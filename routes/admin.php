@@ -99,4 +99,79 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth','perm
     });
 });
 
+//PBX配置管理
+Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth','permission:pbx.manage']],function (){
+    //分机管理
+    Route::group(['middleware'=>'permission:pbx.sip'],function (){
+        Route::get('sip','SipController@index')->name('admin.sip');
+        Route::get('sip/data','SipController@data')->name('admin.sip.data');
+        //添加
+        Route::get('sip/create','SipController@create')->name('admin.sip.create')->middleware('permission:pbx.sip.create');
+        Route::post('sip/store','SipController@store')->name('admin.sip.store')->middleware('permission:pbx.sip.create');
+        //批量添加
+        Route::get('sip/create_list','SipController@createList')->name('admin.sip.create_list')->middleware('permission:pbx.sip.create_list');
+        Route::post('sip/store_list','SipController@storeList')->name('admin.sip.store_list')->middleware('permission:pbx.sip.create_list');
+        //编辑
+        Route::get('sip/{id}/edit','SipController@edit')->name('admin.sip.edit')->middleware('permission:pbx.sip.edit');
+        Route::put('sip/{id}/update','SipController@update')->name('admin.sip.update')->middleware('permission:pbx.sip.edit');
+        //删除
+        Route::delete('sip/destroy','SipController@destroy')->name('admin.sip.destroy')->middleware('permission:pbx.sip.destroy');
+    });
+    //网关管理
+    Route::group(['middleware'=>'permission:pbx.gateway'],function (){
+        Route::get('gateway','GatewayController@index')->name('admin.gateway');
+        Route::get('gateway/data','GatewayController@data')->name('admin.gateway.data');
+        //添加
+        Route::get('gateway/create','GatewayController@create')->name('admin.gateway.create')->middleware('permission:pbx.gateway.create');
+        Route::post('gateway/store','GatewayController@store')->name('admin.gateway.store')->middleware('permission:pbx.gateway.create');
+        //编辑
+        Route::get('gateway/{id}/edit','GatewayController@edit')->name('admin.gateway.edit')->middleware('permission:pbx.gateway.edit');
+        Route::put('gateway/{id}/update','GatewayController@update')->name('admin.gateway.update')->middleware('permission:pbx.gateway.edit');
+        //删除
+        Route::delete('gateway/destroy','GatewayController@destroy')->name('admin.gateway.destroy')->middleware('permission:pbx.gateway.destroy');
+        //更新配置
+        Route::post('gateway/updateXml','GatewayController@updateXml')->name('admin.gateway.updateXml')->middleware('permission:pbx.gateway.updateXml');
+    });
+    //拨号计划
+    Route::group(['middleware'=>'permission:pbx.extension'],function (){
+        Route::get('extension','ExtensionController@index')->name('admin.extension');
+        Route::get('extension/data','ExtensionController@data')->name('admin.extension.data');
+        //详情
+        Route::get('extension/{id}/show','ExtensionController@show')->name('admin.extension.show')->middleware('permission:pbx.extension.show');
+        //添加
+        Route::get('extension/create','ExtensionController@create')->name('admin.extension.create')->middleware('permission:pbx.extension.create');
+        Route::post('extension/store','ExtensionController@store')->name('admin.extension.store')->middleware('permission:pbx.extension.create');
+        //编辑
+        Route::get('extension/{id}/edit','ExtensionController@edit')->name('admin.extension.edit')->middleware('permission:pbx.extension.edit');
+        Route::put('extension/{id}/update','ExtensionController@update')->name('admin.extension.update')->middleware('permission:pbx.extension.edit');
+        //删除
+        Route::delete('extension/destroy','ExtensionController@destroy')->name('admin.extension.destroy')->middleware('permission:pbx.extension.destroy');
+    });
+    //拨号规则，同属拨号计划权限
+    Route::group(['middleware'=>'permission:pbx.extension'],function (){
+        Route::get('extension/{extension_id}/condition','ConditionController@index')->name('admin.condition');
+        Route::get('extension/{extension_id}/condition/data','ConditionController@data')->name('admin.condition.data');
+        //添加
+        Route::get('extension/{extension_id}/condition/create','ConditionController@create')->name('admin.condition.create');
+        Route::post('extension/{extension_id}/condition/store','ConditionController@store')->name('admin.condition.store');
+        //编辑
+        Route::get('extension/{extension_id}/condition/{id}/edit','ConditionController@edit')->name('admin.condition.edit');
+        Route::put('extension/{extension_id}/condition/{id}/update','ConditionController@update')->name('admin.condition.update');
+        //删除
+        Route::delete('condition/destroy','ConditionController@destroy')->name('admin.condition.destroy');
+    });
+    //拨号应用，同属拨号计划权限
+    Route::group(['middleware'=>'permission:pbx.extension'],function (){
+        Route::get('condition/{condition_id}/action','ActionController@index')->name('admin.action');
+        Route::get('condition/{condition_id}/action/data','ActionController@data')->name('admin.action.data');
+        //添加
+        Route::get('condition/{condition_id}/action/create','ActionController@create')->name('admin.action.create');
+        Route::post('condition/{condition_id}/action/store','ActionController@store')->name('admin.action.store');
+        //编辑
+        Route::get('condition/{condition_id}/action/{id}/edit','ActionController@edit')->name('admin.action.edit');
+        Route::put('condition/{condition_id}/action/{id}/update','ActionController@update')->name('admin.action.update');
+        //删除
+        Route::delete('action/destroy','ActionController@destroy')->name('admin.action.destroy');
+    });
 
+});

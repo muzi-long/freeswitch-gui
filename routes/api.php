@@ -16,3 +16,12 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+
+//动态分机注册
+Route::post('directory','ApiController@directory');
+
+//动态拨号计划
+Route::post('dialplan','ApiController@dialplan');
+
+

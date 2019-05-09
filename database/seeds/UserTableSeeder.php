@@ -94,6 +94,50 @@ class UserTableSeeder extends Seeder
                     ],
                 ]
             ],
+            [
+                'name' => 'pbx.manage',
+                'display_name' => 'PBX配置',
+                'route' => '',
+                'icon_id' => '101',
+                'child' => [
+                    [
+                        'name' => 'pbx.sip',
+                        'display_name' => '分机管理',
+                        'route' => 'admin.sip',
+                        'icon_id' => '12',
+                        'child' => [
+                            ['name' => 'pbx.sip.create', 'display_name' => '添加','route'=>'admin.sip.create'],
+                            ['name' => 'pbx.sip.create_list', 'display_name' => '批量添加','route'=>'admin.sip.create_list'],
+                            ['name' => 'pbx.sip.edit', 'display_name' => '编辑','route'=>'admin.sip.edit'],
+                            ['name' => 'pbx.sip.destroy', 'display_name' => '删除','route'=>'admin.sip.destroy'],
+                        ]
+                    ],
+                    [
+                        'name' => 'pbx.gateway',
+                        'display_name' => '网关管理',
+                        'route' => 'admin.gateway',
+                        'icon_id' => '12',
+                        'child' => [
+                            ['name' => 'pbx.gateway.create', 'display_name' => '添加','route'=>'admin.gateway.create'],
+                            ['name' => 'pbx.gateway.edit', 'display_name' => '编辑','route'=>'admin.gateway.edit'],
+                            ['name' => 'pbx.gateway.destroy', 'display_name' => '删除','route'=>'admin.gateway.destroy'],
+                            ['name' => 'pbx.gateway.updateXml', 'display_name' => '更新配置','route'=>'admin.gateway.updateXml'],
+                        ]
+                    ],
+                    [
+                        'name' => 'pbx.extension',
+                        'display_name' => '拨号计划',
+                        'route' => 'admin.extension',
+                        'icon_id' => '12',
+                        'child' => [
+                            ['name' => 'pbx.extension.show', 'display_name' => '详情','route'=>'admin.extension.show'],
+                            ['name' => 'pbx.extension.create', 'display_name' => '添加','route'=>'admin.extension.create'],
+                            ['name' => 'pbx.extension.edit', 'display_name' => '编辑','route'=>'admin.extension.edit'],
+                            ['name' => 'pbx.extension.destroy', 'display_name' => '删除','route'=>'admin.extension.destroy'],
+                        ]
+                    ],
+                ],
+            ]
         ];
 
         foreach ($permissions as $pem1) {

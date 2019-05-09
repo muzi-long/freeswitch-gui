@@ -20,6 +20,13 @@
 <script src="/js/jquery.min.js"></script>
 <script src="/static/admin/layuiadmin/layui/layui.js"></script>
 <script>
+    function newTab(url,tit){
+        if(top.layui.index){
+            top.layui.index.openTabsPage(url,tit)
+        }else{
+            window.open(url)
+        }
+    }
     $.ajaxSetup({
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
