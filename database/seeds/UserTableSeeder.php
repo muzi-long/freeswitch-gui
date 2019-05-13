@@ -137,7 +137,26 @@ class UserTableSeeder extends Seeder
                         ]
                     ],
                 ],
-            ]
+            ],
+            [
+                'name' => 'record.manage',
+                'display_name' => '录音管理',
+                'route' => '',
+                'icon_id' => '102',
+                'child' => [
+                    [
+                        'name' => 'record.cdr',
+                        'display_name' => 'CDR录音',
+                        'route' => 'admin.cdr',
+                        'icon_id' => '12',
+                        'child' => [
+                            ['name' => 'pbx.cdr.show', 'display_name' => '通话详单','route'=>'admin.cdr.show'],
+                            ['name' => 'pbx.cdr.play', 'display_name' => '播放','route'=>'admin.cdr.play'],
+                            ['name' => 'pbx.cdr.download', 'display_name' => '下载','route'=>'admin.cdr.download'],
+                        ]
+                    ],
+                ]
+            ],
         ];
 
         foreach ($permissions as $pem1) {
