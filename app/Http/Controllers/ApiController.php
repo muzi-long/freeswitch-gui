@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Extension;
+use App\Models\Group;
 use App\Models\Sip;
 use Illuminate\Http\Request;
 use Log;
@@ -16,53 +17,57 @@ class ApiController extends Controller
      */
     public function directory(Request $request)
     {
-        $username = $request->get('user');
-        $sip = Sip::where('username', $username)->first();
-        if ($sip==null) {
-            $xml = <<< XML
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="freeswitch/xml">
-  <section name="directory">
-  </section>
-</document>
-XML;
-            return response($xml,404)->header("Content-type","text/xml");
+        $sips = Sip::get();
+        $groups = Group::with('sips')->whereHas('sips')->get();
+
+        $xml  = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n";
+        $xml .= "<document type=\"freeswitch/xml\">\n";
+        $xml .= "<section name=\"directory\" >\n";
+        $xml .= "<domain name=\"\$\${domain}\">\n";
+        $xml .= "<params>\n";
+        $xml .= "<param name=\"dial-string\" value=\"{presence_id=\${dialed_user}@\${dialed_domain}}\${sofia_contact(\${dialed_user}@\${dialed_domain})}\"/>\n";
+        $xml .= "</params>\n";
+        $xml .= "<groups>\n";
+
+        //默认用户组default
+        $xml .= "<group name=\"default\">\n";
+        $xml .= "    <users>\n";
+        foreach ($sips as $sip){
+            $outbound_caller_id_number = $sip->outbound_caller_id_number??"\$\${outbound_caller_id}";
+            $xml .= "    <user id=\"".$sip->username."\">\n";
+            $xml .= "        <params>";
+            $xml .= "           <param name=\"password\" value=\"".$sip->password."\"/>\n";
+            $xml .= "           <param name=\"vm-password\" value=\"".$sip->password."\"/>\n";
+            $xml .= "        </params>\n";
+            $xml .= "        <variables>\n";
+            $xml .= "        <variable name=\"toll_allow\" value=\"domestic,international,local\"/>\n";
+            $xml .= "           <variable name=\"accountcode\" value=\"".$sip->username."\"/>\n";
+            $xml .= "           <variable name=\"user_context\" value=\"".$sip->context."\"/>\n";
+            $xml .= "           <variable name=\"effective_caller_id_name\" value=\"".$sip->effective_caller_id_name."\"/>\n";
+            $xml .= "           <variable name=\"effective_caller_id_number\" value=\"".$sip->effective_caller_id_number."\"/>\n";
+            $xml .= "           <variable name=\"outbound_caller_id_name\" value=\"\$\${outbound_caller_name}\"/>\n";
+            $xml .= "           <variable name=\"outbound_caller_id_number\" value=\"".$outbound_caller_id_number."\"/>\n";
+            $xml .= "        </variables>\n";
+            $xml .= "    </user>";
         }
-        $outbound_caller_id_number = $sip->outbound_caller_id_number??"\$\${outbound_caller_id}";
-        $xml = <<< XML
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="freeswitch/xml">
-  <section name="directory">
-    <domain name="\$\${domain}">
-      <params>
-        <param name="dial-string" value="{presence_id=\${dialed_user}@\${dialed_domain}}\${sofia_contact(\${dialed_user}@\${dialed_domain})}"/>
-      </params>
-      <groups>
-        <group name="default">
-          <users>
-            <user id="{$sip->username}">
-              <params>
-                <param name="password" value="{$sip->password}"/>
-                <param name="vm-password" value="{$sip->password}"/>
-              </params>
-              <variables>
-                <variable name="toll_allow" value="domestic,international,local"/>
-                <variable name="accountcode" value="{$sip->username}"/>
-                <variable name="user_context" value="{$sip->context}"/>
-                <variable name="effective_caller_id_name" value="{$sip->effective_caller_id_name}"/>
-                <variable name="effective_caller_id_number" value="{$sip->effective_caller_id_number}"/>
-                <!-- <variable name="outbound_caller_id_name" value="\$\${outbound_caller_name}"/> -->
-                <variable name="outbound_caller_id_number" value="{$outbound_caller_id_number}"/>
-                <variable name="callgroup" value="{$sip->callgroup}"/>
-              </variables>
-            </user>
-          </users>
-        </group>
-      </groups>
-    </domain>
-  </section>
-</document>
-XML;
+        $xml .= "    </users>\n";
+        $xml .= "</group>\n";
+
+        //自定义用户组
+        foreach ($groups as $group){
+            $xml .= "<group name=\"".$group->name."\">\n";
+            $xml .= "    <users>\n";
+            foreach ($group->sips as $sip){
+                $xml .= "   <user id=\"".$sip->username."\" type=\"pointer\"/>";
+            }
+            $xml .= "    </users>\n";
+            $xml .= "</group>\n";
+        }
+
+        $xml .= "</groups>\n";
+        $xml .= "</domain>\n";
+        $xml .= "</section>\n";
+        $xml .= "</document>\n";
         return response($xml,200)->header("Content-type","text/xml");
     }
 

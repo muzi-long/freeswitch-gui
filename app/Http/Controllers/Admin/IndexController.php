@@ -37,6 +37,11 @@ class IndexController extends Controller
         return view('admin.index.index2');
     }
 
+    public function call()
+    {
+        return view('admin.index.call');
+    }
+
     /**
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse

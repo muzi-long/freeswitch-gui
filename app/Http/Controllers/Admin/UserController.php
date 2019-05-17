@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\UserCreateRequest;
 use App\Http\Requests\UserUpdateRequest;
+use App\Models\Sip;
 use App\Models\User;
+use http\Env\Response;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Role;
@@ -173,6 +175,31 @@ class UserController extends Controller
         }
         $user->syncPermissions($permissions);
         return redirect()->to(route('admin.user'))->with(['success'=>'已更新用户直接权限']);
+    }
+
+    public function setSip(Request $request,$id)
+    {
+        $sip_username = $request->get('sip_username');
+        $user = User::findOrFail($id);
+        if ($sip_username===null){
+            if ($user->update(['sip_id'=>null])){
+                return response()->json(['code'=>0,'msg'=>'更新成功']);
+            }
+            return response()->json(['code'=>1,'msg'=>'更新失败']);
+        }
+
+        $sip = Sip::where('username',$sip_username)->first();
+        if ($sip==null){
+            return response()->json(['code'=>1,'msg'=>'该分机号不存在']);
+        }
+        $hasUsedUser = User::where('sip_id',$sip->id)->first();
+        if ($hasUsedUser!=null){
+            return response()->json(['code'=>1,'msg'=>'该分机号【'.$sip->username.'】已被用户【'.$hasUsedUser->name.'】使用']);
+        }
+        if ($user->update(['sip_id'=>$sip->id])){
+            return response()->json(['code'=>0,'msg'=>'更新成功']);
+        }
+        return response()->json(['code'=>1,'msg'=>'更新失败']);
     }
 
 }

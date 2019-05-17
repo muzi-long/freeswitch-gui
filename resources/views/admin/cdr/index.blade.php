@@ -60,18 +60,17 @@
                 ,cols: [[ //表头
                     //{checkbox: true,fixed: true}
                     {field: 'id', title: 'ID', sort: true,width:80,fixed:'left'}
-                    ,{field: 'caller_id_number', title: '主叫号码',width:100}
-                    ,{field: 'destination_number', title: '被叫号码',width:120}
+                    ,{field: 'caller_id_number', title: '主叫号码',width:100, style:'color:green'}
+                    ,{field: 'destination_number', title: '被叫号码',width:120, style:'color:#2F4056'}
                     ,{field: 'start_stamp', title: '呼叫时间', sort: true,width:160}
                     ,{field: 'answer_stamp', title: '应答时间', sort: true,width:160}
                     ,{field: 'end_stamp', title: '挂断时间', sort: true,width:160}
-                    ,{field: 'duration', title: '主叫时长(秒)', sort: true, width:120}
-                    ,{field: 'billsec', title: '被叫时长(秒)', sort: true, width:120, style:'color: green;font-weight:bold'}
+                    ,{field: 'duration', title: '主叫时长(秒)', sort: true, width:120, style:'color:#2F4056'}
+                    ,{field: 'billsec', title: '被叫时长(秒)', sort: true, width:120, style:'color: green'}
                     ,{field: 'hangup_cause', title: '挂断原因', width:200}
                     ,{field: 'aleg_uuid', title: '主叫UUID', width:300}
                     ,{field: 'bleg_uuid', title: '被叫UUID', width:300}
                     ,{field: 'caller_id_name', title: '主叫名称', width:160}
-                    ,{field: 'created_at', title: '添加时间', sort: true,width:160}
                     ,{fixed: 'right', width: 220, align:'center', toolbar: '#options', title:'操作',fixed:'right'}
                 ]]
             });
@@ -81,7 +80,13 @@
                 var data = obj.data //获得当前行数据
                     ,layEvent = obj.event; //获得 lay-event 对应的值
                 if(layEvent === 'show'){
-                    location.href = '/admin/cdr/'+data.id+'/show';
+                    layer.open({
+                        title : '通话详单',
+                        shadeClose : true,
+                        type : 2,
+                        area : ['800px','600px'],
+                        content : '/admin/cdr/'+data.id+'/show'
+                    })
                 } else if (layEvent === 'play'){
                     var index = layer.load()
                     $.get('/admin/cdr/'+data.aleg_uuid+'/play',function (res) {

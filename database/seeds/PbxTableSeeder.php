@@ -135,7 +135,72 @@ class PbxTableSeeder extends Seeder
                         ],
                     ],
                 ],
-            ]
+            ],
+            [
+                'display_name'  => '内线拨打外线电话',
+                'name'          => 'internal_to_external',
+                'context'       => 'default',
+                'sort'          => 1,
+                'conditions'    => [
+                    [
+                        'display_name'  => '规则一',
+                        'field'         => 'destination_number',
+                        'expression'    => '^(\d{11})$',
+                        'break'         => 'on-false',
+                        'sort'          => 0,
+                        'actions'       => [
+                            [
+                                'display_name'  => '系统应答',
+                                'application'   => 'answer',
+                                'data'          => null,
+                                'sort'          => 0,
+                            ],
+                            [
+                                'display_name'  => '主叫随被叫一起挂断',
+                                'application'   => 'set',
+                                'data'          => 'hangup_after_bridge=true',
+                                'sort'          => 1,
+                            ],
+                            [
+                                'display_name'  => '设置录音文件',
+                                'application'   => 'set',
+                                'data'          => 'sofia_record_file=$${base_dir}/var/lib/freeswitch/recordings/${strftime(%Y)}/${strftime(%m)}/${strftime(%d)}/${strftime(%Y-%m-%d-%H-%M-%S)}_${destination_number}_${caller_id_number}.wav',
+                                'sort'          => 2,
+                            ],
+                            [
+                                'display_name'  => '接通后才进行录音',
+                                'application'   => 'set',
+                                'data'          => 'media_bug_answer_req=true',
+                                'sort'          => 3,
+                            ],
+                            [
+                                'display_name'  => '最小录音时间',
+                                'application'   => 'set',
+                                'data'          => 'RECORD_MIN_SEC=3',
+                                'sort'          => 4,
+                            ],
+                            [
+                                'display_name'  => '立体声',
+                                'application'   => 'set',
+                                'data'          => 'RECORD_STEREO=true',
+                                'sort'          => 5,
+                            ],
+                            [
+                                'display_name'  => '录音',
+                                'application'   => 'record_session',
+                                'data'          => '${sofia_record_file}',
+                                'sort'          => 6,
+                            ],
+                            [
+                                'display_name'  => '呼叫',
+                                'application'   => 'bridge',
+                                'data'          => '{outbound_caller_id=900013}sofia/gateway/900013/$1',
+                                'sort'          => 7,
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ];
         foreach ($data as $d1){
             $extension = \App\Models\Extension::create([

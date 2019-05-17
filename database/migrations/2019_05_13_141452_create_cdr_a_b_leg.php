@@ -27,7 +27,6 @@ class CreateCdrABLeg extends Migration
             $table->string('hangup_cause')->nullable()->comment('挂断原因');
             $table->string('sofia_record_file')->nullable()->comment('录音文件地址');
             $table->string('extend_content')->nullable()->comment('预留扩展字段内容');
-            $table->timestamps();
         });
         Schema::create('cdr_a_leg', function (Blueprint $table) {
             $table->increments('id');
@@ -44,7 +43,6 @@ class CreateCdrABLeg extends Migration
             $table->string('hangup_cause')->nullable()->comment('挂断原因');
             $table->string('sofia_record_file')->nullable()->comment('录音文件地址');
             $table->string('extend_content')->nullable()->comment('预留扩展字段内容');
-            $table->timestamps();
         });
         Schema::create('cdr_b_leg', function (Blueprint $table) {
             $table->increments('id');
@@ -61,7 +59,6 @@ class CreateCdrABLeg extends Migration
             $table->string('hangup_cause')->nullable()->comment('挂断原因');
             $table->string('sofia_record_file')->nullable()->comment('录音文件地址');
             $table->string('extend_content')->nullable()->comment('预留扩展字段内容');
-            $table->timestamps();
         });
     }
 

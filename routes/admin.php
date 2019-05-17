@@ -31,6 +31,8 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>'auth'],funct
     Route::get('/index','IndexController@index')->name('admin.index');
     Route::get('/index1','IndexController@index1')->name('admin.index1');
     Route::get('/index2','IndexController@index2')->name('admin.index2');
+    //拨打电话
+    Route::get('/call','IndexController@call')->name('admin.call');
     //图标
     Route::get('icons','IndexController@icons')->name('admin.icons');
 });
@@ -56,6 +58,8 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth','perm
         //分配权限
         Route::get('user/{id}/permission','UserController@permission')->name('admin.user.permission')->middleware('permission:system.user.permission');
         Route::put('user/{id}/assignPermission','UserController@assignPermission')->name('admin.user.assignPermission')->middleware('permission:system.user.permission');
+        //分配外呼号
+        Route::post('user/{id}/set_sip','UserController@setSip')->name('admin.user.setSip')->middleware('permission:system.user.setSip');
     });
     //角色管理
     Route::group(['middleware'=>'permission:system.role'],function (){
@@ -117,6 +121,25 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth','perm
         //删除
         Route::delete('sip/destroy','SipController@destroy')->name('admin.sip.destroy')->middleware('permission:pbx.sip.destroy');
     });
+    //分机组管理
+    Route::group(['middleware'=>'permission:pbx.group'],function (){
+        Route::get('group','GroupController@index')->name('admin.group');
+        Route::get('group/data','GroupController@data')->name('admin.group.data');
+        //添加
+        Route::get('group/create','GroupController@create')->name('admin.group.create')->middleware('permission:pbx.group.create');
+        Route::post('group/store','GroupController@store')->name('admin.group.store')->middleware('permission:pbx.group.create');
+        //添加
+        Route::get('group/create','GroupController@create')->name('admin.group.create')->middleware('permission:pbx.group.create');
+        Route::post('group/store','GroupController@store')->name('admin.group.store')->middleware('permission:pbx.group.create');
+        //编辑
+        Route::get('group/{id}/edit','GroupController@edit')->name('admin.group.edit')->middleware('permission:pbx.group.edit');
+        Route::put('group/{id}/update','GroupController@update')->name('admin.group.update')->middleware('permission:pbx.group.edit');
+        //删除
+        Route::delete('group/destroy','GroupController@destroy')->name('admin.group.destroy')->middleware('permission:pbx.group.destroy');
+        //分配分机
+        Route::get('group/{id}/sip','GroupController@sip')->name('admin.group.sip')->middleware('permission:pbx.group.sip');
+        Route::put('group/{id}/assignSip','GroupController@assignSip')->name('admin.group.assignSip')->middleware('permission:pbx.group.sip');
+    });
     //网关管理
     Route::group(['middleware'=>'permission:pbx.gateway'],function (){
         Route::get('gateway','GatewayController@index')->name('admin.gateway');
@@ -173,6 +196,26 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth','perm
         //删除
         Route::delete('action/destroy','ActionController@destroy')->name('admin.action.destroy');
     });
+    //队列管理
+    Route::group(['middleware'=>'permission:pbx.queue'],function (){
+        Route::get('queue','QueueController@index')->name('admin.queue');
+        Route::get('queue/data','QueueController@data')->name('admin.queue.data');
+        //添加
+        Route::get('queue/create','QueueController@create')->name('admin.queue.create')->middleware('permission:pbx.queue.create');
+        Route::post('queue/store','QueueController@store')->name('admin.queue.store')->middleware('permission:pbx.queue.create');
+        //编辑
+        Route::get('queue/{id}/edit','QueueController@edit')->name('admin.queue.edit')->middleware('permission:pbx.queue.edit');
+        Route::put('queue/{id}/update','QueueController@update')->name('admin.queue.update')->middleware('permission:pbx.queue.edit');
+        //删除
+        Route::delete('queue/destroy','QueueController@destroy')->name('admin.queue.destroy')->middleware('permission:pbx.queue.destroy');
+        //更新配置
+        Route::post('queue/updateXml','QueueController@updateXml')->name('admin.queue.updateXml')->middleware('permission:pbx.queue.updateXml');
+        //分配坐席
+        Route::get('queue/{id}/agent','QueueController@agent')->name('admin.queue.agent')->middleware('permission:pbx.queue.agent');
+        Route::put('queue/{id}/assignAgent','QueueController@assignAgent')->name('admin.queue.assignAgent')->middleware('permission:pbx.queue.agent');
+
+    });
+
 });
 
 //录音管理
@@ -186,5 +229,7 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth','perm
         Route::get('cdr/{uuid}/play','CdrController@play')->name('admin.cdr.play');
         //下载
         Route::get('cdr/{uuid}/download','CdrController@download')->name('admin.cdr.download');
+        //通话详单
+        Route::get('cdr/{id}/show','CdrController@show')->name('admin.cdr.show');
     });
 });

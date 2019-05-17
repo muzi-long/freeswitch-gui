@@ -105,6 +105,9 @@
                             <dd data-name="console">
                                 <a lay-href="{{route('admin.index2')}}">主页二</a>
                             </dd>
+                            <dd data-name="call">
+                                <a lay-href="{{route('admin.call')}}">拨打电话</a>
+                            </dd>
                         </dl>
                     </li>
                     @foreach($menus as $menu)

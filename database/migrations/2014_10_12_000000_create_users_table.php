@@ -22,8 +22,11 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->rememberToken();
             $table->uuid('uuid');
+            $table->unsignedInteger('sip_id')->nullable()->comment('对应分机ID，不是分机号码');
             $table->timestamps();
+            $table->foreign('sip_id')->references('id')->on('sip')->onDelete('set null');
         });
+
     }
 
     /**

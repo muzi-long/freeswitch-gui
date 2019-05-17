@@ -11,6 +11,7 @@ class User extends Authenticatable
     use Notifiable,HasRoles;
 
     protected $table = 'users';
+    protected $appends = ['sip_username'];
 
     /**
      * The attributes that are mass assignable.
@@ -18,7 +19,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'username','name', 'email', 'password','phone','uuid'
+        'username','name', 'email', 'password','phone','uuid','sip_id'
     ];
 
     /**
@@ -29,5 +30,19 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    public function sip()
+    {
+        return $this->hasOne('App\Models\Sip','id','sip_id');
+    }
+
+    public function getSipUsernameAttribute()
+    {
+        $sip_username = null;
+        if ($this->sip_id){
+            $sip_username = $this->sip->username;
+        }
+        return $this->attributes['sip_username'] = $sip_username;
+    }
 
 }

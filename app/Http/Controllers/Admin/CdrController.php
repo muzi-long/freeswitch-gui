@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Asr;
 use App\Models\Cdr;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -35,7 +36,7 @@ class CdrController extends Controller
         }else if ($search['start_stamp_start'] && $search['start_stamp_end']){
             $query = $query->whereBetween('start_stamp',[$search['start_stamp_start'],$search['start_stamp_end']]);
         }
-        $res = $query->orderBy('created_at')->paginate($request->get('limit', 30));
+        $res = $query->orderByDesc('id')->paginate($request->get('limit', 30));
         $data = [
             'code' => 0,
             'msg' => '正在请求中...',
@@ -74,7 +75,12 @@ class CdrController extends Controller
      */
     public function show($id)
     {
-        //
+        $cdr = Cdr::find($id);
+        $record = [];
+        if ($cdr!=null){
+            $record = Asr::whereIn('uuid',[$cdr->aleg_uuid,$cdr->bleg_uuid])->orderByDesc('id')->get();
+        }
+        return view('admin.cdr.asr',compact('record'));
     }
 
     /**
@@ -144,6 +150,5 @@ class CdrController extends Controller
         }
         return response()->download($cdr->sofia_record_file,$uuid.".wav");
     }
-
 
 }

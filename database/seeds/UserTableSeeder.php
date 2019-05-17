@@ -28,7 +28,7 @@ class UserTableSeeder extends Seeder
             'name' => '超级管理员',
             'email' => 'root@dgg.net',
             'password' => bcrypt('123456'),
-            'uuid' => \Faker\Provider\Uuid::uuid()
+            'uuid' => \Faker\Provider\Uuid::uuid(),
         ]);
 
         //角色
@@ -56,6 +56,7 @@ class UserTableSeeder extends Seeder
                             ['name' => 'system.user.destroy', 'display_name' => '删除用户','route'=>'admin.user.destroy'],
                             ['name' => 'system.user.role', 'display_name' => '分配角色','route'=>'admin.user.role'],
                             ['name' => 'system.user.permission', 'display_name' => '分配权限','route'=>'admin.user.permission'],
+                            ['name' => 'system.user.setSip', 'display_name' => '分配外呼号','route'=>'admin.user.setSip'],
                         ]
                     ],
                     [
@@ -101,6 +102,18 @@ class UserTableSeeder extends Seeder
                 'icon_id' => '101',
                 'child' => [
                     [
+                        'name' => 'pbx.group',
+                        'display_name' => '分机组',
+                        'route' => 'admin.group',
+                        'icon_id' => '12',
+                        'child' => [
+                            ['name' => 'pbx.group.create', 'display_name' => '添加','route'=>'admin.group.create'],
+                            ['name' => 'pbx.group.sip', 'display_name' => '分配分机','route'=>'admin.group.sip'],
+                            ['name' => 'pbx.group.edit', 'display_name' => '编辑','route'=>'admin.group.edit'],
+                            ['name' => 'pbx.group.destroy', 'display_name' => '删除','route'=>'admin.group.destroy'],
+                        ]
+                    ],
+                    [
                         'name' => 'pbx.sip',
                         'display_name' => '分机管理',
                         'route' => 'admin.sip',
@@ -134,6 +147,20 @@ class UserTableSeeder extends Seeder
                             ['name' => 'pbx.extension.create', 'display_name' => '添加','route'=>'admin.extension.create'],
                             ['name' => 'pbx.extension.edit', 'display_name' => '编辑','route'=>'admin.extension.edit'],
                             ['name' => 'pbx.extension.destroy', 'display_name' => '删除','route'=>'admin.extension.destroy'],
+                        ]
+                    ],
+                    [
+                        'name' => 'pbx.queue',
+                        'display_name' => '队列管理',
+                        'route' => 'admin.queue',
+                        'icon_id' => '12',
+                        'child' => [
+                            ['name' => 'pbx.queue.show', 'display_name' => '详情','route'=>'admin.queue.show'],
+                            ['name' => 'pbx.queue.create', 'display_name' => '添加','route'=>'admin.queue.create'],
+                            ['name' => 'pbx.queue.edit', 'display_name' => '编辑','route'=>'admin.queue.edit'],
+                            ['name' => 'pbx.queue.destroy', 'display_name' => '删除','route'=>'admin.queue.destroy'],
+                            ['name' => 'pbx.queue.updateXml', 'display_name' => '更新配置','route'=>'admin.queue.updateXml'],
+                            ['name' => 'pbx.queue.agent', 'display_name' => '分配分机','route'=>'admin.queue.agent'],
                         ]
                     ],
                 ],
@@ -220,5 +247,6 @@ class UserTableSeeder extends Seeder
         foreach ($roles as $role) {
             \App\Models\Role::create($role);
         }
+
     }
 }
