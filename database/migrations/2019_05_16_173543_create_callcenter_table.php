@@ -44,11 +44,11 @@ class CreateCallcenterTable extends Migration
         Schema::create('agents', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name')->nullable()->comment('坐席号码');
-            $table->string('system')->nullable()->comment('single_box');
+            $table->string('system')->default('single_box')->comment('single_box');
             $table->string('uuid')->nullable()->comment('uuid');
             $table->string('type')->default('callback')->comment('callback 或者 uuid-standby');
             $table->string('contact')->nullable()->comment('呼叫字符串');
-            $table->string('status')->default('Available')->comment('坐席状态Logged Out签出，Available示闲，Available (On Demand)，On Break休息/示忙');
+            $table->string('status')->default('Available')->comment('坐席状态Logged Out签出，Available示闲，Available (On Demand)接通电话完成后示忙，On Break休息/示忙');
             $table->string('state')->default('Waiting')->comment('坐席呼叫状态 Idle坐席空闲中，但是不会分配话务，Waiting坐席空闲中，正在等待分配话务，In a queue call正在通话');
             $table->integer('max_no_answer')->default(0)->comment('最大无应答次数,超过次数status变为On Break状态');
             $table->integer('wrap_up_time')->default(0)->comment('通话完成间隔时间,成功处理一个通话后，多久才会有电话进入的等待时长');
@@ -64,6 +64,7 @@ class CreateCallcenterTable extends Migration
             $table->integer('talk_time')->default(0);
             $table->integer('ready_time')->default(0);
             $table->integer('external_calls_count')->default(0);
+            $table->timestamps();
         });
 
         Schema::create('tiers', function (Blueprint $table) {

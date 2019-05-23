@@ -49,7 +49,7 @@ class GatewayController extends Controller
      */
     public function store(GatewayRequest $request)
     {
-        $data = $request->all(['name','realm','username','password']);
+        $data = $request->except(['_method','_token']);
         if (Gateway::create($data)){
             return redirect(route('admin.gateway'))->with(['success'=>'添加成功']);
         }
@@ -89,7 +89,7 @@ class GatewayController extends Controller
     public function update(Request $request, $id)
     {
         $model = Gateway::findOrFail($id);
-        $data = $request->all(['name','realm','username','password']);
+        $data = $request->except(['_method','_token']);
         if ($model->update($data)){
             return redirect(route('admin.gateway'))->with(['success'=>'更新成功']);
         }

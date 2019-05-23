@@ -8,11 +8,7 @@
 <div class="layui-form-item">
     <label for="" class="layui-form-label">标识</label>
     <div class="layui-input-block">
-        @if(isset($model))
-            <input class="layui-input" type="text" value="{{$model->name??old('name')}}" disabled >
-        @else
-            <input class="layui-input" type="text" name="name" lay-verify="required" value="{{$model->name??old('name')}}" placeholder="如：66666">
-        @endif
+        <input class="layui-input" type="text" name="name" lay-verify="required" value="{{$model->name??old('name')}}" placeholder="如：66666">
     </div>
 </div>
 <div class="layui-form-item">

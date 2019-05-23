@@ -5,8 +5,7 @@
         <div class="layui-card-header layuiadmin-card-header-auto">
             <div class="layui-btn-group">
                 <button class="layui-btn layui-btn-sm layui-btn-danger" id="listDelete">删 除</button>
-                <a class="layui-btn layui-btn-sm" href="{{ route('admin.gateway.create') }}">添 加</a>
-                <button class="layui-btn layui-btn-sm" id="updateXml">更新配置</button>
+                <a class="layui-btn layui-btn-sm" href="{{ route('admin.agent.create') }}">添 加</a>
             </div>
 
         </div>
@@ -32,19 +31,21 @@
             var dataTable = table.render({
                 elem: '#dataTable'
                 ,height: 500
-                ,url: "{{ route('admin.gateway.data') }}" //数据接口
+                ,url: "{{ route('admin.agent.data') }}" //数据接口
                 ,page: true //开启分页
                 ,cols: [[ //表头
                     {checkbox: true,fixed: true}
-                    ,{field: 'id', title: 'ID', sort: true,width:80}
-                    ,{field: 'name', title: '名称'}
-                    ,{field: 'realm', title: '地址'}
-                    ,{field: 'username', title: '帐号'}
-                    ,{field: 'password', title: '密码'}
-                    ,{field: 'prefix', title: '前缀'}
-                    ,{field: 'outbound_caller_id', title: '出局号码'}
-                    ,{field: 'created_at', title: '添加时间'}
-                    ,{fixed: 'right', width: 220, align:'center', toolbar: '#options', title:'操作'}
+                    //,{field: 'id', title: 'ID', sort: true,width:80}
+                    ,{field: 'name', title: '坐席名称',width: 100}
+                    ,{field: 'contact_name', title: '分机号',width: 100}
+                    ,{field: 'status_name', title: '坐席状态'}
+                    ,{field: 'state_name', title: '呼叫状态'}
+                    ,{field: 'max_no_answer', title: '最大无应答次数'}
+                    ,{field: 'wrap_up_time', title: '通话间隔（秒）'}
+                    ,{field: 'reject_delay_time', title: '拒接间隔时间（秒）'}
+                    ,{field: 'busy_delay_time', title: '忙重试间隔时间（秒）'}
+                    ,{field: 'no_answer_delay_time', title: '无应答重试间隔（秒）'}
+                    ,{fixed: 'right', width: 150, align:'center', toolbar: '#options', title:'操作'}
                 ]]
             });
 
@@ -54,7 +55,7 @@
                     ,layEvent = obj.event; //获得 lay-event 对应的值
                 if(layEvent === 'del'){
                     layer.confirm('确认删除吗？', function(index){
-                        $.post("{{ route('admin.gateway.destroy') }}",{_method:'delete',ids:[data.id]},function (result) {
+                        $.post("{{ route('admin.agent.destroy') }}",{_method:'delete',ids:[data.id]},function (result) {
                             if (result.code==0){
                                 obj.del(); //删除对应行（tr）的DOM结构
                             }
@@ -64,7 +65,7 @@
                         });
                     });
                 } else if(layEvent === 'edit'){
-                    location.href = '/admin/gateway/'+data.id+'/edit';
+                    location.href = '/admin/agent/'+data.id+'/edit';
                 }
             });
 
@@ -80,7 +81,7 @@
                 }
                 if (ids.length>0){
                     layer.confirm('确认删除吗？', function(index){
-                        $.post("{{ route('admin.gateway.destroy') }}",{_method:'delete',ids:ids},function (result) {
+                        $.post("{{ route('admin.agent.destroy') }}",{_method:'delete',ids:ids},function (result) {
                             if (result.code==0){
                                 dataTable.reload()
                             }
@@ -94,15 +95,6 @@
                 }
             })
 
-            //更新配置
-            $("#updateXml").click(function () {
-                layer.confirm('该操作将重新注册所有网关，确认操作吗？', function(index){
-                    $.post("{{ route('admin.gateway.updateXml') }}",{_method:'post',_token:'{{csrf_token()}}'},function (result) {
-                        var icon = result.code==0?6:5;
-                        layer.msg(result.msg,{icon:icon})
-                    });
-                })
-            })
         })
     </script>
 @endsection

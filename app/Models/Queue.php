@@ -18,4 +18,16 @@ class Queue extends Model
         'max-wait-time-with-no-agent',
         'max-wait-time-with-no-agent-time-reached',
     ];
+    protected $appends = ['strategy_name'];
+
+    public function agents()
+    {
+        return $this->belongsToMany('App\Models\Agent','tiers','queue','agent','name','name');
+    }
+
+    public function getStrategyNameAttribute()
+    {
+        return $this->attributes['strategy_name'] = array_get(config('freeswitch.strategy'),$this->strategy);
+    }
+    
 }

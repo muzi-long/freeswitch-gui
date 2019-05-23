@@ -19,6 +19,8 @@ class CreateGatewayTable extends Migration
             $table->string('realm')->comment('网关IP，如果端口不是5060，默认格式为：xxx.xxx.xxx.xxx:port');
             $table->string('username')->comment('帐号');
             $table->string('password')->comment('密码');
+            $table->string('prefix')->nullable()->comment('前缀');
+            $table->string('outbound_caller_id')->nullable()->comment('出局号码');
             $table->timestamps();
         });
     }

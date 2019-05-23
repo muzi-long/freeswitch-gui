@@ -24,6 +24,18 @@
     </div>
 </div>
 <div class="layui-form-item">
+    <label for="" class="layui-form-label">前缀</label>
+    <div class="layui-input-block">
+        <input class="layui-input" type="text" name="prefix" value="{{$model->prefix??old('prefix')}}" placeholder="非必填">
+    </div>
+</div>
+<div class="layui-form-item">
+    <label for="" class="layui-form-label">出局号码</label>
+    <div class="layui-input-block">
+        <input class="layui-input" type="text" name="outbound_caller_id" value="{{$model->outbound_caller_id??old('outbound_caller_id')}}" placeholder="非必填">
+    </div>
+</div>
+<div class="layui-form-item">
     <div class="layui-input-block">
         <button type="submit" class="layui-btn" lay-submit lay-filter="*" >确 认</button>
         <a href="{{route('admin.gateway')}}" class="layui-btn" >返 回</a>

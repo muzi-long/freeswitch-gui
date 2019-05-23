@@ -15,6 +15,7 @@
             <script type="text/html" id="options">
                 <div class="layui-btn-group">
                     <a class="layui-btn layui-btn-sm" lay-event="edit">编辑</a>
+                    <a class="layui-btn layui-btn-sm" lay-event="agent">分配坐席</a>
                     <a class="layui-btn layui-btn-danger layui-btn-sm " lay-event="del">删除</a>
                 </div>
             </script>
@@ -39,7 +40,8 @@
                     ,{field: 'id', title: 'ID', sort: true,width:80}
                     ,{field: 'display_name', title: '名称'}
                     ,{field: 'name', title: '标识'}
-                    ,{field: 'strategy', title: '振铃策略'}
+                    ,{field: 'strategy_name', title: '振铃策略'}
+                    ,{field: 'agents_count', title: '坐席数'}
                     ,{field: 'created_at', title: '添加时间'}
                     ,{fixed: 'right', width: 220, align:'center', toolbar: '#options', title:'操作'}
                 ]]
@@ -51,7 +53,7 @@
                     ,layEvent = obj.event; //获得 lay-event 对应的值
                 if(layEvent === 'del'){
                     layer.confirm('确认删除吗？', function(index){
-                        $.post("{{ route('admin.gateway.destroy') }}",{_method:'delete',ids:[data.id]},function (result) {
+                        $.post("{{ route('admin.queue.destroy') }}",{_method:'delete',ids:[data.id]},function (result) {
                             if (result.code==0){
                                 obj.del(); //删除对应行（tr）的DOM结构
                             }
@@ -61,7 +63,9 @@
                         });
                     });
                 } else if(layEvent === 'edit'){
-                    location.href = '/admin/gateway/'+data.id+'/edit';
+                    location.href = '/admin/queue/'+data.id+'/edit';
+                } else if(layEvent === 'agent'){
+                    location.href = '/admin/queue/'+data.id+'/agent';
                 }
             });
 
@@ -77,7 +81,7 @@
                 }
                 if (ids.length>0){
                     layer.confirm('确认删除吗？', function(index){
-                        $.post("{{ route('admin.gateway.destroy') }}",{_method:'delete',ids:ids},function (result) {
+                        $.post("{{ route('admin.queue.destroy') }}",{_method:'delete',ids:ids},function (result) {
                             if (result.code==0){
                                 dataTable.reload()
                             }
@@ -93,8 +97,8 @@
 
             //更新配置
             $("#updateXml").click(function () {
-                layer.confirm('该操作将重新注册所有网关，确认操作吗？', function(index){
-                    $.post("{{ route('admin.gateway.updateXml') }}",{_method:'post',_token:'{{csrf_token()}}'},function (result) {
+                layer.confirm('该操作将更新所有队列信息，确认操作吗？', function(index){
+                    $.post("{{ route('admin.queue.updateXml') }}",{_method:'post',_token:'{{csrf_token()}}'},function (result) {
                         var icon = result.code==0?6:5;
                         layer.msg(result.msg,{icon:icon})
                     });

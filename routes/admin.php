@@ -213,7 +213,45 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth','perm
         //分配坐席
         Route::get('queue/{id}/agent','QueueController@agent')->name('admin.queue.agent')->middleware('permission:pbx.queue.agent');
         Route::put('queue/{id}/assignAgent','QueueController@assignAgent')->name('admin.queue.assignAgent')->middleware('permission:pbx.queue.agent');
+    });
+    //坐席管理
+    Route::group(['middleware'=>'permission:pbx.agent'],function (){
+        Route::get('agent','AgentController@index')->name('admin.agent');
+        Route::get('agent/data','AgentController@data')->name('admin.agent.data');
+        //添加
+        Route::get('agent/create','AgentController@create')->name('admin.agent.create')->middleware('permission:pbx.agent.create');
+        Route::post('agent/store','AgentController@store')->name('admin.agent.store')->middleware('permission:pbx.agent.create');
+        //编辑
+        Route::get('agent/{id}/edit','AgentController@edit')->name('admin.agent.edit')->middleware('permission:pbx.agent.edit');
+        Route::put('agent/{id}/update','AgentController@update')->name('admin.agent.update')->middleware('permission:pbx.agent.edit');
+        //删除
+        Route::delete('agent/destroy','AgentController@destroy')->name('admin.agent.destroy')->middleware('permission:pbx.agent.destroy');
 
+    });
+
+});
+
+//批量外呼
+Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth','permission:ai.manage']],function (){
+
+    //任务管理
+    Route::group(['middleware'=>'permission:ai.task'],function (){
+        Route::get('task','TaskController@index')->name('admin.task');
+        Route::get('task/data','TaskController@data')->name('admin.task.data');
+        //详情
+        Route::match(['get','post'],'task/{id}/show','TaskController@show')->name('admin.task.show');
+        //添加
+        Route::get('task/create','TaskController@create')->name('admin.task.create')->middleware('permission:ai.task.create');
+        Route::post('task/store','TaskController@store')->name('admin.task.store')->middleware('permission:ai.task.create');
+        //编辑
+        Route::get('task/{id}/edit','TaskController@edit')->name('admin.task.edit')->middleware('permission:ai.task.edit');
+        Route::put('task/{id}/update','TaskController@update')->name('admin.task.update')->middleware('permission:ai.task.edit');
+        //删除
+        Route::delete('task/destroy','TaskController@destroy')->name('admin.task.destroy')->middleware('permission:ai.task.destroy');
+        //设置状态
+        Route::post('task/setStatus','TaskController@setStatus')->name('admin.task.setStatus')->middleware('permission:ai.task.setStatus');
+        //导入号码
+        Route::post('task/{id}/importCall','TaskController@importCall')->name('admin.task.importCall')->middleware('permission:ai.task.importCall');
     });
 
 });
@@ -233,3 +271,5 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth','perm
         Route::get('cdr/{id}/show','CdrController@show')->name('admin.cdr.show');
     });
 });
+
+

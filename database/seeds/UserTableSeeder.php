@@ -155,12 +155,22 @@ class UserTableSeeder extends Seeder
                         'route' => 'admin.queue',
                         'icon_id' => '12',
                         'child' => [
-                            ['name' => 'pbx.queue.show', 'display_name' => '详情','route'=>'admin.queue.show'],
                             ['name' => 'pbx.queue.create', 'display_name' => '添加','route'=>'admin.queue.create'],
                             ['name' => 'pbx.queue.edit', 'display_name' => '编辑','route'=>'admin.queue.edit'],
                             ['name' => 'pbx.queue.destroy', 'display_name' => '删除','route'=>'admin.queue.destroy'],
                             ['name' => 'pbx.queue.updateXml', 'display_name' => '更新配置','route'=>'admin.queue.updateXml'],
                             ['name' => 'pbx.queue.agent', 'display_name' => '分配分机','route'=>'admin.queue.agent'],
+                        ]
+                    ],
+                    [
+                        'name' => 'pbx.agent',
+                        'display_name' => '坐席管理',
+                        'route' => 'admin.agent',
+                        'icon_id' => '12',
+                        'child' => [
+                            ['name' => 'pbx.agent.create', 'display_name' => '添加','route'=>'admin.agent.create'],
+                            ['name' => 'pbx.agent.edit', 'display_name' => '编辑','route'=>'admin.agent.edit'],
+                            ['name' => 'pbx.agent.destroy', 'display_name' => '删除','route'=>'admin.agent.destroy'],
                         ]
                     ],
                 ],
@@ -180,6 +190,28 @@ class UserTableSeeder extends Seeder
                             ['name' => 'pbx.cdr.show', 'display_name' => '通话详单','route'=>'admin.cdr.show'],
                             ['name' => 'pbx.cdr.play', 'display_name' => '播放','route'=>'admin.cdr.play'],
                             ['name' => 'pbx.cdr.download', 'display_name' => '下载','route'=>'admin.cdr.download'],
+                        ]
+                    ],
+                ]
+            ],
+            [
+                'name' => 'ai.manage',
+                'display_name' => '批量外呼',
+                'route' => '',
+                'icon_id' => '103',
+                'child' => [
+                    [
+                        'name' => 'ai.task',
+                        'display_name' => '任务管理',
+                        'route' => 'admin.task',
+                        'icon_id' => '12',
+                        'child' => [
+                            ['name' => 'ai.task.create', 'display_name' => '添加','route'=>'admin.task.create'],
+                            ['name' => 'ai.task.edit', 'display_name' => '编辑','route'=>'admin.task.edit'],
+                            ['name' => 'ai.task.destroy', 'display_name' => '删除','route'=>'admin.task.destroy'],
+                            ['name' => 'ai.task.show', 'display_name' => '呼叫详情','route'=>'admin.task.show'],
+                            ['name' => 'ai.task.setStatus', 'display_name' => '更新状态','route'=>'admin.task.setStatus'],
+                            ['name' => 'ai.task.importCall', 'display_name' => '导入号码','route'=>'admin.task.importCall'],
                         ]
                     ],
                 ]
