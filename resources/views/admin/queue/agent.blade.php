@@ -2,7 +2,7 @@
 
 @section('content')
     <style>
-        .layui-form-checkbox span{width: 800px;}
+        .layui-form-checkbox span{width: 500px;}
     </style>
     <div class="layui-card">
         <div class="layui-card-header layuiadmin-card-header-auto">
@@ -16,7 +16,7 @@
                     <label for="" class="layui-form-label">选择坐席</label>
                     <div class="layui-input-block">
                         @forelse($agents as $agent)
-                            <input type="checkbox" name="agents[]" value="{{$agent->name}}" title="名称：{{$agent->name}}，分机：{{str_after($agent->contact,'user/')}}， 坐席状态：{{$agent->status_name}}， 呼叫状态：{{$agent->state_name}}， 最大无应答次数：{{$agent->max_no_answer}}" {{ $queue->agents->isNotEmpty()&&$queue->agents->contains($agent) ? 'checked' : ''  }} >
+                            <input type="checkbox" name="agents[]" value="{{$agent->id}}" title="名称：{{$agent->display_name}}，号码：{{$agent->name}}，呼叫类型：{{$agent->originate_type_name}}， 呼叫号码：{{$agent->originate_number}}" {{ $queue->agents->isNotEmpty()&&$queue->agents->contains($agent) ? 'checked' : ''  }} >
                         @empty
                             <div class="layui-form-mid layui-word-aux">还没有坐席</div>
                         @endforelse

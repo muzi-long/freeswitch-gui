@@ -17,14 +17,14 @@
                     </div>
                     <div class="layui-col-xs4">
                         <div class="layui-form-item">
-                            <label for="" class="layui-form-label">开始时间：</label>
-                            <div class="layui-form-mid layui-word-aux">{{$task->datetime_start}}</div>
+                            <label for="" class="layui-form-label">执行日期：</label>
+                            <div class="layui-form-mid layui-word-aux">{{$task->date}}</div>
                         </div>
                     </div>
                     <div class="layui-col-xs4">
                         <div class="layui-form-item">
-                            <label for="" class="layui-form-label">结束时间：</label>
-                            <div class="layui-form-mid layui-word-aux">{{$task->datetime_end}}</div>
+                            <label for="" class="layui-form-label">执行时间：</label>
+                            <div class="layui-form-mid layui-word-aux">{{$task->time}}</div>
                         </div>
                     </div>
                     <div class="layui-col-xs4">
@@ -95,7 +95,7 @@
                         </table>
                     </div>
                 </div>
-                <div class="layui-card">
+                {{--<div class="layui-card">
                     <div class="layui-card-header"><b>坐席监控</b></div>
                     <div class="layui-card-body">
                         <table class="layui-table" lay-skin="line" lay-size="sm">
@@ -107,7 +107,7 @@
                             </tbody>
                         </table>
                     </div>
-                </div>
+                </div>--}}
             </div>
             </div>
         </div>
@@ -149,7 +149,7 @@
             });
             window.onresize = result_pie.resize
 
-            function agentStatus() {
+            /*function agentStatus() {
                 $.post("{{route('admin.task.show',['id'=>$task->id])}}",{_token:"{{csrf_token()}}"},function (res) {
                     if (res.code==0){
                         var _html = '';
@@ -166,7 +166,7 @@
                     }
                 })
             }
-            agentStatus();
+            agentStatus();*/
         })
     </script>
 @endsection

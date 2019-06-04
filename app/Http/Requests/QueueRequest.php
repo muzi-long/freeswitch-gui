@@ -24,7 +24,21 @@ class QueueRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'display_name'                  => 'required',
+            'name'                          => 'required|numeric|min:8000|max:8999|unique:queue,name,'.$this->id.',id',
+            'strategy'                      => 'required',
+            'max_wait_time'                 => 'required|numeric|min:0',
         ];
     }
+
+    public function attributes()
+    {
+        return [
+            'display_name'                  => '队列名称',
+            'name'                          => '队列号码',
+            'strategy'                      => '振铃策略',
+            'max_wait_time'                 => '超时时间',
+        ];
+    }
+
 }

@@ -70,8 +70,8 @@
                     {checkbox: true,fixed: true}
                     ,{field: 'id', title: 'ID', sort: true,width:80}
                     ,{field: 'name', title: '名称'}
-                    ,{field: 'datetime_start', title: '开始时间',width: 160}
-                    ,{field: 'datetime_end', title: '结束时间',width: 160}
+                    ,{field: 'date', title: '执行日期',width: 200}
+                    ,{field: 'time', title: '执行时间',width: 200}
                     ,{field: 'gateway_name', title: '网关'}
                     ,{field: 'queue_name', title: '队列'}
                     ,{field: 'max_channel', title: '并发'}

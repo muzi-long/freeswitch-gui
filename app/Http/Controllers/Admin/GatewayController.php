@@ -135,9 +135,14 @@ class GatewayController extends Controller
             //生产环境，并且debug关闭的情况下自动更新网关注册信息
             if (config('app.env')=='production' && config('app.debug')==false){
                 $freeswitch = new \Freeswitchesl();
+                if (!$freeswitch->connect(config('freeswitch.event_socket.host'), config('freeswitch.event_socket.port'), config('freeswitch.event_socket.password'))){
+                    return response()->json(['code'=>1,'msg'=>'ESL未连接']);
+                }
                 $freeswitch->bgapi("sofia profile external rescan");
+                $freeswitch->disconnect();
+                return response()->json(['code'=>0,'msg'=>'更新成功']);
             }
-            return response()->json(['code'=>0,'msg'=>'更新成功']);
+            return response()->json(['code'=>1,'msg'=>'请在生产环境下更新配置']);
         }catch (\Exception $exception){
             return response()->json(['code'=>1,'msg'=>'更新失败','data'=>$exception->getMessage()]);
         }

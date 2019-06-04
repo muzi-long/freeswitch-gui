@@ -23,7 +23,7 @@ class QueueController extends Controller
 
     public function data(Request $request)
     {
-        $res = Queue::withCount('agents')->orderByDesc('id')->paginate($request->get('limit', 30));
+        $res = Queue::withCount(['agents'])->orderByDesc('id')->paginate($request->get('limit', 30));
         $data = [
             'code' => 0,
             'msg' => '正在请求中...',
@@ -92,17 +92,10 @@ class QueueController extends Controller
     {
         $model = Queue::findOrFail($id);
         $data = $request->except(['_method','_token']);
-        DB::beginTransaction();
-        try{
-            DB::table('queue')->where('id',$model->id)->update($data);
-            DB::table('tiers')->where('queue',$model->name)->update(['queue'=>$data['name']]);
-            DB::commit();
+        if ($model->update($data)){
             return redirect(route('admin.queue'))->with(['success'=>'更新成功，请更新配置']);
-        }catch (\Exception $exception){
-            DB::rollback();
-            return back()->withErrors(['error'=>'更新失败']);
         }
-
+        return back()->withErrors(['error'=>'更新失败']);
     }
 
     /**
@@ -117,63 +110,81 @@ class QueueController extends Controller
         if (empty($ids)){
             return response()->json(['code'=>1,'msg'=>'请选择删除项']);
         }
-        $queues = Queue::whereIn('id',$ids)->pluck('name');
-        DB::beginTransaction();
-        try{
-            DB::table('tiers')->whereIn('queue',$queues)->delete();
-            DB::table('queue')->whereIn('id',$ids)->delete();
-            DB::commit();
+        if (Queue::destroy($ids)){
             return response()->json(['code'=>0,'msg'=>'删除成功,请更新配置']);
-        }catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json(['code'=>1,'msg'=>'删除失败','data'=>$e->getMessage()]);
         }
+        return response()->json(['code'=>1,'msg'=>'删除失败']);
+
     }
 
     public function updateXml()
     {
-        $queues = Queue::get();
+        $queues = Queue::with('agents')->whereHas('agents')->get();
         if ($queues->isEmpty()){
             return response()->json(['code'=>1,'msg'=>'无数据需要更新']);
         }
         try{
-            $xml  = "<configuration name=\"callcenter.conf\" description=\"CallCenter\">\n";
-            $xml .= "    <settings>\n";
-            $xml .= "        <param name=\"odbc-dsn\" value=\"freeswitch:root:pwd\"/>\n";
-            $xml .= "        <!--<param name=\"dbname\" value=\"/dev/shm/callcenter.db\"/>-->\n";
-            $xml .= "        <!--<param name=\"cc-instance-id\" value=\"single_box\"/>-->\n";
-            $xml .= "    </settings>\n";
-            $xml .= "    <queues>\n";
-            foreach ($queues->toArray() as $q){
-                $xml  .= "      <queue name=\"".$q['name']."\">\n";
-                $xml  .= "          <param name=\"strategy\" value=\"".$q['strategy']."\"/>\n";
-                $xml  .= "          <param name=\"moh-sound\" value=\"".$q['moh-sound']."\"/>\n";
-                $xml  .= "          <!--<param name=\"record-template\" value=\"".$q['record-template']."\"/>-->\n";
-                $xml  .= "          <param name=\"time-base-score\" value=\"".$q['time-base-score']."\"/>\n";
-                $xml  .= "          <param name=\"max-wait-time\" value=\"".$q['max-wait-time']."\"/>\n";
-                $xml  .= "          <param name=\"max-wait-time-with-no-agent\" value=\"".$q['max-wait-time-with-no-agent']."\"/>\n";
-                $xml  .= "          <param name=\"max-wait-time-with-no-agent-time-reached\" value=\"".$q['max-wait-time-with-no-agent-time-reached']."\"/>\n";
-                $xml  .= "          <param name=\"tier-rules-apply\" value=\"".$q['tier-rules-apply']."\"/>\n";
-                $xml  .= "          <param name=\"tier-rule-wait-second\" value=\"".$q['tier-rule-wait-second']."\"/>\n";
-                $xml  .= "          <param name=\"tier-rule-wait-multiply-level\" value=\"".$q['tier-rule-wait-multiply-level']."\"/>\n";
-                $xml  .= "          <param name=\"tier-rule-no-agent-no-wait\" value=\"".$q['tier-rule-no-agent-no-wait']."\"/>\n";
-                $xml  .= "          <param name=\"discard-abandoned-after\" value=\"".$q['discard-abandoned-after']."\"/>\n";
-                $xml  .= "          <param name=\"abandoned-resume-allowed\" value=\"".$q['abandoned-resume-allowed']."\"/>\n";
-                $xml .= "        </queue>\n";
-            }
-            $xml .= "    </queues>\n";
-            $xml .= "    <agents>\n";
-            $xml .= "    </agents>\n";
-            $xml .= "    <tier>\n";
-            $xml .= "    </tier>\n";
-            $xml .= "</configuration>\n";
-            file_put_contents(config('freeswitch.callcenter_dir'),$xml);
             //生产环境，并且debug关闭的情况下自动更新网关注册信息
             if (config('app.env')=='production' && config('app.debug')==false){
                 $freeswitch = new \Freeswitchesl();
-                $freeswitch->bgapi("reload callcenter");
+                if (!$freeswitch->connect(config('freeswitch.event_socket.host'), config('freeswitch.event_socket.port'), config('freeswitch.event_socket.password'))){
+                    return response()->json(['code'=>1,'msg'=>'ESL未连接']);
+                }
+                $queues = Queue::with("agents")->get();
+                $agents = Agent::get();
+
+                $xml  = "<configuration name=\"callcenter.conf\" description=\"CallCenter\">\n";
+                $xml .= "    <settings>\n";
+                $xml .= "      <!--<param name=\"odbc-dsn\" value=\"dsn:user:pass\"/>-->\n";
+                $xml .= "      <!--<param name=\"dbname\" value=\"/dev/shm/callcenter.db\"/>-->\n";
+                $xml .= "      <!--<param name=\"cc-instance-id\" value=\"single_box\"/>-->\n";
+                $xml .= "     <param name=\"truncate-tiers-on-load\" value=\"true\"/>\n";
+                $xml .= "     <param name=\"truncate-agents-on-load\" value=\"true\"/>\n";
+                $xml .= "    </settings>\n";
+                //----------------------------------  写入队列信息 ------------------------------------
+                $xml .= "<queues>\n";
+                foreach ($queues as $queue){
+                    $xml .= "    <queue name=\"".$queue->name."\">\n";
+                    $xml .= "        <param name=\"strategy\" value=\"".$queue->strategy."\"/>\n";
+                    $xml .= "        <param name=\"moh-sound\" value=\"".$queue->moh_sound."\"/>\n";
+                    $xml .= "        <param name=\"record-template\" value=\"\$\${recordings_dir}/\${strftime(%Y)}/\${strftime(%m)}/\${strftime(%d)}/.\${destination_number}.\${caller_id_number}.\${uuid}.wav\"/>\n";
+                    $xml .= "        <param name=\"time-base-score\" value=\"".$queue->time_base_score."\"/>\n";
+                    $xml .= "        <param name=\"max-wait-time\" value=\"".$queue->max_wait_time."\"/>\n";
+                    $xml .= "        <param name=\"max-wait-time-with-no-agent\" value=\"".$queue->max_wait_time_with_no_agent."\"/>\n";
+                    $xml .= "        <param name=\"max-wait-time-with-no-agent-time-reached\" value=\"".$queue->max_wait_time_with_no_agent_time_reached."\"/>\n";
+                    $xml .= "        <param name=\"tier-rules-apply\" value=\"".$queue->tier_rules_apply."\"/>\n";
+                    $xml .= "        <param name=\"tier-rule-wait-second\" value=\"".$queue->tier_rule_wait_second."\"/>\n";
+                    $xml .= "        <param name=\"tier-rule-wait-multiply-level\" value=\"".$queue->tier_rule_wait_multiply_level."\"/>\n";
+                    $xml .= "        <param name=\"tier-rule-no-agent-no-wait\" value=\"".$queue->tier_rule_no_agent_no_wait."\"/>\n";
+                    $xml .= "        <param name=\"discard-abandoned-after\" value=\"".$queue->discard_abandoned_after."\"/>\n";
+                    $xml .= "        <param name=\"abandoned-resume-allowed\" value=\"".$queue->abandoned_resume_allowed."\"/>\n";
+                    $xml .= "    </queue>\n";
+                }
+                $xml .= "</queues>\n";
+
+                //----------------------------------  写入坐席信息 ------------------------------------
+                $xml .= "<agents>\n";
+                foreach ($agents as $agent){
+                    $xml .= "<agent name=\"".$agent->name."\" type=\"".$agent->type."\" contact=\"[leg_timeout=10]".$agent->originate_type."/".$agent->originate_number."\" status=\"".$agent->status."\" max-no-answer=\"".$agent->max_no_answer."\" wrap-up-time=\"".$agent->wrap_up_time."\" reject-delay-time=\"".$agent->reject_delay_time."\" busy-delay-time=\"".$agent->busy_delay_time."\" no-answer-delay-time=\"".$agent->no_answer_delay_time."\" />\n";
+                }
+                $xml .= "</agents>\n";
+
+                //----------------------------------  写入队列-坐席信息 ------------------------------------
+                $xml .= "<tiers>\n";
+                foreach ($queues as $queue){
+                    foreach ($queue->agents as $agent){
+                        $xml .= "<tier agent=\"".$agent->name."\" queue=\"".$queue->name."\" level=\"1\" position=\"1\"/>\n";
+                    }
+                }
+                $xml .= "</tiers>\n";
+                $xml .= "</configuration>\n";
+                //生成配置文件
+                file_put_contents(config('freeswitch.callcenter_dir'),$xml);
+                $freeswitch->bgapi("reload mod_callcenter");
+                $freeswitch->disconnect();
+                return response()->json(['code'=>0,'msg'=>'更新成功']);
             }
-            return response()->json(['code'=>0,'msg'=>'更新成功']);
+            return response()->json(['code'=>1,'msg'=>'请在生产环境下更新配置']);
         }catch (\Exception $exception){
             return response()->json(['code'=>1,'msg'=>'更新失败','data'=>$exception->getMessage()]);
         }
@@ -195,5 +206,6 @@ class QueueController extends Controller
         }
         return back()->withErrors(['error'=>'更新失败']);
     }
+
     
 }

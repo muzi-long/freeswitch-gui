@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Extension;
+use App\Models\Gateway;
 use App\Models\Group;
 use App\Models\Sip;
 use Illuminate\Http\Request;
@@ -110,5 +111,271 @@ class ApiController extends Controller
             return response($xml,200)->header("Content-type","text/xml");
         }
     }
-    
+
+    /**
+     * 动态configuration 包含动态网关
+     * @param Request $request
+     * @return mixed
+     */
+    public function configuration(Request $request)
+    {
+        $xml  = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n";
+        $xml .= "<document type=\"freeswitch/xml\">\n";
+        $xml .= "<section name=\"configuration\" description=\"FreeSwitch configuration\">\n";
+
+        $xml .= "<configuration name=\"sofia.conf\" description=\"sofia Endpoint\">\n";
+        $xml .= "    <global_settings>\n";
+        $xml .= "       <param name=\"log-level\" value=\"0\"/>\n";
+        $xml .= "       <!-- <param name=\"auto-restart\" value=\"false\"/> -->\n";
+        $xml .= "       <param name=\"debug-presence\" value=\"0\"/>\n";
+        $xml .= "       <!-- <param name=\"capture-server\" value=\"udp:homer.domain.com:5060\"/> -->\n";
+        $xml .= "       <!-- <param name=\"capture-server\" value=\"udp:homer.domain.com:5060;hep=3;capture_id=100\"/> -->\n";
+        $xml .= "    </global_settings>\n";
+        $xml .= "    <profiles>\n";
+        $xml .= "    <profile name=\"external\">\n";
+        $xml .= "       <gateways>\n";
+        $gateways = Gateway::orderByDesc('id')->get();
+        foreach ($gateways as $gateway){
+            $xml .= "           <gateway name=\"gw".$gateway->id."\">\n";
+            $xml .= "               <param name=\"username\" value=\"".$gateway->username."\"/>\n";
+            $xml .= "               <param name=\"realm\" value=\"".$gateway->realm."\"/>\n";
+            $xml .= "               <param name=\"password\" value=\"".$gateway->password."\"/>\n";
+            $xml .= "           </gateway>\n";
+        }
+        $xml .= "       </gateways>\n";
+        $xml .= "       <aliases>\n";
+        $xml .= "       </aliases>\n";
+        $xml .= "       <domains>\n";
+        $xml .= "           <domain name=\"all\" alias=\"false\" parse=\"true\"/>\n";
+        $xml .= "       </domains>\n";
+        $xml .= "       <settings>\n";
+        $xml .= "           <param name=\"debug\" value=\"0\"/>\n";
+        $xml .= "           <!-- If you want FreeSWITCH to shutdown if this profile fails to load, uncomment the next line. -->\n";
+        $xml .= "           <!-- <param name=\"shutdown-on-fail\" value=\"true\"/> -->\n";
+        $xml .= "           <param name=\"sip-trace\" value=\"no\"/>\n";
+        $xml .= "           <param name=\"sip-capture\" value=\"no\"/>\n";
+        $xml .= "           <param name=\"rfc2833-pt\" value=\"101\"/>\n";
+        $xml .= "           <!-- RFC 5626 : Send reg-id and sip.instance -->\n";
+        $xml .= "           <!--<param name=\"enable-rfc-5626\" value=\"true\"/> -->\n";
+        $xml .= "           <param name=\"sip-port\" value=\"\$\${external_sip_port}\"/>\n";
+        $xml .= "           <param name=\"dialplan\" value=\"XML\"/>\n";
+        $xml .= "           <param name=\"context\" value=\"public\"/>\n";
+        $xml .= "           <param name=\"dtmf-duration\" value=\"2000\"/>\n";
+        $xml .= "           <param name=\"inbound-codec-prefs\" value=\"\$$\{global_codec_prefs}\"/>\n";
+        $xml .= "           <param name=\"outbound-codec-prefs\" value=\"\$\${outbound_codec_prefs}\"/>\n";
+        $xml .= "           <param name=\"hold-music\" value=\"\$\${hold_music}\"/>\n";
+        $xml .= "           <param name=\"rtp-timer-name\" value=\"soft\"/>\n";
+        $xml .= "           <!--<param name=\"enable-100rel\" value=\"true\"/>-->\n";
+        $xml .= "           <!--<param name=\"disable-srv503\" value=\"true\"/>-->\n";
+        $xml .= "           <!-- This could be set to \"passive\" -->\n";
+        $xml .= "           <param name=\"local-network-acl\" value=\"localnet.auto\"/>\n";
+        $xml .= "           <param name=\"manage-presence\" value=\"false\"/>\n";
+        $xml .= "           <!-- Name of the db to use for this profile -->\n";
+        $xml .= "           <!--<param name=\"dbname\" value=\"share_presence\"/>-->\n";
+        $xml .= "           <!--<param name=\"presence-hosts\" value=\"\$\${domain}\"/>-->\n";
+        $xml .= "           <!--<param name=\"force-register-domain\" value=\"\$\${domain}\"/>-->\n";
+        $xml .= "           <!--all inbound reg will stored in the db using this domain -->\n";
+        $xml .= "           <!--<param name=\"force-register-db-domain\" value=\"\$\${domain}\"/>-->  \n";
+        $xml .= "           <!--<param name=\"aggressive-nat-detection\" value=\"true\"/>-->\n";
+        $xml .= "           <param name=\"inbound-codec-negotiation\" value=\"generous\"/>\n";
+        $xml .= "           <param name=\"nonce-ttl\" value=\"60\"/>\n";
+        $xml .= "           <param name=\"auth-calls\" value=\"false\"/>\n";
+        $xml .= "           <param name=\"inbound-late-negotiation\" value=\"true\"/>\n";
+        $xml .= "           <param name=\"inbound-zrtp-passthru\" value=\"true\"/>\n";
+        $xml .= "           <param name=\"rtp-ip\" value=\"\$\${local_ip_v4}\"/>\n";
+        $xml .= "           <param name=\"sip-ip\" value=\"\$\${local_ip_v4}\"/>\n";
+        $xml .= "           <param name=\"ext-rtp-ip\" value=\"auto-nat\"/>\n";
+        $xml .= "           <param name=\"ext-sip-ip\" value=\"auto-nat\"/>\n";
+        $xml .= "           <param name=\"rtp-timeout-sec\" value=\"300\"/>\n";
+        $xml .= "           <param name=\"rtp-hold-timeout-sec\" value=\"1800\"/>\n";
+        $xml .= "           <!--<param name=\"enable-3pcc\" value=\"true\"/>-->\n";
+        $xml .= "           <param name=\"tls\" value=\"\$\${external_ssl_enable}\"/>\n";
+        $xml .= "           <param name=\"tls-only\" value=\"false\"/>\n";
+        $xml .= "           <param name=\"tls-bind-params\" value=\"transport=tls\"/>\n";
+        $xml .= "           <param name=\"tls-sip-port\" value=\"\$\${external_tls_port}\"/>\n";
+        $xml .= "           <!--<param name=\"tls-cert-dir\" value=\"\"/>-->\n";
+        $xml .= "           <param name=\"tls-passphrase\" value=\"\"/>\n";
+        $xml .= "           <!-- Verify the date on TLS certificates -->\n";
+        $xml .= "           <param name=\"tls-verify-date\" value=\"true\"/>\n";
+        $xml .= "           <param name=\"tls-verify-policy\" value=\"none\"/>\n";
+        $xml .= "           <param name=\"tls-verify-depth\" value=\"2\"/>\n";
+        $xml .= "           <param name=\"tls-verify-in-subjects\" value=\"\"/>\n";
+        $xml .= "           <param name=\"tls-version\" value=\"\$\${sip_tls_version}\"/>\n";
+        $xml .= "       </settings>\n";
+        $xml .= "   </profile>\n";
+        //$xml .=     file_get_contents('etc_freeswitch/sip_profiles/internal.xml');
+        $xml .= "   </profiles>\n";
+        $xml .= "</configuration>\n";
+        $xml .= "</section>\n";
+        $xml .= "</document>\n";
+        return response($xml,200)->header("Content-type","text/xml");
+    }
+
+    /**
+     * 动态configuration 包含动态网关
+     * @param Request $request
+     * @return mixed
+     */
+    public function configuration1(Request $request)
+    {
+        $xml  = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n";
+        $xml .= "<document type=\"freeswitch/xml\">\n";
+        $xml .= "<section name=\"configuration\" description=\"FreeSwitch configuration\">\n";
+
+        foreach (scandir('etc_freeswitch/autoload_configs/') as $conf){
+            if ($conf=='.'||$conf=='..')
+            {
+                continue;
+            }elseif ($conf=='sofia.conf.xml') {
+
+                $xml .= "<configuration name=\"sofia.conf\" description=\"sofia Endpoint\">\n";
+                $xml .= "    <global_settings>\n";
+                $xml .= "       <param name=\"log-level\" value=\"0\"/>\n";
+                $xml .= "       <!-- <param name=\"auto-restart\" value=\"false\"/> -->\n";
+                $xml .= "       <param name=\"debug-presence\" value=\"0\"/>\n";
+                $xml .= "       <!-- <param name=\"capture-server\" value=\"udp:homer.domain.com:5060\"/> -->\n";
+                $xml .= "       <!-- <param name=\"capture-server\" value=\"udp:homer.domain.com:5060;hep=3;capture_id=100\"/> -->\n";
+                $xml .= "    </global_settings>\n";
+                $xml .= "    <profiles>\n";
+                $xml .= "    <profile name=\"external\">\n";
+                $xml .= "       <gateways>\n";
+                $gateways = Gateway::orderByDesc('id')->get();
+                foreach ($gateways as $gateway){
+                    $xml .= "           <gateway name=\"gw".$gateway->id."\">\n";
+                    $xml .= "               <param name=\"username\" value=\"".$gateway->username."\"/>\n";
+                    $xml .= "               <param name=\"realm\" value=\"".$gateway->realm."\"/>\n";
+                    $xml .= "               <param name=\"password\" value=\"".$gateway->password."\"/>\n";
+                    $xml .= "           </gateway>\n";
+                }
+                $xml .= "       </gateways>\n";
+                $xml .= "       <aliases>\n";
+                $xml .= "       </aliases>\n";
+                $xml .= "       <domains>\n";
+                $xml .= "           <domain name=\"all\" alias=\"false\" parse=\"true\"/>\n";
+                $xml .= "       </domains>\n";
+                $xml .= "       <settings>\n";
+                $xml .= "           <param name=\"debug\" value=\"0\"/>\n";
+                $xml .= "           <!-- If you want FreeSWITCH to shutdown if this profile fails to load, uncomment the next line. -->\n";
+                $xml .= "           <!-- <param name=\"shutdown-on-fail\" value=\"true\"/> -->\n";
+                $xml .= "           <param name=\"sip-trace\" value=\"no\"/>\n";
+                $xml .= "           <param name=\"sip-capture\" value=\"no\"/>\n";
+                $xml .= "           <param name=\"rfc2833-pt\" value=\"101\"/>\n";
+                $xml .= "           <!-- RFC 5626 : Send reg-id and sip.instance -->\n";
+                $xml .= "           <!--<param name=\"enable-rfc-5626\" value=\"true\"/> -->\n";
+                $xml .= "           <param name=\"sip-port\" value=\"\$\${external_sip_port}\"/>\n";
+                $xml .= "           <param name=\"dialplan\" value=\"XML\"/>\n";
+                $xml .= "           <param name=\"context\" value=\"public\"/>\n";
+                $xml .= "           <param name=\"dtmf-duration\" value=\"2000\"/>\n";
+                $xml .= "           <param name=\"inbound-codec-prefs\" value=\"\$$\{global_codec_prefs}\"/>\n";
+                $xml .= "           <param name=\"outbound-codec-prefs\" value=\"\$\${outbound_codec_prefs}\"/>\n";
+                $xml .= "           <param name=\"hold-music\" value=\"\$\${hold_music}\"/>\n";
+                $xml .= "           <param name=\"rtp-timer-name\" value=\"soft\"/>\n";
+                $xml .= "           <!--<param name=\"enable-100rel\" value=\"true\"/>-->\n";
+                $xml .= "           <!--<param name=\"disable-srv503\" value=\"true\"/>-->\n";
+                $xml .= "           <!-- This could be set to \"passive\" -->\n";
+                $xml .= "           <param name=\"local-network-acl\" value=\"localnet.auto\"/>\n";
+                $xml .= "           <param name=\"manage-presence\" value=\"false\"/>\n";
+                $xml .= "           <!-- Name of the db to use for this profile -->\n";
+                $xml .= "           <!--<param name=\"dbname\" value=\"share_presence\"/>-->\n";
+                $xml .= "           <!--<param name=\"presence-hosts\" value=\"\$\${domain}\"/>-->\n";
+                $xml .= "           <!--<param name=\"force-register-domain\" value=\"\$\${domain}\"/>-->\n";
+                $xml .= "           <!--all inbound reg will stored in the db using this domain -->\n";
+                $xml .= "           <!--<param name=\"force-register-db-domain\" value=\"\$\${domain}\"/>-->  \n";
+                $xml .= "           <!--<param name=\"aggressive-nat-detection\" value=\"true\"/>-->\n";
+                $xml .= "           <param name=\"inbound-codec-negotiation\" value=\"generous\"/>\n";
+                $xml .= "           <param name=\"nonce-ttl\" value=\"60\"/>\n";
+                $xml .= "           <param name=\"auth-calls\" value=\"false\"/>\n";
+                $xml .= "           <param name=\"inbound-late-negotiation\" value=\"true\"/>\n";
+                $xml .= "           <param name=\"inbound-zrtp-passthru\" value=\"true\"/>\n";
+                $xml .= "           <param name=\"rtp-ip\" value=\"\$\${local_ip_v4}\"/>\n";
+                $xml .= "           <param name=\"sip-ip\" value=\"\$\${local_ip_v4}\"/>\n";
+                $xml .= "           <param name=\"ext-rtp-ip\" value=\"auto-nat\"/>\n";
+                $xml .= "           <param name=\"ext-sip-ip\" value=\"auto-nat\"/>\n";
+                $xml .= "           <param name=\"rtp-timeout-sec\" value=\"300\"/>\n";
+                $xml .= "           <param name=\"rtp-hold-timeout-sec\" value=\"1800\"/>\n";
+                $xml .= "           <!--<param name=\"enable-3pcc\" value=\"true\"/>-->\n";
+                $xml .= "           <param name=\"tls\" value=\"\$\${external_ssl_enable}\"/>\n";
+                $xml .= "           <param name=\"tls-only\" value=\"false\"/>\n";
+                $xml .= "           <param name=\"tls-bind-params\" value=\"transport=tls\"/>\n";
+                $xml .= "           <param name=\"tls-sip-port\" value=\"\$\${external_tls_port}\"/>\n";
+                $xml .= "           <!--<param name=\"tls-cert-dir\" value=\"\"/>-->\n";
+                $xml .= "           <param name=\"tls-passphrase\" value=\"\"/>\n";
+                $xml .= "           <!-- Verify the date on TLS certificates -->\n";
+                $xml .= "           <param name=\"tls-verify-date\" value=\"true\"/>\n";
+                $xml .= "           <param name=\"tls-verify-policy\" value=\"none\"/>\n";
+                $xml .= "           <param name=\"tls-verify-depth\" value=\"2\"/>\n";
+                $xml .= "           <param name=\"tls-verify-in-subjects\" value=\"\"/>\n";
+                $xml .= "           <param name=\"tls-version\" value=\"\$\${sip_tls_version}\"/>\n";
+                $xml .= "       </settings>\n";
+                $xml .= "   </profile>\n";
+                $xml .=     file_get_contents('etc_freeswitch/sip_profiles/internal.xml');
+                $xml .= "   </profiles>\n";
+                $xml .= "</configuration>\n";
+
+            }elseif ($conf=='ivr.conf.xml'){
+
+                $xml .= "<configuration name=\"ivr.conf\" description=\"IVR menus\">\n";
+                $xml .= "<menus>\n";
+                foreach (scandir("etc_freeswitch/ivr_menus") as $file){
+                    if ($file=='.'||$file=='..') continue;
+                    $xml .= file_get_contents('etc_freeswitch/ivr_menus/'.$file);
+                }
+                $xml .= "</menus>\n";
+                $xml .= "</configuration>\n";
+
+            }elseif ($conf=='dingaling.conf.xml'){
+
+                $xml .= "<configuration name=\"dingaling.conf\" description=\"XMPP Jingle Endpoint\">\n";
+                $xml .= "<settings>\n";
+                $xml .= "<param name=\"debug\" value=\"0\"/>\n";
+                $xml .= "<param name=\"codec-prefs\" value=\"H264,PCMU\"/>\n";
+                $xml .= "</settings>\n";
+                foreach (scandir("etc_freeswitch/jingle_profiles") as $file){
+                    if ($file=='.'||$file=='..') continue;
+                    $xml .= file_get_contents('etc_freeswitch/jingle_profiles/'.$file);
+                }
+                $xml .= "</configuration>\n";
+
+            }elseif ($conf=='skinny.conf.xml'){
+
+                $xml .= "<configuration name=\"skinny.conf\" description=\"Skinny Endpoints\">\n";
+                $xml .= "<profiles>\n";
+                foreach (scandir("etc_freeswitch/sip_profiles") as $file){
+                    if ($file=='.'||$file=='..') continue;
+                    $xml .= file_get_contents('etc_freeswitch/sip_profiles/'.$file);
+                }
+                $xml .= "</profiles>\n";
+                $xml .= "</configuration>\n";
+
+            }elseif ($conf=='unimrcp.conf.xml'){
+
+                $xml .= "<configuration name=\"unimrcp.conf\" description=\"UniMRCP Client\">\n";
+                $xml .= "<settings>\n";
+                $xml .= "<param name=\"default-tts-profile\" value=\"voxeo-prophecy8.0-mrcp1\"/>\n";
+                $xml .= "<param name=\"default-asr-profile\" value=\"voxeo-prophecy8.0-mrcp1\"/>\n";
+                $xml .= "<param name=\"log-level\" value=\"DEBUG\"/>\n";
+                $xml .= "<param name=\"enable-profile-events\" value=\"false\"/>\n";
+                $xml .= "<param name=\"max-connection-count\" value=\"100\"/>\n";
+                $xml .= "<param name=\"offer-new-connection\" value=\"1\"/>\n";
+                $xml .= "<param name=\"request-timeout\" value=\"3000\"/>\n";
+                $xml .= "</settings>\n";
+                $xml .= "<profiles>\n";
+                foreach (scandir("etc_freeswitch/mrcp_profiles") as $file){
+                    if ($file=='.'||$file=='..') continue;
+                    $xml .= file_get_contents('etc_freeswitch/mrcp_profiles/'.$file);
+                }
+                $xml .= "</profiles>\n";
+                $xml .= "</configuration>\n";
+
+            }else{
+                $xml .= file_get_contents('etc_freeswitch/autoload_configs/'.$conf);
+            }
+
+        }
+        $xml .= "</section>\n";
+        $xml .= "</document>\n";
+        return response($xml,200)->header("Content-type","text/xml");
+    }
+
 }
+

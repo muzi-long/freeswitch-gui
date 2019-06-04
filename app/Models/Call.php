@@ -7,4 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Call extends Model
 {
     protected $table = 'call';
+
+    protected $guarded = ['id'];
+
 }

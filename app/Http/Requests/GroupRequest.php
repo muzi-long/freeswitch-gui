@@ -25,7 +25,7 @@ class GroupRequest extends FormRequest
     {
         return [
             'display_name'  => 'required',
-            'name'          => 'required|string|min:2|unique:group,name,'.$this->id.',id'
+            'name'          => 'required|numeric|min:6000|max:6999|unique:group,name,'.$this->id.',id'
         ];
     }
 

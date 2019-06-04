@@ -13,7 +13,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
 use DB;
-use zgldh\QiniuStorage\QiniuStorage;
+use Log;
+
 
 class TaskController extends Controller
 {
@@ -77,8 +78,8 @@ class TaskController extends Controller
         $task = Task::withCount(['calls','hasCalls','missCalls','successCalls','failCalls'])->findOrFail($id);
         $percent = $task->calls_count>0?100*round(($task->has_calls_count)/($task->calls_count),4):'0.00%';
         if ($request->isMethod('post')){
-            $tiers = DB::table('tiers')->where('queue',$task->queue_name)->pluck('agent');
-            $agents = Agent::whereIn('name',$tiers)->get();
+            $tiers = DB::table('queue_agent')->where('queue_id',$task->queue_id)->pluck('agent_id');
+            $agents = Agent::whereIn('id',$tiers)->get();
             return response()->json(['code'=>0, 'msg'=>'请求成功', 'data'=>$agents]);
         }
         return view('admin.task.show',compact('task','percent'));

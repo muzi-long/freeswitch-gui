@@ -18,6 +18,7 @@ class AgentController extends Controller
      */
     public function index()
     {
+
         return view('admin.agent.index');
     }
 
@@ -40,8 +41,7 @@ class AgentController extends Controller
      */
     public function create()
     {
-        $sips = Sip::orderByDesc('id')->get();
-        return view('admin.agent.create',compact('sips'));
+        return view('admin.agent.create');
     }
 
     /**
@@ -53,7 +53,6 @@ class AgentController extends Controller
     public function store(AgentRequest $request)
     {
         $data = $request->all();
-        $data['contact'] = 'user/'.$data['contact'];
         if (Agent::create($data)){
             return redirect(route('admin.agent'))->with(['success'=>'添加成功']);
         }
@@ -80,8 +79,7 @@ class AgentController extends Controller
     public function edit($id)
     {
         $model = Agent::findOrFail($id);
-        $sips = Sip::orderByDesc('id')->get();
-        return view('admin.agent.edit',compact('model','sips'));
+        return view('admin.agent.edit',compact('model'));
     }
 
     /**
@@ -95,18 +93,10 @@ class AgentController extends Controller
     {
         $model = Agent::findOrFail($id);
         $data = $request->except(['_method','_token']);
-        $data['contact'] = 'user/'.$data['contact'];
-        DB::beginTransaction();
-        try{
-            DB::table('tiers')->where('agent',$model->name)->update(['agent'=>$data['name']]);
-            DB::table('agents')->where('id',$model->id)->update($data);
-            DB::commit();
+        if ($model->update($data)){
             return redirect(route('admin.agent'))->with(['success'=>'更新成功']);
-        }catch (\Exception $exception){
-            DB::rollback();
-            return back()->withErrors(['error'=>'更新失败']);
         }
-
+        return back()->withErrors(['error'=>'更新失败']);
     }
 
     /**
@@ -121,16 +111,9 @@ class AgentController extends Controller
         if (empty($ids)){
             return response()->json(['code'=>1,'msg'=>'请选择删除项']);
         }
-        $names = Agent::whereIn('id',$ids)->pluck('name');
-        DB::beginTransaction();
-        try{
-            DB::table('tiers')->whereIn('agent',$names)->delete();
-            DB::table('agents')->whereIn('id',$ids)->delete();
-            DB::commit();
+        if (Agent::destroy($ids)){
             return response()->json(['code'=>0,'msg'=>'删除成功']);
-        }catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json(['code'=>1,'msg'=>'删除失败','data'=>$e->getMessage()]);
         }
+        return response()->json(['code'=>1,'msg'=>'删除失败']);
     }
 }

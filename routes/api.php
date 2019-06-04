@@ -24,4 +24,7 @@ Route::post('directory','ApiController@directory');
 //动态拨号计划
 Route::post('dialplan','ApiController@dialplan');
 
+//动态configuration 包含动态网关。（未使用）
+Route::post('configuration','ApiController@configuration');
+
 

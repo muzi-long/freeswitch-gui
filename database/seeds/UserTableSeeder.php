@@ -159,7 +159,8 @@ class UserTableSeeder extends Seeder
                             ['name' => 'pbx.queue.edit', 'display_name' => '编辑','route'=>'admin.queue.edit'],
                             ['name' => 'pbx.queue.destroy', 'display_name' => '删除','route'=>'admin.queue.destroy'],
                             ['name' => 'pbx.queue.updateXml', 'display_name' => '更新配置','route'=>'admin.queue.updateXml'],
-                            ['name' => 'pbx.queue.agent', 'display_name' => '分配分机','route'=>'admin.queue.agent'],
+                            ['name' => 'pbx.queue.agent', 'display_name' => '分配坐席','route'=>'admin.queue.agent'],
+                            ['name' => 'pbx.queue.agentStatus', 'display_name' => '坐席状态','route'=>'admin.queue.agentStatus'],
                         ]
                     ],
                     [

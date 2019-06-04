@@ -213,6 +213,7 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth','perm
         //分配坐席
         Route::get('queue/{id}/agent','QueueController@agent')->name('admin.queue.agent')->middleware('permission:pbx.queue.agent');
         Route::put('queue/{id}/assignAgent','QueueController@assignAgent')->name('admin.queue.assignAgent')->middleware('permission:pbx.queue.agent');
+
     });
     //坐席管理
     Route::group(['middleware'=>'permission:pbx.agent'],function (){

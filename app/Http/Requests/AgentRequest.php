@@ -24,30 +24,22 @@ class AgentRequest extends FormRequest
     public function rules()
     {
         return [
-            'name'                  => 'required|string|min:2|unique:agents,name,'.$this->id.',id',
-            'contact'               => 'required',
-            'status'                => 'required|string|in:Logged Out,Available,Available (On Demand),On Break',
-            'state'                 => 'required|string|in:Idle,Waiting,In a queue call',
-            'max_no_answer'         => 'required|numeric|min:0',
-            'wrap_up_time'          => 'required|numeric|min:0',
-            'reject_delay_time'     => 'required|numeric|min:0',
-            'busy_delay_time'       => 'required|numeric|min:0',
-            'no_answer_delay_time'  => 'required|numeric|min:0',
+            'display_name'          => 'required',
+            'name'                  => 'required|numeric|min:7000|max:7999|unique:queue,name,'.$this->id.',id',
+            'originate_type'        => 'required',
+            'originate_number'      => 'required',
+            'status'                => 'required'
         ];
     }
 
     public function attributes()
     {
         return [
-            'name'                  => '坐席名称',
-            'contact'               => '分机号',
-            'status'                => '坐席状态',
-            'state'                 => '呼叫状态',
-            'max_no_answer'         => '最大无应答次数',
-            'wrap_up_time'          => '通话间隔',
-            'reject_delay_time'     => '拒接间隔时间',
-            'busy_delay_time'       => '忙重试间隔时间',
-            'no_answer_delay_time'  => '无应答重试间隔',
+            'display_name'          => '坐席名称',
+            'name'                  => '坐席号码',
+            'originate_type'        => '呼叫类型',
+            'originate_number'      => '呼叫号码',
+            'status'                => '状态'
         ];
     }
 

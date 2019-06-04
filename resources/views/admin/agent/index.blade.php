@@ -36,15 +36,16 @@
                 ,cols: [[ //表头
                     {checkbox: true,fixed: true}
                     //,{field: 'id', title: 'ID', sort: true,width:80}
-                    ,{field: 'name', title: '坐席名称',width: 100}
-                    ,{field: 'contact_name', title: '分机号',width: 100}
-                    ,{field: 'status_name', title: '坐席状态'}
-                    ,{field: 'state_name', title: '呼叫状态'}
-                    ,{field: 'max_no_answer', title: '最大无应答次数'}
-                    ,{field: 'wrap_up_time', title: '通话间隔（秒）'}
-                    ,{field: 'reject_delay_time', title: '拒接间隔时间（秒）'}
-                    ,{field: 'busy_delay_time', title: '忙重试间隔时间（秒）'}
-                    ,{field: 'no_answer_delay_time', title: '无应答重试间隔（秒）'}
+                    ,{field: 'display_name', title: '坐席名称'}
+                    ,{field: 'name', title: '坐席号码'}
+                    ,{field: 'originate_type_name', title: '呼叫类型'}
+                    ,{field: 'originate_number', title: '呼叫号码'}
+                    ,{field: 'status_name', title: '状态'}
+                    ,{field: 'max_no_answer', title: '无应答数'}
+                    ,{field: 'wrap_up_time', title: '通话间隔'}
+                    ,{field: 'reject_delay_time', title: '挂机间隔'}
+                    ,{field: 'busy_delay_time', title: '繁忙间隔'}
+                    ,{field: 'no_answer_delay_time', title: '未接间隔'}
                     ,{fixed: 'right', width: 150, align:'center', toolbar: '#options', title:'操作'}
                 ]]
             });

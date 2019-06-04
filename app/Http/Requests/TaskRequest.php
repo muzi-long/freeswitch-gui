@@ -24,24 +24,28 @@ class TaskRequest extends FormRequest
     public function rules()
     {
         return [
-            'name'              => 'required',
-            'datetime_start'    => 'required|date_format:Y-m-d H\:i\:s|before:datetime_end',
-            'datetime_end'      => 'required|date_format:Y-m-d H\:i\:s|after:datetime_start',
-            'gateway_id'           => 'required|exists:gateway,id',
-            'queue_id'             => 'required|exists:queue,id',
-            'max_channel'       => 'required|numeric|min:0',
+            'name'          => 'required',
+            'date_start'    => 'required|date_format:Y-m-d|before_or_equal:date_end',
+            'date_end'      => 'required|date_format:Y-m-d|after_or_equal:date_start',
+            'time_start'    => 'required|date_format:H\:i\:s|before:time_end',
+            'time_end'      => 'required|date_format:H\:i\:s|after:time_start',
+            'gateway_id'    => 'required|exists:gateway,id',
+            'queue_id'      => 'required|exists:queue,id',
+            'max_channel'   => 'required|numeric|min:0',
         ];
     }
 
     public function attributes()
     {
         return [
-            'name'              => '名称',
-            'datetime_start'    => '开始时间',
-            'datetime_end'      => '结束时间',
-            'gateway_id'           => '网关',
-            'queue_id'             => '队列',
-            'max_channel'       => '最大并发',
+            'name'          => '名称',
+            'date_start'    => '开始日期',
+            'date_end'      => '结束日期',
+            'time_start'    => '开始时间',
+            'time_end'      => '结束时间',
+            'gateway_id'    => '网关',
+            'queue_id'      => '队列',
+            'max_channel'   => '最大并发',
         ];
     }
 

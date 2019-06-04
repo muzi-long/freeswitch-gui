@@ -38,10 +38,11 @@
                 ,cols: [[ //表头
                     {checkbox: true,fixed: true}
                     ,{field: 'id', title: 'ID', sort: true,width:80}
-                    ,{field: 'display_name', title: '名称'}
-                    ,{field: 'name', title: '标识'}
+                    ,{field: 'display_name', title: '队列名称'}
+                    ,{field: 'name', title: '队列号码'}
                     ,{field: 'strategy_name', title: '振铃策略'}
-                    ,{field: 'agents_count', title: '坐席数'}
+                    ,{field: 'agents_count', title: '坐席总数'}
+                    ,{field: 'max_wait_time', title: '超时时间'}
                     ,{field: 'created_at', title: '添加时间'}
                     ,{fixed: 'right', width: 220, align:'center', toolbar: '#options', title:'操作'}
                 ]]

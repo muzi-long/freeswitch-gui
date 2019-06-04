@@ -9,14 +9,16 @@ class Task extends Model
     protected $table = 'task';
     protected $fillable = [
         'name',
-        'datetime_start',
-        'datetime_end',
+        'date_start',
+        'date_end',
+        'time_start',
+        'time_end',
         'gateway_id',
         'queue_id',
         'max_channel',
         'status',
     ];
-    protected $appends = ['gateway_name','queue_name'];
+    protected $appends = ['gateway_name','queue_name','date','time'];
 
     public function gateway()
     {
@@ -37,6 +39,17 @@ class Task extends Model
     {
         return $this->attributes['queue_name'] = $this->queue->display_name;
     }
+
+    public function getDateAttribute()
+    {
+        return $this->attributes['date'] = $this->date_start . ' / '. $this->date_end;
+    }
+
+    public function getTimeAttribute()
+    {
+        return $this->attributes['time'] = $this->time_start . ' - '. $this->time_end;
+    }
+
 
     //总呼叫数
     public function calls()

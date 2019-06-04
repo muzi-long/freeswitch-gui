@@ -1,25 +1,33 @@
 {{csrf_field()}}
 <div class="layui-form-item">
-    <label for="" class="layui-form-label">名称</label>
-    <div class="layui-input-block">
+    <label for="" class="layui-form-label">队列名称</label>
+    <div class="layui-input-inline">
         <input class="layui-input" type="text" name="display_name" lay-verify="required" value="{{$model->display_name??old('display_name')}}" placeholder="如：队列一">
     </div>
 </div>
 <div class="layui-form-item">
-    <label for="" class="layui-form-label">标识</label>
-    <div class="layui-input-block">
-        <input class="layui-input" type="text" name="name" lay-verify="required" value="{{$model->name??old('name')}}" placeholder="如：66666">
+    <label for="" class="layui-form-label">队列号码</label>
+    <div class="layui-input-inline">
+        <input class="layui-input" type="text" maxlength="4" name="name" lay-verify="required|number" value="{{$model->name??old('name')}}" placeholder="">
     </div>
+    <div class="layui-form-mid layui-word-aux">请输入队列号码,8000-8999</div>
 </div>
 <div class="layui-form-item">
     <label for="" class="layui-form-label">振铃策略</label>
-    <div class="layui-input-block">
-        <select name="strategy">
-            @foreach(config('freeswitch.strategy') as $k=>$v)
-                <option value="{{$k}}" @if(isset($model->strategy)&&$model->strategy==$k) selected @endif>{{$v}}</option>
+    <div class="layui-input-inline">
+        <select name="strategy" >
+            @foreach(config('freeswitch.strategy') as $k => $v)
+                <option value="{{$k}}">{{$v}}</option>
             @endforeach
         </select>
     </div>
+</div>
+<div class="layui-form-item">
+    <label for="" class="layui-form-label">超时时间</label>
+    <div class="layui-input-inline">
+        <input class="layui-input" type="text" maxlength="4" name="max_wait_time" lay-verify="required|number" value="{{$model->max_wait_time??0}}" placeholder="">
+    </div>
+    <div class="layui-form-mid layui-word-aux">最大等待时间，默认0为禁用</div>
 </div>
 <div class="layui-form-item">
     <div class="layui-input-block">

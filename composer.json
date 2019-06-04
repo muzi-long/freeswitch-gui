@@ -31,7 +31,10 @@
         ],
         "psr-4": {
             "App\\": "app/"
-        }
+        },
+        "files": [
+            "bootstrap/Freeswitchesl.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
