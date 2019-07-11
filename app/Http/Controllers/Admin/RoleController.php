@@ -20,6 +20,18 @@ class RoleController extends Controller
         return view('admin.role.index');
     }
 
+    public function data(Request $request)
+    {
+        $res = Role::paginate($request->get('limit', 30));
+        $data = [
+            'code' => 0,
+            'msg' => '正在请求中...',
+            'count' => $res->total(),
+            'data' => $res->items()
+        ];
+        return response()->json($data);
+    }
+
     /**
      * Show the form for creating a new resource.
      *

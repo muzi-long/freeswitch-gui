@@ -30,6 +30,8 @@ return [
         'info'      => '显示信息',
         'lua'       => 'lua脚本',
         'detect_speech'=> 'detect_speech',
+        'play_and_detect_speech'=>'play_and_detect_speech',
+        'log' => 'log',
     ],
 
     //队列响铃模式

@@ -56,7 +56,7 @@ class UserTableSeeder extends Seeder
                             ['name' => 'system.user.destroy', 'display_name' => '删除用户','route'=>'admin.user.destroy'],
                             ['name' => 'system.user.role', 'display_name' => '分配角色','route'=>'admin.user.role'],
                             ['name' => 'system.user.permission', 'display_name' => '分配权限','route'=>'admin.user.permission'],
-                            ['name' => 'system.user.setSip', 'display_name' => '分配外呼号','route'=>'admin.user.setSip'],
+                            ['name' => 'system.user.changeMyPassword', 'display_name' => '更改密码','route'=>'admin.user.changeMyPassword'],
                         ]
                     ],
                     [

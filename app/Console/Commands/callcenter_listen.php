@@ -43,7 +43,7 @@ class callcenter_listen extends Command
         //定义日志
         $monolog = Log::getMonolog();
         $monolog->popHandler();
-        Log::useFiles(storage_path('logs/listen.log'));
+        Log::useFiles(storage_path('logs/callcenter_listen.log'));
 
         $fs = new \Freeswitchesl();
         if (!$fs->connect(config('freeswitch.event_socket.host'), config('freeswitch.event_socket.port'), config('freeswitch.event_socket.password'))){

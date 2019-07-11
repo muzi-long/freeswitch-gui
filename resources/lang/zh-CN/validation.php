@@ -86,6 +86,7 @@ return [
     'unique' => ':attribute 已经存在。',
     'uploaded' => ':attribute 上传失败。',
     'url' => ':attribute 格式不正确。',
+    'captcha' => ':attribute 不正确。',
 
     /*
     |--------------------------------------------------------------------------
@@ -117,7 +118,7 @@ return [
 
     'attributes' => [
         'name' => '名称',
-        'username' => '用户名',
+        'username' => '帐号',
         'email' => '邮箱',
         'first_name' => '名',
         'last_name' => '姓',
@@ -145,5 +146,8 @@ return [
         'time' => '时间',
         'available' => '可用的',
         'size' => '大小',
+        'captcha' => '验证码',
+        'old_password' => '原密码',
+        'new_password' => '新密码',
     ],
 ];

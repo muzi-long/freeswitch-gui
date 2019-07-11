@@ -21,6 +21,19 @@ class LoginController extends Controller
     }
 
     /**
+     * 验证登录字段
+     * @param Request $request
+     */
+    protected function validateLogin(Request $request)
+    {
+        $this->validate($request, [
+            'captcha' => 'required|captcha',
+            $this->username() => 'required|string',
+            'password' => 'required|string',
+        ]);
+    }
+
+    /**
      * 用于登录的字段
      * @return string
      */

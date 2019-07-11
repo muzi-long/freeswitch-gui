@@ -49,16 +49,16 @@
             var dataTable = table.render({
                 elem: '#dataTable'
                 ,height: 500
-                ,url: "{{ route('admin.data') }}" //数据接口
+                ,url: "{{ route('admin.user.data') }}" //数据接口
                 ,where:{model:"user"}
                 ,page: true //开启分页
                 ,cols: [[ //表头
                     {checkbox: true,fixed: true}
                     ,{field: 'id', title: 'ID', sort: true,width:80}
-                    ,{field: 'name', title: '用户名'}
+                    ,{field: 'username', title: '帐号'}
+                    ,{field: 'name', title: '昵称'}
                     ,{field: 'email', title: '邮箱'}
                     ,{field: 'phone', title: '电话'}
-                    ,{field: 'sip_username', title: '分机号', edit: true}
                     ,{field: 'created_at', title: '创建时间'}
                     ,{field: 'updated_at', title: '更新时间'}
                     ,{fixed: 'right', width: 320, align:'center', toolbar: '#options'}
@@ -112,16 +112,6 @@
                     layer.msg('请选择删除项',{icon:5})
                 }
             })
-
-            //监听编辑
-            table.on('edit(dataTable)', function(obj){
-                var index = layer.load();
-                $.post("/admin/user/"+obj.data.id+"/set_sip",{"sip_username":obj.value},function (res) {
-                    layer.close(index);
-                    var icon = res.code==0?6:5;
-                    layer.msg(res.msg,{icon:icon})
-                });
-            });
 
         })
     </script>

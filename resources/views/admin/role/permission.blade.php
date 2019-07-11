@@ -11,12 +11,20 @@
     </style>
     <div class="layui-card">
         <div class="layui-card-header layuiadmin-card-header-auto">
-            <h2>角色 【{{$role->name}}】分配权限</h2>
+            <h2>分配权限</h2>
         </div>
         <div class="layui-card-body">
             <form action="{{route('admin.role.assignPermission',['role'=>$role])}}" method="post" class="layui-form">
                 {{csrf_field()}}
                 {{method_field('put')}}
+                <div class="layui-form-item">
+                    <label for="" class="layui-form-label">名称</label>
+                    <div class="layui-word-aux layui-form-mid">{{ $role->name }}</div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="" class="layui-form-label">显示名称</label>
+                    <div class="layui-word-aux layui-form-mid">{{ $role->display_name }}</div>
+                </div>
                 @forelse($permissions as $first)
                     <dl class="cate-box">
                         <dt>

@@ -39,11 +39,10 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>'auth'],funct
 
 //系统管理
 Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth','permission:system.manage']],function (){
-    //数据表格接口
-    Route::get('data','IndexController@data')->name('admin.data')->middleware('permission:system.role|system.user|system.permission');
     //用户管理
     Route::group(['middleware'=>['permission:system.user']],function (){
         Route::get('user','UserController@index')->name('admin.user');
+        Route::get('user/data','UserController@data')->name('admin.user.data');
         //添加
         Route::get('user/create','UserController@create')->name('admin.user.create')->middleware('permission:system.user.create');
         Route::post('user/store','UserController@store')->name('admin.user.store')->middleware('permission:system.user.create');
@@ -58,12 +57,15 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth','perm
         //分配权限
         Route::get('user/{id}/permission','UserController@permission')->name('admin.user.permission')->middleware('permission:system.user.permission');
         Route::put('user/{id}/assignPermission','UserController@assignPermission')->name('admin.user.assignPermission')->middleware('permission:system.user.permission');
-        //分配外呼号
-        Route::post('user/{id}/set_sip','UserController@setSip')->name('admin.user.setSip')->middleware('permission:system.user.setSip');
+        //更改自己密码
+        Route::get('user/change_my_password_form','UserController@changeMyPasswordForm')->name('admin.user.changeMyPasswordForm')->middleware('permission:system.user.changeMyPassword');
+        Route::post('user/change_my_password','UserController@changeMyPassword')->name('admin.user.changeMyPassword')->middleware('permission:system.user.changeMyPassword');
+
     });
     //角色管理
     Route::group(['middleware'=>'permission:system.role'],function (){
         Route::get('role','RoleController@index')->name('admin.role');
+        Route::get('role/data','RoleController@data')->name('admin.role.data');
         //添加
         Route::get('role/create','RoleController@create')->name('admin.role.create')->middleware('permission:system.role.create');
         Route::post('role/store','RoleController@store')->name('admin.role.store')->middleware('permission:system.role.create');
@@ -79,6 +81,7 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth','perm
     //权限管理
     Route::group(['middleware'=>'permission:system.permission'],function (){
         Route::get('permission','PermissionController@index')->name('admin.permission');
+        Route::get('permission/data','PermissionController@data')->name('admin.permission.data');
         //添加
         Route::get('permission/create','PermissionController@create')->name('admin.permission.create')->middleware('permission:system.permission.create');
         Route::post('permission/store','PermissionController@store')->name('admin.permission.store')->middleware('permission:system.permission.create');

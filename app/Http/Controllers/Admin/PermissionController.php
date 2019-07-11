@@ -17,8 +17,19 @@ class PermissionController extends Controller
      */
     public function index()
     {
-
         return view('admin.permission.index');
+    }
+
+    public function data()
+    {
+        $res = Permission::with('icon')->get();
+        $data = [
+            'code' => 0,
+            'msg' => '正在请求中...',
+            'count' => $res->count(),
+            'data' => $res
+        ];
+        return response()->json($data);
     }
 
     /**
@@ -28,7 +39,7 @@ class PermissionController extends Controller
      */
     public function create()
     {
-        $permissions = $this->tree();
+        $permissions = Permission::with('allChilds')->where('parent_id',0)->get();
         return view('admin.permission.create',compact('permissions'));
     }
 
@@ -68,7 +79,7 @@ class PermissionController extends Controller
     public function edit($id)
     {
         $permission = Permission::findOrFail($id);
-        $permissions = $this->tree();
+        $permissions = Permission::with('allChilds')->where('parent_id',0)->get();
         return view('admin.permission.edit',compact('permission','permissions'));
     }
 

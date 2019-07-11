@@ -10,6 +10,7 @@ use http\Env\Response;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Role;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -21,6 +22,18 @@ class UserController extends Controller
     public function index()
     {
         return view('admin.user.index');
+    }
+
+    public function data(Request $request)
+    {
+        $res = User::paginate($request->get('limit', 30));
+        $data = [
+            'code' => 0,
+            'msg' => '正在请求中...',
+            'count' => $res->total(),
+            'data' => $res->items()
+        ];
+        return response()->json($data);
     }
 
     /**
@@ -177,29 +190,35 @@ class UserController extends Controller
         return redirect()->to(route('admin.user'))->with(['success'=>'已更新用户直接权限']);
     }
 
-    public function setSip(Request $request,$id)
+    /**
+     * 修改密码表单
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function changeMyPasswordForm()
     {
-        $sip_username = $request->get('sip_username');
-        $user = User::findOrFail($id);
-        if ($sip_username===null){
-            if ($user->update(['sip_id'=>null])){
-                return response()->json(['code'=>0,'msg'=>'更新成功']);
-            }
-            return response()->json(['code'=>1,'msg'=>'更新失败']);
-        }
+        return view('admin.user.changeMyPassword');
+    }
 
-        $sip = Sip::where('username',$sip_username)->first();
-        if ($sip==null){
-            return response()->json(['code'=>1,'msg'=>'该分机号不存在']);
+    /**
+     * 修改密码逻辑
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function changeMyPassword(Request $request)
+    {
+        $this->validate($request,[
+            'old_password' => 'required|string|min:6|max:14',
+            'new_password' => 'required|string|min:6|max:14|confirmed'
+        ]);
+        //验证原密码
+        if (!Hash::check($request->get('old_password'),auth()->user()->getAuthPassword())){
+            return back()->withInput()->withErrors('原密码不正确');
         }
-        $hasUsedUser = User::where('sip_id',$sip->id)->first();
-        if ($hasUsedUser!=null){
-            return response()->json(['code'=>1,'msg'=>'该分机号【'.$sip->username.'】已被用户【'.$hasUsedUser->name.'】使用']);
+        //更新密码
+        if ($request->user()->fill(['password' => Hash::make($request->new_password)])->save()){
+            return back()->with(['success'=>'密码修改成功']);
         }
-        if ($user->update(['sip_id'=>$sip->id])){
-            return response()->json(['code'=>0,'msg'=>'更新成功']);
-        }
-        return response()->json(['code'=>1,'msg'=>'更新失败']);
+        return back()->withErrors('修改密码失败');
     }
 
 }
