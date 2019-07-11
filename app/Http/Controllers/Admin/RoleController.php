@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\RoleCreateRequest;
 use App\Http\Requests\RoleUpdateRequest;
+use App\Models\Permission;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Role;
@@ -121,20 +122,19 @@ class RoleController extends Controller
     public function permission(Request $request,$id)
     {
         $role = Role::findOrFail($id);
-        $permissions = $this->tree();
-        foreach ($permissions as $key1 => $item1){
-            $permissions[$key1]['own'] = $role->hasPermissionTo($item1['id']) ? 'checked' : false ;
-            if (isset($item1['_child'])){
-                foreach ($item1['_child'] as $key2 => $item2){
-                    $permissions[$key1]['_child'][$key2]['own'] = $role->hasPermissionTo($item2['id']) ? 'checked' : false ;
-                    if (isset($item2['_child'])){
-                        foreach ($item2['_child'] as $key3 => $item3){
-                            $permissions[$key1]['_child'][$key2]['_child'][$key3]['own'] = $role->hasPermissionTo($item3['id']) ? 'checked' : false ;
+        $permissions = Permission::with('allChilds')->where('parent_id',0)->get();
+        foreach ($permissions as $p1){
+            $p1->own = $role->hasPermissionTo($p1->id) ? 'checked' : false ;
+            if ($p1->childs->isNotEmpty()){
+                foreach ($p1->childs as $p2){
+                    $p2->own = $role->hasPermissionTo($p2->id) ? 'checked' : false ;
+                    if ($p2->childs->isNotEmpty()){
+                        foreach ($p2->childs as $p3){
+                            $p3->own = $role->hasPermissionTo($p3->id) ? 'checked' : false ;
                         }
                     }
                 }
             }
-
         }
         return view('admin.role.permission',compact('role','permissions'));
     }

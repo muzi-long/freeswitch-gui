@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\UserCreateRequest;
 use App\Http\Requests\UserUpdateRequest;
+use App\Models\Permission;
 use App\Models\Sip;
 use App\Models\User;
 use http\Env\Response;
@@ -157,15 +158,15 @@ class UserController extends Controller
     public function permission(Request $request,$id)
     {
         $user = User::findOrFail($id);
-        $permissions = $this->tree();
-        foreach ($permissions as $key1 => $item1){
-            $permissions[$key1]['own'] = $user->hasDirectPermission($item1['id']) ? 'checked' : false ;
-            if (isset($item1['_child'])){
-                foreach ($item1['_child'] as $key2 => $item2){
-                    $permissions[$key1]['_child'][$key2]['own'] = $user->hasDirectPermission($item2['id']) ? 'checked' : false ;
-                    if (isset($item2['_child'])){
-                        foreach ($item2['_child'] as $key3 => $item3){
-                            $permissions[$key1]['_child'][$key2]['_child'][$key3]['own'] = $user->hasDirectPermission($item3['id']) ? 'checked' : false ;
+        $permissions = Permission::with('allChilds')->where('parent_id',0)->get();
+        foreach ($permissions as $p1){
+            $p1->own = $user->hasDirectPermission($p1->id) ? 'checked' : false ;
+            if ($p1->childs->isNotEmpty()){
+                foreach ($p1->childs as $p2){
+                    $p2->own = $user->hasDirectPermission($p2->id) ? 'checked' : false ;
+                    if ($p2->childs->isNotEmpty()){
+                        foreach ($p2->childs as $p3){
+                            $p3->own = $user->hasDirectPermission($p3->id) ? 'checked' : false ;
                         }
                     }
                 }

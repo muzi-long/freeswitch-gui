@@ -25,19 +25,19 @@
                     <label for="" class="layui-form-label">显示名称</label>
                     <div class="layui-word-aux layui-form-mid">{{ $role->display_name }}</div>
                 </div>
-                @forelse($permissions as $first)
+                @forelse($permissions as $p1)
                     <dl class="cate-box">
                         <dt>
-                        <div class="cate-first"><input id="menu{{$first['id']}}" type="checkbox" name="permissions[]" value="{{$first['id']}}" title="{{$first['display_name']}}" lay-skin="primary" {{$first['own']??''}} ></div>
+                            <div class="cate-first"><input id="menu{{$p1->id}}" type="checkbox" name="permissions[]" value="{{$p1->id}}" title="{{$p1->display_name}}" lay-skin="primary" {{$p1->own??''}} ></div>
                         </dt>
-                        @if(isset($first['_child']))
-                            @foreach($first['_child'] as $second)
+                        @if($p1->childs->isNotEmpty())
+                            @foreach($p1->childs as $p2)
                                 <dd>
-                                    <div class="cate-second"><input id="menu{{$first['id']}}-{{$second['id']}}" type="checkbox" name="permissions[]" value="{{$second['id']}}" title="{{$second['display_name']}}" lay-skin="primary" {{$second['own']??''}}></div>
-                                    @if(isset($second['_child']))
+                                    <div class="cate-second"><input id="menu{{$p1->id}}-{{$p2->id}}" type="checkbox" name="permissions[]" value="{{$p2->id}}" title="{{$p2->display_name}}" lay-skin="primary" {{$p2->own??''}}></div>
+                                    @if($p2->childs->isNotEmpty())
                                         <div class="cate-third">
-                                            @foreach($second['_child'] as $thild)
-                                                <input type="checkbox" id="menu{{$first['id']}}-{{$second['id']}}-{{$thild['id']}}" name="permissions[]" value="{{$thild['id']}}" title="{{$thild['display_name']}}" lay-skin="primary" {{$thild['own']??''}}>
+                                            @foreach($p2->childs as $p3)
+                                                <input type="checkbox" id="menu{{$p1->id}}-{{$p2->id}}-{{$p3->id}}" name="permissions[]" value="{{$p3->id}}" title="{{$p3->display_name}}" lay-skin="primary" {{$p3->own??''}}>
                                             @endforeach
                                         </div>
                                     @endif

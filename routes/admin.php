@@ -29,8 +29,6 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>'auth'],funct
     Route::get('/','IndexController@layout')->name('admin.layout');
     //后台首页
     Route::get('/index','IndexController@index')->name('admin.index');
-    Route::get('/index1','IndexController@index1')->name('admin.index1');
-    Route::get('/index2','IndexController@index2')->name('admin.index2');
     //拨打电话
     Route::get('/call','IndexController@call')->name('admin.call');
     //图标

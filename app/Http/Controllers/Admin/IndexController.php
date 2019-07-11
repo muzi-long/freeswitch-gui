@@ -28,15 +28,11 @@ class IndexController extends Controller
     {
         return view('admin.index.index');
     }
-    public function index1()
-    {
-        return view('admin.index.index1');
-    }
-    public function index2()
-    {
-        return view('admin.index.index2');
-    }
 
+    /**
+     * 拨打电话
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function call()
     {
         return view('admin.index.call');

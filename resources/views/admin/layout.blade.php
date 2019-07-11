@@ -96,12 +96,6 @@
                             <dd data-name="console" class="layui-this">
                                 <a lay-href="{{route('admin.index')}}">控制台</a>
                             </dd>
-                            <dd data-name="console">
-                                <a lay-href="{{route('admin.index1')}}">主页一</a>
-                            </dd>
-                            <dd data-name="console">
-                                <a lay-href="{{route('admin.index2')}}">主页二</a>
-                            </dd>
                             <dd data-name="call">
                                 <a lay-href="{{route('admin.call')}}">拨打电话</a>
                             </dd>
