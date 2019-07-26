@@ -13,25 +13,10 @@ class PbxTableSeeder extends Seeder
     {
         //清空表
         \Illuminate\Support\Facades\DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        \App\Models\Sip::truncate();
         \App\Models\Action::truncate();
         \App\Models\Condition::truncate();
         \App\Models\Extension::truncate();
-        \App\Models\Group::truncate();
-        \App\Models\Queue::truncate();
-        \App\Models\Agent::truncate();
-        \App\Models\Gateway::truncate();
         \Illuminate\Support\Facades\DB::statement('SET FOREIGN_KEY_CHECKS=1;');
-
-        //分机用户
-        for ($sip=10000; $sip<=10020; $sip++){
-            \App\Models\Sip::create([
-                'username'  => $sip,
-                'password'  => $sip,
-                'effective_caller_id_name'  => $sip,
-                'effective_caller_id_number'  => $sip,
-            ]);
-        }
 
         //拨号计划
         $data = [
@@ -236,58 +221,6 @@ class PbxTableSeeder extends Seeder
                     }
                 }
             }
-        }
-
-        //添加分机组
-        for ($i=1; $i<20; $i++){
-            \App\Models\Group::create([
-                'display_name'  => 'group'.$i,
-                'name'          => 6000+$i,
-            ]);
-        }
-
-        //添加队列
-        for ($i=1; $i<20; $i++){
-            \App\Models\Queue::create([
-                'display_name'  => 'queue'.$i,
-                'name'          => 8000+$i,
-            ]);
-        }
-
-        //添加坐席
-        for ($i=1; $i<20; $i++){
-            \App\Models\Agent::create([
-                'display_name'      => str_random(8),
-                'name'              => 7000+$i,
-                'originate_number'  => 10000+$i,
-            ]);
-        }
-
-        //添加网
-        $datas = [
-            [
-                'name'                  => '网关一',
-                'realm'                 => '125.69.90.72',
-                'username'              => 'KL20190429',
-                'password'              => 'VTLZMBkY',
-                'outbound_caller_id'    => '600011',
-            ],
-            [
-                'name'                  => '900011',
-                'realm'                 => '120.77.227.133',
-                'username'              => '900011',
-                'password'              => '900011',
-                'outbound_caller_id'    => '900011',
-            ],
-            [
-                'name'                  => 'test',
-                'realm'                 => '192.168.254.100',
-                'username'              => 'test',
-                'password'              => 'test',
-            ]
-        ];
-        foreach ($datas as $data){
-            \App\Models\Gateway::create($data);
         }
 
     }

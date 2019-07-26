@@ -21,6 +21,7 @@ class CreateIconsTable extends Migration
             $table->integer('sort')->default(0)->comment('排序');
             $table->timestamps();
         });
+        \DB::statement("ALTER TABLE `icons` comment '图标表'");
     }
 
     /**

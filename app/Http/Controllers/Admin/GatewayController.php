@@ -86,7 +86,7 @@ class GatewayController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(GatewayRequest $request, $id)
     {
         $model = Gateway::findOrFail($id);
         $data = $request->except(['_method','_token']);

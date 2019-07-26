@@ -1,0 +1,21 @@
+<include>
+<menu name="test1"
+greet-long="16000/1563787502.wav"
+greet-short="16000/1563787502.wav"
+invalid-sound="ivr/ivr-that_was_an_invalid_entry.wav"
+exit-sound="voicemail/vm-goodbye.wav"
+confirm-macro=""
+confirm-key=""
+tts-engine="flite"
+tts-voice="rms"
+confirm-attempts="3"
+timeout="10000"
+inter-digit-timeout="2000"
+max-failures="3"
+max-timeouts=""
+digit-len="4">
+<entry action="mmenu-sub" digits="" param="3333"/>
+<entry action="mmenu-sub" digits="" param="sfsdf"/>
+<entry action="mmenu-sub" digits="" param="5555"/>
+</menu>
+</include>

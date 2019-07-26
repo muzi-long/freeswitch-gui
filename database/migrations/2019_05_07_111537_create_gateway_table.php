@@ -21,8 +21,11 @@ class CreateGatewayTable extends Migration
             $table->string('password')->comment('密码');
             $table->string('prefix')->nullable()->comment('前缀');
             $table->string('outbound_caller_id')->nullable()->comment('出局号码');
+            $table->decimal('rate',10,2)->default(0)->comment('费率：每分钟多少元');
             $table->timestamps();
         });
+        \DB::statement("ALTER TABLE `gateway` comment '中继网关表'");
+
     }
 
     /**

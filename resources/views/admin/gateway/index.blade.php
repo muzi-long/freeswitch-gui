@@ -41,6 +41,7 @@
                     ,{field: 'realm', title: '地址'}
                     ,{field: 'username', title: '帐号'}
                     ,{field: 'password', title: '密码'}
+                    ,{field: 'rate', title: '费率（元/分钟）'}
                     ,{field: 'prefix', title: '前缀'}
                     ,{field: 'outbound_caller_id', title: '出局号码'}
                     ,{field: 'created_at', title: '添加时间'}

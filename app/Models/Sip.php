@@ -14,6 +14,7 @@ class Sip extends Model
         'effective_caller_id_number',
         'outbound_caller_id_name',
         'outbound_caller_id_number',
+        'merchant_id',
     ];
 
 

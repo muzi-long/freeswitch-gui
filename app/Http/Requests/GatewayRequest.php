@@ -27,7 +27,8 @@ class GatewayRequest extends FormRequest
             'name' => 'required',
             'realm' => 'required',
             'username' => 'required',
-            'password' => 'required'
+            'password' => 'required',
+            'rate' => 'required|numeric|min:0'
         ];
     }
 
@@ -37,7 +38,8 @@ class GatewayRequest extends FormRequest
             'name' => '网关名称',
             'realm' => '地址',
             'username' => '帐号',
-            'password' => '密码'
+            'password' => '密码',
+            'rate' => '费率',
         ];
     }
 

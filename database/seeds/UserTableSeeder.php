@@ -97,20 +97,29 @@ class UserTableSeeder extends Seeder
             ],
             [
                 'name' => 'pbx.manage',
-                'display_name' => 'PBX配置',
+                'display_name' => '平台管理',
                 'route' => '',
                 'icon_id' => '101',
                 'child' => [
                     [
-                        'name' => 'pbx.group',
-                        'display_name' => '分机组',
-                        'route' => 'admin.group',
+                        'name' => 'pbx.merchant',
+                        'display_name' => '商户管理',
+                        'route' => 'admin.merchant',
                         'icon_id' => '12',
                         'child' => [
-                            ['name' => 'pbx.group.create', 'display_name' => '添加','route'=>'admin.group.create'],
-                            ['name' => 'pbx.group.sip', 'display_name' => '分配分机','route'=>'admin.group.sip'],
-                            ['name' => 'pbx.group.edit', 'display_name' => '编辑','route'=>'admin.group.edit'],
-                            ['name' => 'pbx.group.destroy', 'display_name' => '删除','route'=>'admin.group.destroy'],
+                            ['name' => 'pbx.merchant.create', 'display_name' => '添加','route'=>'admin.merchant.create'],
+                            ['name' => 'pbx.merchant.edit', 'display_name' => '编辑','route'=>'admin.merchant.edit'],
+                            ['name' => 'pbx.merchant.destroy', 'display_name' => '删除','route'=>'admin.merchant.destroy'],
+                            ['name' => 'pbx.merchant.gateway', 'display_name' => '分配网关','route'=>'admin.merchant.gateway'],
+                        ]
+                    ],
+                    [
+                        'name' => 'pbx.bill',
+                        'display_name' => '帐单管理',
+                        'route' => 'admin.bill',
+                        'icon_id' => '12',
+                        'child' => [
+                            ['name' => 'pbx.bill.create', 'display_name' => '添加','route'=>'admin.bill.create'],
                         ]
                     ],
                     [
@@ -172,6 +181,39 @@ class UserTableSeeder extends Seeder
                             ['name' => 'pbx.agent.create', 'display_name' => '添加','route'=>'admin.agent.create'],
                             ['name' => 'pbx.agent.edit', 'display_name' => '编辑','route'=>'admin.agent.edit'],
                             ['name' => 'pbx.agent.destroy', 'display_name' => '删除','route'=>'admin.agent.destroy'],
+                        ]
+                    ],
+                    [
+                        'name' => 'pbx.ivr',
+                        'display_name' => 'IVR管理',
+                        'route' => 'admin.ivr',
+                        'icon_id' => '12',
+                        'child' => [
+                            ['name' => 'pbx.ivr.create', 'display_name' => '添加','route'=>'admin.ivr.create'],
+                            ['name' => 'pbx.ivr.edit', 'display_name' => '编辑','route'=>'admin.ivr.edit'],
+                            ['name' => 'pbx.ivr.destroy', 'display_name' => '删除','route'=>'admin.ivr.destroy'],
+                            ['name' => 'pbx.ivr.updateXml', 'display_name' => '更新配置','route'=>'admin.ivr.updateXml'],
+                        ]
+                    ],
+                    [
+                        'name' => 'pbx.digits',
+                        'display_name' => '按键管理',
+                        'route' => 'admin.digits',
+                        'icon_id' => '12',
+                        'child' => [
+                            ['name' => 'pbx.digits.create', 'display_name' => '添加','route'=>'admin.digits.create'],
+                            ['name' => 'pbx.digits.edit', 'display_name' => '编辑','route'=>'admin.digits.edit'],
+                            ['name' => 'pbx.digits.destroy', 'display_name' => '删除','route'=>'admin.digits.destroy'],
+                        ]
+                    ],
+                    [
+                        'name' => 'pbx.audio',
+                        'display_name' => '音频管理',
+                        'route' => 'admin.audio',
+                        'icon_id' => '12',
+                        'child' => [
+                            ['name' => 'pbx.audio.create', 'display_name' => '添加','route'=>'admin.audio.create'],
+                            ['name' => 'pbx.audio.destroy', 'display_name' => '删除','route'=>'admin.audio.destroy'],
                         ]
                     ],
                 ],

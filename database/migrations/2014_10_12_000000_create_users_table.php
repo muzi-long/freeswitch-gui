@@ -26,7 +26,7 @@ class CreateUsersTable extends Migration
             $table->timestamps();
             $table->foreign('sip_id')->references('id')->on('sip')->onDelete('set null');
         });
-
+        \DB::statement("ALTER TABLE `users` comment '后台用户表'");
     }
 
     /**

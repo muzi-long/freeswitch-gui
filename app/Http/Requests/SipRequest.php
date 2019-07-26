@@ -26,6 +26,7 @@ class SipRequest extends FormRequest
         return [
             'username'  => 'required|numeric|min:1000|unique:sip,username,'.$this->id.',id',
             'password'  => 'required',
+            'merchant_id' => 'required|exists:merchant,id'
         ];
     }
 

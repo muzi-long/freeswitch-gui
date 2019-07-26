@@ -27,6 +27,16 @@ class SipListRequest extends FormRequest
             'sip_start' => 'required|numeric|min:1000',
             'sip_end'   => 'required|numeric',
             'password'  => 'required',
+            'merchant_id' => 'required|exists:merchant,id'
+        ];
+    }
+
+    public function attributes()
+    {
+        return [
+            'sip_start' => '开始分机',
+            'sip_end'   => '结束分机',
+            'merchant_id' => '商户'
         ];
     }
 }

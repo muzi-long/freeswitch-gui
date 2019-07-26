@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class GroupRequest extends FormRequest
+class BillRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,16 +24,20 @@ class GroupRequest extends FormRequest
     public function rules()
     {
         return [
-            'display_name'  => 'required',
-            'name'          => 'required|numeric|min:6000|max:6999|unique:group,name,'.$this->id.',id'
+            'merchant_id' => 'required|exists:merchant,id',
+            'type' => 'required|in:1,2',
+            'money' => 'required|numeric|min:0.01',
+            'remark' => 'required',
         ];
     }
 
     public function attributes()
     {
         return [
-            'display_name'  => '名称',
-            'name'          => '标识'
+            'type' => '类型',
+            'money' => '金额',
+            'remark' => '备注'
         ];
     }
+
 }

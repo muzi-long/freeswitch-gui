@@ -23,6 +23,7 @@ class CreateDistrictTable extends Migration
             $table->integer('sort')->default(0)->comment('排序');
             $table->timestamps();
         });
+        \DB::statement("ALTER TABLE `districts` comment '地区表'");
     }
 
     /**

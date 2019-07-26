@@ -11,9 +11,11 @@ return [
     //网关目录
     'gateway_dir' => '/usr/local/freeswitch/etc/freeswitch/sip_profiles/external/',
 
+    //IVR 目录
+    'ivr_dir' => '/usr/local/freeswitch/etc/freeswitch/ivr_menus/',
+
     //callcenter目录
-    //'callcenter_dir' => '/usr/local/freeswitch/etc/freeswitch/autoload_configs/callcenter.conf.xml',
-    'callcenter_dir' => 'callcenter.conf.xml',
+    'callcenter_dir' => '/usr/local/freeswitch/etc/freeswitch/autoload_configs/callcenter.conf.xml',
 
     //application
     'application' => [
@@ -59,4 +61,25 @@ return [
         'Receiving'         => '电话呼入',
         'In a queue call'   => '通话中',
     ],
+
+    //商户状态
+    'merchant_status' => [
+        1 => '正常',
+        2 => '禁用',
+    ],
+
+    //讯飞在线语音合成参数
+    'xfyun' => [
+        'appid' => '5bc842c0',
+        'apikey' => '33e3e90871156122614cbe26d2992ab0',
+        'sounds' => '/usr/local/freeswitch/share/freeswitch/sounds/en/us/callie/custom/16000/'
+    ],
+
+    //IVR
+    'ivr_action' => [
+        'menu-exec-app' => '应用',
+        'menu-sub' => '子菜单',
+        'enu-top' => '父菜单',
+    ],
+
 ];

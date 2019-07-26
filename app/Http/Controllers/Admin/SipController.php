@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\SipListRequest;
 use App\Http\Requests\SipRequest;
+use App\Models\Merchant;
 use App\Models\Sip;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -47,7 +48,8 @@ class SipController extends Controller
      */
     public function create()
     {
-        return view('admin.sip.create');
+        $merchants = Merchant::orderByDesc('id')->where('status',1)->get();
+        return view('admin.sip.create',compact('merchants'));
     }
 
     /**
@@ -59,6 +61,7 @@ class SipController extends Controller
     public function store(SipRequest $request)
     {
         $data = $request->all([
+            'merchant_id',
             'username',
             'password',
             'effective_caller_id_name',
@@ -72,11 +75,17 @@ class SipController extends Controller
         if ($data['effective_caller_id_number']==null){
             $data['effective_caller_id_number'] = $data['username'];
         }
-        if (Sip::create($data)){
-            return redirect(route('admin.sip'))->with(['success'=>'添加成功']);
+        //验证商户允许的最大分机数
+        $merchant = Merchant::withCount('sips')->findOrFail($data['merchant_id']);
+        if ($merchant->sips_count >= $merchant->sip_num){
+            return back()->withInput()->withErrors(['error'=>'添加失败：超出商户最大允许分机数量']);
         }
-        return back()->withErrors(['error'=>'添加失败']);
-
+        try{
+            Sip::create($data);
+            return redirect(route('admin.sip'))->with(['success'=>'添加成功']);
+        }catch (\Exception $exception){
+            return back()->withInput()->withErrors(['error'=>'添加失败：'.$exception->getMessage()]);
+        }
     }
 
     /**
@@ -99,7 +108,8 @@ class SipController extends Controller
     public function edit($id)
     {
         $model = Sip::findOrFail($id);
-        return view('admin.sip.edit',compact('model'));
+        $merchants = Merchant::orderByDesc('id')->where('status',1)->get();
+        return view('admin.sip.edit',compact('model','merchants'));
     }
 
     /**
@@ -126,10 +136,13 @@ class SipController extends Controller
         if ($data['effective_caller_id_number']==null){
             $data['effective_caller_id_number'] = $data['username'];
         }
-        if ($model->update($data)){
+        try{
+            $model->update($data);
             return redirect(route('admin.sip'))->with(['success'=>'更新成功']);
+        }catch (\Exception $exception){
+            return back()->withErrors(['error'=>'更新失败：'.$exception->getMessage()]);
         }
-        return back()->withErrors(['error'=>'更新失败']);
+
     }
 
     /**
@@ -152,18 +165,25 @@ class SipController extends Controller
 
     public function createList()
     {
-        return view('admin.sip.create_list');
+        $merchants = Merchant::orderByDesc('id')->where('status',1)->get();
+        return view('admin.sip.create_list',compact('merchants'));
     }
 
     public function storeList(SipListRequest $request)
     {
-        $data = $request->all(['sip_start','sip_end','password']);
+        $data = $request->all(['sip_start','sip_end','password','merchant_id']);
         if ($data['sip_start'] <= $data['sip_end']){
+            //验证商户允许的最大分机数
+            $merchant = Merchant::withCount('sips')->findOrFail($data['merchant_id']);
+            if (($merchant->sips_count+($data['sip_end']-$data['sip_start']+1)) >= $merchant->sip_num){
+                return back()->withInput()->withErrors(['error'=>'添加失败：超出商户最大允许分机数量']);
+            }
             //开启事务
             DB::beginTransaction();
             try{
                 for ($i=$data['sip_start'];$i<=$data['sip_end'];$i++){
                     DB::table('sip')->insert([
+                        'merchant_id' => $data['merchant_id'],
                         'username'  => $i,
                         'password'  => $data['password'],
                         'effective_caller_id_name' => $i,
@@ -176,7 +196,7 @@ class SipController extends Controller
                 return redirect(route('admin.sip'))->with(['success'=>'添加成功']);
             }catch (\Exception $e) {
                 DB::rollback();
-                return back()->withInput()->withErrors(['error'=>'添加失败']);
+                return back()->withInput()->withErrors(['error'=>'添加失败：'.$e->getMessage()]);
             }
         }
         return back()->withInput()->withErrors(['error'=>'开始分机号必须小于等于结束分机号']);

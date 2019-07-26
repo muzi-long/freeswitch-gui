@@ -3,13 +3,17 @@
 @section('content')
     <div class="layui-card">
         <div class="layui-card-header layuiadmin-card-header-auto">
-            <h2>更新分机组</h2>
+            <h2>更新商家</h2>
         </div>
         <div class="layui-card-body">
-            <form action="{{route('admin.group.update',['id'=>$model->id])}}" method="post" class="layui-form">
+            <form action="{{route('admin.merchant.update',['id'=>$model->id])}}" method="post" class="layui-form">
                 {{method_field('put')}}
-                @include('admin.group._form')
+                @include('admin.merchant._form')
             </form>
         </div>
     </div>
+@endsection
+
+@section('script')
+    @include('admin.merchant._js')
 @endsection
