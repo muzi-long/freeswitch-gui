@@ -26,6 +26,7 @@ class CreatePermissionTables extends Migration
             $table->integer('sort')->default(0)->comment('排序');
             $table->timestamps();
         });
+        \DB::statement("ALTER TABLE `".$tableNames['permissions']."` comment '权限表'");
 
         Schema::create($tableNames['roles'], function (Blueprint $table) {
             $table->increments('id');
@@ -34,6 +35,7 @@ class CreatePermissionTables extends Migration
             $table->string('display_name');
             $table->timestamps();
         });
+        \DB::statement("ALTER TABLE `".$tableNames['roles']."` comment '角色表'");
 
         Schema::create($tableNames['model_has_permissions'], function (Blueprint $table) use ($tableNames) {
             $table->unsignedInteger('permission_id');
@@ -46,6 +48,7 @@ class CreatePermissionTables extends Migration
 
             $table->primary(['permission_id', 'model_id', 'model_type'], 'model_has_permissions_permission_model_type_primary');
         });
+        \DB::statement("ALTER TABLE `".$tableNames['model_has_permissions']."` comment '用户-权限中间表'");
 
         Schema::create($tableNames['model_has_roles'], function (Blueprint $table) use ($tableNames) {
             $table->unsignedInteger('role_id');
@@ -58,6 +61,7 @@ class CreatePermissionTables extends Migration
 
             $table->primary(['role_id', 'model_id', 'model_type']);
         });
+        \DB::statement("ALTER TABLE `".$tableNames['model_has_roles']."` comment '用户-角色中间表'");
 
         Schema::create($tableNames['role_has_permissions'], function (Blueprint $table) use ($tableNames) {
             $table->unsignedInteger('permission_id');
@@ -77,6 +81,7 @@ class CreatePermissionTables extends Migration
 
             app('cache')->forget('spatie.permission.cache');
         });
+        \DB::statement("ALTER TABLE `".$tableNames['role_has_permissions']."` comment '角色-权限中间表'");
     }
 
     /**

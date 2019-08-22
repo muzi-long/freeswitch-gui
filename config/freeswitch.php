@@ -72,7 +72,7 @@ return [
     'xfyun' => [
         'appid' => '5bc842c0',
         'apikey' => '33e3e90871156122614cbe26d2992ab0',
-        'sounds' => '/usr/local/freeswitch/share/freeswitch/sounds/en/us/callie/custom/16000/'
+        'sounds' => '/usr/local/freeswitch/share/freeswitch/sounds/en/us/callie/custom/8000/'
     ],
 
     //IVR

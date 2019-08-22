@@ -57,7 +57,7 @@ class AudioController extends Controller
         $appid = config('freeswitch.xfyun.appid');
         $apikey = config('freeswitch.xfyun.apikey');
         $param = array (
-            'auf' => 'audio/L16;rate=16000',
+            'auf' => 'audio/L16;rate=8000',
             'aue' => 'raw',
             'voice_name' => 'xiaoyan',
             'speed' => '50',  //这三个参数必需是字符串
