@@ -28,6 +28,7 @@
                 </div>
 
                 <div class="layui-form-item">
+                    <label for="" class="layui-form-label"></label>
                     <div class="layui-input-block">
                         <button class="layui-btn" lay-submit lay-filter="*">确 认</button>
                     </div>

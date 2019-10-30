@@ -43,15 +43,41 @@
     </div>
 </div>
 <div class="layui-form-item">
+    <label for="" class="layui-form-label">链接</label>
+    <div class="layui-input-inline">
+        <input class="layui-input" type="text" name="url" value="{{$permission->url??old('url')}}" placeholder="如：/admin/xxx" >
+    </div>
+</div>
+<div class="layui-form-item">
+    <label for="" class="layui-form-label">类型</label>
+    <div class="layui-input-inline">
+        <input type="radio" name="type" value="1" title="按钮" @if(isset($permission) && $permission->type==1) checked @endif >
+        <input type="radio" name="type" value="2" title="菜单" @if(!isset($permission) || (isset($permission) && $permission->type==2)) checked @endif>
+    </div>
+</div>
+<div class="layui-form-item">
+    <label for="" class="layui-form-label">可见性</label>
+    <div class="layui-input-inline">
+        <input type="radio" name="visiable" value="1" title="显示" @if(isset($permission) && $permission->visiable==1) checked @endif >
+        <input type="radio" name="visiable" value="2" title="隐藏" @if(!isset($permission) || (isset($permission) && $permission->visiable==2)) checked @endif>
+    </div>
+</div>
+<div class="layui-form-item">
     <label for="" class="layui-form-label">图标</label>
     <div class="layui-input-inline">
-        <input class="layui-input" type="hidden" name="icon_id" >
+        <input class="layui-input" type="hidden" name="icon" value="{{$permission->icon??''}}" >
     </div>
     <div class="layui-form-mid layui-word-aux" id="icon_box">
-        <i class="layui-icon {{$permission->icon->class??''}}"></i> {{$permission->icon->name??''}}
+        <i class="layui-icon {{$permission->icon??''}}"></i>
     </div>
     <div class="layui-form-mid layui-word-aux">
         <button type="button" class="layui-btn layui-btn-xs" onclick="showIconsBox()">选择图标</button>
+    </div>
+</div>
+<div class="layui-form-item">
+    <label for="" class="layui-form-label">排序</label>
+    <div class="layui-input-inline">
+        <input class="layui-input" type="number" name="sort" value="{{$permission->sort??0}}" placeholder="" >
     </div>
 </div>
 <div class="layui-form-item">

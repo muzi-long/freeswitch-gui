@@ -1,19 +1,15 @@
-
-
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
-    <title>后台管理</title>
+    <title>{{session('configuration.site_title')}}</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <link rel="stylesheet" href="/static/admin/layuiadmin/layui/css/layui.css" media="all">
     <link rel="stylesheet" href="/static/admin/layuiadmin/style/admin.css" media="all">
-
 </head>
 <body class="layui-layout-body">
-
 <div id="LAY_app">
     <div class="layui-layout layui-layout-admin">
         <div class="layui-header">
@@ -60,13 +56,11 @@
                 </li>
                 <li class="layui-nav-item" lay-unselect>
                     <a href="javascript:;">
-                        <cite>{{auth()->user()->name}}</cite>
+                        <cite>{{auth()->user()->nickname ?? auth()->user()->username}}</cite>
                     </a>
                     <dl class="layui-nav-child">
-                        @can('system.user.changeMyPassword')
                         <dd><a lay-href="{{route('admin.user.changeMyPasswordForm')}}">修改密码</a></dd>
-                        @endcan
-                        <dd><a href="{{route('admin.logout')}}">退出</a></dd>
+                        <dd><a href="{{route('admin.user.logout')}}">退出</a></dd>
                     </dl>
                 </li>
 
@@ -83,9 +77,8 @@
         <div class="layui-side layui-side-menu">
             <div class="layui-side-scroll">
                 <div class="layui-logo" lay-href="{{route('admin.index')}}">
-                    <span>外呼平台</span>
+                    <span>{{session('configuration.site_title')}}</span>
                 </div>
-
                 <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu" lay-filter="layadmin-system-side-menu">
                     <li data-name="home" class="layui-nav-item layui-nav-itemed">
                         <a href="javascript:;" lay-tips="主页" lay-direction="2">
@@ -96,30 +89,68 @@
                             <dd data-name="console" class="layui-this">
                                 <a lay-href="{{route('admin.index')}}">控制台</a>
                             </dd>
-                            <dd data-name="call">
-                                <a lay-href="{{route('admin.call')}}">拨打电话</a>
-                            </dd>
                         </dl>
                     </li>
-                    @foreach($menus as $menu)
-                        @can($menu->name)
-                        <li data-name="{{$menu->name}}" class="layui-nav-item">
-                            <a href="javascript:;" lay-tips="{{$menu->display_name}}" lay-direction="2">
-                                <i class="layui-icon {{$menu->icon->class??''}}"></i>
-                                <cite>{{$menu->display_name}}</cite>
-                            </a>
-                            @if($menu->childs->isNotEmpty())
-                            <dl class="layui-nav-child">
-                                @foreach($menu->childs as $subMenu)
-                                    @can($subMenu->name)
-                                    <dd data-name="{{$subMenu->name}}" >
-                                        <a lay-href="{{ route($subMenu->route) }}">{{$subMenu->display_name}}</a>
-                                    </dd>
-                                    @endcan
-                                @endforeach
-                            </dl>
+                    @foreach($menus as $menu1)
+                        @can($menu1->name)
+                            @if($menu1->visiable==1)
+                                <li data-name="{{$menu1->name}}" class="layui-nav-item">
+                                    <a
+                                       @if($menu1->type==2 && ($menu1->route || $menu1->url))
+                                            lay-href="{{$menu1->route?route($menu1->route):$menu1->url}}"
+                                       @else
+                                            href="javascript:;"
+                                       @endif
+                                       lay-tips="{{$menu1->display_name}}" lay-direction="2">
+                                        <i class="layui-icon {{$menu1->icon}}"></i>
+                                        <cite>{{$menu1->display_name}}</cite>
+                                    </a>
+                                    @if($menu1->type==1 && $menu1->allChilds->isNotEmpty())
+                                    <dl class="layui-nav-child">
+                                        @foreach($menu1->allChilds as $menu2)
+                                            @can($menu2->name)
+                                                @if($menu2->visiable==1)
+                                                    <dd data-name="{{$menu2->name}}" >
+                                                        <a
+                                                            @if($menu2->type==2 && ($menu2->route || $menu2->url))
+                                                                lay-href="{{$menu2->route?route($menu2->route):$menu2->url}}"
+                                                            @else
+                                                                href="javascript:;"
+                                                            @endif
+                                                            lay-tips="{{$menu2->display_name}}" lay-direction="2">
+                                                            <i class="layui-icon {{$menu2->icon}}"></i>
+                                                            <cite>{{$menu2->display_name}}</cite>
+                                                        </a>
+                                                        @if($menu2->type==1 && $menu2->allChilds->isNotEmpty())
+                                                            <dl class="layui-nav-child">
+                                                                @foreach($menu2->allChilds as $menu3)
+                                                                    @can($menu3->name)
+                                                                        @if($menu3->visiable==1)
+                                                                        <dd data-name="{{$menu3->name}}">
+                                                                            <a
+                                                                                @if($menu3->type==2 && ($menu3->route || $menu3->url))
+                                                                                    lay-href="{{$menu3->route?route($menu3->route):$menu3->url}}"
+                                                                                @else
+                                                                                    href="javascript:;"
+                                                                                @endif
+                                                                                lay-tips="{{$menu3->display_name}}" lay-direction="2">
+                                                                                <i class="layui-icon {{$menu3->icon}}"></i>
+                                                                                <cite>{{$menu3->display_name}}</cite>
+                                                                            </a>
+                                                                        </dd>
+                                                                        @endif
+                                                                    @endcan
+                                                                @endforeach
+                                                            </dl>
+                                                        @endif
+                                                    </dd>
+                                                @endif
+                                            @endcan
+                                        @endforeach
+                                    </dl>
+                                    @endif
+                                </li>
                             @endif
-                        </li>
                         @endcan
                     @endforeach
                 </ul>
