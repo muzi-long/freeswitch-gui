@@ -29,4 +29,5 @@ return array(
     'b6ec61354e97f32c0ae683041c78392a' => $vendorDir . '/scrivo/highlight.php/HighlightUtilities/functions.php',
     '5e8fe2a5ffaded85af682684fe3bbf5a' => $vendorDir . '/mews/captcha/src/helpers.php',
     '377b22b161c09ed6e5152de788ca020a' => $vendorDir . '/spatie/laravel-permission/src/helpers.php',
+    'a38b85dec9d83a5d3b31723990f6f122' => $baseDir . '/bootstrap/Freeswitchesl.php',
 );

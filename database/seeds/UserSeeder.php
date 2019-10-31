@@ -118,6 +118,158 @@ class UserSeeder extends Seeder
                 ]
             ],
             [
+                'name' => 'pbx.manage',
+                'display_name' => '平台管理',
+                'route' => '',
+                'icon' => 'layui-icon-fonts-strong',
+                'child' => [
+                    [
+                        'name' => 'pbx.merchant',
+                        'display_name' => '商户管理',
+                        'route' => 'admin.merchant',
+                        'child' => [
+                            ['name' => 'pbx.merchant.create', 'display_name' => '添加','route'=>'admin.merchant.create'],
+                            ['name' => 'pbx.merchant.edit', 'display_name' => '编辑','route'=>'admin.merchant.edit'],
+                            ['name' => 'pbx.merchant.destroy', 'display_name' => '删除','route'=>'admin.merchant.destroy'],
+                            ['name' => 'pbx.merchant.gateway', 'display_name' => '分配网关','route'=>'admin.merchant.gateway'],
+                        ]
+                    ],
+                    [
+                        'name' => 'pbx.bill',
+                        'display_name' => '帐单管理',
+                        'route' => 'admin.bill',
+                        'child' => [
+                            ['name' => 'pbx.bill.create', 'display_name' => '添加','route'=>'admin.bill.create'],
+                        ]
+                    ],
+                    [
+                        'name' => 'pbx.sip',
+                        'display_name' => '分机管理',
+                        'route' => 'admin.sip',
+                        'child' => [
+                            ['name' => 'pbx.sip.create', 'display_name' => '添加','route'=>'admin.sip.create'],
+                            ['name' => 'pbx.sip.create_list', 'display_name' => '批量添加','route'=>'admin.sip.create_list'],
+                            ['name' => 'pbx.sip.edit', 'display_name' => '编辑','route'=>'admin.sip.edit'],
+                            ['name' => 'pbx.sip.destroy', 'display_name' => '删除','route'=>'admin.sip.destroy'],
+                        ]
+                    ],
+                    [
+                        'name' => 'pbx.gateway',
+                        'display_name' => '网关管理',
+                        'route' => 'admin.gateway',
+                        'child' => [
+                            ['name' => 'pbx.gateway.create', 'display_name' => '添加','route'=>'admin.gateway.create'],
+                            ['name' => 'pbx.gateway.edit', 'display_name' => '编辑','route'=>'admin.gateway.edit'],
+                            ['name' => 'pbx.gateway.destroy', 'display_name' => '删除','route'=>'admin.gateway.destroy'],
+                            ['name' => 'pbx.gateway.updateXml', 'display_name' => '更新配置','route'=>'admin.gateway.updateXml'],
+                        ]
+                    ],
+                    [
+                        'name' => 'pbx.extension',
+                        'display_name' => '拨号计划',
+                        'route' => 'admin.extension',
+                        'child' => [
+                            ['name' => 'pbx.extension.show', 'display_name' => '详情','route'=>'admin.extension.show'],
+                            ['name' => 'pbx.extension.create', 'display_name' => '添加','route'=>'admin.extension.create'],
+                            ['name' => 'pbx.extension.edit', 'display_name' => '编辑','route'=>'admin.extension.edit'],
+                            ['name' => 'pbx.extension.destroy', 'display_name' => '删除','route'=>'admin.extension.destroy'],
+                        ]
+                    ],
+                    [
+                        'name' => 'pbx.queue',
+                        'display_name' => '队列管理',
+                        'route' => 'admin.queue',
+                        'child' => [
+                            ['name' => 'pbx.queue.create', 'display_name' => '添加','route'=>'admin.queue.create'],
+                            ['name' => 'pbx.queue.edit', 'display_name' => '编辑','route'=>'admin.queue.edit'],
+                            ['name' => 'pbx.queue.destroy', 'display_name' => '删除','route'=>'admin.queue.destroy'],
+                            ['name' => 'pbx.queue.updateXml', 'display_name' => '更新配置','route'=>'admin.queue.updateXml'],
+                            ['name' => 'pbx.queue.agent', 'display_name' => '分配坐席','route'=>'admin.queue.agent'],
+                            ['name' => 'pbx.queue.agentStatus', 'display_name' => '坐席状态','route'=>'admin.queue.agentStatus'],
+                        ]
+                    ],
+                    [
+                        'name' => 'pbx.agent',
+                        'display_name' => '坐席管理',
+                        'route' => 'admin.agent',
+                        'child' => [
+                            ['name' => 'pbx.agent.create', 'display_name' => '添加','route'=>'admin.agent.create'],
+                            ['name' => 'pbx.agent.edit', 'display_name' => '编辑','route'=>'admin.agent.edit'],
+                            ['name' => 'pbx.agent.destroy', 'display_name' => '删除','route'=>'admin.agent.destroy'],
+                        ]
+                    ],
+                    [
+                        'name' => 'pbx.ivr',
+                        'display_name' => 'IVR管理',
+                        'route' => 'admin.ivr',
+                        'child' => [
+                            ['name' => 'pbx.ivr.create', 'display_name' => '添加','route'=>'admin.ivr.create'],
+                            ['name' => 'pbx.ivr.edit', 'display_name' => '编辑','route'=>'admin.ivr.edit'],
+                            ['name' => 'pbx.ivr.destroy', 'display_name' => '删除','route'=>'admin.ivr.destroy'],
+                            ['name' => 'pbx.ivr.updateXml', 'display_name' => '更新配置','route'=>'admin.ivr.updateXml'],
+                        ]
+                    ],
+                    [
+                        'name' => 'pbx.digits',
+                        'display_name' => '按键管理',
+                        'route' => 'admin.digits',
+                        'child' => [
+                            ['name' => 'pbx.digits.create', 'display_name' => '添加','route'=>'admin.digits.create'],
+                            ['name' => 'pbx.digits.edit', 'display_name' => '编辑','route'=>'admin.digits.edit'],
+                            ['name' => 'pbx.digits.destroy', 'display_name' => '删除','route'=>'admin.digits.destroy'],
+                        ]
+                    ],
+                    [
+                        'name' => 'pbx.audio',
+                        'display_name' => '音频管理',
+                        'route' => 'admin.audio',
+                        'child' => [
+                            ['name' => 'pbx.audio.create', 'display_name' => '添加','route'=>'admin.audio.create'],
+                            ['name' => 'pbx.audio.destroy', 'display_name' => '删除','route'=>'admin.audio.destroy'],
+                        ]
+                    ],
+                ],
+            ],
+            [
+                'name' => 'record.manage',
+                'display_name' => '录音管理',
+                'route' => '',
+                'icon' => 'layui-icon-theme',
+                'child' => [
+                    [
+                        'name' => 'record.cdr',
+                        'display_name' => 'CDR录音',
+                        'route' => 'admin.cdr',
+                        'child' => [
+                            ['name' => 'pbx.cdr.show', 'display_name' => '通话详单','route'=>'admin.cdr.show'],
+                            ['name' => 'pbx.cdr.play', 'display_name' => '播放','route'=>'admin.cdr.play'],
+                            ['name' => 'pbx.cdr.download', 'display_name' => '下载','route'=>'admin.cdr.download'],
+                        ]
+                    ],
+                ]
+            ],
+            [
+                'name' => 'ai.manage',
+                'display_name' => '批量外呼',
+                'route' => '',
+                'icon' => 'layui-icon-carousel',
+                'child' => [
+                    [
+                        'name' => 'ai.task',
+                        'display_name' => '任务管理',
+                        'route' => 'admin.task',
+                        'child' => [
+                            ['name' => 'ai.task.create', 'display_name' => '添加','route'=>'admin.task.create'],
+                            ['name' => 'ai.task.edit', 'display_name' => '编辑','route'=>'admin.task.edit'],
+                            ['name' => 'ai.task.destroy', 'display_name' => '删除','route'=>'admin.task.destroy'],
+                            ['name' => 'ai.task.show', 'display_name' => '呼叫详情','route'=>'admin.task.show'],
+                            ['name' => 'ai.task.setStatus', 'display_name' => '更新状态','route'=>'admin.task.setStatus'],
+                            ['name' => 'ai.task.importCall', 'display_name' => '导入号码','route'=>'admin.task.importCall'],
+                        ]
+                    ],
+                ]
+            ],
+            [
                 'name' => 'information',
                 'display_name' => '资讯管理',
                 'route' => '',
