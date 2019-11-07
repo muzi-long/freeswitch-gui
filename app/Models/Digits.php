@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 
 class Digits extends Model
 {
@@ -13,7 +14,7 @@ class Digits extends Model
 
     public function getActionNameAttribute()
     {
-        return $this->attributes['action_name'] = array_get(config('freeswitch.ivr_action'),$this->action);
+        return $this->attributes['action_name'] = Arr::get(config('freeswitch.ivr_action'),$this->action);
     }
 
     public function getIvrNameAttribute()

@@ -23,6 +23,7 @@ class CreateActionTable extends Migration
             $table->timestamps();
             $table->foreign('condition_id')->references('id')->on('condition')->onDelete('cascade');
         });
+        \DB::statement("ALTER TABLE `action` comment '拨号应用表'");
     }
 
     /**

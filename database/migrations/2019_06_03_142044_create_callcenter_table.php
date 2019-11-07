@@ -31,6 +31,7 @@ class CreateCallcenterTable extends Migration
             $table->string('abandoned_resume_allowed')->default('false')->comment('丢弃后是否允许恢复或者重新进入队列');
             $table->timestamps();
         });
+        \DB::statement("ALTER TABLE `queue` comment '队列表'");
 
         Schema::create('agent', function (Blueprint $table) {
             $table->increments('id');
@@ -48,6 +49,7 @@ class CreateCallcenterTable extends Migration
             $table->integer('no_answer_delay_time')->default(10)->comment('无应答重试间隔，来电无应答后多久才会有电话进入的等待时长');
             $table->timestamps();
         });
+        \DB::statement("ALTER TABLE `agent` comment '坐席表'");
 
         Schema::create('queue_agent', function (Blueprint $table) {
             $table->unsignedInteger('queue_id');
@@ -63,7 +65,7 @@ class CreateCallcenterTable extends Migration
                 ->onDelete('cascade');
             $table->primary(['queue_id', 'agent_id']);
         });
-
+        \DB::statement("ALTER TABLE `queue_agent` comment '队列-坐席中间表'");
 
     }
 

@@ -2,46 +2,45 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Arr;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Support\Facades\Hash;
 
-class Merchant extends Model
+class Merchant extends Authenticatable
 {
-    use SoftDeletes;
+    use SoftDeletes,Notifiable,HasRoles;
 
+    protected $guard_name = 'merchant';
     protected $table = 'merchant';
     protected $fillable = [
         'uuid',
         'username',
         'password',
-        'status',
         'company_name',
+        'contact_name',
+        'contact_phone',
+        'status',
         'expires_at',
         'sip_num',
+        'member_num',
+        'queue_num',
         'money',
-        'created_user_id',
     ];
     protected $hidden = ['uuid','password'];
     protected $dates = ['expires_at'];
-    protected $appends = ['status_name','created_user_name'];
+    protected $appends = ['status_name'];
+
+    public function setPasswordAttribute($value)
+    {
+        $this->attributes['password'] = Hash::make($value);
+    }
 
     public function getStatusNameAttribute()
     {
-        return $this->attributes['status_name'] = array_get(config('freeswitch.merchant_status'),$this->status);
-    }
-
-    public function getCreatedUserNameAttribute()
-    {
-        return $this->attributes['created_user_name'] = $this->user->name??'未知';
-    }
-
-    /**
-     * 创建用户
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function user()
-    {
-        return $this->belongsTo('App\Models\User', 'created_user_id', 'id');
+        return $this->attributes['status_name'] = Arr::get(config('freeswitch.merchant_status'),$this->status);
     }
 
     /**
@@ -54,13 +53,12 @@ class Merchant extends Model
     }
 
     /**
-     * 拥有的分机
+     * 商户拥有的多个分机
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function sips()
     {
         return $this->hasMany('App\Models\Sip','merchant_id','id');
     }
-
 
 }

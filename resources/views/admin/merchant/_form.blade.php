@@ -19,9 +19,33 @@
     </div>
 </div>
 <div class="layui-form-item">
+    <label for="" class="layui-form-label">联系人</label>
+    <div class="layui-input-inline">
+        <input class="layui-input" type="text" name="contact_name" lay-verify="required" value="{{$model->contact_name??old('contact_name')}}" placeholder="联系人">
+    </div>
+</div>
+<div class="layui-form-item">
+    <label for="" class="layui-form-label">联系电话</label>
+    <div class="layui-input-inline">
+        <input class="layui-input" type="text" name="contact_phone" lay-verify="required" value="{{$model->contact_phone??old('contact_phone')}}" placeholder="联系电话">
+    </div>
+</div>
+<div class="layui-form-item">
     <label for="" class="layui-form-label">分机数量</label>
     <div class="layui-input-inline">
         <input class="layui-input" type="number" name="sip_num" lay-verify="required|number" value="{{$model->sip_num??old('sip_num')}}" placeholder="分机数量">
+    </div>
+</div>
+<div class="layui-form-item">
+    <label for="" class="layui-form-label">子帐号数量</label>
+    <div class="layui-input-inline">
+        <input class="layui-input" type="number" name="member_num" lay-verify="required|number" value="{{$model->member_num??old('member_num')}}" placeholder="子帐号数量">
+    </div>
+</div>
+<div class="layui-form-item">
+    <label for="" class="layui-form-label">队列数量</label>
+    <div class="layui-input-inline">
+        <input class="layui-input" type="number" name="queue_num" lay-verify="required|number" value="{{$model->queue_num??old('queue_num')}}" placeholder="队列数量">
     </div>
 </div>
 <div class="layui-form-item">

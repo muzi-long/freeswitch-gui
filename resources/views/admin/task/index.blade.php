@@ -56,6 +56,7 @@
 @section('script')
     <script>
         layui.use(['layer','table','form','upload'],function () {
+            var $ = layui.jquery;
             var layer = layui.layer;
             var form = layui.form;
             var table = layui.table;

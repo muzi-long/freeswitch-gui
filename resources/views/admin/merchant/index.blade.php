@@ -5,13 +5,13 @@
         <div class="layui-card-header layuiadmin-card-header-auto">
             <form class="layui-form" >
                 <div class="layui-btn-group">
-                    @can('pbx.merchant.destroy')
+                    @can('portal.merchant.destroy')
                     <button class="layui-btn layui-btn-sm layui-btn-danger" id="listDelete">删 除</button>
                     @endcan
-                    @can('pbx.merchant.create')
+                    @can('portal.merchant.create')
                     <a class="layui-btn layui-btn-sm" href="{{ route('admin.merchant.create') }}">添 加</a>
                     @endcan
-                    <button class="layui-btn layui-btn-sm" lay-submit lay-filter="search" >搜 索</button>
+                    <button type="submit" class="layui-btn layui-btn-sm" lay-submit lay-filter="search" >搜 索</button>
                 </div>
                 <div class="layui-form-item">
                     <div class="layui-inline">
@@ -54,16 +54,11 @@
             <table id="dataTable" lay-filter="dataTable"></table>
             <script type="text/html" id="options">
                 <div class="layui-btn-group">
-                    @can('pbx.bill')
-                    <a class="layui-btn layui-btn-sm" lay-event="bill">帐单</a>
-                    @endcan
-                    @can('pbx.merchant.gateway')
-                        <a class="layui-btn layui-btn-sm" lay-event="gateway">网关</a>
-                    @endcan
-                    @can('pbx.merchant.edit')
+                    <a class="layui-btn layui-btn-sm" lay-event="show">详情</a>
+                    @can('portal.merchant.edit')
                     <a class="layui-btn layui-btn-sm" lay-event="edit">编辑</a>
                     @endcan
-                    @can('pbx.merchant.destroy')
+                    @can('portal.merchant.destroy')
                     <a class="layui-btn layui-btn-danger layui-btn-sm " lay-event="del">删除</a>
                     @endcan
                 </div>
@@ -75,6 +70,7 @@
 @section('script')
     <script>
         layui.use(['layer','table','form','element','laydate'],function () {
+            var $ = layui.jquery;
             var layer = layui.layer;
             var form = layui.form;
             var table = layui.table;
@@ -88,8 +84,10 @@
                 ,cols: [[ //表头
                     {checkbox: true,fixed: true}
                     ,{field: 'id', title: 'ID', sort: true,width:80}
-                    ,{field: 'company_name', title: '公司名称'}
                     ,{field: 'username', title: '帐号'}
+                    ,{field: 'company_name', title: '公司名称'}
+                    ,{field: 'contact_name', title: '联系人'}
+                    ,{field: 'contact_phone', title: '联系电话'}
                     ,{field: 'status_name', title: '状态', templet:function (d) {
                         if (d.status==1){
                             return '<span class="layui-badge layui-bg-green">'+d.status_name+'</span>'
@@ -100,10 +98,10 @@
                         }
                     }}
                     ,{field: 'expires_at', title: '到期时间'}
-                    ,{field: 'sip_num', title: '最大分机数'}
-                    ,{field: 'sips_count', title: '已建分机数'}
+                    ,{field: 'sip_num', title: '分机数量'}
+                    ,{field: 'member_num', title: '子帐号数量'}
+                    ,{field: 'queue_num', title: '队列数量'}
                     ,{field: 'money', title: '帐户余额'}
-                    ,{field: 'created_user_name', title: '创建人'}
                     ,{field: 'created_at', title: '创建时间'}
                     ,{fixed: 'right', width: 220, align:'center', toolbar: '#options', title:'操作'}
                 ]]
@@ -138,8 +136,8 @@
                         area : ['80%','80%'],
                         content : '/admin/merchant/bill?merchant_id='+data.id
                     })
-                } else if(layEvent === 'gateway'){
-                    location.href = '/admin/merchant/'+data.id+'/gateway';
+                } else if(layEvent === 'show'){
+                    location.href = '/admin/merchant/'+data.id+'/show';
                 }
             });
 
@@ -172,6 +170,7 @@
             //搜索
             form.on('submit(search)', function(data){
                 var parms = data.field;
+                console.log(parms);
                 dataTable.reload({
                     where:parms,
                     page:{curr:1}

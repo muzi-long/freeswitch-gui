@@ -53,6 +53,7 @@
 @section('script')
     <script>
         layui.use(['layer','table','form','element','laydate'],function () {
+            var $ = layui.jquery;
             var layer = layui.layer;
             var form = layui.form;
             var table = layui.table;
@@ -83,8 +84,8 @@
                 ]]
             });
             //时间选择
-            laydate.render({elem:'#created_at_start',type:'datetime'})
-            laydate.render({elem:'#created_at_end',type:'datetime'})
+            laydate.render({elem:'#created_at_start',type:'datetime'});
+            laydate.render({elem:'#created_at_end',type:'datetime'});
             //搜索
             form.on('submit(search)', function (data) {
                 parms = data.field;

@@ -193,7 +193,7 @@ class SipController extends Controller
             //验证商户允许的最大分机数
             $merchant = Merchant::withCount('sips')->findOrFail($data['merchant_id']);
             if (($merchant->sips_count+($data['sip_end']-$data['sip_start']+1)) >= $merchant->sip_num){
-                return back()->withInput()->withErrors(['error'=>'添加失败：超出商户最大允许分机数量']);
+                return back()->withInput()->withErrors(['error'=>'添加失败：超出商户最大允许分机数量'.$merchant->sips_count.'<=>'.$merchant->sip_num]);
             }
             //开启事务
             DB::beginTransaction();

@@ -2,8 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Extension;
+use App\Models\Gateway;
+use App\Models\Merchant;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Sip;
+
 
 class ApiController extends Controller
 {
@@ -53,6 +59,22 @@ class ApiController extends Controller
     }
 
     /**
+     * 商户网关关系
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function merchantGateway(Request $request)
+    {
+        $res = Merchant::with('gateways')
+            ->where('status',1)
+            ->where('expires_at','>',Carbon::now())
+            ->select(['id','username as name'])
+            ->get();
+        return response()->json($res);
+
+    }
+
+    /**
      * 分机动态注册
      * @param Request $request
      * @return bool
@@ -60,7 +82,7 @@ class ApiController extends Controller
     public function directory(Request $request)
     {
         $sips = Sip::get();
-        $groups = Group::with('sips')->whereHas('sips')->get();
+        //$groups = Group::with('sips')->whereHas('sips')->get();
 
         $xml  = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n";
         $xml .= "<document type=\"freeswitch/xml\">\n";
@@ -96,7 +118,7 @@ class ApiController extends Controller
         $xml .= "</group>\n";
 
         //自定义用户组
-        foreach ($groups as $group){
+        /*foreach ($groups as $group){
             $xml .= "<group name=\"".$group->name."\">\n";
             $xml .= "    <users>\n";
             foreach ($group->sips as $sip){
@@ -104,7 +126,7 @@ class ApiController extends Controller
             }
             $xml .= "    </users>\n";
             $xml .= "</group>\n";
-        }
+        }*/
 
         $xml .= "</groups>\n";
         $xml .= "</domain>\n";

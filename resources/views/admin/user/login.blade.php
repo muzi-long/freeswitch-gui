@@ -15,7 +15,7 @@
 <div class="layadmin-user-login layadmin-user-display-show">
     <div class="layadmin-user-login-main">
         <div class="layadmin-user-login-box layadmin-user-login-header">
-            <h2>后台管理</h2>
+            <h2>后台管理端</h2>
             <p>后台管理系统，仅内部使用</p>
         </div>
         <div class="layadmin-user-login-box layadmin-user-login-body layui-form">

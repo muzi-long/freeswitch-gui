@@ -31,7 +31,7 @@ class RoleController extends Controller
      */
     public function data(Request $request)
     {
-        $res = Role::paginate($request->get('limit', 30));
+        $res = Role::where('guard_name','web')->paginate($request->get('limit', 30));
         $data = [
             'code' => 0,
             'msg' => '正在请求中...',

@@ -31,6 +31,7 @@ class CreateCall extends Migration
             $table->timestamps();
             $table->foreign('task_id')->references('id')->on('task')->onDelete('cascade');
         });
+        \DB::statement("ALTER TABLE `call` comment '呼叫任务详情表'");
     }
 
     /**

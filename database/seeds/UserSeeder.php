@@ -118,30 +118,53 @@ class UserSeeder extends Seeder
                 ]
             ],
             [
-                'name' => 'pbx.manage',
+                'name' => 'portal.manage',
                 'display_name' => '平台管理',
                 'route' => '',
-                'icon' => 'layui-icon-fonts-strong',
+                'icon' => 'layui-icon-login-wechat',
                 'child' => [
                     [
-                        'name' => 'pbx.merchant',
+                        'name' => 'portal.merchant',
                         'display_name' => '商户管理',
                         'route' => 'admin.merchant',
                         'child' => [
-                            ['name' => 'pbx.merchant.create', 'display_name' => '添加','route'=>'admin.merchant.create'],
-                            ['name' => 'pbx.merchant.edit', 'display_name' => '编辑','route'=>'admin.merchant.edit'],
-                            ['name' => 'pbx.merchant.destroy', 'display_name' => '删除','route'=>'admin.merchant.destroy'],
-                            ['name' => 'pbx.merchant.gateway', 'display_name' => '分配网关','route'=>'admin.merchant.gateway'],
+                            ['name' => 'portal.merchant.create', 'display_name' => '添加','route'=>'admin.merchant.create'],
+                            ['name' => 'portal.merchant.edit', 'display_name' => '编辑','route'=>'admin.merchant.edit'],
+                            ['name' => 'portal.merchant.destroy', 'display_name' => '删除','route'=>'admin.merchant.destroy'],
+                            ['name' => 'portal.merchant.gateway', 'display_name' => '分配网关','route'=>'admin.merchant.gateway'],
+                            ['name' => 'portal.merchant.assignRole', 'display_name' => '分配角色','route'=>'admin.merchant.assignRole'],
                         ]
                     ],
                     [
-                        'name' => 'pbx.bill',
-                        'display_name' => '帐单管理',
-                        'route' => 'admin.bill',
+                        'name' => 'portal.merchant-role',
+                        'display_name' => '商户角色',
+                        'route' => 'admin.merchant-role',
                         'child' => [
-                            ['name' => 'pbx.bill.create', 'display_name' => '添加','route'=>'admin.bill.create'],
+                            ['name' => 'portal.merchant-role.create', 'display_name' => '添加','route'=>'admin.merchant-role.create'],
+                            ['name' => 'portal.merchant-role.edit', 'display_name' => '编辑','route'=>'admin.merchant-role.edit'],
+                            ['name' => 'portal.merchant-role.destroy', 'display_name' => '删除','route'=>'admin.merchant-role.destroy'],
+                            ['name' => 'portal.merchant-role.permission', 'display_name' => '分配权限','route'=>'admin.merchant-role.permission'],
                         ]
                     ],
+                    [
+                        'name' => 'portal.merchant-permission',
+                        'display_name' => '商户权限',
+                        'route' => 'admin.merchant-permission',
+                        'child' => [
+                            ['name' => 'portal.merchant-permission.create', 'display_name' => '添加权限','route'=>'admin.merchant-permission.create'],
+                            ['name' => 'portal.merchant-permission.edit', 'display_name' => '编辑权限','route'=>'admin.merchant-permission.edit'],
+                            ['name' => 'portal.merchant-permission.destroy', 'display_name' => '删除权限','route'=>'admin.merchant-permission.destroy'],
+                        ]
+                    ],
+
+                ],
+            ],
+            [
+                'name' => 'pbx.manage',
+                'display_name' => '服务配置',
+                'route' => '',
+                'icon' => 'layui-icon-carousel',
+                'child' => [
                     [
                         'name' => 'pbx.sip',
                         'display_name' => '分机管理',

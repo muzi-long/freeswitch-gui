@@ -51,12 +51,11 @@
                         treeLinkage: false,        // treetable新增参数
                         elem: '#dataTable',
                         url: "{{ route('admin.permission.data') }}",
-                        where: {model: "permission"},
                         cols: [[ //表头
                             {field: 'id', title: 'ID', sort: true, width: 80}
                             , {field: 'display_name', title: '显示名称'}
                             , {field: 'name', title: '权限名称'}
-                            , {field: 'route', title: '路由'}0
+                            , {field: 'route', title: '路由'}
                             , {field: 'url', title: '链接（路由优先）'}
                             , {
                                 field: 'icon_id', title: '图标', templet: function (d) {

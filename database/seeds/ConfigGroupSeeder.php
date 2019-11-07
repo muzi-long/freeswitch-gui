@@ -59,7 +59,7 @@ class ConfigGroupSeeder extends Seeder
                     [
                         'label' => '标题',
                         'key' => 'site_title',
-                        'val' => 'laravel6.0LTS后台管理',
+                        'val' => '小顶外呼2.0',
                         'type' => 'input',
                         'content' => '',
                         'tips' => '',
@@ -67,7 +67,7 @@ class ConfigGroupSeeder extends Seeder
                     [
                         'label' => '关键词',
                         'key' => 'site_keywords',
-                        'val' => '后台管理系统管理',
+                        'val' => '小顶外呼2.0',
                         'type' => 'input',
                         'content' => '',
                         'tips' => '',
@@ -75,7 +75,7 @@ class ConfigGroupSeeder extends Seeder
                     [
                         'label' => '描述',
                         'key' => 'site_description',
-                        'val' => '后台管理系统管理，laravel6，layuiadmin，layui',
+                        'val' => '小顶外呼2.0',
                         'type' => 'textarea',
                         'content' => '',
                         'tips' => '',
@@ -156,6 +156,28 @@ class ConfigGroupSeeder extends Seeder
                         'type' => 'input',
                         'content' => '',
                         'tips' => '兼容与安全模式下请一定要填写！！！',
+                    ],
+                ]
+            ],
+            [
+                'name'=>'freeswitch配置',
+                'sort'=>5,
+                'configuration' => [
+                    [
+                        'label' => 'WSS域名',
+                        'key' => 'fs_wss_url',
+                        'val' => 'call.dgg.net',
+                        'type' => 'input',
+                        'content' => '',
+                        'tips' => '',
+                    ],
+                    [
+                        'label' => 'WSS端口',
+                        'key' => 'fs_wss_port',
+                        'val' => '7443',
+                        'type' => 'input',
+                        'content' => '',
+                        'tips' => '如果修改服务端也需要对应调整',
                     ],
                 ]
             ],

@@ -27,6 +27,7 @@ class Sip extends Migration
             $table->unsignedBigInteger('expense_id')->nullable()->comment('资费套餐ID');
             $table->timestamps();
         });
+        \DB::statement("ALTER TABLE `sip` comment '分机表'");
     }
 
     /**

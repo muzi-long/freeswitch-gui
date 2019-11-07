@@ -23,7 +23,7 @@
 <div style="background:#0ff;width:100%; height:20px;">呼叫状态：<span id='state0'></span></div>
 <div style="background:#fC6;width:100%; overflow:visible">对端状态：<span id='state2'></span></div>
 <div style="background:#cc0;width:100%; overflow:visible">本端状态：<span id='state3'></span></div>
-<div id="play" style="display:none"></div>
+<div id="play"></div>
 
 <script type="text/javascript">
     var userAgentSession;
@@ -35,7 +35,7 @@
         password: 'dgg123456',
         hackIpInContact: true,
         rtcpMuxPolicy: 'negotiate',
-        hackWssInTransport: true
+        hackWssInTransport: true,
     });
     //注册成功
     userAgent.on('registered', function () {

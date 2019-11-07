@@ -28,6 +28,8 @@ class CreateCdrABLeg extends Migration
             $table->string('sofia_record_file')->nullable()->comment('录音文件地址');
             $table->string('extend_content')->nullable()->comment('预留扩展字段内容');
         });
+        \DB::statement("ALTER TABLE `cdr_ab_leg` comment '通话记录ab表'");
+
         Schema::create('cdr_a_leg', function (Blueprint $table) {
             $table->increments('id');
             $table->string('aleg_uuid')->comment('aleg_uuid');
@@ -44,6 +46,8 @@ class CreateCdrABLeg extends Migration
             $table->string('sofia_record_file')->nullable()->comment('录音文件地址');
             $table->string('extend_content')->nullable()->comment('预留扩展字段内容');
         });
+        \DB::statement("ALTER TABLE `cdr_a_leg` comment '通话记录a表'");
+
         Schema::create('cdr_b_leg', function (Blueprint $table) {
             $table->increments('id');
             $table->string('aleg_uuid')->comment('aleg_uuid');
@@ -60,6 +64,7 @@ class CreateCdrABLeg extends Migration
             $table->string('sofia_record_file')->nullable()->comment('录音文件地址');
             $table->string('extend_content')->nullable()->comment('预留扩展字段内容');
         });
+        \DB::statement("ALTER TABLE `cdr_b_leg` comment '通话记录b表'");
     }
 
     /**
