@@ -28,3 +28,31 @@ Route::group(['namespace'=>'Merchant','prefix'=>'merchant','middleware'=>'mercha
     Route::get('/index','IndexController@index')->name('merchant.index');
 });
 
+/*
+|--------------------------------------------------------------------------
+| 系统管理模块
+|--------------------------------------------------------------------------
+*/
+Route::group(['namespace'=>'Merchant','prefix'=>'merchant','middleware'=>'merchant'],function (){
+
+    //会员管理
+    Route::group(['middleware'=>['permission:merchant.member']],function (){
+        Route::get('member','MermberController@index')->name('merchant.member');
+        Route::get('member/data','MermberController@data')->name('merchant.member.data');
+        //添加
+        Route::get('member/create','MermberController@create')->name('merchant.member.create')->middleware('permission:merchant.member.create');
+        Route::post('member/store','MermberController@store')->name('merchant.member.store')->middleware('permission:merchant.member.create');
+        //编辑
+        Route::get('member/{id}/edit','MermberController@edit')->name('merchant.member.edit')->middleware('permission:merchant.member.edit');
+        Route::put('member/{id}/update','MermberController@update')->name('merchant.member.update')->middleware('permission:merchant.member.edit');
+        //删除
+        Route::delete('member/destroy','MermberController@destroy')->name('merchant.member.destroy')->middleware('permission:merchant.member.destroy');
+        //分配角色
+        Route::get('member/{id}/role','MermberController@role')->name('merchant.user.role')->middleware('permission:merchant.member.role');
+        Route::put('member/{id}/assignRole','MermberController@assignRole')->name('merchant.member.assignRole')->middleware('permission:merchant.member.role');
+
+    });
+
+
+});
+

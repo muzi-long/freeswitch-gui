@@ -53,7 +53,7 @@
                         url: "{{ route('admin.permission.data') }}",
                         cols: [[ //表头
                             {field: 'id', title: 'ID', sort: true, width: 80}
-                            , {field: 'display_name', title: '显示名称'}
+                            , {field: 'display_name', title: '显示名称',width:200}
                             , {field: 'name', title: '权限名称'}
                             , {field: 'route', title: '路由'}
                             , {field: 'url', title: '链接（路由优先）'}

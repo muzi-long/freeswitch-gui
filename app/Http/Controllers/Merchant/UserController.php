@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Merchant;
 
+use App\Http\Requests\ChangePasswordRequest;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
@@ -77,4 +78,34 @@ class UserController extends Controller
     {
         return 'username';
     }
+
+    /**
+     * 更改密码
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function changeMyPasswordForm()
+    {
+        return View::make('merchant.user.changeMyPassword');
+    }
+
+    /**
+     * 修改密码
+     * @param ChangePasswordRequest $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function changeMyPassword(ChangePasswordRequest $request)
+    {
+        $data = $request->all(['old_password','new_password']);
+        //验证原密码
+        if (!Hash::check($data['old_password'],$request->user('merchant')->getAuthPassword())){
+            return Redirect::back()->withErrors('原密码不正确');
+        }
+        try{
+            $request->user('merchant')->fill(['password' => $data['new_password']])->save();
+            return Redirect::back()->with(['success'=>'密码修改成功']);
+        }catch (\Exception $exception){
+            return Redirect::back()->withErrors('修改失败');
+        }
+    }
+
 }

@@ -91,6 +91,19 @@
                         </dl>
                     </li>
 
+                    <li data-name="system" class="layui-nav-item">
+                        <a href="javascript:;" lay-tips="系统配置" lay-direction="2">
+                            <i class="layui-icon layui-icon-set"></i>
+                            <cite>系统配置</cite>
+                        </a>
+                        <dl class="layui-nav-child">
+                            <dd data-name="member" >
+                                <a lay-href="{{route('merchant.member')}}" lay-tips="会员管理" lay-direction="2">会员管理</a>
+
+                            </dd>
+                        </dl>
+                    </li>
+
                 </ul>
             </div>
         </div>
