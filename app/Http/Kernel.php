@@ -2,7 +2,6 @@
 
 namespace App\Http;
 
-use App\Http\Middleware\Member;
 use App\Http\Middleware\Merchant;
 use App\Http\Middleware\OperateLog;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
@@ -70,7 +69,6 @@ class Kernel extends HttpKernel
 
         'operate.log' => OperateLog::class,
         'merchant' => Merchant::class,
-        'member' => Member::class,
 
     ];
 

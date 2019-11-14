@@ -26,9 +26,8 @@ class MerchantUpdateRequest extends FormRequest
         $reg = [
             'username' => 'required|string|min:4|max:14|unique:merchant,username,'.$this->id.',id',
             'status' => 'required|numeric|in:'.implode(',',array_keys(config('freeswitch.merchant_status'))),
-            'company_name' => 'required',
-            'sip_num' => 'required|numeric|min:0',
-            'expires_at' => 'required|date_format:Y-m-d H\:i\:s'
+            'contact_name' => 'required',
+            'contact_phone' => 'required',
         ];
         if ($this->get('password')){
             $reg['password'] = 'required|string|min:6|max:14';

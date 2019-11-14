@@ -31,7 +31,7 @@ class RoleController extends Controller
      */
     public function data(Request $request)
     {
-        $res = Role::where('guard_name','web')->paginate($request->get('limit', 30));
+        $res = Role::paginate($request->get('limit', 30));
         $data = [
             'code' => 0,
             'msg' => '正在请求中...',
@@ -57,7 +57,7 @@ class RoleController extends Controller
      */
     public function store(RoleCreateRequest $request)
     {
-        $data = $request->only(['name','display_name']);
+        $data = $request->only(['name','display_name','guard_name']);
         try{
             Role::create($data);
             return Redirect::to(URL::route('admin.role'))->with(['success'=>'添加成功']);
@@ -97,7 +97,7 @@ class RoleController extends Controller
     public function update(RoleUpdateRequest $request, $id)
     {
         $role = Role::findOrFail($id);
-        $data = $request->only(['name','display_name']);
+        $data = $request->only(['name','display_name','guard_name']);
         try{
             $role->update($data);
             return Redirect::to(URL::route('admin.role'))->with(['success'=>'更新成功']);
@@ -134,7 +134,7 @@ class RoleController extends Controller
     public function permission(Request $request,$id)
     {
         $role = Role::findOrFail($id);
-        $permissions = Permission::with('allChilds')->where('parent_id',0)->get();
+        $permissions = Permission::with('allChilds')->where('guard_name',$role->guard_name)->where('parent_id',0)->get();
         foreach ($permissions as $p1){
             $p1->own = $role->hasPermissionTo($p1->id) ? 'checked' : false ;
             if ($p1->childs->isNotEmpty()){

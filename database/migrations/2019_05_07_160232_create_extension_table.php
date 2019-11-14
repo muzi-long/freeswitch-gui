@@ -22,7 +22,7 @@ class CreateExtensionTable extends Migration
             $table->string('context')->default('default')->comment('标识呼出还是呼入，default==呼出，public==呼入');
             $table->timestamps();
         });
-        \DB::statement("ALTER TABLE `cdr_asr` comment '拨号计划表'");
+        \DB::statement("ALTER TABLE `extension` comment '拨号计划表'");
     }
 
     /**

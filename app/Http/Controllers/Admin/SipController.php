@@ -48,9 +48,7 @@ class SipController extends Controller
      */
     public function create()
     {
-        $merchants = Merchant::orderByDesc('id')->where('status',1)->get();
-
-        return view('admin.sip.create',compact('merchants'));
+        return view('admin.sip.create');
     }
 
     /**
@@ -83,8 +81,8 @@ class SipController extends Controller
             $data['effective_caller_id_number'] = $data['username'];
         }
         //验证商户允许的最大分机数
-        $merchant = Merchant::withCount('sips')->findOrFail($data['merchant_id']);
-        if ($merchant->sips_count >= $merchant->sip_num){
+        $merchant = Merchant::with('info')->withCount('sips')->findOrFail($data['merchant_id']);
+        if ($merchant->sips_count >= $merchant->info->sip_num){
             return back()->withInput()->withErrors(['error'=>'添加失败：超出商户最大允许分机数量']);
         }
         try{

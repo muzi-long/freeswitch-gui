@@ -178,6 +178,7 @@ return [
         Spatie\Permission\PermissionServiceProvider::class,
         Mews\Captcha\CaptchaServiceProvider::class,
         Overtrue\LaravelWeChat\ServiceProvider::class,
+        Jenssegers\Agent\AgentServiceProvider::class,
 
     ],
 
@@ -232,6 +233,7 @@ return [
 
         'Captcha' => Mews\Captcha\Facades\Captcha::class,
         'EasyWeChat' => Overtrue\LaravelWeChat\Facade::class,
+        'Agent' => Jenssegers\Agent\Facades\Agent::class,
 
     ],
 

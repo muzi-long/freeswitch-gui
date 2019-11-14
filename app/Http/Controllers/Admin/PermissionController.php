@@ -43,10 +43,11 @@ class PermissionController extends Controller
      * 添加权限
      * @return \Illuminate\Contracts\View\View
      */
-    public function create()
+    public function create(Request $request)
     {
-        $permissions = Permission::with('allChilds')->where('parent_id', 0)->get();
-        return View::make('admin.permission.create', compact('permissions'));
+        $guard_name = $request->get('guard_name','web');
+        $permissions = Permission::with('allChilds')->where('guard_name',$guard_name)->where('parent_id', 0)->get();
+        return View::make('admin.permission.create', compact('permissions','guard_name'));
     }
 
     /**
@@ -86,7 +87,8 @@ class PermissionController extends Controller
     {
         $permission = Permission::findOrFail($id);
         $permissions = Permission::with('allChilds')->where('parent_id', 0)->get();
-        return View::make('admin.permission.edit', compact('permission', 'permissions'));
+        $guard_name = $permission->guard_name;
+        return View::make('admin.permission.edit', compact('permission', 'permissions', 'guard_name'));
     }
 
     /**

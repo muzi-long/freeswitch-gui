@@ -3,16 +3,17 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\MerchantCreateRequest;
-use App\Http\Requests\MerchantRequest;
 use App\Http\Requests\MerchantUpdateRequest;
 use App\Models\Gateway;
-use App\Models\Member;
 use App\Models\Merchant;
+use App\Models\MerchantInfo;
 use App\Models\Role;
 use App\Models\Sip;
 use Faker\Provider\Uuid;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\View;
 
@@ -31,24 +32,14 @@ class MerchantController extends Controller
     public function data(Request $request)
     {
         $data = $request->all(['username','company_name','status','expires_at_start','expires_at_end']);
-        $res = Merchant::orderBy('id','desc')
+        $res = Merchant::with('info')
+            ->where('merchant_id',0)
+            ->orderBy('id','desc')
             ->when($data['username'],function ($query) use ($data){
                 return $query->where('username','like','%'.$data['username'].'%');
             })
-            ->when($data['company_name'],function ($query) use ($data){
-                return $query->where('company_name','like','%'.$data['company_name'].'%');
-            })
             ->when($data['status']!==null,function ($query) use ($data){
                 return $query->where('status',$data['status']);
-            })
-            ->when($data['expires_at_start']&&!$data['expires_at_end'],function ($query) use ($data){
-                return $query->where('expires_at','>=',$data['expires_at_start']);
-            })
-            ->when(!$data['expires_at_start']&&$data['expires_at_end'],function ($query) use ($data){
-                return $query->where('expires_at','<=',$data['expires_at_end']);
-            })
-            ->when($data['expires_at_start']&&$data['expires_at_end'],function ($query) use ($data){
-                return $query->whereBetween('expires_at',[$data['expires_at_start'],$data['expires_at_end']]);
             })
             ->paginate($request->get('limit', 30));
         $data = [
@@ -81,10 +72,12 @@ class MerchantController extends Controller
         $data = $request->all([
             'username',
             'password',
-            'company_name',
             'contact_name',
             'contact_phone',
             'status',
+        ]);
+        $dataInfo = $request->all([
+            'company_name',
             'expires_at',
             'sip_num',
             'member_num',
@@ -92,9 +85,15 @@ class MerchantController extends Controller
         ]);
         $data['uuid'] = Uuid::uuid();
         try{
-            Merchant::create($data);
+            $data['password'] = bcrypt($data['password']);
+            $merchant = Merchant::create($data);
+            if ($merchant){
+                $dataInfo['merchant_id'] = $merchant->id;
+                MerchantInfo::create($dataInfo);
+            }
             return redirect()->to(route('admin.merchant'))->with(['success'=>'添加成功']);
         }catch (\Exception $e){
+            Log::info('添加商户异常：'.$e->getMessage());
             return back()->withInput()->withErrors($e->getMessage());
         }
     }
@@ -105,7 +104,11 @@ class MerchantController extends Controller
      */
     public function show($id)
     {
-        $merchant = Merchant::with(['gateways'])->findOrFail($id);
+        $merchant = Merchant::with(['info','gateways'])->findOrFail($id);
+        $roles = Role::where('guard_name','merchant')->get();
+        foreach ($roles as $role){
+            $role->own = $merchant->hasRole($role) ? true : false;
+        }
         $gateways = Gateway::get();
         foreach ($gateways as $gateway){
             if ($merchant->gateways->isNotEmpty()){
@@ -117,24 +120,11 @@ class MerchantController extends Controller
             }
         }
         //子帐号
-        $members = Member::where('merchant_id',$merchant->id)->orderByDesc('id')->get();
+        $accounts = Merchant::where('merchant_id',$merchant->id)->orderByDesc('id')->get();
         //分机
         $sips = Sip::where('merchant_id',$merchant->id)->orderByDesc('id')->get();
-        //角色
-        $roles = Role::where('guard_name','merchant')->get();
-        return View::make('admin.merchant.show',compact('merchant','gateways','members','sips','roles'));
-    }
 
-    public function assignRole(Request $request,$id)
-    {
-        $user = Merchant::findOrFail($id);
-        $roles = $request->get('roles',[]);
-        try{
-            $user->syncRoles($roles);
-            return Response::json(['code'=>0,'msg'=>'更新成功']);
-        }catch (\Exception $exception){
-            return Response::json(['code'=>1,'msg'=>'更新失败']);
-        }
+        return View::make('admin.merchant.show',compact('merchant','gateways','accounts','sips','roles'));
     }
 
     /**
@@ -162,23 +152,33 @@ class MerchantController extends Controller
         $data = $request->all([
             'username',
             'password',
-            'company_name',
             'contact_name',
             'contact_phone',
             'status',
+        ]);
+        $dataInfo = $request->all([
+            'company_name',
             'expires_at',
             'sip_num',
             'member_num',
             'queue_num',
         ]);
-        if ($data['password']==null){
-            unset($data['password']);
-        }
+
+        DB::beginTransaction();
         try{
-            $model->update($data);
+            if ($data['password']==null){
+                unset($data['password']);
+            }else{
+                $data['password'] = bcrypt($data['password']);
+            }
+            DB::table('merchant')->where('id',$id)->update($data);
+            DB::table('merchant_info')->where('merchant_id',$id)->update($dataInfo);
+            DB::commit();
             return redirect()->to(route('admin.merchant'))->with(['success'=>'更新成功']);
         }catch (\Exception $e){
-            return back()->withErrors($e->getMessage());
+            DB::rollBack();
+            Log::info('更新商户异常：'.$e->getMessage());
+            return back()->withErrors('更新失败');
         }
     }
 
@@ -202,18 +202,6 @@ class MerchantController extends Controller
         }catch (\Exception $exception){
             return response()->json(['code'=>1, 'msg'=>$exception->getMessage()]);
         }
-    }
-
-    /**
-     * 帐单
-     * @param Request $request
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     */
-    public function bill(Request $request)
-    {
-        $merchant_id = $request->get('merchant_id');
-        $merchant = Merchant::findOrFail($merchant_id);
-        return view('admin.merchant.bill',compact('merchant'));
     }
 
     public function gateway($id)
@@ -247,6 +235,24 @@ class MerchantController extends Controller
             return redirect()->to(route('admin.merchant'))->with(['success'=>'更新成功']);
         }catch (\Exception $exception){
             return back()->withErrors('更新失败');
+        }
+    }
+
+    /**
+     * 授予角色
+     * @param Request $request
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function assignRole(Request $request,$id)
+    {
+        $merchant = Merchant::findOrFail($id);
+        $roles = $request->get('roles',[]);
+        try{
+            $merchant->syncRoles($roles);
+            return Response::json(['code'=>0,'msg'=>'更新成功']);
+        }catch (\Exception $exception){
+            return Response::json(['code'=>1,'msg'=>'更新失败']);
         }
     }
 

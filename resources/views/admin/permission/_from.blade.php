@@ -1,5 +1,11 @@
 {{csrf_field()}}
-
+<div class="layui-form-item">
+    <label for="" class="layui-form-label">所属</label>
+    <div class="layui-input-inline">
+        <input type="hidden" name="guard_name" value="{{$guard_name}}">
+        <input type="text" value="{{$guard_name=='web'?'后台':'前台'}}" disabled class="layui-input layui-disabled">
+    </div>
+</div>
 <div class="layui-form-item">
     <label for="" class="layui-form-label">父级</label>
     <div class="layui-input-inline">

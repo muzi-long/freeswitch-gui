@@ -5,7 +5,8 @@
         <div class="layui-card-header layuiadmin-card-header-auto">
             <div class="layui-btn-group ">
                 @can('system.permission.create')
-                    <a class="layui-btn layui-btn-sm" href="{{ route('admin.permission.create') }}">添 加</a>
+                    <a class="layui-btn layui-btn-sm layui-bg-cyan" href="{{ route('admin.permission.create',['guard_name'=>'web']) }}">添加后台权限</a>
+                    <a class="layui-btn layui-btn-sm layui-bg-green" href="{{ route('admin.permission.create',['guard_name'=>'merchant']) }}">添加前台权限</a>
                 @endcan
             </div>
         </div>
@@ -64,6 +65,15 @@
                             }
                             , {field: 'type_name', title: '类型'}
                             , {field: 'visiable_name', title: '可见性'}
+                            , {field: 'guard_name', title: '权限所属',templet:function (d) {
+                                    if (d.guard_name=='web'){
+                                        return '<span class="layui-badge layui-bg-cyan">后台</span>'
+                                    } else if (d.guard_name=='merchant'){
+                                        return '<span class="layui-badge layui-bg-green">前台</span>'
+                                    } else {
+                                        return '未知';
+                                    }
+                                }}
                             , {field: 'created_at', title: '创建时间'}
                             , {field: 'updated_at', title: '更新时间'}
                             , {fixed: 'right', width: 260, align: 'center', toolbar: '#options'}

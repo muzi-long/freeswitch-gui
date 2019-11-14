@@ -3,17 +3,20 @@
 namespace App\Http\Controllers\Home;
 
 use App\Http\Requests\ChangePasswordRequest;
-use App\Models\Configuration;
-use App\Models\LoginLog;
+use App\Models\Merchant;
+use Carbon\Carbon;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
+use Jenssegers\Agent\Agent;
 
 
 class UserController extends Controller
@@ -27,8 +30,9 @@ class UserController extends Controller
      */
     public function showLoginForm()
     {
-        return View::make('admin.user.login');
+        return View::make('home.user.login');
     }
+
 
     /**
      * 验证登录字段
@@ -38,7 +42,6 @@ class UserController extends Controller
     protected function validateLogin(Request $request)
     {
         $this->validate($request, [
-            'captcha' => 'required|captcha',
             $this->username() => 'required|string',
             'password' => 'required|string',
         ]);
@@ -47,7 +50,7 @@ class UserController extends Controller
     //登录成功后的跳转地址
     public function redirectTo()
     {
-        return URL::route('admin.layout');
+        return URL::route('home.layout');
     }
 
     /**
@@ -57,7 +60,7 @@ class UserController extends Controller
      */
     protected function loggedOut(Request $request)
     {
-        return Redirect::to(URL::route('admin.user.login'));
+        return Redirect::to(URL::route('home.user.login'));
     }
 
     /**
@@ -67,23 +70,68 @@ class UserController extends Controller
      */
     protected function guard()
     {
-        return Auth::guard('member');
+        return Auth::guard('merchant');
     }
 
+    /**
+     * 验证商户、员工信息
+     * @param Request $request
+     * @param $user
+     * @return \Illuminate\Http\RedirectResponse
+     */
     protected function authenticated(Request $request, $user)
     {
-        //缓存配置信息
-        $configuration = Configuration::pluck('val','key');
-        $request->session()->put('configuration',$configuration);
-        //记录登录成功日志
-        if ($configuration['login_log']==1){
-            LoginLog::create([
-                'username' => $user->username,
-                'ip' => $request->ip(),
-                'method' => $request->method(),
-                'user_agent' => $request->header('User-Agent'),
-                'remark' => '登录成功',
+        try{
+            $agent = new Agent();
+            DB::table('merchant_login_log')->insert([
+                'merchant_id' => $user->id,
+                'ip' => $request->getClientIp(),
+                'platform' => $agent->platform(),
+                'browser' => $agent->browser(),
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ]);
+        }catch (\Exception $exception){
+            Log::info('会员ID：'.$user->id.' 登录日志写入失败。'.$exception->getMessage());
+        }
+
+        //验证
+        if ($user->merchant_id==0){ //商户
+            if ($user->status!=1){
+                $this->guard()->logout();
+                $request->session()->invalidate();
+                return Redirect::back()->withErrors('帐号已被禁用');
+            }
+            $user->load('info');
+            if (Carbon::now()->diffInSeconds($user->info->expires_at,false)<0){
+                $this->guard()->logout();
+                $request->session()->invalidate();
+                return Redirect::back()->withErrors('帐号使用已到期，请联系管理员');
+            }
+
+        }else { //员工
+            if ($user->status!=1){
+                $this->guard()->logout();
+                $request->session()->invalidate();
+                return Redirect::back()->withErrors('帐号已被禁用');
+            }
+            //验证员工的商户
+            $merchant = Merchant::with('info')->where('merchant_id',0)->where('id',$user->merchant_id)->first();
+            if ($merchant==null){
+                $this->guard()->logout();
+                $request->session()->invalidate();
+                return Redirect::back()->withErrors('商户帐号不存在');
+            }
+            if ($merchant->status!=1){
+                $this->guard()->logout();
+                $request->session()->invalidate();
+                return Redirect::back()->withErrors('商户帐号已被禁用');
+            }
+            if (Carbon::now()->diffInSeconds($merchant->info->expires_at,false)<0){
+                $this->guard()->logout();
+                $request->session()->invalidate();
+                return Redirect::back()->withErrors('商户帐号使用已到期，请联系管理员');
+            }
         }
     }
 
@@ -102,7 +150,7 @@ class UserController extends Controller
      */
     public function changeMyPasswordForm()
     {
-        return View::make('admin.user.changeMyPassword');
+        return View::make('home.user.changeMyPassword');
     }
 
     /**

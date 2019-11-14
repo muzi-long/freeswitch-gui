@@ -136,24 +136,15 @@ class UserSeeder extends Seeder
                         ]
                     ],
                     [
-                        'name' => 'portal.merchant-role',
-                        'display_name' => '商户角色',
-                        'route' => 'admin.merchant-role',
+                        'name' => 'portal.member',
+                        'display_name' => '员工管理',
+                        'route' => 'admin.member',
                         'child' => [
-                            ['name' => 'portal.merchant-role.create', 'display_name' => '添加','route'=>'admin.merchant-role.create'],
-                            ['name' => 'portal.merchant-role.edit', 'display_name' => '编辑','route'=>'admin.merchant-role.edit'],
-                            ['name' => 'portal.merchant-role.destroy', 'display_name' => '删除','route'=>'admin.merchant-role.destroy'],
-                            ['name' => 'portal.merchant-role.permission', 'display_name' => '分配权限','route'=>'admin.merchant-role.permission'],
-                        ]
-                    ],
-                    [
-                        'name' => 'portal.merchant-permission',
-                        'display_name' => '商户权限',
-                        'route' => 'admin.merchant-permission',
-                        'child' => [
-                            ['name' => 'portal.merchant-permission.create', 'display_name' => '添加权限','route'=>'admin.merchant-permission.create'],
-                            ['name' => 'portal.merchant-permission.edit', 'display_name' => '编辑权限','route'=>'admin.merchant-permission.edit'],
-                            ['name' => 'portal.merchant-permission.destroy', 'display_name' => '删除权限','route'=>'admin.merchant-permission.destroy'],
+                            ['name' => 'portal.member.create', 'display_name' => '添加权限','route'=>'admin.member.create'],
+                            ['name' => 'portal.member.edit', 'display_name' => '编辑权限','route'=>'admin.member.edit'],
+                            ['name' => 'portal.member.destroy', 'display_name' => '删除权限','route'=>'admin.member.destroy'],
+                            ['name' => 'portal.member.role', 'display_name' => '分配角色','route'=>'admin.member.role'],
+                            ['name' => 'portal.member.assignSip', 'display_name' => '分配分机','route'=>'admin.member.assignSip'],
                         ]
                     ],
 

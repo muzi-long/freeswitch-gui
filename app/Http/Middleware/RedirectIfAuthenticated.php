@@ -20,7 +20,12 @@ class RedirectIfAuthenticated
     public function handle($request, Closure $next, $guard = null)
     {
         if (Auth::guard($guard)->check()) {
-            return Redirect::to(URL::route('admin.layout'));
+            if ($guard=='merchant'){
+                $route = 'home.layout';
+            }else{
+                $route = 'admin.layout';
+            }
+            return Redirect::to(URL::route($route));
         }
 
         return $next($request);

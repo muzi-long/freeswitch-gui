@@ -15,12 +15,6 @@
                 </div>
                 <div class="layui-form-item">
                     <div class="layui-inline">
-                        <label for="" class="layui-form-label">公司名称</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="company_name" placeholder="公司名称" class="layui-input">
-                        </div>
-                    </div>
-                    <div class="layui-inline">
                         <label for="" class="layui-form-label">帐号</label>
                         <div class="layui-input-inline">
                             <input type="text" name="username" placeholder="商家帐号" class="layui-input">
@@ -35,16 +29,6 @@
                                     <option value="{{$k}}">{{$v}}</option>
                                 @endforeach
                             </select>
-                        </div>
-                    </div>
-                    <div class="layui-inline">
-                        <label for="" class="layui-form-label">到期时间</label>
-                        <div class="layui-input-inline" style="width: 150px">
-                            <input type="text" name="expires_at_start" id="expires_at_start" placeholder="开始时间" class="layui-input">
-                        </div>
-                        <div class="layui-form-mid layui-word-aux">-</div>
-                        <div class="layui-input-inline" style="width: 150px">
-                            <input type="text" name="expires_at_end" id="expires_at_end" placeholder="结束时间" class="layui-input">
                         </div>
                     </div>
                 </div>
@@ -85,7 +69,6 @@
                     {checkbox: true,fixed: true}
                     ,{field: 'id', title: 'ID', sort: true,width:80}
                     ,{field: 'username', title: '帐号'}
-                    ,{field: 'company_name', title: '公司名称'}
                     ,{field: 'contact_name', title: '联系人'}
                     ,{field: 'contact_phone', title: '联系电话'}
                     ,{field: 'status_name', title: '状态', templet:function (d) {
@@ -97,13 +80,26 @@
                             return ''
                         }
                     }}
-                    ,{field: 'expires_at', title: '到期时间'}
-                    ,{field: 'sip_num', title: '分机数量'}
-                    ,{field: 'member_num', title: '子帐号数量'}
-                    ,{field: 'queue_num', title: '队列数量'}
-                    ,{field: 'money', title: '帐户余额'}
+                    ,{field: 'company_name', title: '公司名称',templet:function (d) {
+                            return d.info.company_name;
+                        }}
+                    ,{field: 'expires_at', title: '到期时间',templet:function (d) {
+                            return d.info.expires_at
+                        }}
+                    ,{field: 'sip_num', title: '分机数量',templet:function (d) {
+                            return d.info.sip_num;
+                        }}
+                    ,{field: 'member_num', title: '子帐号数量',templet:function (d) {
+                            return d.info.member_num;
+                        }}
+                    ,{field: 'queue_num', title: '队列数量',templet:function (d) {
+                            return d.info.queue_num;
+                        }}
+                    ,{field: 'money', title: '帐户余额',templet:function (d) {
+                            return d.info.money;
+                        }}
                     ,{field: 'created_at', title: '创建时间'}
-                    ,{fixed: 'right', width: 220, align:'center', toolbar: '#options', title:'操作'}
+                    ,{fixed: 'right', width: 200, align:'center', toolbar: '#options', title:'操作'}
                 ]]
             });
 
@@ -170,7 +166,6 @@
             //搜索
             form.on('submit(search)', function(data){
                 var parms = data.field;
-                console.log(parms);
                 dataTable.reload({
                     where:parms,
                     page:{curr:1}

@@ -66,8 +66,7 @@ class ApiController extends Controller
     public function merchantGateway(Request $request)
     {
         $res = Merchant::with('gateways')
-            ->where('status',1)
-            ->where('expires_at','>',Carbon::now())
+            ->where('merchant_id',0)
             ->select(['id','username as name'])
             ->get();
         return response()->json($res);

@@ -1409,3 +1409,12 @@ html {
     z-index:999;
     cursor: pointer;
 }
+body,html{
+    font-size: 12px;
+}
+.layui-table td, .layui-table th{
+    font-size: 12px;
+}
+.layui-card-header{
+    font-size: 12px;
+}

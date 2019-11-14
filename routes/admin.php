@@ -206,57 +206,36 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth','perm
         Route::put('merchant/{id}/update','MerchantController@update')->name('admin.merchant.update')->middleware('permission:portal.merchant.edit');
         //删除
         Route::delete('merchant/destroy','MerchantController@destroy')->name('admin.merchant.destroy')->middleware('permission:portal.merchant.destroy');
-        //帐单列表，与帐单同权限
-        Route::get('merchant/bill','MerchantController@bill')->name('admin.merchant.bill')->middleware('permission:portal.bill');
-        //添加帐单， 与帐单同权限
-        Route::post('merchant/bill/create','MerchantController@billCreate')->name('admin.merchant.bill.create')->middleware('permission:portal.bill.create');
         //分配网关
         Route::get('merchant/{id}/gateway','MerchantController@gateway')->name('admin.merchant.gateway')->middleware('permission:portal.merchant.gateway');
         Route::put('merchant/{id}/assignGateway','MerchantController@assignGateway')->name('admin.merchant.assignGateway')->middleware('permission:portal.merchant.gateway');
         //详情
         Route::get('merchant/{id}/show','MerchantController@show')->name('admin.merchant.show');
+        //授予角色
+        Route::put('merchant/{id}/assignRole','MerchantController@assignRole')->name('admin.merchant.assignRole');
+
+    });
+
+    //员工管理
+    Route::group(['middleware'=>'permission:portal.member'],function (){
+        Route::get('member','MemberController@index')->name('admin.member');
+        Route::get('member/data','MemberController@data')->name('admin.member.data');
+        //添加
+        Route::get('member/create','MemberController@create')->name('admin.member.create')->middleware('permission:portal.member.create');
+        Route::post('member/store','MemberController@store')->name('admin.member.store')->middleware('permission:portal.member.create');
+        //编辑
+        Route::get('member/{id}/edit','MemberController@edit')->name('admin.member.edit')->middleware('permission:portal.member.edit');
+        Route::put('member/{id}/update','MemberController@update')->name('admin.member.update')->middleware('permission:portal.member.edit');
+        //删除
+        Route::delete('member/destroy','MemberController@destroy')->name('admin.member.destroy')->middleware('permission:portal.member.destroy');
         //分配角色
-        Route::put('merchant/{id}/assignRole','MerchantController@assignRole')->name('admin.merchant.assignRole')->middleware('permission:portal.merchant.assignRole');
+        Route::get('member/{id}/role','MemberController@role')->name('admin.member.role')->middleware('permission:portal.member.role');
+        Route::put('member/{id}/assignRole','MemberController@assignRole')->name('admin.member.assignRole')->middleware('permission:portal.member.role');
+        //分配分机
+        Route::post('member/assignSip','MemberController@assignSip')->name('admin.member.assignSip')->middleware('permission:portal.member.assignSip');
 
     });
-    //商户角色
-    Route::group(['middleware'=>'permission:portal.merchant-role'],function (){
-        Route::get('merchant-role','MerchantRoleController@index')->name('admin.merchant-role');
-        Route::get('merchant-role/data','MerchantRoleController@data')->name('admin.merchant-role.data');
-        //添加
-        Route::get('merchant-role/create','MerchantRoleController@create')->name('admin.merchant-role.create')->middleware('permission:portal.merchant-role.create');
-        Route::post('merchant-role/store','MerchantRoleController@store')->name('admin.merchant-role.store')->middleware('permission:portal.merchant-role.create');
-        //编辑
-        Route::get('merchant-role/{id}/edit','MerchantRoleController@edit')->name('admin.merchant-role.edit')->middleware('permission:portal.merchant-role.edit');
-        Route::put('merchant-role/{id}/update','MerchantRoleController@update')->name('admin.merchant-role.update')->middleware('permission:portal.merchant-role.edit');
-        //删除
-        Route::delete('merchant-role/destroy','MerchantRoleController@destroy')->name('admin.merchant-role.destroy')->middleware('permission:portal.merchant-role.destroy');
-        //分配权限
-        Route::get('merchant-role/{id}/permission','MerchantRoleController@permission')->name('admin.merchant-role.permission')->middleware('permission:portal.merchant-role.permission');
-        Route::put('merchant-role/{id}/assignPermission','MerchantRoleController@assignPermission')->name('admin.merchant-role.assignPermission')->middleware('permission:portal.merchant-role.permission');
-    });
-    //商户权限
-    Route::group(['middleware'=>'permission:portal.merchant-permission'],function (){
-        Route::get('merchant-permission','MerchantPermissionController@index')->name('admin.merchant-permission');
-        Route::get('merchant-permission/data','MerchantPermissionController@data')->name('admin.merchant-permission.data');
-        //添加
-        Route::get('merchant-permission/create','MerchantPermissionController@create')->name('admin.merchant-permission.create')->middleware('permission:portal.merchant-permission.create');
-        Route::post('merchant-permission/store','MerchantPermissionController@store')->name('admin.merchant-permission.store')->middleware('permission:portal.merchant-permission.create');
-        //编辑
-        Route::get('merchant-permission/{id}/edit','MerchantPermissionController@edit')->name('admin.merchant-permission.edit')->middleware('permission:portal.merchant-permission.edit');
-        Route::put('merchant-permission/{id}/update','MerchantPermissionController@update')->name('admin.merchant-permission.update')->middleware('permission:portal.merchant-permission.edit');
-        //删除
-        Route::delete('merchant-permission/destroy','MerchantPermissionController@destroy')->name('admin.merchant-permission.destroy')->middleware('permission:portal.merchant-permission.destroy');
 
-    });
-    //商户帐单
-    Route::group(['middleware'=>'permission:portal.bill'], function (){
-        Route::get('bill','BillController@index')->name('admin.bill');
-        Route::get('bill/data','BillController@data')->name('admin.bill.data');
-        //添加
-        Route::get('bill/create','BillController@create')->name('admin.bill.create')->middleware('permission:portal.bill.create');
-        Route::post('bill/store','BillController@store')->name('admin.bill.store')->middleware('permission:portal.bill.create');
-    });
 });
 
 /*

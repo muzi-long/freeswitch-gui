@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>{{session('configuration.site_title')}}</title>
+    <title>小顶外呼2.0</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
@@ -56,14 +56,13 @@
                 </li>
                 <li class="layui-nav-item" lay-unselect>
                     <a href="javascript:;">
-                        <cite>{{auth('member')->user()->nickname ?? auth('member')->user()->username}}</cite>
+                        <cite>{{auth('merchant')->user()->contact_name}}</cite>
                     </a>
                     <dl class="layui-nav-child">
                         <dd><a lay-href="{{route('home.user.changeMyPasswordForm')}}">修改密码</a></dd>
                         <dd><a href="{{route('home.user.logout')}}">退出</a></dd>
                     </dl>
                 </li>
-
                 <li class="layui-nav-item layui-hide-xs" lay-unselect>
                     <a href="javascript:;" layadmin-event="about"><i class="layui-icon layui-icon-more-vertical"></i></a>
                 </li>
@@ -77,7 +76,7 @@
         <div class="layui-side layui-side-menu">
             <div class="layui-side-scroll">
                 <div class="layui-logo" lay-href="{{route('home.index')}}">
-                    <span>{{session('configuration.site_title')}}</span>
+                    <span>小顶外呼2.0</span>
                 </div>
                 <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu" lay-filter="layadmin-system-side-menu">
                     <li data-name="home" class="layui-nav-item layui-nav-itemed">
@@ -89,70 +88,51 @@
                             <dd data-name="console" class="layui-this">
                                 <a lay-href="{{route('home.index')}}">控制台</a>
                             </dd>
+                            <dd data-name="console">
+                                <a lay-href="{{route('home.onlinecall')}}">在线拨号</a>
+                            </dd>
                         </dl>
                     </li>
-                    @foreach($menus as $menu1)
-                        @can($menu1->name)
-                            @if($menu1->visiable==1)
-                                <li data-name="{{$menu1->name}}" class="layui-nav-item">
-                                    <a
-                                       @if($menu1->type==2 && ($menu1->route || $menu1->url))
-                                            lay-href="{{$menu1->route?route($menu1->route):$menu1->url}}"
-                                       @else
-                                            href="javascript:;"
-                                       @endif
-                                       lay-tips="{{$menu1->display_name}}" lay-direction="2">
-                                        <i class="layui-icon {{$menu1->icon}}"></i>
-                                        <cite>{{$menu1->display_name}}</cite>
-                                    </a>
-                                    @if($menu1->type==1 && $menu1->allChilds->isNotEmpty())
-                                    <dl class="layui-nav-child">
-                                        @foreach($menu1->allChilds as $menu2)
-                                            @can($menu2->name)
-                                                @if($menu2->visiable==1)
-                                                    <dd data-name="{{$menu2->name}}" >
-                                                        <a
-                                                            @if($menu2->type==2 && ($menu2->route || $menu2->url))
-                                                                lay-href="{{$menu2->route?route($menu2->route):$menu2->url}}"
-                                                            @else
-                                                                href="javascript:;"
-                                                            @endif
-                                                            lay-tips="{{$menu2->display_name}}" lay-direction="2">
-                                                            <i class="layui-icon {{$menu2->icon}}"></i>
-                                                            <cite>{{$menu2->display_name}}</cite>
-                                                        </a>
-                                                        @if($menu2->type==1 && $menu2->allChilds->isNotEmpty())
-                                                            <dl class="layui-nav-child">
-                                                                @foreach($menu2->allChilds as $menu3)
-                                                                    @can($menu3->name)
-                                                                        @if($menu3->visiable==1)
-                                                                        <dd data-name="{{$menu3->name}}">
-                                                                            <a
-                                                                                @if($menu3->type==2 && ($menu3->route || $menu3->url))
-                                                                                    lay-href="{{$menu3->route?route($menu3->route):$menu3->url}}"
-                                                                                @else
-                                                                                    href="javascript:;"
-                                                                                @endif
-                                                                                lay-tips="{{$menu3->display_name}}" lay-direction="2">
-                                                                                <i class="layui-icon {{$menu3->icon}}"></i>
-                                                                                <cite>{{$menu3->display_name}}</cite>
-                                                                            </a>
-                                                                        </dd>
-                                                                        @endif
-                                                                    @endcan
-                                                                @endforeach
-                                                            </dl>
-                                                        @endif
-                                                    </dd>
-                                                @endif
-                                            @endcan
-                                        @endforeach
-                                    </dl>
-                                    @endif
-                                </li>
-                            @endif
-                        @endcan
-                    @endforeach
+                    <li data-name="crm" class="layui-nav-item">
+                        <a href="javascript:;" lay-tips="CRM管理" lay-direction="2">
+                            <i class="layui-icon layui-icon-group"></i>
+                            <cite>CRM管理</cite>
+                        </a>
+                        <dl class="layui-nav-child">
+                            <dd data-name="home.node" >
+                                <a lay-href="{{route('home.node')}}" lay-tips="节点管理" lay-direction="2">节点管理</a>
+                            </dd>
+                            <dd data-name="home.node" >
+                                <a lay-href="{{route('home.project-design')}}" lay-tips="项目管理" lay-direction="2">表单设计</a>
+                            </dd>
+                            <dd data-name="home.node" >
+                                <a lay-href="{{route('home.project')}}" lay-tips="项目管理" lay-direction="2">项目管理</a>
+                            </dd>
+                            <dd data-name="home.node" >
+                                <a lay-href="" lay-tips="跟进提醒" lay-direction="2">跟进提醒</a>
+                            </dd>
+                            <dd data-name="home.node" >
+                                <a lay-href="" lay-tips="回收站" lay-direction="2">回收站</a>
+                            </dd>
+                        </dl>
+                    </li>
+                    <li data-name="data" class="layui-nav-item">
+                        <a href="javascript:;" lay-tips="数据报告" lay-direction="2">
+                            <i class="layui-icon layui-icon-group"></i>
+                            <cite>数据报告</cite>
+                        </a>
+                        <dl class="layui-nav-child">
+                            <dd data-name="home.node" >
+                                <a lay-href="" lay-tips="节点管理" lay-direction="2">分机监控</a>
+                            </dd>
+                            <dd data-name="home.node" >
+                                <a lay-href="" lay-tips="分机统计" lay-direction="2">分机统计</a>
+                            </dd>
+                            <dd data-name="home.node" >
+                                <a lay-href="" lay-tips="通话记录" lay-direction="2">通话记录</a>
+                            </dd>
+                        </dl>
+                    </li>
                 </ul>
             </div>
         </div>

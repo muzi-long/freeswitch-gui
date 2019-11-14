@@ -37,6 +37,7 @@ class CreatePermissionTables extends Migration
             $table->string('name');
             $table->string('guard_name');
             $table->string('display_name');
+            $table->integer('merchant_id')->default(0);
             $table->timestamps();
         });
         \DB::statement("ALTER TABLE `".$tableNames['roles']."` comment '角色表'");

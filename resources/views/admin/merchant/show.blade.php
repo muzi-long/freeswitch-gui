@@ -15,7 +15,7 @@
                     <div class="layui-inline">
                         <label for="" class="layui-form-label">公司名称</label>
                         <div class="layui-form-mid layui-word-aux" style="width: 140px">
-                            {{$merchant->company_name}}
+                            {{$merchant->info->company_name}}
                         </div>
                     </div>
                 </div>
@@ -23,13 +23,13 @@
                     <div class="layui-inline">
                         <label for="" class="layui-form-label">分机数</label>
                         <div class="layui-form-mid layui-word-aux" style="width: 140px">
-                            共{{$merchant->sip_num}}个
+                            共{{$merchant->info->sip_num}}个
                         </div>
                     </div>
                     <div class="layui-inline">
-                        <label for="" class="layui-form-label">子帐号数</label>
+                        <label for="" class="layui-form-label">员工数</label>
                         <div class="layui-form-mid layui-word-aux" style="width: 140px">
-                            共{{$merchant->member_num}}个
+                            共{{$merchant->info->member_num}}个
                         </div>
                     </div>
                 </div>
@@ -43,7 +43,7 @@
                     <div class="layui-inline">
                         <label for="" class="layui-form-label">到期时间</label>
                         <div class="layui-form-mid layui-word-aux" style="width: 140px">
-                            {{$merchant->expires_at}}
+                            {{$merchant->info->expires_at}}
                         </div>
                     </div>
                 </div>
@@ -53,9 +53,9 @@
             <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
                 <ul class="layui-tab-title">
                     <li class="layui-this">网关</li>
-                    <li >子帐号</li>
-                    <li >分机</li>
                     <li >角色</li>
+                    <li >员工</li>
+                    <li >分机</li>
                 </ul>
                 <div class="layui-tab-content">
                     <div class="layui-tab-item layui-show">
@@ -99,19 +99,39 @@
                         </form>
                     </div>
                     <div class="layui-tab-item">
+                        <form class="layui-form" method="post">
+                            {{csrf_field()}}
+                            {{method_field('put')}}
+                            <div class="layui-form-item">
+                                @forelse($roles as $role)
+                                    <input type="checkbox" name="roles[]" value="{{$role->id}}" title="{{$role->display_name}}" {{ $role->own ? 'checked' : ''  }} >
+                                @empty
+                                    <div class="layui-form-mid layui-word-aux">还没有角色</div>
+                                @endforelse
+                            </div>
+                            <div class="layui-form-item">
+                                <div class="layui-input-block">
+                                    <button type="submit" class="layui-btn" lay-submit="" lay-filter="assignRole">确 认</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="layui-tab-item">
                         <table class="layui-table" lay-size="sm">
                             <thead>
                             <tr>
                                 <th>帐号</th>
-                                <th>昵称</th>
+                                <th>联系人</th>
+                                <th>联系电话</th>
                                 <th>分机号</th>
                             </tr>
                             </thead>
                             <tbody>
-                            @forelse($members as $val)
+                            @forelse($accounts as $val)
                                 <tr>
-                                    <td>{{$val->phone}}</td>
-                                    <td>{{$val->nickname}}</td>
+                                    <td>{{$val->username}}</td>
+                                    <td>{{$val->contact_name}}</td>
+                                    <td>{{$val->contact_phone}}</td>
                                     <td>{{$val->sip->username}}</td>
                                 </tr>
                             @empty
@@ -150,25 +170,6 @@
                             @endforelse
                         </table>
                     </div>
-                    <div class="layui-tab-item">
-                        @can('portal.merchant.assignRole')
-                        <form class="layui-form">
-                            <div class="layui-form-item">
-                                @forelse($roles as $role)
-                                    <input type="checkbox" name="roles[]" value="{{$role->id}}" title="{{$role->display_name}}" {{ $role->own ? 'checked' : ''  }} >
-                                @empty
-                                    <div class="layui-form-mid layui-word-aux">还没有角色</div>
-                                @endforelse
-                            </div>
-                            <div class="layui-form-item">
-                                <button type="submit" class="layui-btn" lay-submit="" lay-filter="formDemo">确 认</button>
-                                <a class="layui-btn" href="{{route('admin.merchant')}}" >返 回</a>
-                            </div>
-                        </form>
-                        @else
-                        无权限查看
-                        @endcan
-                    </div>
                 </div>
             </div>
         </div>
@@ -187,23 +188,19 @@
             $("#checkAll").click(function () {
                 var pop = $(this).prop('checked');
                 $(".checkItem").prop('checked',pop);
-            })
+            });
 
-            form.on('submit(formDemo)',function (data) {
-                var parm = data.field;
-                parm['_method'] = 'put';
+            form.on('submit(assignRole)',function (data) {
                 var load = layer.load();
-                $.post("{{route('admin.merchant.assignRole',['id'=>$merchant->id])}}",parm,function (res) {
+                $.post('{{route('admin.merchant.assignRole',['id'=>$merchant->id])}}',data.field,function (res) {
                     layer.close(load);
                     if (res.code == 0) {
-                        layer.msg(res.msg, {icon: 1}, function () {
-                            obj.del();
-                        })
+                        layer.msg(res.msg, {icon: 1})
                     } else {
                         layer.msg(res.msg, {icon: 2})
                     }
                 });
-                return false
+                return false;
             })
 
         })

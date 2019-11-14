@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
 
 class Merchant
 {
@@ -17,7 +18,7 @@ class Merchant
     public function handle($request, Closure $next)
     {
         if (Auth::guard('merchant')->guest()){
-            return redirect(route('merchant.user.loginForm'));
+            return Redirect::route('home.user.loginForm');
         }
         return $next($request);
     }
