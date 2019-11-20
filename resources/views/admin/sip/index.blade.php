@@ -44,6 +44,7 @@
                     ,{field: 'effective_caller_id_number', title: '外显号码'}
                     ,{field: 'outbound_caller_id_name', title: '出局名称'}
                     ,{field: 'outbound_caller_id_number', title: '出局号码'}
+                    ,{field: 'status', title: '状态'}
                     ,{field: 'created_at', title: '添加时间'}
                     ,{fixed: 'right', width: 220, align:'center', toolbar: '#options', title:'操作'}
                 ]]

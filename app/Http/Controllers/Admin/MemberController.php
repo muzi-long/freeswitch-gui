@@ -5,11 +5,13 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Requests\MerchantCreateRequest;
 use App\Http\Requests\MerchantUpdateRequest;
 use App\Models\Merchant;
+use App\Models\Role;
 use App\Models\Sip;
 use Faker\Provider\Uuid;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\View;
 
@@ -194,6 +196,38 @@ class MemberController extends Controller
 
     }
 
+    /**
+     * 更新角色
+     * @param $id
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function role($id)
+    {
+        $member = Merchant::findOrFail($id);
+        $roles = Role::where('guard_name','merchant')->get();
+        foreach ($roles as $role){
+            $role->own = $member->hasRole($role) ? true : false;
+        }
+        return View::make('admin.member.role',compact('member','roles'));
+    }
+
+    /**
+     * 更新角色
+     * @param Request $request
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function assignRole(Request $request,$id)
+    {
+        $member = Merchant::findOrFail($id);
+        $roles = $request->get('roles',[]);
+        try{
+            $member->syncRoles($roles);
+            return Redirect::route('admin.member')->with(['success'=>'更新成功']);
+        }catch (\Exception $exception){
+            return Redirect::back()->withErrors('更新失败');
+        }
+    }
 
 
 }

@@ -32,6 +32,9 @@ class SipController extends Controller
             $query = $query->where('username',$username);
         }
         $res = $query->orderByDesc('id')->paginate($request->get('limit', 30));
+        foreach ($res->items() as $d){
+            $d->status = Sip::getStatus($d);
+        }
         $data = [
             'code' => 0,
             'msg' => '正在请求中...',

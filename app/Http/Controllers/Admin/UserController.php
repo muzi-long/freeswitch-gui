@@ -246,7 +246,7 @@ class UserController extends Controller
     public function role($id)
     {
         $user = User::findOrFail($id);
-        $roles = Role::get();
+        $roles = Role::where('guard_name','web')->get();
         foreach ($roles as $role){
             $role->own = $user->hasRole($role) ? true : false;
         }

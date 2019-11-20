@@ -179,6 +179,7 @@ return [
         Mews\Captcha\CaptchaServiceProvider::class,
         Overtrue\LaravelWeChat\ServiceProvider::class,
         Jenssegers\Agent\AgentServiceProvider::class,
+        Maatwebsite\Excel\ExcelServiceProvider::class,
 
     ],
 
@@ -234,6 +235,7 @@ return [
         'Captcha' => Mews\Captcha\Facades\Captcha::class,
         'EasyWeChat' => Overtrue\LaravelWeChat\Facade::class,
         'Agent' => Jenssegers\Agent\Facades\Agent::class,
+        'Excel' => Maatwebsite\Excel\Facades\Excel::class,
 
     ],
 

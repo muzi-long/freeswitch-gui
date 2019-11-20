@@ -1,16 +1,10 @@
-@extends('admin.base')
+@extends('home.base')
 
 @section('content')
     <div class="layui-card">
         <div class="layui-card-header layuiadmin-card-header-auto">
             <h2>项目详情</h2>
-            <div class="layui-btn-group">
-                <a href="" class="layui-btn layui-btn-sm layui-btn-primary">返回列表</a>
-                <a href="" class="layui-btn layui-btn-sm">项目详情</a>
-                <a href="" class="layui-btn layui-btn-sm">更新节点</a>
-                <a href="" class="layui-btn layui-btn-sm">添加备注</a>
-                <a id="destroyBtn" class="layui-btn layui-btn-sm layui-btn-danger">删除</a>
-            </div>
+            @include('home.project._btn')
         </div>
         <div class="layui-card-body">
             <div class="layui-row">

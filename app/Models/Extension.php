@@ -20,5 +20,4 @@ class Extension extends Model
     {
         return $this->hasMany('App\Models\Condition','extension_id','id')->orderBy('sort')->orderBy('id');
     }
-
 }

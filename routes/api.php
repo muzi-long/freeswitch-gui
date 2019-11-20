@@ -30,3 +30,10 @@ Route::post('dialplan','ApiController@dialplan');
 
 //动态configuration 包含动态网关。（未使用）
 Route::post('configuration','ApiController@configuration');
+
+//呼叫接口
+Route::post('dial','ApiController@dial')->name('api.dial');
+
+Route::get('getCdr','ApiController@getCdr');
+
+

@@ -14,7 +14,7 @@ class ProjectRequest extends FormRequest
      */
     public function authorize()
     {
-        return Auth::guard('merchant')->merchant_id>0;
+        return Auth::guard('merchant')->user()->merchant_id>0;
     }
 
     /**

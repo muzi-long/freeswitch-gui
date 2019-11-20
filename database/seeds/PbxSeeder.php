@@ -134,7 +134,7 @@ class PbxSeeder extends Seeder
                     [
                         'display_name'  => '规则一',
                         'field'         => 'destination_number',
-                        'expression'    => '^(\d{11})$',
+                        'expression'    => '^(gw\d+)_(\d{6,13})$',
                         'break'         => 'on-false',
                         'sort'          => 0,
                         'actions'       => [
@@ -153,7 +153,7 @@ class PbxSeeder extends Seeder
                             [
                                 'display_name'  => '设置录音文件',
                                 'application'   => 'set',
-                                'data'          => 'sofia_record_file=$${base_dir}/var/lib/freeswitch/recordings/${strftime(%Y)}/${strftime(%m)}/${strftime(%d)}/${strftime(%Y-%m-%d-%H-%M-%S)}_${destination_number}_${caller_id_number}.wav',
+                                'data'          => 'record_file=$${base_dir}/var/lib/freeswitch/recordings/${strftime(%Y)}/${strftime(%m)}/${strftime(%d)}/${strftime(%Y-%m-%d-%H-%M-%S)}_${destination_number}_${caller_id_number}.wav',
                                 'sort'          => 2,
                             ],
                             [
@@ -183,7 +183,7 @@ class PbxSeeder extends Seeder
                             [
                                 'display_name'  => '呼叫',
                                 'application'   => 'bridge',
-                                'data'          => '{outbound_caller_id=900013}sofia/gateway/900013/$1',
+                                'data'          => 'sofia/gateway/$1/$2',
                                 'sort'          => 7,
                             ],
                         ],

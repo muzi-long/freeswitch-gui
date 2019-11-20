@@ -33,7 +33,7 @@
     <div class="layui-input-inline">
         <textarea name="field_option" class="layui-textarea">{{$model->field_option??''}}</textarea>
     </div>
-    <div class="layui-word-aux layui-form-mid">例：<br/>1:男<br/>2:女<br/>3:保密</div>
+    <div class="layui-word-aux layui-form-mid">例：<br/>1:男|2:女|3:保密</div>
 </div>
 
 <div class="layui-form-item">

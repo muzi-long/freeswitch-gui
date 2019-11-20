@@ -430,17 +430,17 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth','perm
 | 录音管理
 |--------------------------------------------------------------------------
 */
-Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth','permission:record.manage']],function (){
+Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth','permission:monitor.manage']],function (){
 
     //CDR录音
-    Route::group(['middleware'=>'permission:record.cdr'],function (){
+    Route::group(['middleware'=>'permission:monitor.cdr'],function (){
         Route::get('cdr','CdrController@index')->name('admin.cdr');
         Route::get('cdr/data','CdrController@data')->name('admin.cdr.data');
         //播放
-        Route::get('cdr/{uuid}/play','CdrController@play')->name('admin.cdr.play');
+        Route::get('cdr/{uuid}/play','CdrController@play')->name('admin.cdr.play')->middleware("permission:monitor.cdr.play");
         //下载
-        Route::get('cdr/{uuid}/download','CdrController@download')->name('admin.cdr.download');
+        Route::get('cdr/{uuid}/download','CdrController@download')->name('admin.cdr.download')->middleware("permission:monitor.cdr.download");
         //通话详单
-        Route::get('cdr/{id}/show','CdrController@show')->name('admin.cdr.show');
+        Route::get('cdr/{id}/show','CdrController@show')->name('admin.cdr.show')->middleware("permission:monitor.cdr.show");
     });
 });

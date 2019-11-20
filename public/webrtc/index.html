@@ -29,10 +29,10 @@
     var userAgentSession;
     var holdstate = false;
     var userAgent = new SIP.UA({
-        uri: '1003@call.dgg188.cn',
-        wsServers: ['wss://call.dgg188.cn:7443'],
-        authorizationUser: '1003',
-        password: 'dgg123456',
+        uri: '8002@xdwh.dgg.net',
+        wsServers: ['wss://xdwh.dgg.net:7443'],
+        authorizationUser: '8002',
+        password: '1234',
         hackIpInContact: true,
         rtcpMuxPolicy: 'negotiate',
         hackWssInTransport: true,
@@ -158,7 +158,7 @@
                 }
             }
         };
-        userAgentSession = userAgent.invite('sip:' + phone + '@call.dgg188.cn', options);
+        userAgentSession = userAgent.invite('sip:' + phone + '@xdwh.dgg.net', options);
         //接听
         userAgentSession.on('accepted', function (data) {
             $('#state0').html('接听');

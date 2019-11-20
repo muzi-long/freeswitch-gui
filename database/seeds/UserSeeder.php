@@ -245,19 +245,19 @@ class UserSeeder extends Seeder
                 ],
             ],
             [
-                'name' => 'record.manage',
-                'display_name' => '录音管理',
+                'name' => 'monitor.manage',
+                'display_name' => '数据监控',
                 'route' => '',
                 'icon' => 'layui-icon-theme',
                 'child' => [
                     [
-                        'name' => 'record.cdr',
+                        'name' => 'monitor.cdr',
                         'display_name' => 'CDR录音',
                         'route' => 'admin.cdr',
                         'child' => [
-                            ['name' => 'pbx.cdr.show', 'display_name' => '通话详单','route'=>'admin.cdr.show'],
-                            ['name' => 'pbx.cdr.play', 'display_name' => '播放','route'=>'admin.cdr.play'],
-                            ['name' => 'pbx.cdr.download', 'display_name' => '下载','route'=>'admin.cdr.download'],
+                            ['name' => 'monitor.cdr.show', 'display_name' => '通话详单','route'=>'admin.cdr.show'],
+                            ['name' => 'monitor.cdr.play', 'display_name' => '播放','route'=>'admin.cdr.play'],
+                            ['name' => 'monitor.cdr.download', 'display_name' => '下载','route'=>'admin.cdr.download'],
                         ]
                     ],
                 ]

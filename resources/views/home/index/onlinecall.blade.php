@@ -1,4 +1,4 @@
-@extends('admin.base')
+@extends('home.base')
 
 @section('content')
     <link rel="stylesheet" href="/static/admin/layuiadmin/style/keyboard-call.css">

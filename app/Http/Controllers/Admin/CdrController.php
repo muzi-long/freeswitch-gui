@@ -22,19 +22,19 @@ class CdrController extends Controller
     public function data(Request $request)
     {
         $query = Cdr::query();
-        $search = $request->all(['caller_id_number','destination_number','start_stamp_start','start_stamp_end']);
-        if ($search['caller_id_number']){
-            $query = $query->where('caller_id_number',$search['caller_id_number']);
+        $search = $request->all(['src','dst','start_at_start','start_at_end']);
+        if ($search['src']){
+            $query = $query->where('src',$search['src']);
         }
-        if ($search['destination_number']){
-            $query = $query->where('destination_number',$search['destination_number']);
+        if ($search['dst']){
+            $query = $query->where('dst',$search['dst']);
         }
-        if ($search['start_stamp_start'] && !$search['start_stamp_end']){
-            $query = $query->where('start_stamp','>=',$search['start_stamp_start']);
-        }else if (!$search['start_stamp_start'] && $search['start_stamp_end']){
-            $query = $query->where('start_stamp','<=',$search['start_stamp_end']);
-        }else if ($search['start_stamp_start'] && $search['start_stamp_end']){
-            $query = $query->whereBetween('start_stamp',[$search['start_stamp_start'],$search['start_stamp_end']]);
+        if ($search['start_at_start'] && !$search['start_at_end']){
+            $query = $query->where('start_at','>=',$search['start_at_start']);
+        }else if (!$search['start_at_start'] && $search['start_at_end']){
+            $query = $query->where('start_at','<=',$search['start_at_end']);
+        }else if ($search['start_at_start'] && $search['start_at_end']){
+            $query = $query->whereBetween('start_at',[$search['start_at_start'],$search['start_at_end']]);
         }
         $res = $query->orderByDesc('id')->paginate($request->get('limit', 30));
         $data = [
@@ -78,7 +78,7 @@ class CdrController extends Controller
         $cdr = Cdr::find($id);
         $record = [];
         if ($cdr!=null){
-            $record = Asr::whereIn('uuid',[$cdr->aleg_uuid,$cdr->bleg_uuid])->orderByDesc('id')->get();
+            $record = Asr::whereIn('uuid',[$cdr->uuid])->orderByDesc('id')->get();
         }
         return view('admin.cdr.asr',compact('record'));
     }
@@ -124,11 +124,11 @@ class CdrController extends Controller
      */
     public function play($uuid)
     {
-        $cdr = Cdr::where(['aleg_uuid'=>$uuid])->first();
+        $cdr = Cdr::where('uuid',$uuid)->first();
         if ($cdr==null){
             return ['code'=>'1','msg'=>'通话记录不存在'];
         }
-        if (empty($cdr->sofia_record_file)){
+        if (empty($cdr->record_file)){
             return ['code'=>'1','msg'=>'未找到录音文件'];
         }
         return ['code'=>0,'msg'=>'请求成功','data'=>$cdr->sofia_record_file];
@@ -141,14 +141,14 @@ class CdrController extends Controller
      */
     public function download($uuid)
     {
-        $cdr = Cdr::where(['aleg_uuid'=>$uuid])->first();
+        $cdr = Cdr::where('uuid',$uuid)->first();
         if ($cdr==null){
             return back()->withErrors(['error'=>'通话记录不存在']);
         }
-        if (!file_exists($cdr->sofia_record_file)){
+        if (!file_exists($cdr->record_file)){
             return back()->withErrors(['error'=>'未找到录音文件']);
         }
-        return response()->download($cdr->sofia_record_file,$uuid.".wav");
+        return response()->download($cdr->record_file,$uuid.".wav");
     }
 
 }

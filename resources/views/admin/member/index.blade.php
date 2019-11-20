@@ -52,7 +52,7 @@
                     @can('portal.member.edit')
                         <a class="layui-btn layui-btn-sm" lay-event="edit">编辑</a>
                     @endcan
-                    @can('portal.member.permission')
+                    @can('portal.member.role')
                         <a class="layui-btn layui-btn-sm" lay-event="role">角色</a>
                     @endcan
                     @can('portal.member.destroy')
