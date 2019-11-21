@@ -3,7 +3,7 @@ return [
 
     //socket连接授权
     'event_socket' => [
-        'host'      => '192.168.254.32',
+        'host'      => '127.0.0.1',
         'port'      => 8021,
         'password'  => 'ClueCon',
     ],

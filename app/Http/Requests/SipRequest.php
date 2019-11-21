@@ -24,7 +24,7 @@ class SipRequest extends FormRequest
     public function rules()
     {
         return [
-            'username'  => 'required|numeric|min:1000|unique:sip,username,'.$this->id.',id',
+            'username'  => 'required|numeric|min:1000|max:9999|unique:sip,username,'.$this->id.',id',
             'password'  => 'required',
             'merchant_gateway' => 'required|regex:/\d,\d/'
         ];

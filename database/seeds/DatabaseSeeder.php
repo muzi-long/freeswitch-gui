@@ -13,6 +13,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             UserSeeder::class,
+            HomeSeeder::class,
             ConfigGroupSeeder::class,
             PbxSeeder::class,
         ]);

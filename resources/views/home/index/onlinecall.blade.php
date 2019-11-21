@@ -7,7 +7,7 @@
             <h2>在线拨号</h2>
         </div>
         <div class="layui-card-body">
-            <div class="body-main" style="min-height: 450px;">
+            <div class="body-main" style="min-height: 720px;">
                 <div class="call-warp">
                     <div class="call-input">
                         <input type="text" id="telNum" autofocus="autofocus" style="box-sizing:border-box"/>
@@ -167,18 +167,16 @@
             });
 
             function markCall() {
-                var ss = $("#telNum").val();
-                $("#telNum").val(ss.replace(/\s/g, ""));
-                call(ss);
+                var phone = $("#telNum").val();
+                $("#telNum").val(phone.replace(/\s/g, ""));
+                call(phone);
             }
             function delStr() {
                 var telStr = $('#telNum').val();
                 telStr = telStr.substr(0, telStr.length - 1);
                 $('#telNum').val(telStr);
             }
-            function call(ss) {
-                layer.msg('功能待开发')
-            }
+
         });
     </script>
 @endsection

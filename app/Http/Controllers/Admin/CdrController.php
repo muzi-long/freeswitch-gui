@@ -131,7 +131,7 @@ class CdrController extends Controller
         if (empty($cdr->record_file)){
             return ['code'=>'1','msg'=>'未找到录音文件'];
         }
-        return ['code'=>0,'msg'=>'请求成功','data'=>$cdr->sofia_record_file];
+        return ['code'=>0,'msg'=>'请求成功','data'=>$cdr->record_file];
     }
 
     /**

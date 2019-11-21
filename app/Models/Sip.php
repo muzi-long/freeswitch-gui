@@ -34,7 +34,7 @@ class Sip extends Model
      */
     public function gateway()
     {
-        return $this->hasOne('App\Models\Gateway','id','gateway_id');
+        return $this->hasOne('App\Models\Gateway','id','gateway_id')->withDefault(['name'=>'未分配']);
     }
 
     /**
