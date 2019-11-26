@@ -40,7 +40,7 @@ class Merchant extends Authenticatable
      */
     public function gateways()
     {
-        return $this->belongsToMany('App\Models\Gateway', 'merchant_gateway','gateway_id','merchant_id')->withPivot(['rate']);
+        return $this->belongsToMany('App\Models\Gateway', 'merchant_gateway','merchant_id','gateway_id')->withPivot(['rate']);
     }
 
     /**
