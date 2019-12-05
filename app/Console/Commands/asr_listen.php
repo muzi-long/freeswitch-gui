@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Call;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
@@ -23,6 +22,9 @@ class asr_listen extends Command
      * @var string
      */
     protected $description = 'asr listen';
+
+    protected $channel;
+    protected $fs_record = '/usr/local/freeswitch/var/lib/freeswitch/recordings/';
 
     /**
      * Create a new command instance.
@@ -47,28 +49,89 @@ class asr_listen extends Command
         Log::useFiles(storage_path('logs/asr_listen.log'));
 
         $fs = new \Freeswitchesl();
-        if (!$fs->connect(config('freeswitch.event_socket.host'), config('freeswitch.event_socket.port'), config('freeswitch.event_socket.password'))){
-            echo "ESL未连接";
+        if (!$fs->connect('127.0.0.1', '8022', 'dgg@1234.')){
+            $this->error("ESL未连接");
             return 1;
         }
-        $fs->events('json', 'CUSTOM asr');
-        while (true){
+        $status = 1;
+        $fs->events('plain','CHANNEL_ANSWER CHANNEL_HANGUP RECORD_START RECORD_STOP');
+        while ($status==1){
+            //录音目录
+            $filepath = $this->fs_record.date('Y').'/'.date('m').'/'.date('d').'/';
+            if (!is_dir($filepath)) {
+                mkdir($filepath,0777,true);
+            }
             $received_parameters = $fs->recvEvent();
             if (!empty($received_parameters)) {
                 //记录日志
                 $info = $fs->serialize($received_parameters,"json");
-                Log::info($info);
-                $response = $fs->getHeader($received_parameters,"ASR-Response");
-                $response = json_decode(urldecode($response),true);
-                if($response['status_code']==200&&isset($response['result'])&&$response['result']['status_code']==0&&!empty($response['result']['text'])){
-                    $text = $response['result']['text'];
-                    $uuid = $fs->getHeader($received_parameters,"Core-UUID");
-                    DB::table('cdr_asr')->insert([
-                        'uuid'          => $uuid,
-                        'text'          => $text,
-                        'created_at'    => Carbon::now(),
-                        'updated_at'    => Carbon::now(),
+
+                $eventname = $fs->getHeader($received_parameters,"Event-Name"); //事件名称
+                $uuid = $fs->getHeader($received_parameters,"Unique-ID");//当前信道leg的uuid
+                $CallerOrigCallerIDNumber = $fs->getHeader($received_parameters,"Caller-Orig-Caller-ID-Number");//打电话者
+                $CallerCalleeIDNumber = $fs->getHeader($received_parameters,"Caller-Callee-ID-Number");//接电话者
+
+                if ($eventname == 'CHANNEL_ANSWER')
+                {
+                    $this->info('CHANNEL_ANSWER事件：'.$uuid);
+
+                    //开启全程录音
+                    $fullfile = $filepath.md5($uuid.uniqid()).'.wav';
+                    if (!file_exists($fullfile)){
+                        $fs->bgapi("uuid_record ".$uuid." start ".$fullfile." 7200"); //收到应答开启全程录音
+                    }
+
+                    //写入记录
+                    DB::table('asr')->insert([
+                        'src' => $CallerOrigCallerIDNumber,
+                        'dst' => $CallerCalleeIDNumber,
+                        'unique_id' => $uuid,
+                        'record_file' => $fullfile,
+                        'created_at' => Carbon::now(),
                     ]);
+
+                    //开启分段录音
+                    $halffile = $filepath.md5($uuid.time().uniqid()).'.wav';
+                    $fs->bgapi("uuid_record ".$uuid." start ".$halffile." 18");
+                    //记录分段录音数据
+                    $this->channel[$uuid] = [
+                        'pid' => null,
+                        'unique_id' => $uuid,
+                        'record_file' => $halffile,
+                        'created_at' => Carbon::now(),
+                    ];
+
+                }elseif ($eventname == 'RECORD_START')//开始说话
+                {
+
+                }elseif ($eventname == 'RECORD_STOP')//结束说话
+                {
+                    if (isset($this->channel[$uuid])){
+                        $halffile = $this->channel[$uuid]['record_file'];
+                        if (file_exists($halffile)) {
+                            //在这里进行语音识别 $this->channel[$uuid]['record_file'] 文件
+
+                            $text = null;
+                            DB::table('asr_list')->insert([
+                                'pid' => $this->channel[$uuid]['pid'],
+                                'unique_id' => $this->channel[$uuid]['unique_id'],
+                                'record_file' => $this->channel[$uuid]['record_file'],
+                                'created_at' => $this->channel[$uuid]['created_at'],
+                                'text' => $text,
+                            ]);
+                        }
+                        //结束说话 后接着开启分段录音
+                        $halffile = $filepath.md5($uuid.time().uniqid()).'.wav';
+                        $this->channel[$uuid]['record_file'] = $halffile;
+                        $this->channel[$uuid]['created_at'] = Carbon::now();
+                        $fs->bgapi("uuid_record ".$uuid." start ".$halffile." 18");
+                    }
+                }elseif ($eventname == 'CHANNEL_HANGUP')
+                {
+                    $this->info('CHANNEL_HANGUP事件：'.$uuid);
+                    if (isset($this->channel[$uuid])){
+                        unset($this->channel[$uuid]);
+                    }
                 }
             }
         }
