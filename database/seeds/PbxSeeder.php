@@ -29,7 +29,7 @@ class PbxSeeder extends Seeder
                     [
                         'display_name'  => '规则一',
                         'field'         => 'destination_number',
-                        'expression'    => '^(\d{5,9})$',
+                        'expression'    => '^(\d{4,5})$',
                         'break'         => 'on-false',
                         'sort'          => 0,
                         'actions'       => [
@@ -52,6 +52,12 @@ class PbxSeeder extends Seeder
                                 'sort'          => 2,
                             ],
                             [
+                                'display_name'  => '本地互打费率设为0',
+                                'application'   => 'set',
+                                'data'          => 'nibble_rate=0',
+                                'sort'          => 2,
+                            ],
+                            [
                                 'display_name'  => '呼叫',
                                 'application'   => 'bridge',
                                 'data'          => 'user/$1',
@@ -62,63 +68,40 @@ class PbxSeeder extends Seeder
                 ],
             ],
             [
-                'display_name'  => '回音测试',
-                'name'          => 'echo_test',
+                'display_name'  => '设置网关和出局信息',
+                'name'          => 'set_gateway_and_prefix',
                 'context'       => 'default',
                 'sort'          => 1,
                 'conditions'    => [
                     [
                         'display_name'  => '规则一',
                         'field'         => 'destination_number',
-                        'expression'    => '^9996$',
+                        'expression'    => '^(gw\d+)_(\d{6,11})_(\d{0,5})$',
                         'break'         => 'on-false',
                         'sort'          => 0,
                         'actions'       => [
                             [
-                                'display_name'  => '系统应答',
-                                'application'   => 'answer',
-                                'data'          => null,
+                                'display_name'  => '设置网关',
+                                'application'   => 'set',
+                                'data'          => 'gw=$1',
                                 'sort'          => 0,
                             ],
                             [
-                                'display_name'  => '回音',
-                                'application'   => 'echo',
-                                'data'          => null,
-                                'sort'          => 1,
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-            [
-                'display_name'  => '控制台显示info',
-                'name'          => 'info_test',
-                'context'       => 'default',
-                'sort'          => 1,
-                'conditions'    => [
-                    [
-                        'display_name'  => '规则一',
-                        'field'         => 'destination_number',
-                        'expression'    => '^9992$',
-                        'break'         => 'on-false',
-                        'sort'          => 0,
-                        'actions'       => [
-                            [
-                                'display_name'  => '系统应答',
-                                'application'   => 'answer',
-                                'data'          => null,
-                                'sort'          => 0,
-                            ],
-                            [
-                                'display_name'  => '输出信息',
-                                'application'   => 'info',
-                                'data'          => null,
+                                'display_name'  => '设置前缀',
+                                'application'   => 'set',
+                                'data'          => 'dialed_prefix=$3',
                                 'sort'          => 1,
                             ],
                             [
-                                'display_name'  => '挂断',
-                                'application'   => 'hangup',
-                                'data'          => null,
+                                'display_name'  => '设置被叫号码',
+                                'application'   => 'set',
+                                'data'          => 'dialed_extension=$2',
+                                'sort'          => 2,
+                            ],
+                            [
+                                'display_name'  => '呼叫转移',
+                                'application'   => 'transfer',
+                                'data'          => '$2 XML default',
                                 'sort'          => 2,
                             ],
                         ],
@@ -134,7 +117,7 @@ class PbxSeeder extends Seeder
                     [
                         'display_name'  => '规则一',
                         'field'         => 'destination_number',
-                        'expression'    => '^(gw\d+)_(\d{6,13})$',
+                        'expression'    => '^(\d{6,11})$',
                         'break'         => 'on-false',
                         'sort'          => 0,
                         'actions'       => [
@@ -152,7 +135,7 @@ class PbxSeeder extends Seeder
                             ],
                             [
                                 'display_name'  => '设置录音文件',
-                                'application'   => 'set',
+                                'application'   => 'export',
                                 'data'          => 'record_file=$${base_dir}/var/lib/freeswitch/recordings/${strftime(%Y)}/${strftime(%m)}/${strftime(%d)}/${strftime(%Y-%m-%d-%H-%M-%S)}_${destination_number}_${caller_id_number}.wav',
                                 'sort'          => 2,
                             ],
@@ -177,13 +160,13 @@ class PbxSeeder extends Seeder
                             [
                                 'display_name'  => '录音',
                                 'application'   => 'record_session',
-                                'data'          => '${sofia_record_file}',
+                                'data'          => '${record_file}',
                                 'sort'          => 6,
                             ],
                             [
                                 'display_name'  => '呼叫',
                                 'application'   => 'bridge',
-                                'data'          => 'sofia/gateway/$1/$2',
+                                'data'          => 'sofia/gateway/${gw}/${dialed_prefix}${dialed_extension}',
                                 'sort'          => 7,
                             ],
                         ],

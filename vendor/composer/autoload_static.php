@@ -638,6 +638,7 @@ class ComposerStaticInit6675cbe0f4bd494f35f4f72af7e495cd
         'App\\Http\\Middleware\\CheckForMaintenanceMode' => __DIR__ . '/../..' . '/app/Http/Middleware/CheckForMaintenanceMode.php',
         'App\\Http\\Middleware\\EncryptCookies' => __DIR__ . '/../..' . '/app/Http/Middleware/EncryptCookies.php',
         'App\\Http\\Middleware\\Merchant' => __DIR__ . '/../..' . '/app/Http/Middleware/Merchant.php',
+        'App\\Http\\Middleware\\MerchantPermission' => __DIR__ . '/../..' . '/app/Http/Middleware/MerchantPermission.php',
         'App\\Http\\Middleware\\OperateLog' => __DIR__ . '/../..' . '/app/Http/Middleware/OperateLog.php',
         'App\\Http\\Middleware\\RedirectIfAuthenticated' => __DIR__ . '/../..' . '/app/Http/Middleware/RedirectIfAuthenticated.php',
         'App\\Http\\Middleware\\TrimStrings' => __DIR__ . '/../..' . '/app/Http/Middleware/TrimStrings.php',

@@ -30,7 +30,7 @@ class IndexController extends Controller
         //分机数量
         $sipNum = Sip::count();
 
-        $datas = Merchant::with(['sips','info'])->whereHas('sips')->where('merchant_id',0)->get();
+        /*$datas = Merchant::with(['sips','info'])->whereHas('sips')->where('merchant_id',0)->get();
         foreach ($datas as $data){
             foreach ($data->sips as $sip){
                 $sip->todayCalls = Cdr::where('src',$sip->username)->whereBetween('start_at',[Carbon::today(),Carbon::tomorrow()])->count();
@@ -45,7 +45,8 @@ class IndexController extends Controller
                 $sip->monthSuccessCalls = Cdr::where('src',$sip->username)->whereBetween('start_at',[Carbon::now()->startOfMonth(),Carbon::now()->endOfMonth()])->where('billsec','>',0)->count();
                 $sip->monthRateCalls = $sip->monthCalls>0?round($sip->monthSuccessCalls/$sip->monthCalls,4)*100:0.00;
             }
-        }
+        }*/
+        $datas = [];
         return View::make('admin.index.index',compact('merchantNum','memberNum','gatewayNum','sipNum','datas'));
     }
 }

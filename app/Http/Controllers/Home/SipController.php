@@ -174,7 +174,7 @@ class SipController extends Controller
         }else{
             $merchant_id = Auth::guard('merchant')->user()->merchant_id;
         }
-        $sips = Sip::with('merchant')->where('merchant_id',$merchant_id)->get();
+        /*$sips = Sip::with('merchant')->where('merchant_id',$merchant_id)->get();
         foreach ($sips as $sip){
             $sip->todayCalls = Cdr::where('src',$sip->username)->whereBetween('start_at',[Carbon::today(),Carbon::tomorrow()])->count();
             $sip->todaySuccessCalls = Cdr::where('src',$sip->username)->whereBetween('start_at',[Carbon::today(),Carbon::tomorrow()])->where('billsec','>',0)->count();
@@ -187,7 +187,8 @@ class SipController extends Controller
             $sip->monthCalls = Cdr::where('src',$sip->username)->whereBetween('start_at',[Carbon::now()->startOfMonth(),Carbon::now()->endOfMonth()])->count();
             $sip->monthSuccessCalls = Cdr::where('src',$sip->username)->whereBetween('start_at',[Carbon::now()->startOfMonth(),Carbon::now()->endOfMonth()])->where('billsec','>',0)->count();
             $sip->monthRateCalls = $sip->monthCalls>0?round($sip->monthSuccessCalls/$sip->monthCalls,4)*100:0.00;
-        }
+        }*/
+        $sips = [];
         return View::make('home.sip.count',compact('sips'));
     }
 

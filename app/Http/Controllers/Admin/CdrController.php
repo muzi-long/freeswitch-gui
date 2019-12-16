@@ -21,20 +21,20 @@ class CdrController extends Controller
 
     public function data(Request $request)
     {
-        $query = Cdr::query();
+        $query = Cdr::query()->with('bleg');
         $search = $request->all(['src','dst','start_at_start','start_at_end']);
         if ($search['src']){
-            $query = $query->where('src',$search['src']);
+            $query = $query->where('caller_id_number',$search['src']);
         }
         if ($search['dst']){
-            $query = $query->where('dst',$search['dst']);
+            $query = $query->where('destination_number',$search['dst']);
         }
         if ($search['start_at_start'] && !$search['start_at_end']){
-            $query = $query->where('start_at','>=',$search['start_at_start']);
+            $query = $query->where('start_stamp','>=',$search['start_at_start']);
         }else if (!$search['start_at_start'] && $search['start_at_end']){
-            $query = $query->where('start_at','<=',$search['start_at_end']);
+            $query = $query->where('start_stamp','<=',$search['start_at_end']);
         }else if ($search['start_at_start'] && $search['start_at_end']){
-            $query = $query->whereBetween('start_at',[$search['start_at_start'],$search['start_at_end']]);
+            $query = $query->whereBetween('start_stamp',[$search['start_at_start'],$search['start_at_end']]);
         }
         $res = $query->orderByDesc('id')->paginate($request->get('limit', 30));
         $data = [

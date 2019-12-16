@@ -472,11 +472,21 @@ class ApiController extends Controller
             Log::info('呼叫接口ESL连接异常：'.$exception->getMessage());
             return Response::json(['code'=>1,'msg'=>'无法连接服务器']);
         }
-        $dialStr = "originate user/".$sip->username." gw".$sip->gateway->id."_";
-        if ($sip->gateway->prefix){
-            $dialStr .=$sip->gateway->prefix;
+        //兼容内部外呼呼叫
+        $dialStr = "originate {origination_caller_id_number=".$sip->username."}{origination_caller_id_name=".$sip->username."}";
+        if (isset($sip->gateway->outbound_caller_id) && !empty($sip->gateway->outbound_caller_id)){
+            $dialStr .= "{effective_caller_id_number=".$sip->gateway->outbound_caller_id."}"."{effective_caller_id_name=".$sip->gateway->outbound_caller_id."}";
         }
-        $dialStr .=$data["phone"]." XML default";
+        $dialStr .= "user/".$sip->username." ";
+        if (strlen($data['phone'])>=6){
+            $dialStr .= "gw".$sip->gateway->id."_".$data['phone']."_";
+            if ($sip->gateway->prefix){
+                $dialStr .=$sip->gateway->prefix;
+            }
+        }else{
+            $dialStr .=$data["phone"];
+        }
+        $dialStr .=" XML default";
         try{
             $fs->bgapi($dialStr);
             return Response::json(['code'=>0,'msg'=>'呼叫成功']);
@@ -486,50 +496,4 @@ class ApiController extends Controller
         }
 
     }
-
-    /**
-     * 接收通话记录
-     * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function getCdr(Request $request)
-    {
-        $uuid = $request->get('uuid');
-        $cdrXml = $request->get('cdr');
-        try{
-            $objectxml = simplexml_load_string($cdrXml);
-            $cdrData = json_decode(json_encode($objectxml),true);
-        }catch (\Exception $exception){
-            Log::info("解析通话记录xml格式异常：".$exception->getMessage());
-            return Response::json(['code'=>1,'msg'=>$exception->getMessage()]);
-        }
-
-        try{
-            $data = [
-                'uuid' => $uuid,
-                'duration' => $cdrData['variables']['duration'],
-                'billsec' => $cdrData['variables']['billsec'],
-                'start_at' => $cdrData['variables']['start_stamp']?urldecode($cdrData['variables']['start_stamp']):null,
-                'answer_at' => $cdrData['variables']['answer_stamp']?urldecode($cdrData['variables']['answer_stamp']):null,
-                'end_at' => $cdrData['variables']['end_stamp']?urldecode($cdrData['variables']['end_stamp']):null,
-                'record_file' => $cdrData['variables']['record_file']??null,
-                'user_data' => $cdrData['variables']['user_data']??null,
-                'direction' => 1,
-                'hangup_cause' => $cdrData['variables']['hangup_cause'],
-            ];
-            if (isset($cdrData['variables']['user_name'])){
-                $data['src'] = $cdrData['variables']['user_name'];
-                $data['dst'] = $cdrData['callflow']['caller_profile']['destination_number'];
-            }else{
-                $data['src'] = $cdrData['variables']['dialed_user'];
-                $data['dst'] = $cdrData['callflow'][0]['caller_profile']['origination']['origination_caller_profile']['destination_number'];
-            }
-            Cdr::create($data);
-            return Response::json(['code'=>0,'msg'=>'ok']);
-        }catch (\Exception $exception){
-            Log::info("通话记录写入库异常：".$exception->getMessage());
-            return Response::json(['code'=>1,'msg'=>$exception->getMessage()]);
-        }
-    }
-
 }

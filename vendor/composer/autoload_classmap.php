@@ -54,6 +54,7 @@ return array(
     'App\\Http\\Middleware\\CheckForMaintenanceMode' => $baseDir . '/app/Http/Middleware/CheckForMaintenanceMode.php',
     'App\\Http\\Middleware\\EncryptCookies' => $baseDir . '/app/Http/Middleware/EncryptCookies.php',
     'App\\Http\\Middleware\\Merchant' => $baseDir . '/app/Http/Middleware/Merchant.php',
+    'App\\Http\\Middleware\\MerchantPermission' => $baseDir . '/app/Http/Middleware/MerchantPermission.php',
     'App\\Http\\Middleware\\OperateLog' => $baseDir . '/app/Http/Middleware/OperateLog.php',
     'App\\Http\\Middleware\\RedirectIfAuthenticated' => $baseDir . '/app/Http/Middleware/RedirectIfAuthenticated.php',
     'App\\Http\\Middleware\\TrimStrings' => $baseDir . '/app/Http/Middleware/TrimStrings.php',

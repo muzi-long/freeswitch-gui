@@ -35,7 +35,7 @@
             <table id="dataTable" lay-filter="dataTable"></table>
             <script type="text/html" id="options">
                 <div class="layui-btn-group">
-                    <a class="layui-btn layui-btn-sm" lay-event="show">通话详单</a>
+                    {{--<a class="layui-btn layui-btn-sm" lay-event="show">通话详单</a>--}}
                     <a class="layui-btn layui-btn-sm" lay-event="play">播放</a>
                     <a class="layui-btn layui-btn-sm" lay-event="download">下载</a>
                 </div>
@@ -61,10 +61,12 @@
                 ,cols: [[ //表头
                     //{checkbox: true,fixed: true}
                     {field: 'id', title: 'ID', sort: true,width:80,fixed:'left'}
-                    ,{field: 'src', title: '主叫号码',style:'color:green'}
-                    ,{field: 'dst', title: '被叫号码',style:'color:#2F4056'}
-                    ,{field: 'start_at', title: '呼叫时间', sort: true}
-                    ,{field: 'billsec', title: '通话时长(秒)', sort: true, style:'color: green'}
+                    ,{field: 'caller_id_number', title: '主叫号码',style:'color:green'}
+                    ,{field: 'destination_number', title: '被叫号码',style:'color:#2F4056'}
+                    ,{field: 'start_stamp', title: '呼叫时间', sort: true}
+                    ,{field: 'billsec', title: '通话时长(秒)', sort: true, style:'color: green',templet:function (d) {
+                            return d.bleg_uuid?d.bleg.billsec:0;
+                        }}
                     ,{field: 'hangup_cause', title: '挂断原因'}
                     ,{width: 220, align:'center', toolbar: '#options', title:'操作',fixed:'right'}
                 ]]
