@@ -145,7 +145,7 @@ class GatewayController extends Controller
                 if (!$freeswitch->connect(config('freeswitch.event_socket.host'), config('freeswitch.event_socket.port'), config('freeswitch.event_socket.password'))){
                     return response()->json(['code'=>1,'msg'=>'ESL未连接']);
                 }
-                $freeswitch->bgapi("sofia profile external rescan");
+                $freeswitch->bgapi("sofia profile external rescan all");
                 $freeswitch->disconnect();
                 return response()->json(['code'=>0,'msg'=>'更新成功']);
             }

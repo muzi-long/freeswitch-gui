@@ -21,6 +21,35 @@ class PbxSeeder extends Seeder
         //拨号计划
         $data = [
             [
+                'display_name'  => '挂断',
+                'name'          => 'hangup',
+                'context'       => 'default',
+                'sort'          => 0,
+                'conditions'    => [
+                    [
+                        'display_name'  => '规则一',
+                        'field'         => 'destination_number',
+                        'expression'    => '^hangup$',
+                        'break'         => 'on-false',
+                        'sort'          => 0,
+                        'actions'       => [
+                            [
+                                'display_name'  => '系统应答',
+                                'application'   => 'answer',
+                                'data'          => null,
+                                'sort'          => 0,
+                            ],
+                            [
+                                'display_name'  => '挂断',
+                                'application'   => 'hangup',
+                                'data'          => '',
+                                'sort'          => 1,
+                            ],
+                        ]
+                    ],
+                ],
+            ],
+            [
                 'display_name'  => '本地分机互拨',
                 'name'          => 'Local_Extension',
                 'context'       => 'default',
@@ -52,16 +81,16 @@ class PbxSeeder extends Seeder
                                 'sort'          => 2,
                             ],
                             [
-                                'display_name'  => '本地互打费率设为0',
-                                'application'   => 'set',
-                                'data'          => 'nibble_rate=0',
-                                'sort'          => 2,
+                                'display_name'  => '计费心跳',
+                                'application'   => 'nibblebill',
+                                'data'          => 'heartbeat 30',
+                                'sort'          => 3,
                             ],
                             [
                                 'display_name'  => '呼叫',
                                 'application'   => 'bridge',
                                 'data'          => 'user/$1',
-                                'sort'          => 3,
+                                'sort'          => 4,
                             ],
                         ]
                     ],
@@ -134,9 +163,15 @@ class PbxSeeder extends Seeder
                                 'sort'          => 1,
                             ],
                             [
+                                'display_name'  => '计费心跳',
+                                'application'   => 'nibblebill',
+                                'data'          => 'heartbeat 30',
+                                'sort'          => 2,
+                            ],
+                            /*[
                                 'display_name'  => '设置录音文件',
                                 'application'   => 'export',
-                                'data'          => 'record_file=$${base_dir}/var/lib/freeswitch/recordings/${strftime(%Y)}/${strftime(%m)}/${strftime(%d)}/${strftime(%Y-%m-%d-%H-%M-%S)}_${destination_number}_${caller_id_number}.wav',
+                                'data'          => 'record_file=$${base_dir}/recordings/${strftime(%Y)}/${strftime(%m)}/${strftime(%d)}/${strftime(%Y-%m-%d-%H-%M-%S)}_${destination_number}_${caller_id_number}.wav',
                                 'sort'          => 2,
                             ],
                             [
@@ -162,7 +197,7 @@ class PbxSeeder extends Seeder
                                 'application'   => 'record_session',
                                 'data'          => '${record_file}',
                                 'sort'          => 6,
-                            ],
+                            ],*/
                             [
                                 'display_name'  => '呼叫',
                                 'application'   => 'bridge',
