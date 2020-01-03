@@ -208,6 +208,7 @@ class asr_listen extends Command
                     $start = $fs->getHeader($received_parameters, "variable_start_stamp");
                     $answer = $fs->getHeader($received_parameters, "variable_answer_stamp");
                     $end = $fs->getHeader($received_parameters, "variable_end_stamp");
+                    $extend_content = $fs->getHeader($received_parameters, "variable_extend_content");
                     $cdr = [
                         'caller_id_number' => $CallerCallerIDNumber,
                         'destination_number' => $CallerCalleeIDNumber,
@@ -219,8 +220,13 @@ class asr_listen extends Command
                         'hangup_cause' => $fs->getHeader($received_parameters, "variable_hangup_cause"),
                         'record_file' => $fs->getHeader($received_parameters, "variable_record_file"),
                         'nibble_total_billed' => (int)$fs->getHeader($received_parameters, "variable_nibble_total_billed"),
-                        'extend_content' => $fs->getHeader($received_parameters, "variable_extend_content"),
+                        'extend_content' => $extend_content ? decrypt($extend_content) : $extend_content,
                     ];
+                    //通过cop拨打的需要变更被叫号码
+                    $bPhone = $fs->getHeader($received_parameters, "variable_bPhone");
+                    if (!empty($bPhone)){
+                        $cdr['destination_number'] = $bPhone;
+                    }
                     if (empty($otherType) || $otherType == 'originatee') {
                         $cdr['aleg_uuid'] = $uuid;
                         $cdr['bleg_uuid'] = $thoerLegUniqueId;
