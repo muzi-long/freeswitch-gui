@@ -44,7 +44,8 @@
             "database/factories"
         ],
         "files": [
-            "bootstrap/Freeswitchesl.php"
+            "bootstrap/Freeswitchesl.php",
+            "bootstrap/Snowflake.php",
         ]
     },
     "autoload-dev": {

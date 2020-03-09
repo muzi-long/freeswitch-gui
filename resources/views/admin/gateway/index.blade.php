@@ -40,12 +40,18 @@
                     ,{field: 'id', title: 'ID', sort: true,width:80}
                     ,{field: 'name', title: '名称'}
                     ,{field: 'realm', title: '地址'}
-                    ,{field: 'username', title: '帐号'}
-                    ,{field: 'password', title: '密码'}
-                    ,{field: 'rate', title: '费率（元/分钟）'}
+                    ,{field: 'username', title: '帐号',templet:function(d){
+                        return d.type==1?d.username:'';
+                    }}
+                    ,{field: 'password', title: '密码',templet:function(d){
+                        return d.type==1?d.password:'';
+                    }}
                     ,{field: 'prefix', title: '前缀'}
                     ,{field: 'outbound_caller_id', title: '出局号码'}
-                    ,{field: 'status', title: '状态'}
+                    //,{field: 'status', title: '状态'}
+                    ,{field: 'type', title: '对接方式',templet:function(d){
+                        return d.type==1?'SIP':'IP';
+                    }}
                     ,{field: 'created_at', title: '添加时间'}
                     ,{fixed: 'right', width: 220, align:'center', toolbar: '#options', title:'操作'}
                 ]]

@@ -10,10 +10,10 @@ class Agent extends Model
     protected $table = 'agent';
     protected $fillable = [
         'display_name',
-        'name',
         'originate_type',
         'originate_number',
         'status',
+        'state',
         'max_no_answer',
         'wrap_up_time',
         'reject_delay_time',
@@ -21,7 +21,7 @@ class Agent extends Model
         'no_answer_delay_time',
     ];
 
-    protected $appends = ['originate_type_name','status_name'];
+    protected $appends = ['originate_type_name','status_name','state_name'];
 
     public function getOriginateTypeNameAttribute()
     {
@@ -35,6 +35,10 @@ class Agent extends Model
     public function getStatusNameAttribute()
     {
         return $this->attributes['status_name'] = Arr::get(config('freeswitch.agent_status'),$this->status);
+    }
+    public function getStateNameAttribute()
+    {
+        return $this->attributes['state_name'] = Arr::get(config('freeswitch.agent_state'),$this->state);
     }
 
 

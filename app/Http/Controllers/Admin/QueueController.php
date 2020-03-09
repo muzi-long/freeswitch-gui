@@ -1,13 +1,14 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Admin\pbx;
 
 use App\Http\Requests\QueueRequest;
 use App\Models\Agent;
 use App\Models\Queue;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use DB;
+use Illuminate\Support\Facades\DB;
+use GuzzleHttp\Client;
 
 class QueueController extends Controller
 {
@@ -23,7 +24,10 @@ class QueueController extends Controller
 
     public function data(Request $request)
     {
-        $res = Queue::withCount(['agents'])->orderByDesc('id')->paginate($request->get('limit', 30));
+        $display_name = $request->get('display_name');
+        $res = Queue::withCount(['agents'])->when($display_name,function($q) use($display_name){
+            return $q->where('display_name','like','%'.$display_name.'%');
+        })->orderByDesc('id')->paginate($request->get('limit', 30));
         $data = [
             'code' => 0,
             'msg' => '正在请求中...',
@@ -119,72 +123,25 @@ class QueueController extends Controller
 
     public function updateXml()
     {
-        $queues = Queue::with('agents')->whereHas('agents')->get();
+        $queues = Queue::with('agents')->get();
         if ($queues->isEmpty()){
             return response()->json(['code'=>1,'msg'=>'无数据需要更新']);
         }
+        $agents = Agent::get();
         try{
-            //生产环境，并且debug关闭的情况下自动更新网关注册信息
-            if (config('app.env')=='production' && config('app.debug')==false){
-                $freeswitch = new \Freeswitchesl();
-                if (!$freeswitch->connect(config('freeswitch.event_socket.host'), config('freeswitch.event_socket.port'), config('freeswitch.event_socket.password'))){
-                    return response()->json(['code'=>1,'msg'=>'ESL未连接']);
-                }
-                $queues = Queue::with("agents")->get();
-                $agents = Agent::get();
-
-                $xml  = "<configuration name=\"callcenter.conf\" description=\"CallCenter\">\n";
-                $xml .= "    <settings>\n";
-                $xml .= "      <!--<param name=\"odbc-dsn\" value=\"dsn:user:pass\"/>-->\n";
-                $xml .= "      <!--<param name=\"dbname\" value=\"/dev/shm/callcenter.db\"/>-->\n";
-                $xml .= "      <!--<param name=\"cc-instance-id\" value=\"single_box\"/>-->\n";
-                $xml .= "     <param name=\"truncate-tiers-on-load\" value=\"true\"/>\n";
-                $xml .= "     <param name=\"truncate-agents-on-load\" value=\"true\"/>\n";
-                $xml .= "    </settings>\n";
-                //----------------------------------  写入队列信息 ------------------------------------
-                $xml .= "<queues>\n";
-                foreach ($queues as $queue){
-                    $xml .= "    <queue name=\"".$queue->name."\">\n";
-                    $xml .= "        <param name=\"strategy\" value=\"".$queue->strategy."\"/>\n";
-                    $xml .= "        <param name=\"moh-sound\" value=\"".$queue->moh_sound."\"/>\n";
-                    $xml .= "        <param name=\"record-template\" value=\"\$\${recordings_dir}/\${strftime(%Y)}/\${strftime(%m)}/\${strftime(%d)}/.\${destination_number}.\${caller_id_number}.\${uuid}.wav\"/>\n";
-                    $xml .= "        <param name=\"time-base-score\" value=\"".$queue->time_base_score."\"/>\n";
-                    $xml .= "        <param name=\"max-wait-time\" value=\"".$queue->max_wait_time."\"/>\n";
-                    $xml .= "        <param name=\"max-wait-time-with-no-agent\" value=\"".$queue->max_wait_time_with_no_agent."\"/>\n";
-                    $xml .= "        <param name=\"max-wait-time-with-no-agent-time-reached\" value=\"".$queue->max_wait_time_with_no_agent_time_reached."\"/>\n";
-                    $xml .= "        <param name=\"tier-rules-apply\" value=\"".$queue->tier_rules_apply."\"/>\n";
-                    $xml .= "        <param name=\"tier-rule-wait-second\" value=\"".$queue->tier_rule_wait_second."\"/>\n";
-                    $xml .= "        <param name=\"tier-rule-wait-multiply-level\" value=\"".$queue->tier_rule_wait_multiply_level."\"/>\n";
-                    $xml .= "        <param name=\"tier-rule-no-agent-no-wait\" value=\"".$queue->tier_rule_no_agent_no_wait."\"/>\n";
-                    $xml .= "        <param name=\"discard-abandoned-after\" value=\"".$queue->discard_abandoned_after."\"/>\n";
-                    $xml .= "        <param name=\"abandoned-resume-allowed\" value=\"".$queue->abandoned_resume_allowed."\"/>\n";
-                    $xml .= "    </queue>\n";
-                }
-                $xml .= "</queues>\n";
-
-                //----------------------------------  写入坐席信息 ------------------------------------
-                $xml .= "<agents>\n";
-                foreach ($agents as $agent){
-                    $xml .= "<agent name=\"".$agent->name."\" type=\"".$agent->type."\" contact=\"[leg_timeout=10]".$agent->originate_type."/".$agent->originate_number."\" status=\"".$agent->status."\" max-no-answer=\"".$agent->max_no_answer."\" wrap-up-time=\"".$agent->wrap_up_time."\" reject-delay-time=\"".$agent->reject_delay_time."\" busy-delay-time=\"".$agent->busy_delay_time."\" no-answer-delay-time=\"".$agent->no_answer_delay_time."\" />\n";
-                }
-                $xml .= "</agents>\n";
-
-                //----------------------------------  写入队列-坐席信息 ------------------------------------
-                $xml .= "<tiers>\n";
-                foreach ($queues as $queue){
-                    foreach ($queue->agents as $agent){
-                        $xml .= "<tier agent=\"".$agent->name."\" queue=\"".$queue->name."\" level=\"1\" position=\"1\"/>\n";
-                    }
-                }
-                $xml .= "</tiers>\n";
-                $xml .= "</configuration>\n";
-                //生成配置文件
-                file_put_contents(config('freeswitch.callcenter_dir'),$xml);
-                $freeswitch->bgapi("reload mod_callcenter");
-                $freeswitch->disconnect();
-                return response()->json(['code'=>0,'msg'=>'更新成功']);
+            $client = new Client();
+            $response = $client->post(config('freeswitch.swoole_http_url.callcenter'),[
+                'form_params'=>[
+                    'data'=>['queues'=>$queues->toArray(),'agents'=>$agents->toArray()]
+                ],
+                'timeout'=>30
+            ]);
+            if ($response->getStatusCode()==200) {
+                $res = json_decode($response->getBody(),true);
+                return response()->json($res);
             }
-            return response()->json(['code'=>1,'msg'=>'请在生产环境下更新配置']);
+            return response()->json(['code'=>1,'msg'=>'更新失败']);
+            
         }catch (\Exception $exception){
             return response()->json(['code'=>1,'msg'=>'更新失败','data'=>$exception->getMessage()]);
         }

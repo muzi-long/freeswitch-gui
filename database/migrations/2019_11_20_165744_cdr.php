@@ -15,16 +15,18 @@ class Cdr extends Migration
     {
         Schema::create('cdr', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('uuid')->nullable()->comment('uuid');
-            $table->string('direction')->nullable()->comment('呼出/呼入');
+            $table->string('uniqueid')->nullable()->comment('通话唯一标识');
+            $table->tinyInteger('direction')->default(1)->comment('1呼出,2呼入');
             $table->string('src')->nullable()->comment('主叫号码');
             $table->string('dst')->nullable()->comment('主叫号码');
-            $table->integer('duration')->default(0)->comment('主叫时长（秒）');
-            $table->integer('billsec')->default(0)->comment('被叫时长（秒）');
-            $table->dateTime('start_at')->nullable()->comment('开始时间');
-            $table->dateTime('answer_at')->nullable()->comment('应答时间');
-            $table->dateTime('end_at')->nullable()->comment('结束时间');
-            $table->string('record_file')->nullable()->comment('通话录音');
+            $table->integer('billsec')->default(0)->comment('通话时长（秒）');
+            $table->dateTime('aleg_start_at')->nullable()->comment('主叫开始时间');
+            $table->dateTime('aleg_answer_at')->nullable()->comment('主叫应答时间');
+            $table->dateTime('aleg_end_at')->nullable()->comment('主叫结束时间');
+            $table->dateTime('bleg_start_at')->nullable()->comment('被叫开始时间');
+            $table->dateTime('bleg_answer_at')->nullable()->comment('被叫应答时间');
+            $table->dateTime('bleg_end_at')->nullable()->comment('被叫结束时间');
+            $table->string('record_file')->nullable()->comment('通话录音地址');
             $table->string('user_data')->nullable()->comment('扩展数据，json格式');
             $table->string('hangup_cause')->nullable()->comment('挂机描述');
             $table->timestamps();

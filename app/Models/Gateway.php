@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Log;
 class Gateway extends Model
 {
     protected $table = 'gateway';
-    protected $fillable = ['name','realm','username','password','prefix','outbound_caller_id','rate'];
+    protected $fillable = ['name','realm','username','password','prefix','outbound_caller_id','rate','type'];
 
     /**
      * 查询网关状态
@@ -35,6 +35,11 @@ class Gateway extends Model
                 return $itemArr[1];
             }
         }
+        $fs->disconnect();
+    }
+    //出局号码
+    public function outbound(){
+        return $this->hasMany('App\Models\GatewayOutbound','gateway_id','id');
     }
 
 }

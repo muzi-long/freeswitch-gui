@@ -21,7 +21,7 @@ class CdrController extends Controller
 
     public function data(Request $request)
     {
-        $query = Cdr::query()->with('bleg');
+        $query = Cdr::query();
         $search = $request->all(['src','dst','start_at_start','start_at_end']);
         if ($search['src']){
             $query = $query->where('caller_id_number',$search['src']);
@@ -30,11 +30,11 @@ class CdrController extends Controller
             $query = $query->where('destination_number',$search['dst']);
         }
         if ($search['start_at_start'] && !$search['start_at_end']){
-            $query = $query->where('start_stamp','>=',$search['start_at_start']);
+            $query = $query->where('aleg_start_stamp','>=',$search['start_at_start']);
         }else if (!$search['start_at_start'] && $search['start_at_end']){
-            $query = $query->where('start_stamp','<=',$search['start_at_end']);
+            $query = $query->where('aleg_start_stamp','<=',$search['start_at_end']);
         }else if ($search['start_at_start'] && $search['start_at_end']){
-            $query = $query->whereBetween('start_stamp',[$search['start_at_start'],$search['start_at_end']]);
+            $query = $query->whereBetween('aleg_start_stamp',[$search['start_at_start'],$search['start_at_end']]);
         }
         $res = $query->orderByDesc('id')->paginate($request->get('limit', 30));
         $data = [
@@ -67,21 +67,7 @@ class CdrController extends Controller
         //
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        $cdr = Cdr::find($id);
-        $record = [];
-        if ($cdr!=null){
-            $record = Asr::whereIn('uuid',[$cdr->uuid])->orderByDesc('id')->get();
-        }
-        return view('admin.cdr.asr',compact('record'));
-    }
+   
 
     /**
      * Show the form for editing the specified resource.

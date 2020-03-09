@@ -35,7 +35,6 @@
             <table id="dataTable" lay-filter="dataTable"></table>
             <script type="text/html" id="options">
                 <div class="layui-btn-group">
-                    {{--<a class="layui-btn layui-btn-sm" lay-event="show">通话详单</a>--}}
                     <a class="layui-btn layui-btn-sm" lay-event="play">播放</a>
                     <a class="layui-btn layui-btn-sm" lay-event="download">下载</a>
                 </div>
@@ -61,12 +60,10 @@
                 ,cols: [[ //表头
                     //{checkbox: true,fixed: true}
                     {field: 'id', title: 'ID', sort: true,width:80,fixed:'left'}
-                    ,{field: 'caller_id_number', title: '主叫号码',style:'color:green'}
-                    ,{field: 'destination_number', title: '被叫号码',style:'color:#2F4056'}
-                    ,{field: 'start_stamp', title: '呼叫时间', sort: true}
-                    ,{field: 'billsec', title: '通话时长(秒)', sort: true, style:'color: green',templet:function (d) {
-                            return d.bleg_uuid?d.bleg.billsec:0;
-                        }}
+                    ,{field: 'src', title: '主叫号码',style:'color:green'}
+                    ,{field: 'dst', title: '被叫号码',style:'color:#2F4056'}
+                    ,{field: 'aleg_start_stamp', title: '呼叫时间', sort: true}
+                    ,{field: 'billsec', title: '通话时长(秒)', sort: true, style:'color: green'}
                     ,{field: 'hangup_cause', title: '挂断原因'}
                     ,{width: 220, align:'center', toolbar: '#options', title:'操作',fixed:'right'}
                 ]]
@@ -76,15 +73,7 @@
             table.on('tool(dataTable)', function(obj){ //注：tool是工具条事件名，dataTable是table原始容器的属性 lay-filter="对应的值"
                 var data = obj.data //获得当前行数据
                     ,layEvent = obj.event; //获得 lay-event 对应的值
-                if(layEvent === 'show'){
-                    layer.open({
-                        title : '通话详单',
-                        shadeClose : true,
-                        type : 2,
-                        area : ['800px','600px'],
-                        content : '/admin/cdr/'+data.id+'/show'
-                    })
-                } else if (layEvent === 'play'){
+                if (layEvent === 'play'){
                     var index = layer.load()
                     $.get('/admin/cdr/'+data.aleg_uuid+'/play',function (res) {
                         layer.close(index);

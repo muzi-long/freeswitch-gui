@@ -2,21 +2,19 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\TaskRequest;
-use App\Models\Agent;
 use App\Models\Gateway;
-use App\Models\Queue;
-use App\Models\Task;
-use Carbon\Carbon;
-use Faker\Provider\Uuid;
+use App\Models\GatewayOutbound;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use DB;
-use Log;
-use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+use Faker\Provider\Uuid;
 
-class TaskController extends Controller
+class GatewayOutboundController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -25,19 +23,28 @@ class TaskController extends Controller
      */
     public function index()
     {
-        return view('admin.task.index');
+        $gateways = Gateway::get();
+        return view('admin.gateway_outbound.index',compact('gateways'));
     }
 
     public function data(Request $request)
     {
-        $res = Task::orderByDesc('id')->paginate($request->get('limit', 30));
+        $data = $request->all(['gateway_id','number']);
+        $res = GatewayOutbound::with('gateway')
+        ->when($data['gateway_id'],function($q) use($data){
+            return $q->where('gateway_id',$data['gateway_id']);
+        })
+        ->when($data['number'],function($q) use($data){
+            return $q->where('number',$data['number']);
+        })
+        ->orderByDesc('id')->paginate($request->get('limit', 30));
         $data = [
             'code' => 0,
             'msg' => '正在请求中...',
             'count' => $res->total(),
             'data' => $res->items(),
         ];
-        return response()->json($data);
+        return Response::json($data);
     }
 
     /**
@@ -47,9 +54,8 @@ class TaskController extends Controller
      */
     public function create()
     {
-        $queues = Queue::orderByDesc('id')->get();
-        $gateways = Gateway::orderByDesc('id')->get();
-        return view('admin.task.create',compact('queues','gateways'));
+        $gateways = Gateway::get();
+        return View::make('admin.gateway_outbound.create',compact('gateways'));
     }
 
     /**
@@ -58,13 +64,16 @@ class TaskController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(TaskRequest $request)
+    public function store(Request $request)
     {
-        $data = $request->except(['_method','_token']);
-        if (Task::create($data)){
-            return redirect(route('admin.task'))->with(['success'=>'添加成功']);
+        $data = $request->all(['gateway_id','number','status']);
+        try{
+            GatewayOutbound::create($data);
+            return Response::json(['code'=>0,'msg'=>'添加成功']);
+        }catch (\Exception $exception){
+            Log::info('添加网关号码异常：'.$exception->getMessage(),$data);
+            return Response::json(['code'=>1,'msg'=>'添加失败']);
         }
-        return back()->withErrors(['error'=>'添加失败']);
     }
 
     /**
@@ -73,16 +82,9 @@ class TaskController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Request $request, $id)
+    public function show($id)
     {
-        $task = Task::withCount(['calls','hasCalls','missCalls','successCalls','failCalls'])->findOrFail($id);
-        $percent = $task->calls_count>0?100*round(($task->has_calls_count)/($task->calls_count),4):'0.00%';
-        if ($request->isMethod('post')){
-            $tiers = DB::table('queue_agent')->where('queue_id',$task->queue_id)->pluck('agent_id');
-            $agents = Agent::whereIn('id',$tiers)->get();
-            return response()->json(['code'=>0, 'msg'=>'请求成功', 'data'=>$agents]);
-        }
-        return view('admin.task.show',compact('task','percent'));
+        //
     }
 
     /**
@@ -93,10 +95,9 @@ class TaskController extends Controller
      */
     public function edit($id)
     {
-        $model = Task::findOrFail($id);
-        $queues = Queue::orderByDesc('id')->get();
-        $gateways = Gateway::orderByDesc('id')->get();
-        return view('admin.task.edit',compact('model', 'queues', 'gateways'));
+        $model = GatewayOutbound::findOrFail($id);
+        $gateways = Gateway::get();
+        return View::make('admin.gateway_outbound.edit',compact('model','gateways'));
     }
 
     /**
@@ -106,14 +107,20 @@ class TaskController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(TaskRequest $request, $id)
+    public function update(Request $request, $id)
     {
-        $data = $request->except(['_method','_token']);
-        $model = Task::findOrFail($id);
-        if ($model->update($data)){
-            return redirect(route('admin.task'))->with(['success'=>'更新成功']);
+        $model = GatewayOutbound::where('id',$id)->first();
+        if ($model == null){
+            return Response::json(['code'=>1,'msg'=>'词库不存在']);
         }
-        return back()->withErrors(['error'=>'更新失败']);
+        $data = $request->all(['gateway_id','number','status']);
+        try{
+            $model->update($data);
+            return Response::json(['code'=>0,'msg'=>'更新成功']);
+        }catch (\Exception $exception){
+            Log::info('更新网关号码异常：'.$exception->getMessage(),$data);
+            return Response::json(['code'=>1,'msg'=>'更新失败']);
+        }
     }
 
     /**
@@ -128,50 +135,28 @@ class TaskController extends Controller
         if (empty($ids)){
             return response()->json(['code'=>1,'msg'=>'请选择删除项']);
         }
-        if (Task::destroy($ids)){
+        if (GatewayOutbound::destroy($ids)){
             return response()->json(['code'=>0,'msg'=>'删除成功']);
         }
         return response()->json(['code'=>1,'msg'=>'删除失败']);
     }
 
-    public function setStatus(Request $request)
+
+    public function importForm()
     {
-        $ids = $request->get('ids',[]);
-        if (count($ids)!=1){
-            return response()->json(['code'=>1,'msg'=>'请选择一条记录']);
-        }
-        $task = Task::withCount('calls')->find($ids[0]);
-        if ($task==null){
-            return response()->json(['code'=>1,'msg'=>'任务不存在']);
-        }
-        if ($task->status==3){
-            return response()->json(['code'=>1,'msg'=>'任务已完成，禁止操作']);
-        }
-        $status = $request->get('status',1);
-
-        if ($status==2&&$task->calls_count==0){
-            return response()->json(['code'=>1,'msg'=>'任务未导入号码，禁止操作']);
-        }
-        if ($status==1&&$task->status!=2){
-            $key = config('freeswitch.redis_key.callcenter_task');
-            Redis::rPush($key,$task->id);
-            return response()->json(['code'=>1,'msg'=>'任务未启动，禁止操作']);
-        }
-
-        if ($task->update(['status'=>$status])){
-            return response()->json(['code'=>0,'msg'=>'更新成功']);
-        }
-        return response()->json(['code'=>1,'msg'=>'更新失败']);
+        $gateways = Gateway::get();
+        return View::make('admin.gateway_outbound.import',compact('gateways'));
     }
 
-    public function importCall(Request $request, $id)
+    public function import(Request $request)
     {
         set_time_limit(0);
-        $task = Task::find($id);
-        if ($task==null){
-            return response()->json(['code'=>1,'msg'=>'任务不存在']);
-        }
+        $gateway_id = $request->get('gateway_id');
 
+        $gateway = Gateway::find($gateway_id);
+        if ($gateway==null){
+            return response()->json(['code'=>1,'msg'=>'网关不存在']);
+        }
         $file = $request->file('file');
         if ($file->isValid()){
             $allowed_extensions = ['csv'];
@@ -189,9 +174,8 @@ class TaskController extends Controller
             //上传到七牛云
             $newFile = Uuid::uuid().".".$file->getClientOriginalExtension();
             try{
-                $disk = QiniuStorage::disk('qiniu');
-                $disk->put($newFile,file_get_contents($file->getRealPath()));
-                $url = $disk->downloadUrl($newFile);
+                Storage::disk('uploadfile')->put($newFile,file_get_contents($file->getRealPath()));
+                $url = public_path('uploadfile').'/'.$newFile;
             }catch (\Exception $exception){
                 return response()->json(['code'=>1,'msg'=>'文件上传失败','data'=>$exception->getMessage()]);
             }
@@ -220,9 +204,10 @@ class TaskController extends Controller
                 DB::beginTransaction();
                 try{
                     foreach ($data as $d){
-                        DB::table('call')->insert([
-                            'task_id'   => $task->id,
-                            'phone'     => $d,
+                        DB::table('gateway_outbound')->insert([
+                            'gateway_id'   => $gateway->id,
+                            'number'     => $d,
+                            'status' => 1,
                             'created_at'=> Carbon::now(),
                             'updated_at'=> Carbon::now(),
                         ]);
@@ -237,7 +222,6 @@ class TaskController extends Controller
             return response()->json(['code'=>1,'msg'=>'导入数据为空']);
         }
         return response()->json(['code'=>1,'msg'=>'上传失败','data'=>$file->getErrorMessage()]);
-
     }
 
 }

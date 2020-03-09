@@ -10,7 +10,6 @@ class Queue extends Model
     protected $table = 'queue';
     protected $fillable = [
         'display_name',
-        'name',
         'strategy',
         'max_wait_time',
     ];

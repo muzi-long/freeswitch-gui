@@ -7,4 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Bleg extends Model
 {
     protected $table = 'cdr_b_leg';
+    protected $guarded = ['id'];
+
+    
 }

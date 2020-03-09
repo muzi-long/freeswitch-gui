@@ -6,6 +6,7 @@ use App\Http\Requests\ExtensionRequest;
 use App\Models\Extension;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use GuzzleHttp\Client;
 
 class ExtensionController extends Controller
 {
@@ -116,4 +117,35 @@ class ExtensionController extends Controller
         }
         return response()->json(['code'=>1,'msg'=>'删除失败']);
     }
+
+    public function updateXml()
+    {
+        set_time_limit(0);
+        $extension = DB::table('extension')->orderBy('sort')->get()->groupBy('context')->toArray();
+        $condition = DB::table('condition')->orderBy('sort')->get()->groupBy('extension_id')->toArray();
+        $action = DB::table('action')->orderBy('sort')->get()->groupBy('condition_id')->toArray();
+        if (empty($extension)){
+            return response()->json(['code'=>1,'msg'=>'无数据需要更新']);
+        }
+        foreach ($condition as $key1 => $value1) {
+            foreach ($value1 as $key2 => $value2) {
+                $value2->action = isset($action[$value2->id]) ? $action[$value2->id] : [];
+            } 
+        }
+        
+        foreach ($extension as $key1 => $value1) {
+            foreach ($value1 as $key2 => $value2) {
+                $value2->condition = isset($condition[$value2->id]) ? $condition[$value2->id] : [];
+            }
+        }
+        $data = $extension;
+        try{
+            $client = new Client();
+            $res = $client->post('http://'.config('freeswitch.swoole_http_url.dialplan'),['form_params'=>['data'=>$data]]);
+            return response()->json(['code'=>0,'msg'=>'更新成功']);
+        }catch (\Exception $exception){
+            return response()->json(['code'=>1,'msg'=>'更新失败','data'=>$exception->getMessage()]);
+        }
+    }
+
 }

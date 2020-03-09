@@ -179,6 +179,19 @@ class UserSeeder extends Seeder
                         ]
                     ],
                     [
+                        'name' => 'pbx.gateway_outbound',
+                        'display_name' => '出局号码',
+                        'guard_name' => 'web',
+                        'route' => 'admin.gateway_outbound',
+                        'icon_id' => '12',
+                        'child' => [
+                            ['name' => 'pbx.gateway_outbound.create', 'display_name' => '添加', 'guard_name' => 'web', 'route' => 'admin.gateway_outbound.create'],
+                            ['name' => 'pbx.gateway_outbound.edit', 'display_name' => '编辑', 'guard_name' => 'web', 'route' => 'admin.gateway_outbound.edit'],
+                            ['name' => 'pbx.gateway_outbound.destroy', 'display_name' => '删除', 'guard_name' => 'web', 'route' => 'admin.gateway_outbound.destroy'],
+                            ['name' => 'pbx.gateway_outbound.import', 'display_name' => '导入', 'guard_name' => 'web', 'route' => 'admin.gateway_outbound.updateXml'],
+                        ]
+                    ],
+                    [
                         'name' => 'pbx.extension',
                         'display_name' => '拨号计划',
                         'route' => 'admin.extension',

@@ -7,6 +7,8 @@
                 <button class="layui-btn layui-btn-sm layui-btn-danger" id="listDelete">删 除</button>
                 <a class="layui-btn layui-btn-sm" href="{{ route('admin.sip.create') }}">添 加</a>
                 <a class="layui-btn layui-btn-sm" href="{{ route('admin.sip.create_list') }}">批量添加</a>
+                <button class="layui-btn layui-btn-sm" type="button" id="updateXml">更新配置</button>
+                <button class="layui-btn layui-btn-sm" type="button" id="updateGateway">切换网关</button>
             </div>
 
         </div>
@@ -95,6 +97,30 @@
                     layer.msg('请选择删除项',{icon:5})
                 }
             })
+            //更新配置
+            $("#updateXml").click(function () {
+                    layer.confirm('确认生成所有分机配置吗？', function (index) {
+            layer.close(index);
+            layer.load();
+                        $.post("{{ route('admin.sip.updateXml') }}", {}, function (result) {
+                            layer.closeAll();
+                            var icon = result.code == 0 ? 6 : 5;
+                            layer.msg(result.msg, {icon: icon})
+                        });
+                    })
+            })
+
+            //切换网关
+            $("#updateGateway").click(function(){
+                layer.open({
+                    title:'批量更新网关',
+                    type:2,
+                    area:['600px','400px'],
+                    shadeClose:true,
+                    content:'{{route('admin.sip.updateGatewayForm')}}'
+                })
+            })
+
         })
     </script>
 @endsection

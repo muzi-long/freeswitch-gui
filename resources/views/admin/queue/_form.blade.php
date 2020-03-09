@@ -6,13 +6,6 @@
     </div>
 </div>
 <div class="layui-form-item">
-    <label for="" class="layui-form-label">队列号码</label>
-    <div class="layui-input-inline">
-        <input class="layui-input" type="text" maxlength="4" name="name" lay-verify="required|number" value="{{$model->name??old('name')}}" placeholder="">
-    </div>
-    <div class="layui-form-mid layui-word-aux">请输入队列号码,8000-8999</div>
-</div>
-<div class="layui-form-item">
     <label for="" class="layui-form-label">振铃策略</label>
     <div class="layui-input-inline">
         <select name="strategy" >

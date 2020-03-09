@@ -259,6 +259,11 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth','perm
         Route::put('sip/{id}/update','SipController@update')->name('admin.sip.update')->middleware('permission:pbx.sip.edit');
         //删除
         Route::delete('sip/destroy','SipController@destroy')->name('admin.sip.destroy')->middleware('permission:pbx.sip.destroy');
+        //更新配置
+        Route::post('sip/updateXml','SipController@updateXml')->name('admin.sip.updateXml');
+        //更新网关
+        Route::get('sip/updateGatewayForm','SipController@updateGatewayForm')->name('admin.sip.updateGatewayForm');
+        Route::post('sip/updateGateway','SipController@updateGateway')->name('admin.sip.updateGateway');
     });
     //网关管理
     Route::group(['middleware'=>'permission:pbx.gateway'],function (){
@@ -275,6 +280,22 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth','perm
         //更新配置
         Route::post('gateway/updateXml','GatewayController@updateXml')->name('admin.gateway.updateXml')->middleware('permission:pbx.gateway.updateXml');
     });
+    //网关号码管理
+    Route::group(['middleware'=>'permission:pbx.gateway_outbound'],function (){
+        Route::get('gateway_outbound','GatewayOutboundController@index')->name('admin.gateway_outbound');
+        Route::get('gateway_outbound/data','GatewayOutboundController@data')->name('admin.gateway_outbound.data');
+        //添加
+        Route::get('gateway_outbound/create','GatewayOutboundController@create')->name('admin.gateway_outbound.create')->middleware('permission:pbx.gateway_outbound.create');
+        Route::post('gateway_outbound/store','GatewayOutboundController@store')->name('admin.gateway_outbound.store')->middleware('permission:pbx.gateway_outbound.create');
+        //编辑
+        Route::get('gateway_outbound/{id}/edit','GatewayOutboundController@edit')->name('admin.gateway_outbound.edit')->middleware('permission:pbx.gateway_outbound.edit');
+        Route::put('gateway_outbound/{id}/update','GatewayOutboundController@update')->name('admin.gateway_outbound.update')->middleware('permission:pbx.gateway_outbound.edit');
+        //删除
+        Route::delete('gateway_outbound/destroy','GatewayOutboundController@destroy')->name('admin.gateway_outbound.destroy')->middleware('permission:pbx.gateway_outbound.destroy');
+        //导入
+        Route::get('gateway_outbound/importForm','GatewayOutboundController@importForm')->name('admin.gateway_outbound.importForm')->middleware('permission:pbx.gateway_outbound.import');
+        Route::post('gateway_outbound/import','GatewayOutboundController@import')->name('admin.gateway_outbound.import')->middleware('permission:pbx.gateway_outbound.import');
+    });
     //拨号计划
     Route::group(['middleware'=>'permission:pbx.extension'],function (){
         Route::get('extension','ExtensionController@index')->name('admin.extension');
@@ -289,6 +310,8 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth','perm
         Route::put('extension/{id}/update','ExtensionController@update')->name('admin.extension.update')->middleware('permission:pbx.extension.edit');
         //删除
         Route::delete('extension/destroy','ExtensionController@destroy')->name('admin.extension.destroy')->middleware('permission:pbx.extension.destroy');
+        //更新配置
+        Route::post('extension/updateXml','ExtensionController@updateXml')->name('admin.extension.updateXml');
     });
     //拨号规则，同属拨号计划权限
     Route::group(['middleware'=>'permission:pbx.extension'],function (){
@@ -440,7 +463,6 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth','perm
         Route::get('cdr/{uuid}/play','CdrController@play')->name('admin.cdr.play')->middleware("permission:monitor.cdr.play");
         //下载
         Route::get('cdr/{uuid}/download','CdrController@download')->name('admin.cdr.download')->middleware("permission:monitor.cdr.download");
-        //通话详单
-        Route::get('cdr/{id}/show','CdrController@show')->name('admin.cdr.show')->middleware("permission:monitor.cdr.show");
+       
     });
 });

@@ -11,6 +11,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Validator;
+use GuzzleHttp\Client;
+use App\Models\Gateway;
 
 class SipController extends Controller
 {
@@ -220,6 +222,57 @@ class SipController extends Controller
             }
         }
         return back()->withInput()->withErrors(['error'=>'开始分机号必须小于等于结束分机号']);
+    }
+
+    public function updateXml(){
+        set_time_limit(0);
+        $sips = DB::table('sip')->get()->toArray();
+        if (empty($sips)){
+            return response()->json(['code'=>1,'msg'=>'无数据需要更新']);
+        }
+        try{
+            $client = new Client();
+            $res = $client->post(config('swoole_http_url.directory'),['form_params'=>['data'=>$sips],'timeout'=>30]);
+            return response()->json(['code'=>0,'msg'=>'更新成功']);
+        }catch (\Exception $exception){
+            return response()->json(['code'=>1,'msg'=>'更新失败','data'=>$exception->getMessage()]);
+        }   
+    }   
+
+    public function updateGatewayForm(){
+        $gateways = Gateway::get();
+        return view('admin.sip.update_gateway',compact('gateways'));
+    }
+
+    public function updateGateway(Request $request){
+        $data = $request->all(['gateway_id','content']);
+        if (preg_match('/(\d{4,5})-(\d{4,5})/', $data['content'],$arr)) { //区间
+            if ((int)$arr[1] <= (int)$arr[2]) {
+                try{
+                    Sip::where('username','>=',$arr[1])->where('username','<=',$arr[2])->update(['gateway_id'=>$data['gateway_id']]);
+                    return response()->json(['code'=>0,'msg'=>'更新成功']);
+                }catch(\Exception $e){
+                    return response()->json(['code'=>1,'msg'=>'更新失败','data'=>$e->getMessage()]);
+                }
+            }else{
+                return response()->json(['code'=>1,'msg'=>'参数不合法']);
+            }
+        }elseif(strpos($data['content'], ",")!==false){ //多个
+            $arr = explode(",",$data['content']);
+            try{
+                Sip::whereIn('username',$arr)->update(['gateway_id'=>$data['gateway_id']]);
+                return response()->json(['code'=>0,'msg'=>'更新成功']);
+            }catch(\Exception $e){
+                return response()->json(['code'=>1,'msg'=>'更新失败','data'=>$e->getMessage()]);
+            }
+        }else{ //单个
+            try{
+                Sip::where('username',$data['content'])->update(['gateway_id'=>$data['gateway_id']]);
+                return response()->json(['code'=>0,'msg'=>'更新成功']);
+            }catch(\Exception $e){
+                return response()->json(['code'=>1,'msg'=>'更新失败','data'=>$e->getMessage()]);
+            }
+        }
     }
     
 }
