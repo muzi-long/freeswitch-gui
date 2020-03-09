@@ -45,7 +45,7 @@
         ],
         "files": [
             "bootstrap/Freeswitchesl.php",
-            "bootstrap/Snowflake.php",
+            "bootstrap/Snowflake.php"
         ]
     },
     "autoload-dev": {

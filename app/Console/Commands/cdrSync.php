@@ -67,7 +67,7 @@ class cdrSync extends Command
                 'bleg_end_at' => $item->bleg_uuid ? $item->bleg->end_stamp : null,
                 'created_at' => Carbon::now(),
 
-            ]
+            ];
             $idArr[] = $item->id;
         }
         

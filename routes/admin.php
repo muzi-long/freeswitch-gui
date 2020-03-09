@@ -370,6 +370,8 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth','perm
         Route::put('agent/{id}/update','AgentController@update')->name('admin.agent.update')->middleware('permission:pbx.agent.edit');
         //删除
         Route::delete('agent/destroy','AgentController@destroy')->name('admin.agent.destroy')->middleware('permission:pbx.agent.destroy');
+        //签入、签出
+        Route::post('agent/check','AgentController@check')->name('admin.agent.check');
 
     });
 

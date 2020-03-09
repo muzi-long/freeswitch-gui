@@ -31,9 +31,14 @@
         base: '/static/admin/layuiadmin/' //静态资源所在路径
     }).extend({
         index: 'lib/index' //主入口模块
-    }).use(['layer','jquery'],function () {
+    }).use(['element','form','layer','table','upload','laydate','jquery'],function () {
         var $ = layui.jquery;
+        var element = layui.element;
         var layer = layui.layer;
+        var form = layui.form;
+        var table = layui.table;
+        var upload = layui.upload;
+        var laydate = layui.laydate;
 
         $.ajaxSetup({
             headers: {

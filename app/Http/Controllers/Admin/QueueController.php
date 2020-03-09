@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin\pbx;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\QueueRequest;
 use App\Models\Agent;
