@@ -146,7 +146,7 @@ class callcenterRun extends Command
                         }
                         //否则进行呼叫
                         Log::info("任务：".$task->name." 将呼叫 ".$channel." 个号码");
-                        $calls = Call::where('status',1)->orderBy('id','asc')->take($channel)->get();
+                        $calls = Call::where('task_id',$task->id)->where('status',1)->orderBy('id','asc')->take($channel)->get();
                         if ($calls->isEmpty()){
                             Log::info("任务：".$task->name."已完成");
                             $task->update(['status'=>3]);
