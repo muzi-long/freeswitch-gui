@@ -22,17 +22,11 @@ Route::post('upload', 'ApiController@upload')->name('api.upload');
 
 Route::get('merchant-gateway', 'ApiController@MerchantGateway')->name('merchant-gateway');
 
-//动态分机注册
-Route::post('directory','ApiController@directory');
-
-//动态拨号计划
-Route::post('dialplan','ApiController@dialplan');
-
-//动态configuration 包含动态网关。（未使用）
-Route::post('configuration','ApiController@configuration');
-
 //呼叫接口
 Route::post('dial','ApiController@dial')->name('api.dial');
+
+//挂断接口
+Route::post('hangup','ApiController@hangup')->name('api.hangup');
 
 
 
