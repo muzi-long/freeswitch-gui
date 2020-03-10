@@ -42,7 +42,7 @@ class callcenterListen extends Command
     {
 
         $fs = new \Freeswitchesl();
-        $service = config('freeswitch.service')[1];
+        $service = config('freeswitch.event_socket');
         if (!$fs->connect($service['host'], $service['port'], $service['password'])){
             Log::info("群呼监听ESL未连接");
             return 0;
@@ -55,18 +55,21 @@ class callcenterListen extends Command
                 $info = $fs->serialize($received_parameters,"json");
                 $action = $fs->getHeader($received_parameters,"CC-Action");
                 $uuid = $fs->getHeader($received_parameters,"CC-Member-Session-UUID");
+
                 switch ($action){
                     //坐席状态
                     case 'agent-status-change':
                         $agent_name     = $fs->getHeader($received_parameters,"CC-Agent");
                         $status         = $fs->getHeader($received_parameters,"CC-Agent-Status");
-                        Agent::where('id',(int)$agent_name)->update(['status'=>$status]);
+                        $id             = (int)str_after($agent_name,'agent');
+                        Agent::where('id',$id)->update(['status'=>urldecode($status)]);
                         break;
                     //坐席呼叫状态
                     case 'agent-state-change':
                         $agent_name     = $fs->getHeader($received_parameters,"CC-Agent");
                         $state          = $fs->getHeader($received_parameters,"CC-Agent-State");
-                        Agent::where('id',(int)$agent_name)->update(['state'=>$state]);
+                        $id             = (int)str_after($agent_name,'agent');
+                        Agent::where('id',$id)->update(['state'=>urldecode($state)]);
                         break;
                     //呼叫进入队列
                     case 'member-queue-start':
@@ -76,12 +79,16 @@ class callcenterListen extends Command
                     // 坐席应答
                     case 'bridge-agent-start':
                         $datetime       = $fs->getHeader($received_parameters,"CC-Agent-Answered-Time");
-                        Call::where('uuid',$uuid)->update(['datetime_agent_answered'=>date('Y-m-d H:i:s',$datetime),'status'=>4]);
+                        $agent_name     = $fs->getHeader($received_parameters,"CC-Agent");
+                        $id             = (int)str_after($agent_name,'agent');
+                        Call::where('uuid',$uuid)->update(['datetime_agent_answered'=>date('Y-m-d H:i:s',$datetime),'status'=>4,'agent_id'=>$id]);
                         break;
                     //坐席结束
                     case 'bridge-agent-end':
                         $datetime       = $fs->getHeader($received_parameters,"CC-Bridge-Terminated-Time");
-                        Call::where('uuid',$uuid)->update(['datetime_end'=>date('Y-m-d H:i:s',$datetime),'status'=>4]);
+                        $agent_name     = $fs->getHeader($received_parameters,"CC-Agent");
+                        $id             = (int)str_after($agent_name,'agent');
+                        Call::where('uuid',$uuid)->update(['datetime_end'=>date('Y-m-d H:i:s',$datetime),'status'=>4,'agent_id'=>$id]);
                         break;
                     //桥接结束，通话结束
                     case 'member-queue-end':
@@ -95,14 +102,14 @@ class callcenterListen extends Command
                         }else{
                             
                             if ($leaving_time && $answered_time){
-                                $billsec    = $leaving_time - $answered_time > 0 ? $leaving_time - $answered_time : 0;
+                                $billsec = $leaving_time - $answered_time > 0 ? $leaving_time - $answered_time : 0;
                             }else{
-                                $billsec    = 0;
+                                $billsec = 0;
                             }
                         }
                         Call::where('uuid',$uuid)->update([
-                            'cause'                     => $cause,
-                            'billsec'                   => $billsec,
+                            'cause'      => $cause,
+                            'billsec'    => $billsec,
                         ]);
                         break;
                     default:

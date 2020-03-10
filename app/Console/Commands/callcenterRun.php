@@ -165,6 +165,7 @@ class callcenterRun extends Command
                                 $varStr .= "{origination_caller_id_number=".$task->gateway->outbound_caller_id."}";
                                 $varStr .= "{origination_caller_id_name=".$task->gateway->outbound_caller_id."}";
                             }
+                            $varStr .= "{cc_export_vars=effective_caller_id_number,effective_caller_id_name}";
                             $dail_string = "originate ".$varStr."sofia/gateway/gw".$task->gateway->id."/".$phone." &callcenter(queue".$task->queue->id.")";
                             Log::info("呼叫：".$dail_string);
                             $fs->bgapi($dail_string);
@@ -180,8 +181,9 @@ class callcenterRun extends Command
             
         }
 
-    
+       
     }
 
+    
 
 }

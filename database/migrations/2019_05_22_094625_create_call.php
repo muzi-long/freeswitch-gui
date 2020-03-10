@@ -21,10 +21,9 @@ class CreateCall extends Migration
             $table->string('uuid')->nullable()->comment('通话UUID');
             $table->timestamp('datetime_originate_phone')->nullable()->comment('呼叫时间');
             $table->timestamp('datetime_entry_queue')->nullable()->comment('进入队列时间');
-            $table->timestamp('datetime_agent_called')->nullable()->comment('呼叫坐席时间');
             $table->timestamp('datetime_agent_answered')->nullable()->comment('坐席应答时间');
             $table->timestamp('datetime_end')->nullable()->comment('结束通话时间');
-            $table->string('agent_name')->nullable()->comment('接听坐席');
+            $table->string('agent_id')->nullable()->comment('接听坐席ID');
             $table->integer('billsec')->default(0)->comment('通话时长');
             $table->string('cause')->nullable()->comment('挂机原因');
             $table->timestamps();
