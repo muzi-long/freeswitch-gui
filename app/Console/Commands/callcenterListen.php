@@ -22,6 +22,7 @@ class callcenterListen extends Command
      * @var string
      */
     protected $description = 'callcenter listen';
+    protected $fs_dir = '/usr/local/freeswitch';
 
     /**
      * Create a new command instance.
@@ -81,6 +82,11 @@ class callcenterListen extends Command
                         $datetime       = $fs->getHeader($received_parameters,"CC-Agent-Answered-Time");
                         $agent_name     = $fs->getHeader($received_parameters,"CC-Agent");
                         $id             = (int)str_after($agent_name,'agent');
+                        //录音
+                        $filepath       = $this->fs_dir . '/recordings/' . date('Y') . '/' . date('m') . '/' . date('d') . '/';
+                        $callcenter_file = $filepath . 'callcenter_' . md5($uuid . time() . uniqid()) . '.wav';
+                        $fs->bgapi("uuid_setvar {$uuid} callcenter_record_file {$callcenter_file}");
+                        $fs->bgapi("uuid_record " . $uuid . " start " . $callcenter_file . " 1800");
                         Call::where('uuid',$uuid)->update(['datetime_agent_answered'=>date('Y-m-d H:i:s',$datetime),'status'=>4,'agent_id'=>$id]);
                         break;
                     //坐席结束
@@ -107,10 +113,13 @@ class callcenterListen extends Command
                                 $billsec = 0;
                             }
                         }
-                        Call::where('uuid',$uuid)->update([
-                            'cause'      => $cause,
-                            'billsec'    => $billsec,
-                        ]);
+                        if ($billsec > 0) {
+                            $data['record_file'] = $fs->getHeader($received_parameters,"variable_callcenter_record_file");
+                        }
+                        $data['cause'] = $cause;
+                        $data['billsec'] = $billsec;
+                        Call::where('uuid',$uuid)->update($data);
+                        unset($data);
                         break;
                     default:
                         
