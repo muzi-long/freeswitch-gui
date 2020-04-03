@@ -42,7 +42,7 @@ class submeter extends Command
     public function handle()
     {
         //表名
-        $tables = ['asr_list','records'];
+        $tables = ['asr','cdr'];
         foreach ($tables as $table){
             $new_table = $table.'_'.date('Ym',strtotime('+1 month'));
             try{
@@ -54,7 +54,7 @@ class submeter extends Command
             }
         }
         //需要合建视图的表
-        $view_tables = ['records'];
+        $view_tables = [];
         foreach ($view_tables as $table){
             $this->createView($table);
         }

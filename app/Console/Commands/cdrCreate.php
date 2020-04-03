@@ -27,8 +27,9 @@ class cdrCreate extends Command
      */
     protected $description = 'cdr';
     protected $channel;
-    protected $fs_record = '/usr/local/freeswitch/recordings/';
-    public $machineId = 1;
+    protected $fs_dir = '/usr/local/freeswitch';
+    protected $machineId = 1;
+    protected $url = 'http://localhost';
 
     /**
      * Create a new command instance.
@@ -57,9 +58,9 @@ class cdrCreate extends Command
         
         $fs->events('plain', 'CHANNEL_ANSWER CHANNEL_HANGUP_COMPLETE');
         while (1) {
-
+            $table = 'cdr_'.date('Ym');
             //录音目录
-            $filepath = $this->fs_record . date('Y') . '/' . date('m') . '/' . date('d') . '/';
+            $filepath = $this->fs_dir . '/recordings/' . date('Y') . '/' . date('m') . '/' . date('d') . '/';
             
             $received_parameters = $fs->recvEvent();
             if (!empty($received_parameters)) {
@@ -70,18 +71,11 @@ class cdrCreate extends Command
                 $CallerCalleeIDNumber = $fs->getHeader($received_parameters, "Caller-Callee-ID-Number");//接电话者
 
                 switch ($eventname) {
-                	
                     case 'CHANNEL_ANSWER':
                         //$this->info($info);
                         $otherUuid = $fs->getHeader($received_parameters, "Other-Leg-Unique-ID");
                         if ($otherUuid) { //被叫应答后
-                            //设置费率
-                            /*$sip = Sip::with(['rate', 'merchant'])->where('username', $CallerCallerIDNumber)->first();
-                            if ($sip != null && isset($sip->rate->cost1) && isset($sip->merchant->id)) {
-                                $fs->bgapi("uuid_setvar {$uuid} nibble_rate {$sip->rate->cost1}");
-                                $fs->bgapi("uuid_setvar {$uuid} nibble_account {$sip->merchant->id}");
-                                $fs->bgapi("uuid_setvar {$uuid} nibble_increment {$sip->rate->cycle}");
-                            }*/
+                            DB::table($table)->where('uuid',$otherUuid)->update(['bleg_uuid'=>$uuid]);
                             //开启全程录音
                             $fullfile = $filepath . 'full_' . md5($otherUuid . $uuid) . '.wav';
                             if (!file_exists($fullfile)) {
@@ -91,113 +85,105 @@ class cdrCreate extends Command
                             }
 
                             //开启分段录音A
-                            //$halffile_a = $filepath . 'half_' . md5($otherUuid . time() . uniqid()) . '.wav';
-                            //$fs->bgapi("uuid_record " . $otherUuid . " start " . $halffile_a . " 18");
-                            //记录分段录音数据
-                            /*$this->channel[$otherUuid] = [
-                                'pid' => $otherUuid,
-                                'unique_id' => $otherUuid,
+                            $halffile_a = $filepath . 'half_' . md5($otherUuid . time() . uniqid()) . '.wav';
+                            $fs->bgapi("uuid_record " . $otherUuid . " start " . $halffile_a . " 18");
+                            $this->channel[$otherUuid] = [
+                                'uuid' => $otherUuid,
+                                'aleg_uuid' => $otherUuid,
+                                'bleg_uuid' => $uuid,
                                 'record_file' => $halffile_a,
-                                'created_at' => Carbon::now(),
-                            ];*/
+                                'start_at' => date('Y-m-d H:i:s'),
+                                'end_at' => null,
+                            ];
 
                             //开启分段录音B
-                            //$halffile_b = $filepath . 'half_' . md5($uuid . time() . uniqid()) . '.wav';
-                            //$fs->bgapi("uuid_record " . $uuid . " start " . $halffile_b . " 18");
-                            //记录分段录音数据
-                            /*$this->channel[$uuid] = [
-                                'pid' => $otherUuid,
-                                'unique_id' => $uuid,
+                            $halffile_b = $filepath . 'half_' . md5($uuid . time() . uniqid()) . '.wav';
+                            $fs->bgapi("uuid_record " . $uuid . " start " . $halffile_b . " 18");
+                            $this->channel[$uuid] = [
+                                'uuid' => $otherUuid,
+                                'aleg_uuid' => $otherUuid,
+                                'bleg_uuid' => $uuid,
                                 'record_file' => $halffile_b,
-                                'created_at' => Carbon::now(),
-                            ];*/
+                                'start_at' => date('Y-m-d H:i:s'),
+                                'end_at' => null,
+                            ];
+                        }else{
+                            DB::table($table)->insert([
+                                'uuid' => $uuid,
+                                'aleg_uuid' => $uuid,
+                            ]);
+                        }
+                        break;
+                    case 'RECORD_START':
+                        if (isset($this->channel[$uuid])) {
+                            $this->channel[$uuid]['start_at'] = date('Y-m-d H:i:s');
                         }
                         break;
                     case 'RECORD_STOP':
-                            if (isset($this->channel[$uuid])) {
-                                /*//发送识别
-                                try{
-                                    //语音识别 $this->channel[$uuid]['record_file'] 文件
-                                    $client = new \Swoole\Client(SWOOLE_SOCK_TCP);
-                                    if (!$client->connect('127.0.0.1', 9502, -1)) {
-                                        return false;
-                                    }
-                                    $client->send(json_encode([
-                                        'method' => 'asr',
-                                        'data' =>[
-                                            'url' => $this->url,
-                                            'record_file'=>$this->channel[$uuid]['record_file'],
-                                            'pid'=>$this->channel[$uuid]['pid'],
-                                            'unique_id'=>$this->channel[$uuid]['unique_id'],
-                                        ]
-                                    ]));
-                                    $client->close();
-                                }catch(\Exception $e){
-
-                                }*/
-
-                                //结束说话 后接着开启分段录音
-                                $halffile = $filepath . 'half_' . md5($uuid . time() . uniqid()) . '.wav';
-                                $this->channel[$uuid]['record_file'] = $halffile;
-                                $this->channel[$uuid]['created_at'] = Carbon::now();
-                                $fs->bgapi("uuid_record " . $uuid . " start " . $halffile . " 18");
-                            }
-                            break;
+                        if (isset($this->channel[$uuid])) {
+                            $this->channel[$uuid]['end_at'] = date('Y-m-d H:i:s');
+                            //结束说话 后接着开启分段录音
+                            $halffile = $filepath . 'half_' . md5($uuid . time() . uniqid()) . '.wav';
+                            $this->channel[$uuid]['record_file'] = $halffile;
+                            $this->channel[$uuid]['created_at'] = Carbon::now();
+                            $fs->bgapi("uuid_record " . $uuid . " start " . $halffile . " 18");
+                        }
+                        break;
                     case 'CHANNEL_HANGUP_COMPLETE':
                         if (isset($this->channel[$uuid])) {
                             unset($this->channel[$uuid]);
                         }
+                        //共用变量
                         $otherType = $fs->getHeader($received_parameters, "Other-Type");
-                        $thoerLegUniqueId = $fs->getHeader($received_parameters, "Other-Leg-Unique-ID");
                         $start = $fs->getHeader($received_parameters, "variable_start_stamp");
                         $answer = $fs->getHeader($received_parameters, "variable_answer_stamp");
                         $end = $fs->getHeader($received_parameters, "variable_end_stamp");
-                        $user_data = $fs->getHeader($received_parameters, "variable_user_data");
-                        $dgg_caller = $fs->getHeader($received_parameters, "variable_dgg_caller");
-                        $cdr = [
-                            'caller_id_number' => $CallerCallerIDNumber,
-                            'destination_number' => $CallerCalleeIDNumber,
-                            'duration' => (int)$fs->getHeader($received_parameters, "variable_duration"),
-                            'billsec' => (int)$fs->getHeader($received_parameters, "variable_billsec"),
-                            'start_stamp' => $start ? urldecode($start) : null,
-                            'answer_stamp' => $answer ? urldecode($answer) : null,
-                            'end_stamp' => $end ? urldecode($end) : null,
-                            'hangup_cause' => $fs->getHeader($received_parameters, "variable_hangup_cause"),
-                            'record_file' => $fs->getHeader($received_parameters, "variable_record_file"),
-                        ];
-                        try{
-                            $cdr['user_data'] = decrypt($user_data);
-                        }catch (\Exception $exception){
-                            $cdr['user_data'] = null;
-                        }
 
                         if (empty($otherType) || $otherType == 'originatee') {
-                            if (!empty($dgg_caller)){
-                                $cdr['destination_number'] = $dgg_caller;
+                            $dgg_caller = $fs->getHeader($received_parameters, "variable_dgg_caller");
+                            $record_file = $fs->getHeader($received_parameters, "variable_record_file");
+                            try{
+                                $user_data = decrypt($fs->getHeader($received_parameters, "variable_user_data"));
+                            }catch (\Exception $exception){
+                                $user_data = null;
                             }
-                            $cdr['aleg_uuid'] = $uuid;
-                            $cdr['bleg_uuid'] = $thoerLegUniqueId;
-                            $table = 'cdr_a_leg';
+                            DB::table($table)->where('uuid',$uuid)
+                                ->where('aleg_uuid',$uuid)
+                                ->update([
+                                    'src' => $CallerCallerIDNumber,
+                                    'dst' => !empty($dgg_caller) ? $dgg_caller : $CallerCalleeIDNumber,
+                                    'aleg_start_at' => $start ? urldecode($start) : null,
+                                    'aleg_answer_at' => $answer ? urldecode($answer) : null,
+                                    'aleg_end_at' => $end ? urldecode($end) : null,
+                                    'user_data' => $user_data,
+                                    'record_file' => !empty($record_file)&&isset($this->url) ? str_replace($this->fs_dir,$this->url,$record_file) : $record_file,
+                                    'hangup_cause' => $fs->getHeader($received_parameters, "variable_hangup_cause"),
+                                ]);
+                            unset($dgg_caller);
+                            unset($user_data);
+                            unset($record_file);
                         } else {
-                            $cdr['aleg_uuid'] = $thoerLegUniqueId;
-                            $cdr['bleg_uuid'] = $uuid;
-                            $table = 'cdr_b_leg';
+                            $thoerLegUniqueId = $fs->getHeader($received_parameters, "Other-Leg-Unique-ID");
+                            $billsec = $fs->getHeader($received_parameters, "variable_billsec");
+                            DB::table($table)->where('uuid',$thoerLegUniqueId)
+                                ->where('bleg_uuid',$uuid)
+                                ->update([
+                                    'bleg_start_at' => $start ? urldecode($start) : null,
+                                    'bleg_answer_at' => $answer ? urldecode($answer) : null,
+                                    'bleg_end_at' => $end ? urldecode($end) : null,
+                                    'billsec' => $billsec,
+                                ]);
+                            unset($thoerLegUniqueId);
+                            unset($billsec);
                         }
-                        DB::table($table)->insert($cdr);
-                        //销毁变量
-                        unset($cdr);
-                        unset($table);
+                        //销毁公共变量
                         unset($otherType);
-                        unset($thoerLegUniqueId);
                         unset($start);
                         unset($answer);
                         unset($end);
-                        unset($user_data);
-                        unset($dgg_caller);
                         break;
                     default:
                         # code...
-
                 }
             }
         }

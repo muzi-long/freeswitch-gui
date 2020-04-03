@@ -15,7 +15,9 @@ class Cdr extends Migration
     {
         Schema::create('cdr', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('uniqueid')->nullable()->comment('通话唯一标识');
+            $table->string('uuid')->nullable()->comment('通话唯一标识');
+            $table->string('aleg_uuid')->nullable()->comment('aleg唯一标识');
+            $table->string('bleg_uuid')->nullable()->comment('bleg唯一标识');
             $table->tinyInteger('direction')->default(1)->comment('1呼出,2呼入');
             $table->string('src')->nullable()->comment('主叫号码');
             $table->string('dst')->nullable()->comment('主叫号码');
