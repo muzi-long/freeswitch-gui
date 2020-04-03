@@ -107,8 +107,9 @@ class cdrCreate extends Command
                                 'end_at' => null,
                             ];
                         }else {
-                            DB::table($table)->insert([
+                            DB::table($table)->updateOrInsert([
                                 'uuid' => $uuid,
+                            ],[
                                 'aleg_uuid' => $uuid,
                             ]);
                         }
@@ -162,11 +163,8 @@ class cdrCreate extends Command
                             unset($user_data);
                             unset($record_file);
                         } else {
-
                             $thoerLegUniqueId = $fs->getHeader($received_parameters, "Other-Leg-Unique-ID");
                             $billsec = $fs->getHeader($received_parameters, "variable_billsec");
-                            $this->info($thoerLegUniqueId);
-                            $this->info($uuid);
                             DB::table($table)->where('uuid',$thoerLegUniqueId)
                                 ->where('bleg_uuid',$uuid)
                                 ->update([
@@ -191,5 +189,4 @@ class cdrCreate extends Command
         }
         $fs->disconnect();
     }
-
 }
