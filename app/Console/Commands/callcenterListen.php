@@ -41,7 +41,6 @@ class callcenterListen extends Command
      */
     public function handle()
     {
-
         $fs = new \Freeswitchesl();
         $service = config('freeswitch.event_socket');
         if (!$fs->connect($service['host'], $service['port'], $service['password'])){
@@ -52,11 +51,8 @@ class callcenterListen extends Command
         while (true){
             $received_parameters = $fs->recvEvent();
             if (!empty($received_parameters)) {
-                //记录日志
-                $info = $fs->serialize($received_parameters,"json");
                 $action = $fs->getHeader($received_parameters,"CC-Action");
                 $uuid = $fs->getHeader($received_parameters,"CC-Member-Session-UUID");
-
                 switch ($action){
                     //坐席状态
                     case 'agent-status-change':
@@ -106,7 +102,7 @@ class callcenterListen extends Command
                         if ($cause == 'Cancel') {
                             $billsec = 0;
                         }else{
-                            
+
                             if ($leaving_time && $answered_time){
                                 $billsec = $leaving_time - $answered_time > 0 ? $leaving_time - $answered_time : 0;
                             }else{
@@ -114,7 +110,8 @@ class callcenterListen extends Command
                             }
                         }
                         if ($billsec > 0) {
-                            $data['record_file'] = $fs->getHeader($received_parameters,"variable_callcenter_record_file");
+                            $record_file = $fs->getHeader($received_parameters,"variable_callcenter_record_file");
+                            $data['record_file'] = $record_file ? str_replace('/usr/local/freeswitch',config('app.url'),$record_file) : null;
                         }
                         $data['cause'] = $cause;
                         $data['billsec'] = $billsec;
@@ -122,7 +119,6 @@ class callcenterListen extends Command
                         unset($data);
                         break;
                     default:
-                        
                 }
             }
         }

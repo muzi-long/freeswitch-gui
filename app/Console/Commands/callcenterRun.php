@@ -155,10 +155,11 @@ class callcenterRun extends Command
                         foreach ($calls as $call){
                             $uuid = md5(\Snowflake::nextId($this->machineId).$call->phone.Redis::incr($callKey));
                             //更新为正在呼叫
-                            $call->update(['status'=>2,'uuid'=>$uuid]);
+                            $call->update(['status'=>2,'uuid'=>$uuid,'datetime_originate_phone'=>date('Y-m-d H:i:s')]);
                             Log::info("更新号码: ".$call->phone." 状态为：2");
                             $phone = $task->gateway->prefix ? $task->gateway->prefix.$call->phone : $call->phone;
                             $varStr  = "{origination_uuid=".$uuid."}";
+                            $varStr .= "{ignore_early_media=true}";
                             $varStr .= "{effective_caller_id_number=".$call->phone."}";
                             $varStr .= "{effective_caller_id_name=".$call->phone."}";
                             if ($task->gateway->outbound_caller_id){
