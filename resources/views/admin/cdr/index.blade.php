@@ -62,7 +62,7 @@
                     {field: 'id', title: 'ID', sort: true,width:80,fixed:'left'}
                     ,{field: 'src', title: '主叫号码',style:'color:green'}
                     ,{field: 'dst', title: '被叫号码',style:'color:#2F4056'}
-                    ,{field: 'aleg_start_stamp', title: '呼叫时间', sort: true}
+                    ,{field: 'aleg_start_at', title: '呼叫时间', sort: true}
                     ,{field: 'billsec', title: '通话时长(秒)', sort: true, style:'color: green'}
                     ,{field: 'hangup_cause', title: '挂断原因'}
                     ,{width: 220, align:'center', toolbar: '#options', title:'操作',fixed:'right'}
