@@ -56,7 +56,7 @@ class cdrCreate extends Command
             return 1;
         }
         
-        $fs->events('plain', 'CHANNEL_ANSWER CHANNEL_HANGUP_COMPLETE');
+        $fs->events('plain', 'CHANNEL_ANSWER RECORD_START RECORD_STOP CHANNEL_HANGUP_COMPLETE');
         while (1) {
             $table = 'cdr_'.date('Ym');
             //录音目录
