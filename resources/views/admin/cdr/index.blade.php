@@ -21,11 +21,11 @@
                     <div class="layui-inline">
                         <label for="" class="layui-form-label">呼叫时间</label>
                         <div class="layui-input-inline" style="width: 160px">
-                            <input type="text" name="start_stamp_start" id="start_at_start" class="layui-input" placeholder="开始时间">
+                            <input type="text" name="start_at_start" id="start_at_start" class="layui-input" placeholder="开始时间">
                         </div>
                         <div class="layui-form-mid layui-word-aux">-</div>
                         <div class="layui-input-inline" style="width: 160px">
-                            <input type="text" name="start_stamp_end" id="start_at_end" class="layui-input" placeholder="结束时间">
+                            <input type="text" name="start_at_end" id="start_at_end" class="layui-input" placeholder="结束时间">
                         </div>
                     </div>
                 </div>
