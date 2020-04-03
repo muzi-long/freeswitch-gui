@@ -75,7 +75,7 @@
                     ,layEvent = obj.event; //获得 lay-event 对应的值
                 if (layEvent === 'play'){
                     var index = layer.load()
-                    $.get('/admin/cdr/'+data.aleg_uuid+'/play',function (res) {
+                    $.get('/admin/cdr/'+data.uuid+'/play',function (res) {
                         layer.close(index);
                         if (res.code==0){
                             var _html = '<div style="padding:20px;">';
@@ -92,7 +92,7 @@
                         }
                     })
                 } else if (layEvent === 'download'){
-                    location.href = '/admin/cdr/'+data.aleg_uuid+'/download';
+                    location.href = '/admin/cdr/'+data.uuid+'/download';
                 }
             });
 
