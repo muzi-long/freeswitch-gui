@@ -2,14 +2,9 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Sip;
 use Carbon\Carbon;
-use GuzzleHttp\Client;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\Redis;
 
 class cdrCreate extends Command
 {
@@ -75,7 +70,12 @@ class cdrCreate extends Command
                         //$this->info($info);
                         $otherUuid = $fs->getHeader($received_parameters, "Other-Leg-Unique-ID");
                         if ($otherUuid) { //被叫应答后
-                            DB::table($table)->where('uuid',$otherUuid)->update(['bleg_uuid'=>$uuid]);
+                            DB::table($table)->updateOrInsert([
+                                'uuid' => $otherUuid,
+                            ],[
+                                'aleg_uuid' => $otherUuid,
+                                'bleg_uuid' => $uuid,
+                            ]);
                             //开启全程录音
                             $fullfile = $filepath . 'full_' . md5($otherUuid . $uuid) . '.wav';
                             if (!file_exists($fullfile)) {
@@ -83,7 +83,6 @@ class cdrCreate extends Command
                                 $fs->bgapi("uuid_setvar {$uuid} record_file {$fullfile}");//设置录音地址变量
                                 $fs->bgapi("uuid_setvar {$otherUuid} record_file {$fullfile}");//设置录音地址变量
                             }
-
                             //开启分段录音A
                             $halffile_a = $filepath . 'half_' . md5($otherUuid . time() . uniqid()) . '.wav';
                             $fs->bgapi("uuid_record " . $otherUuid . " start " . $halffile_a . " 18");
@@ -107,7 +106,7 @@ class cdrCreate extends Command
                                 'start_at' => date('Y-m-d H:i:s'),
                                 'end_at' => null,
                             ];
-                        }else{
+                        }else {
                             DB::table($table)->insert([
                                 'uuid' => $uuid,
                                 'aleg_uuid' => $uuid,
@@ -163,8 +162,11 @@ class cdrCreate extends Command
                             unset($user_data);
                             unset($record_file);
                         } else {
+
                             $thoerLegUniqueId = $fs->getHeader($received_parameters, "Other-Leg-Unique-ID");
                             $billsec = $fs->getHeader($received_parameters, "variable_billsec");
+                            $this->info($thoerLegUniqueId);
+                            $this->info($uuid);
                             DB::table($table)->where('uuid',$thoerLegUniqueId)
                                 ->where('bleg_uuid',$uuid)
                                 ->update([
