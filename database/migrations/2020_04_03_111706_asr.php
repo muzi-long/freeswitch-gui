@@ -13,7 +13,7 @@ class Asr extends Migration
      */
     public function up()
     {
-        Schema::create('cdr', function (Blueprint $table) {
+        Schema::create('asr', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('uuid')->nullable()->comment('通话记录UUID');
             $table->string('leg_uuid')->nullable()->comment('当前说话leg的UUID');
