@@ -14,6 +14,10 @@ class MerchantPermission
             throw UnauthorizedException::notLoggedIn();
         }
 
+        if (Auth::guard('merchant')->user()->merchant_id==0) {
+            return $next($request);
+        }
+
         $permissions = is_array($permission)
             ? $permission
             : explode('|', $permission);
