@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Seeder;
 
-class PbxSeeder extends Seeder
+class PbxTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -71,7 +71,7 @@ class PbxSeeder extends Seeder
                             [
                                 'display_name'  => '媒体绕过',
                                 'application'   => 'set',
-                                'data'          => 'bypass_media=true',
+                                'data'          => 'bypass_media=false',
                                 'sort'          => 1,
                             ],
                             [
@@ -79,12 +79,6 @@ class PbxSeeder extends Seeder
                                 'application'   => 'set',
                                 'data'          => 'hangup_after_bridge=true',
                                 'sort'          => 2,
-                            ],
-                            [
-                                'display_name'  => '计费心跳',
-                                'application'   => 'nibblebill',
-                                'data'          => 'heartbeat 30',
-                                'sort'          => 3,
                             ],
                             [
                                 'display_name'  => '呼叫',
@@ -97,8 +91,8 @@ class PbxSeeder extends Seeder
                 ],
             ],
             [
-                'display_name'  => '设置网关和出局信息',
-                'name'          => 'set_gateway_and_prefix',
+                'display_name'  => '内线拨打外线电话',
+                'name'          => 'dial_from_gateway_to_phone',
                 'context'       => 'default',
                 'sort'          => 1,
                 'conditions'    => [
@@ -110,36 +104,108 @@ class PbxSeeder extends Seeder
                         'sort'          => 0,
                         'actions'       => [
                             [
+                                'display_name'  => '系统应答',
+                                'application'   => 'answer',
+                                'data'          => null,
+                                'sort'          => 0,
+                            ],
+                            [
                                 'display_name'  => '设置网关',
                                 'application'   => 'set',
                                 'data'          => 'gw=$1',
-                                'sort'          => 0,
+                                'sort'          => 1,
                             ],
                             [
                                 'display_name'  => '设置前缀',
                                 'application'   => 'set',
                                 'data'          => 'dialed_prefix=$3',
-                                'sort'          => 1,
+                                'sort'          => 2,
                             ],
                             [
                                 'display_name'  => '设置被叫号码',
                                 'application'   => 'set',
                                 'data'          => 'dialed_extension=$2',
-                                'sort'          => 2,
+                                'sort'          => 3,
                             ],
                             [
-                                'display_name'  => '呼叫转移',
-                                'application'   => 'transfer',
-                                'data'          => '$2 XML default',
-                                'sort'          => 2,
+                                'display_name'  => '设置被叫号码到ableg',
+                                'application'   => 'export',
+                                'data'          => 'dgg_caller=$2',
+                                'sort'          => 4,
+                            ],
+                            [
+                                'display_name'  => '主叫随被叫一起挂断',
+                                'application'   => 'set',
+                                'data'          => 'hangup_after_bridge=true',
+                                'sort'          => 5,
+                            ],
+                            [
+                                'display_name'  => '呼叫失败时继续来播放提示音',
+                                'application'   => 'set',
+                                'data'          => 'continue_on_fail=true',
+                                'sort'          => 6,
+                            ],
+                            [
+                                'display_name'  => '设置全程录音文件地址',
+                                'application'   => 'export',
+                                'data'          => 'record_file=$${base_dir}/recordings/${strftime(%Y)}/${strftime(%m)}/${strftime(%d)}/${uuid}${caller_id_number}${dialed_prefix}${dialed_extension}.wav',
+                                'sort'          => 7,
+                            ],
+                            [
+                                'display_name'  => '对AB都进行录音',
+                                'application'   => 'set',
+                                'data'          => 'RECORD_STEREO=true',
+                                'sort'          => 8,
+                            ],
+                            [
+                                'display_name'  => '桥接后再录音',
+                                'application'   => 'set',
+                                'data'          => 'RECORD_BRIDGE_REQ=true',
+                                'sort'          => 9,
+                            ],
+                            [
+                                'display_name'  => '执行录音',
+                                'application'   => 'record_session',
+                                'data'          => '${record_file}',
+                                'sort'          => 10,
+                            ],
+                            [
+                                'display_name'  => '呼叫',
+                                'application'   => 'bridge',
+                                'data'          => 'sofia/gateway/${gw}/${dialed_prefix}${dialed_extension}',
+                                'sort'          => 11,
+                            ],
+                            [
+                                'display_name'  => '系统应答',
+                                'application'   => 'answer',
+                                'data'          => null,
+                                'sort'          => 12,
+                            ],
+                            [
+                                'display_name'  => '等待1秒',
+                                'application'   => 'sleep',
+                                'data'          => '1000',
+                                'sort'          => 13,
+                            ],
+                            [
+                                'display_name'  => '播放提示',
+                                'application'   => 'playback',
+                                'data'          => '/usr/local/freeswitch/sounds/dial_failed_tips.wav',
+                                'sort'          => 14,
+                            ],
+                            [
+                                'display_name'  => '挂机',
+                                'application'   => 'hangup',
+                                'data'          => null,
+                                'sort'          => 15,
                             ],
                         ],
                     ],
                 ],
             ],
             [
-                'display_name'  => '内线拨打外线电话',
-                'name'          => 'internal_to_external',
+                'display_name'  => '客户端直接拨号',
+                'name'          => 'client_to_phone',
                 'context'       => 'default',
                 'sort'          => 1,
                 'conditions'    => [
@@ -163,52 +229,89 @@ class PbxSeeder extends Seeder
                                 'sort'          => 1,
                             ],
                             [
-                                'display_name'  => '计费心跳',
-                                'application'   => 'nibblebill',
-                                'data'          => 'heartbeat 30',
-                                'sort'          => 2,
-                            ],
-                            /*[
-                                'display_name'  => '设置录音文件',
-                                'application'   => 'export',
-                                'data'          => 'record_file=$${base_dir}/recordings/${strftime(%Y)}/${strftime(%m)}/${strftime(%d)}/${strftime(%Y-%m-%d-%H-%M-%S)}_${destination_number}_${caller_id_number}.wav',
+                                'display_name'  => '等待1秒',
+                                'application'   => 'sleep',
+                                'data'          => '1000',
                                 'sort'          => 2,
                             ],
                             [
-                                'display_name'  => '接通后才进行录音',
-                                'application'   => 'set',
-                                'data'          => 'media_bug_answer_req=true',
+                                'display_name'  => '播放提示',
+                                'application'   => 'playback',
+                                'data'          => '/usr/local/freeswitch/sounds/client_to_phone.wav',
                                 'sort'          => 3,
                             ],
                             [
-                                'display_name'  => '最小录音时间',
-                                'application'   => 'set',
-                                'data'          => 'RECORD_MIN_SEC=3',
+                                'display_name'  => '挂断',
+                                'application'   => 'hangup',
+                                'data'          => null,
                                 'sort'          => 4,
-                            ],
-                            [
-                                'display_name'  => '立体声',
-                                'application'   => 'set',
-                                'data'          => 'RECORD_STEREO=true',
-                                'sort'          => 5,
-                            ],
-                            [
-                                'display_name'  => '录音',
-                                'application'   => 'record_session',
-                                'data'          => '${record_file}',
-                                'sort'          => 6,
-                            ],*/
-                            [
-                                'display_name'  => '呼叫',
-                                'application'   => 'bridge',
-                                'data'          => 'sofia/gateway/${gw}/${dialed_prefix}${dialed_extension}',
-                                'sort'          => 7,
                             ],
                         ],
                     ],
                 ],
             ],
+            //呼入
+            [
+                'display_name'  => '952273呼入',
+                'name'          => 'call_in_952273',
+                'context'       => 'public',
+                'sort'          => 0,
+                'conditions'    => [
+                    [
+                        'display_name'  => '规则一',
+                        'field'         => 'destination_number',
+                        'expression'    => '^(02863803994|952273|63803994)$',
+                        'break'         => 'on-false',
+                        'sort'          => 0,
+                        'actions'       => [
+                            [
+                                'display_name'  => '系统应答',
+                                'application'   => 'answer',
+                                'data'          => null,
+                                'sort'          => 0,
+                            ],
+                            [
+                                'display_name'  => '等待1秒',
+                                'application'   => 'sleep',
+                                'data'          => '1000',
+                                'sort'          => 1,
+                            ],
+                            [
+                                'display_name'  => '呼叫失败时继续来播放提示音',
+                                'application'   => 'set',
+                                'data'          => 'continue_on_fail=true',
+                                'sort'          => 2,
+                            ],
+                            [
+                                'display_name'  => '转到分机',
+                                'application'   => 'bridge',
+                                'data'          => 'user/8971|user/8972|user/8973',
+                                'sort'          => 3,
+                            ],
+                            [
+                                'display_name'  => '系统应答',
+                                'application'   => 'answer',
+                                'data'          => null,
+                                'sort'          => 4,
+                            ],
+                            [
+                                'display_name'  => '播放提示',
+                                'application'   => 'playback',
+                                'data'          => '/usr/local/freeswitch/sounds/kefu_is_busy.wav',
+                                'sort'          => 6,
+                            ],
+                            [
+                                'display_name'  => '挂机',
+                                'application'   => 'hangup',
+                                'data'          => null,
+                                'sort'          => 7,
+                            ],
+                        ]
+                    ],
+                ],
+            ],
         ];
+
         foreach ($data as $d1){
             $extension = \App\Models\Extension::create([
                 'display_name'  => $d1['display_name'],
@@ -240,6 +343,5 @@ class PbxSeeder extends Seeder
                 }
             }
         }
-
     }
 }

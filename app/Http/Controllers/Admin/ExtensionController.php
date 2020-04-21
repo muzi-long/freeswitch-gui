@@ -7,6 +7,7 @@ use App\Models\Extension;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\DB;
 
 class ExtensionController extends Controller
 {
@@ -142,7 +143,7 @@ class ExtensionController extends Controller
         try{
             $client = new Client();
             $res = $client->post('http://'.config('freeswitch.swoole_http_url.dialplan'),['form_params'=>['data'=>$data]]);
-            return response()->json(['code'=>0,'msg'=>'更新成功']);
+            return $res->getBody();
         }catch (\Exception $exception){
             return response()->json(['code'=>1,'msg'=>'更新失败','data'=>$exception->getMessage()]);
         }

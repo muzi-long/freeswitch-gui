@@ -225,7 +225,7 @@ class UserSeeder extends Seeder
                             ['name' => 'pbx.agent.destroy', 'display_name' => '删除','route'=>'admin.agent.destroy'],
                         ]
                     ],
-                    [
+                    /*[
                         'name' => 'pbx.ivr',
                         'display_name' => 'IVR管理',
                         'route' => 'admin.ivr',
@@ -245,7 +245,7 @@ class UserSeeder extends Seeder
                             ['name' => 'pbx.digits.edit', 'display_name' => '编辑','route'=>'admin.digits.edit'],
                             ['name' => 'pbx.digits.destroy', 'display_name' => '删除','route'=>'admin.digits.destroy'],
                         ]
-                    ],
+                    ],*/
                     [
                         'name' => 'pbx.audio',
                         'display_name' => '音频管理',
@@ -296,7 +296,7 @@ class UserSeeder extends Seeder
                     ],
                 ]
             ],
-            [
+            /*[
                 'name' => 'information',
                 'display_name' => '资讯管理',
                 'route' => '',
@@ -333,7 +333,7 @@ class UserSeeder extends Seeder
                         ]
                     ],
                 ]
-            ],
+            ],*/
         ];
 
         foreach ($permissions as $pem1) {

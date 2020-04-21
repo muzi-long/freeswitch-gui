@@ -233,7 +233,7 @@ class SipController extends Controller
         try{
             $client = new Client();
             $res = $client->post(config('swoole_http_url.directory'),['form_params'=>['data'=>$sips],'timeout'=>30]);
-            return response()->json(['code'=>0,'msg'=>'更新成功']);
+            return $res->getBody();
         }catch (\Exception $exception){
             return response()->json(['code'=>1,'msg'=>'更新失败','data'=>$exception->getMessage()]);
         }   

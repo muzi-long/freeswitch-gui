@@ -130,17 +130,13 @@ class QueueController extends Controller
         $agents = Agent::get();
         try{
             $client = new Client();
-            $response = $client->post(config('freeswitch.swoole_http_url.callcenter'),[
+            $res = $client->post(config('freeswitch.swoole_http_url.callcenter'),[
                 'form_params'=>[
                     'data'=>['queues'=>$queues->toArray(),'agents'=>$agents->toArray()]
                 ],
                 'timeout'=>30
             ]);
-            if ($response->getStatusCode()==200) {
-                $res = json_decode($response->getBody(),true);
-                return response()->json($res);
-            }
-            return response()->json(['code'=>1,'msg'=>'更新失败']);
+            return $res->getBody();
             
         }catch (\Exception $exception){
             return response()->json(['code'=>1,'msg'=>'更新失败','data'=>$exception->getMessage()]);
