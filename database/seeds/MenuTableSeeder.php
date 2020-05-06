@@ -56,6 +56,104 @@ class MenuTableSeeder extends Seeder
                     ],
                 ]
             ],
+            [
+                'name' => '服务配置',
+                'route' => null,
+                'url' => null,
+                'icon' => 'layui-icon-windows',
+                'type' => 2,
+                'sort' => 2,
+                'permission_name' => 'fs',
+                'child' => [
+                    [
+                        'name' => '分机管理',
+                        'route' => 'admin.sip',
+                        'url' => null,
+                        'icon' => 'layui-icon-cellphone',
+                        'type' => 1,
+                        'permission_name' => 'fs.sip',
+                    ],
+                    [
+                        'name' => '网关管理',
+                        'route' => 'admin.gateway',
+                        'url' => null,
+                        'icon' => 'layui-icon-service',
+                        'type' => 1,
+                        'permission_name' => 'fs.gateway',
+                    ],
+                    [
+                        'name' => '出局号码',
+                        'route' => 'admin.gateway_outbound',
+                        'url' => null,
+                        'icon' => 'layui-icon-link',
+                        'type' => 1,
+                        'permission_name' => 'fs.gateway_outbound',
+                    ],
+                    [
+                        'name' => '拨号计划',
+                        'route' => 'admin.extension',
+                        'url' => null,
+                        'icon' => 'layui-icon-chart',
+                        'type' => 1,
+                        'permission_name' => 'fs.extension',
+                    ],
+                ]
+            ],
+            [
+                'name' => '群呼管理',
+                'route' => null,
+                'url' => null,
+                'icon' => 'layui-icon-group',
+                'type' => 2,
+                'sort' => 2,
+                'permission_name' => 'callcenter',
+                'child' => [
+                    [
+                        'name' => '坐席管理',
+                        'route' => 'admin.agent',
+                        'url' => null,
+                        'icon' => 'layui-icon-friends',
+                        'type' => 1,
+                        'permission_name' => 'callcenter.agent',
+                    ],
+                    [
+                        'name' => '队列管理',
+                        'route' => 'admin.queue',
+                        'url' => null,
+                        'icon' => 'layui-icon-user',
+                        'type' => 1,
+                        'permission_name' => 'callcenter.queue',
+                    ],
+                    [
+                        'name' => '任务',
+                        'route' => 'admin.task',
+                        'url' => null,
+                        'icon' => 'layui-icon-template-1',
+                        'type' => 1,
+                        'permission_name' => 'callcenter.task',
+                    ],
+                ]
+            ],
+            [
+                'name' => '客户管理',
+                'route' => null,
+                'url' => null,
+                'icon' => 'layui-icon-android',
+                'type' => 2,
+                'sort' => 2,
+                'permission_name' => 'crm',
+                'child' => [
+                    [
+                        'name' => '坐席管理',
+                        'route' => 'admin.node',
+                        'url' => null,
+                        'icon' => 'layui-icon-cellphone-fine',
+                        'type' => 1,
+                        'permission_name' => 'crm.node',
+                    ],
+
+                ]
+            ],
         ];
         $permissions = \App\Models\Permission::pluck('id','name')->toArray();
         foreach ($datas as $k1 => $d1){

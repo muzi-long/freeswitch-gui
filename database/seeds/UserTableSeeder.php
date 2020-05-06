@@ -46,6 +46,7 @@ class UserTableSeeder extends Seeder
                         'child' => [
                             ['name' => 'system.user.create', 'display_name' => '添加用户'],
                             ['name' => 'system.user.edit', 'display_name' => '编辑用户'],
+                            ['name' => 'system.user.resetPassword', 'display_name' => '重置密码'],
                             ['name' => 'system.user.destroy', 'display_name' => '删除用户'],
                             ['name' => 'system.user.role', 'display_name' => '分配角色'],
                             ['name' => 'system.user.permission', 'display_name' => '分配权限'],
@@ -77,6 +78,109 @@ class UserTableSeeder extends Seeder
                             ['name' => 'system.menu.create', 'display_name' => '添加'],
                             ['name' => 'system.menu.edit', 'display_name' => '编辑'],
                             ['name' => 'system.menu.destroy', 'display_name' => '删除'],
+                        ]
+                    ],
+                ]
+            ],
+            [
+                'name' => 'fs',
+                'display_name' => '服务配置',
+                'child' => [
+                    [
+                        'name' => 'fs.sip',
+                        'display_name' => '分机管理',
+                        'child' => [
+                            ['name' => 'fs.sip.create', 'display_name' => '添加'],
+                            ['name' => 'fs.sip.create_list', 'display_name' => '批量添加'],
+                            ['name' => 'fs.sip.edit', 'display_name' => '编辑'],
+                            ['name' => 'fs.sip.destroy', 'display_name' => '删除'],
+                            ['name' => 'fs.sip.updateXml', 'display_name' => '更新配置'],
+                            ['name' => 'fs.sip.updateGateway', 'display_name' => '切换网关'],
+                        ]
+                    ],
+                    [
+                        'name' => 'fs.gateway',
+                        'display_name' => '网关管理',
+                        'child' => [
+                            ['name' => 'fs.gateway.create', 'display_name' => '添加'],
+                            ['name' => 'fs.gateway.edit', 'display_name' => '编辑'],
+                            ['name' => 'fs.gateway.destroy', 'display_name' => '删除'],
+                            ['name' => 'fs.gateway.updateXml', 'display_name' => '更新配置'],
+                        ]
+                    ],
+                    [
+                        'name' => 'fs.gateway_outbound',
+                        'display_name' => '出局号码',
+                        'child' => [
+                            ['name' => 'fs.gateway_outbound.create', 'display_name' => '添加'],
+                            ['name' => 'fs.gateway_outbound.edit', 'display_name' => '编辑'],
+                            ['name' => 'fs.gateway_outbound.destroy', 'display_name' => '删除'],
+                            ['name' => 'fs.gateway_outbound.import', 'display_name' => '导入'],
+                        ]
+                    ],
+                    [
+                        'name' => 'fs.extension',
+                        'display_name' => '拨号计划',
+                        'child' => [
+                            ['name' => 'fs.extension.show', 'display_name' => '详情'],
+                            ['name' => 'fs.extension.create', 'display_name' => '添加'],
+                            ['name' => 'fs.extension.edit', 'display_name' => '编辑'],
+                            ['name' => 'fs.extension.destroy', 'display_name' => '删除'],
+                        ]
+                    ],
+                ]
+            ],
+            [
+                'name' => 'callcenter',
+                'display_name' => '群呼管理',
+                'child' => [
+                    [
+                        'name' => 'callcenter.queue',
+                        'display_name' => '队列管理',
+                        'child' => [
+                            ['name' => 'callcenter.queue.create', 'display_name' => '添加'],
+                            ['name' => 'callcenter.queue.edit', 'display_name' => '编辑'],
+                            ['name' => 'callcenter.queue.destroy', 'display_name' => '删除'],
+                            ['name' => 'callcenter.queue.updateXml', 'display_name' => '更新配置'],
+                            ['name' => 'callcenter.queue.agent', 'display_name' => '分配坐席'],
+                        ]
+                    ],
+                    [
+                        'name' => 'callcenter.agent',
+                        'display_name' => '坐席管理',
+                        'child' => [
+                            ['name' => 'callcenter.agent.create', 'display_name' => '添加'],
+                            ['name' => 'callcenter.agent.edit', 'display_name' => '编辑'],
+                            ['name' => 'callcenter.agent.destroy', 'display_name' => '删除'],
+                            ['name' => 'callcenter.agent.check', 'display_name' => '签入签出'],
+                        ]
+                    ],
+                    [
+                        'name' => 'callcenter.task',
+                        'display_name' => '任务管理',
+                        'child' => [
+                            ['name' => 'callcenter.task.create', 'display_name' => '添加'],
+                            ['name' => 'callcenter.task.show', 'display_name' => '详情'],
+                            ['name' => 'callcenter.task.edit', 'display_name' => '编辑'],
+                            ['name' => 'callcenter.task.destroy', 'display_name' => '删除'],
+                            ['name' => 'callcenter.task.importCall', 'display_name' => '导入号码'],
+                            ['name' => 'callcenter.task.setStatus', 'display_name' => '设置状态'],
+                        ]
+                    ],
+
+                ]
+            ],
+            [
+                'name' => 'crm',
+                'display_name' => '客户管理',
+                'child' => [
+                    [
+                        'name' => 'crm.node',
+                        'display_name' => '节点管理',
+                        'child' => [
+                            ['name' => 'crm.node.create', 'display_name' => '添加'],
+                            ['name' => 'crm.node.edit', 'display_name' => '编辑'],
+                            ['name' => 'crm.node.destroy', 'display_name' => '删除'],
                         ]
                     ],
                 ]

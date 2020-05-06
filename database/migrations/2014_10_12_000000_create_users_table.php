@@ -25,6 +25,7 @@ class CreateUsersTable extends Migration
             $table->ipAddress('last_login_ip')->nullable()->comment('最后登录IP地址');
             $table->timestamps();
         });
+        \DB::statement("ALTER TABLE `extension` comment '用户'");
     }
 
     /**

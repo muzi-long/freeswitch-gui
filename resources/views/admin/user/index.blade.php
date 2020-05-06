@@ -5,11 +5,12 @@
 
         <div class="layui-card-header layuiadmin-card-header-auto">
             <div class="layui-btn-group">
-
+                @can('system.user.destroy')
                     <button class="layui-btn layui-btn-sm layui-btn-danger" id="listDelete">删 除</button>
-
+                @endcan
+                @can('system.user.create')
                     <a class="layui-btn layui-btn-sm" href="{{ route('admin.user.create') }}">添 加</a>
-
+                @endcan
             </div>
         </div>
 
@@ -17,16 +18,21 @@
             <table id="dataTable" lay-filter="dataTable"></table>
             <script type="text/html" id="options">
                 <div class="layui-btn-group">
-
+                    @can('system.user.edit')
                         <a class="layui-btn layui-btn-sm" lay-event="edit">编辑</a>
+                    @endcan
+                    @can('system.user.resetPassword')
                         <a class="layui-btn layui-btn-sm" lay-event="resetPassword">重置密码</a>
-
+                    @endcan
+                    @can('system.user.role')
                         <a class="layui-btn layui-btn-sm" lay-event="role">角色</a>
-
+                    @endcan
+                    @can('system.user.permission')
                         <a class="layui-btn layui-btn-sm" lay-event="permission">权限</a>
-
+                    @endcan
+                    @can('system.user.destroy')
                         <a class="layui-btn layui-btn-danger layui-btn-sm " lay-event="del">删除</a>
-
+                    @endcan
                 </div>
             </script>
         </div>

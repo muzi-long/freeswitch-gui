@@ -27,6 +27,13 @@
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
+        window.newTab = function (url,tit){
+            if(top.layui.index){
+                top.layui.index.openTabsPage(url,tit)
+            }else{
+                window.open(url)
+            }
+        }
     });
 </script>
 @yield('script')
