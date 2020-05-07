@@ -60,6 +60,12 @@
                         , {field: 'id', title: 'ID', sort: true, width: 80}
                         , {field: 'nickname', title: '昵称'}
                         , {field: 'phone', title: '帐号'}
+                        , {field: 'department_id', title: '部门',templet:function (d) {
+                                return d.department.name;
+                            }}
+                        , {field: 'sip_id', title: '分机',templet:function (d) {
+                                return d.sip.username;
+                            }}
                         , {field: 'last_login_at', title: '最近登录时间'}
                         , {field: 'last_login_ip', title: '最近登录IP'}
                         , {field: 'created_at', title: '创建时间'}

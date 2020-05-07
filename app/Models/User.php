@@ -21,6 +21,7 @@ class User extends Authenticatable
         'remember_token',
         'api_token',
         'department_id',
+        'sip_id',
         'last_login_at',
         'last_login_ip',
     ];
@@ -48,12 +49,22 @@ class User extends Authenticatable
         $this->attributes['password'] = Hash::make($value);
     }
 
+    public function department()
+    {
+        return $this->hasOne('App\Models\Department','id','department_id')->withDefault(['name'=>'-']);
+    }
+
+    public function sip()
+    {
+        return $this->hasOne('App\Models\Sip','id','sip_id')->withDefault(['username'=>'-']);
+    }
+
     public function menus()
     {
         $menus = [];
         $data = Menu::with('childs')->where('parent_id', 0)->orderBy('sort','asc')->get();
         foreach ($data as $k1 => $v1){
-            if ($this->hasPermissionTo($v1->permission_id)){
+            if ($v1->permission_id==null || ($v1->permission_id!=null&&$this->hasPermissionTo($v1->permission_id))){
                 $menus[$k1] = [
                     'name' => $v1->name,
                     'route' => $v1->route,
@@ -64,7 +75,7 @@ class User extends Authenticatable
                 ];
                 if ($v1->childs->isNotEmpty()){
                     foreach ($v1->childs as $k2 => $v2){
-                        if ($this->hasPermissionTo($v2->permission_id)){
+                        if ($v2->permission_id==null || ($v2->permission_id!=null&&$this->hasPermissionTo($v2->permission_id))){
                             $menus[$k1]['childs'][$k2] = [
                                 'name' => $v2->name,
                                 'route' => $v2->route,

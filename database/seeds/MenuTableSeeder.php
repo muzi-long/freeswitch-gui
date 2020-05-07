@@ -125,7 +125,7 @@ class MenuTableSeeder extends Seeder
                         'permission_name' => 'callcenter.queue',
                     ],
                     [
-                        'name' => '任务',
+                        'name' => '任务管理',
                         'route' => 'admin.task',
                         'url' => null,
                         'icon' => 'layui-icon-template-1',
@@ -144,14 +144,37 @@ class MenuTableSeeder extends Seeder
                 'permission_name' => 'crm',
                 'child' => [
                     [
-                        'name' => '坐席管理',
+                        'name' => '部门管理',
+                        'route' => 'admin.department',
+                        'url' => null,
+                        'icon' => 'layui-icon-group',
+                        'type' => 1,
+                        'permission_name' => 'crm.department',
+                    ],
+                    [
+                        'name' => '节点管理',
                         'route' => 'admin.node',
                         'url' => null,
                         'icon' => 'layui-icon-cellphone-fine',
                         'type' => 1,
                         'permission_name' => 'crm.node',
                     ],
-
+                    [
+                        'name' => '客户配置',
+                        'route' => 'admin.project-design',
+                        'url' => null,
+                        'icon' => 'layui-icon-set-fill',
+                        'type' => 1,
+                        'permission_name' => 'crm.project-design',
+                    ],
+                    [
+                        'name' => '客户管理',
+                        'route' => 'admin.project',
+                        'url' => null,
+                        'icon' => 'layui-icon-reply-fill',
+                        'type' => 1,
+                        'permission_name' => 'crm.project',
+                    ],
                 ]
             ],
         ];

@@ -19,7 +19,7 @@ class Department extends Migration
             $table->unsignedBigInteger('parent_id')->default(0)->comment('上级部门ID');
             $table->timestamps();
         });
-        \DB::statement("ALTER TABLE `extension` comment '部门'");
+        \DB::statement("ALTER TABLE `department` comment '部门'");
     }
 
     /**

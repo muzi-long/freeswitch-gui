@@ -7,9 +7,11 @@ use App\Http\Requests\Admin\User\ChangePasswordRequest;
 use App\Http\Requests\Admin\User\ResetPasswordRequest;
 use App\Http\Requests\Admin\User\StoreRequest;
 use App\Http\Requests\Admin\User\UpdateRequest;
+use App\Models\Department;
 use App\Models\Menu;
 use App\Models\Permission;
 use App\Models\Role;
+use App\Models\Sip;
 use App\Models\User;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
@@ -126,7 +128,10 @@ class UserController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()){
-            $res = User::where('id','!=',config('freeswitch.user_root_id'))->orderByDesc('id')->paginate($request->get('limit', 30));
+            $res = User::with(['department','sip'])
+                ->where('id','!=',config('freeswitch.user_root_id'))
+                ->orderByDesc('id')
+                ->paginate($request->get('limit', 30));
             $data = [
                 'code' => 0,
                 'msg' => '正在请求中...',
@@ -144,7 +149,10 @@ class UserController extends Controller
      */
     public function create()
     {
-        return View::make('admin.user.create');
+        $departments = Department::with('childs')->where('parent_id',0)->get();
+        $user_sip = User::whereNotNull('sip_id')->pluck('sip_id')->toArray();
+        $sips = Sip::get();
+        return View::make('admin.user.create',compact('departments','user_sip','sips'));
     }
 
     /**
@@ -154,7 +162,7 @@ class UserController extends Controller
      */
     public function store(StoreRequest $request)
     {
-        $data = $request->all(['phone','nickname','password']);
+        $data = $request->all(['phone','nickname','password','department_id','sip_id']);
         try{
             User::create($data);
             return Response::json(['code'=>0,'msg'=>'添加成功']);
@@ -172,7 +180,10 @@ class UserController extends Controller
     public function edit($id)
     {
         $user = User::findOrFail($id);
-        return View::make('admin.user.edit',compact('user'));
+        $departments = Department::with('childs')->where('parent_id',0)->get();
+        $user_sip = User::whereNotNull('sip_id')->pluck('sip_id')->toArray();
+        $sips = Sip::get();
+        return View::make('admin.user.edit',compact('user','departments','user_sip','sips'));
     }
 
     /**
@@ -184,7 +195,7 @@ class UserController extends Controller
     public function update(UpdateRequest $request, $id)
     {
         $user = User::findOrFail($id);
-        $data = $request->all(['phone','nickname']);
+        $data = $request->all(['phone','nickname','department_id','sip_id']);
         try{
             $user->update($data);
             return Response::json(['code'=>0,'msg'=>'更新成功']);
@@ -252,7 +263,7 @@ class UserController extends Controller
     public function role($id)
     {
         $user = User::findOrFail($id);
-        $roles = Role::where('guard_name','web')->get();
+        $roles = Role::where('id','!=',config('freeswitch.role_root_id'))->get();
         foreach ($roles as $role){
             $role->own = $user->hasRole($role) ? true : false;
         }

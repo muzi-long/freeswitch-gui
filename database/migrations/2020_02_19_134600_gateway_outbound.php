@@ -20,7 +20,7 @@ class GatewayOutbound extends Migration
             $table->integer('status')->default(1)->nullable()->comment('状态，1启用，2禁用，默认1');
             $table->timestamps();
         });
-        \DB::statement("ALTER TABLE `extension` comment '网关出局号码'");
+        \DB::statement("ALTER TABLE `gateway_outbound` comment '网关出局号码'");
     }
 
     /**

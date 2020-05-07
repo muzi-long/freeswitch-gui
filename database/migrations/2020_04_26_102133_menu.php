@@ -25,7 +25,7 @@ class Menu extends Migration
             $table->unsignedTinyInteger('permission_id')->nullable()->comment('对应权限ID');
             $table->timestamps();
         });
-        \DB::statement("ALTER TABLE `extension` comment '菜单'");
+        \DB::statement("ALTER TABLE `menu` comment '菜单'");
     }
 
     /**

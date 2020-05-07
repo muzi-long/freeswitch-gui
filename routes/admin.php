@@ -292,5 +292,50 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth','perm
 
     });
 
+    //客户属性
+    Route::group([],function (){
+        Route::get('project-design','ProjectDesignController@index')->name('admin.project-design')->middleware('permission:crm.project-design');
+        //添加
+        Route::get('project-design/create','ProjectDesignController@create')->name('admin.project-design.create')->middleware('permission:crm.project-design.create');
+        Route::post('project-design/store','ProjectDesignController@store')->name('admin.project-design.store')->middleware('permission:crm.project-design.create');
+        //编辑
+        Route::get('project-design/{id}/edit','ProjectDesignController@edit')->name('admin.project-design.edit')->middleware('permission:crm.project-design.edit');
+        Route::put('project-design/{id}/update','ProjectDesignController@update')->name('admin.project-design.update')->middleware('permission:crm.project-design.edit');
+        //删除
+        Route::delete('project-design/destroy','ProjectDesignController@destroy')->name('admin.project-design.destroy')->middleware('permission:crm.project-design.destroy');
+
+    });
+
+    //客户管理
+    Route::group([],function (){
+        Route::get('project','ProjectController@index')->name('admin.project')->middleware('permission:crm.project');
+        Route::get('project/data','ProjectController@data')->name('admin.project.data')->middleware('permission:crm.project');
+        //添加
+        Route::get('project/create','ProjectController@create')->name('admin.project.create')->middleware('permission:crm.project.create');
+        Route::post('project/store','ProjectController@store')->name('admin.project.store')->middleware('permission:crm.project.create');
+        //编辑
+        Route::get('project/{id}/edit','ProjectController@edit')->name('admin.project.edit')->middleware('permission:crm.project.edit');
+        Route::put('project/{id}/update','ProjectController@update')->name('admin.project.update')->middleware('permission:crm.project.edit');
+        //详情
+        Route::get('project/{id}/show','ProjectController@show')->name('admin.project.show')->middleware('permission:crm.project.show');
+        //删除
+        Route::delete('project/destroy','ProjectController@destroy')->name('admin.project.destroy')->middleware('permission:crm.project.destroy');
+        //更新节点
+        Route::get('project/{id}/node','ProjectController@node')->name('admin.project.node')->middleware('permission:crm.project.node');
+        Route::post('project/{id}/nodeStore','ProjectController@nodeStore')->name('admin.project.nodeStore')->middleware('permission:crm.project.node');
+        //节点记录
+        Route::get('project/{id}/nodeList','ProjectController@nodeList')->name('admin.project.nodeList');
+        //更新备注
+        Route::get('project/{id}/remark','ProjectController@remark')->name('admin.project.remark')->middleware('permission:crm.project.remark');
+        Route::post('project/{id}/remarkStore','ProjectController@remarkStore')->name('admin.project.remarkStore');
+        //备注记录
+        Route::get('project/{id}/remarkList','ProjectController@remarkList')->name('admin.project.remarkList')->middleware('permission:crm.project.import');
+        //下载导入模板
+        Route::get('project/downloadTemplate','ProjectController@downloadTemplate')->name('admin.project.downloadTemplate')->middleware('permission:crm.project.downloadTemplate');
+        //导入
+        Route::post('project/import','ProjectController@import')->name('admin.project.import')->middleware('permission:crm.project.import');
+
+    });
+
 
 });

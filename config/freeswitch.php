@@ -65,4 +65,13 @@ return [
         'Receiving'         => '电话呼入',
         'In a queue call'   => '通话中',
     ],
+    //字段类型
+    'field_type' => [
+        'input' => '输入框',
+        'radio' => '单选',
+        'checkbox' => '多选',
+        'select' => '下拉选择',
+        'image' => '图片上传',
+        'textarea' => '文本框',
+    ],
 ];

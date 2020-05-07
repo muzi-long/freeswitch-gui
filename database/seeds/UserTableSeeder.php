@@ -175,12 +175,45 @@ class UserTableSeeder extends Seeder
                 'display_name' => '客户管理',
                 'child' => [
                     [
+                        'name' => 'crm.department',
+                        'display_name' => '部门管理',
+                        'child' => [
+                            ['name' => 'crm.department.create', 'display_name' => '添加'],
+                            ['name' => 'crm.department.edit', 'display_name' => '编辑'],
+                            ['name' => 'crm.department.destroy', 'display_name' => '删除'],
+                        ]
+                    ],
+                    [
                         'name' => 'crm.node',
                         'display_name' => '节点管理',
                         'child' => [
                             ['name' => 'crm.node.create', 'display_name' => '添加'],
                             ['name' => 'crm.node.edit', 'display_name' => '编辑'],
                             ['name' => 'crm.node.destroy', 'display_name' => '删除'],
+                        ]
+                    ],
+                    [
+                        'name' => 'crm.project-design',
+                        'display_name' => '客户配置',
+                        'child' => [
+                            ['name' => 'crm.project-design.create', 'display_name' => '添加'],
+                            ['name' => 'crm.project-design.edit', 'display_name' => '编辑'],
+                            ['name' => 'crm.project-design.destroy', 'display_name' => '删除'],
+                        ]
+                    ],
+                    [
+                        'name' => 'crm.project',
+                        'display_name' => '客户管理',
+                        'route' => 'admin.project',
+                        'child' => [
+                            ['name' => 'crm.project.create', 'display_name' => '添加'],
+                            ['name' => 'crm.project.edit', 'display_name' => '编辑'],
+                            ['name' => 'crm.project.destroy', 'display_name' => '删除'],
+                            ['name' => 'crm.project.show', 'display_name' => '详情'],
+                            ['name' => 'crm.project.node', 'display_name' => '节点变更'],
+                            ['name' => 'crm.project.remark', 'display_name' => '添加备注'],
+                            ['name' => 'crm.project.import', 'display_name' => '导入'],
+                            ['name' => 'crm.project.downloadTemplate', 'display_name' => '下载模板'],
                         ]
                     ],
                 ]

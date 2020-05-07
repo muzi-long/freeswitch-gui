@@ -21,6 +21,7 @@ class CreateUsersTable extends Migration
             $table->rememberToken()->comment('记住密码');
             $table->string('api_token')->nullable()->comment('token');
             $table->unsignedBigInteger('department_id')->nullable()->comment('部门ID');
+            $table->unsignedBigInteger('sip_id')->nullable()->comment('分机ID');
             $table->dateTime('last_login_at')->nullable()->comment('最后登录时间');
             $table->ipAddress('last_login_ip')->nullable()->comment('最后登录IP地址');
             $table->timestamps();
