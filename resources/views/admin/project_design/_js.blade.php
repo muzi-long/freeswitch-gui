@@ -14,6 +14,14 @@
             }
         });
 
+        form.on('switch(required)', function(data){
+            if (data.elem.checked){
+                $(data.elem).val(1)
+            }else {
+                $(data.elem).val(2)
+            }
+        });
+
         form.on('submit(go)',function (data) {
             var load = layer.load();
             $.post(data.form.action,data.field,function (res) {

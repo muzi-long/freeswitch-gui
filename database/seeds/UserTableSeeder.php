@@ -214,6 +214,8 @@ class UserTableSeeder extends Seeder
                             ['name' => 'crm.project.remark', 'display_name' => '添加备注'],
                             ['name' => 'crm.project.import', 'display_name' => '导入'],
                             ['name' => 'crm.project.downloadTemplate', 'display_name' => '下载模板'],
+                            ['name' => 'crm.project.list_all', 'display_name' => '查看所有客户'],
+                            ['name' => 'crm.project.list_department', 'display_name' => '查看本部门客户'],
                         ]
                     ],
                 ]

@@ -55,6 +55,12 @@
     </div>
 </div>
 <div class="layui-form-item">
+    <label for="" class="layui-form-label">是否必填</label>
+    <div class="layui-input-inline">
+        <input type="checkbox" name="required" lay-text="是|否" @if(isset($model)&&$model->required==1) checked @endif value="1" lay-skin="switch" lay-filter="required">
+    </div>
+</div>
+<div class="layui-form-item">
     <div class="layui-input-block">
         <button type="button" class="layui-btn" lay-submit lay-filter="go" >确 认</button>
         <a href="{{route('admin.project-design')}}" class="layui-btn" >返 回</a>

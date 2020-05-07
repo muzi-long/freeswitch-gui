@@ -55,7 +55,14 @@ class ProjectController extends Controller
         ]);
         $res = Project::with(['node','followUser'])
             ->where(function ($query) use($user){
-                return $query->where('follow_user_id',$user->id)->orWhere('created_user_id',$user->id);
+                if ($user->hasPermissionTo('crm.project.list_all')) {
+                    # code...
+                }elseif ($user->hasPermissionTo('crm.project.list_department')) {
+                    $user_ids = User::where('department_id',$user->department_id)->pluck('id')->toArray();
+                    return $query->whereIn('owner_user_id',$user_ids);
+                }else{
+                    return $query->where('owner_user_id',$user->id);
+                }               
             })
             //姓名
             ->when($data['name'],function ($query) use($data){
@@ -129,7 +136,7 @@ class ProjectController extends Controller
      */
     public function store(ProjectRequest $request)
     {
-        $user = Auth::guard()->user();
+        $user = Auth::user();
         $data = $request->all(['company_name','name','phone']);
         $dataInfo = [];
         $fields = ProjectDesign::where('visiable',1)->get();
@@ -169,11 +176,11 @@ class ProjectController extends Controller
                 ]);
             }
             DB::commit();
-            return Redirect::route('admin.project')->with(['success'=>'添加成功']);
+            return Response::json(['code'=>0,'msg'=>'添加成功']);
         }catch (\Exception $exception){
             DB::rollBack();
             Log::info('添加项目异常：'.$exception->getMessage());
-            return Redirect::back()->withInput()->withErrors('添加失败');
+            return Response::json(['code'=>1,'msg'=>'添加失败']);
         }
 
     }
@@ -228,11 +235,11 @@ class ProjectController extends Controller
                 DB::table('project_design_value')->where('id',$d['id'])->update(['data'=>$d['data']]);
             }
             DB::commit();
-            return Redirect::route('home.project')->with(['success'=>'更新成功']);
+            return Response::json(['code'=>0,'msg'=>'更新成功']);
         }catch (\Exception $exception){
             DB::rollBack();
-            Log::info('更新项目异常：'.$exception->getMessage());
-            return Redirect::back()->withInput()->withErrors('更新失败');
+            Log::error('更新项目异常：'.$exception->getMessage());
+            return Response::json(['code'=>1,'msg'=>'更新失败']);
         }
     }
 
@@ -255,7 +262,7 @@ class ProjectController extends Controller
             return Response::json(['code'=>0,'msg'=>'删除成功']);
         }catch (\Exception $exception){
             DB::rollBack();
-            Log::info('删除项目异常：'.$exception->getMessage());
+            Log::error('删除项目异常：'.$exception->getMessage());
             return Response::json(['code'=>1,'msg'=>'删除失败']);
         }
     }
@@ -312,11 +319,11 @@ class ProjectController extends Controller
                 'updated_at' => Carbon::now()
             ]);
             DB::commit();
-            return Redirect::route('home.project.show',['id'=>$id])->with(['success'=>'更新成功']);
+            return Response::json(['code'=>0,'msg'=>'更新成功']);
         }catch (\Exception $exception){
             DB::rollBack();
             Log::info('更新节点异常：'.$exception->getMessage());
-            return Redirect::back()->withInput()->withErrors('更新失败');
+            return Response::json(['code'=>1,'msg'=>'更新失败']);
         }
     }
 
@@ -349,7 +356,7 @@ class ProjectController extends Controller
     public function remark($id)
     {
         $model = Project::findOrFail($id);
-        return View::make('home.project.remark',compact('model'));
+        return View::make('admin.project.remark',compact('model'));
     }
 
     /**
@@ -362,7 +369,7 @@ class ProjectController extends Controller
     {
         $model = Project::findOrFail($id);
         $data = $request->all(['next_follow_at','content']);
-        $user = Auth::guard('merchant')->user();
+        $user = Auth::user();
         DB::beginTransaction();
         try{
             DB::table('project_remark')->insert([
@@ -381,11 +388,11 @@ class ProjectController extends Controller
                 'updated_at' => Carbon::now()
             ]);
             DB::commit();
-            return Redirect::route('home.project.show',['id'=>$id])->with(['success'=>'更新成功']);
+            return Response::json(['code'=>0,'msg'=>'更新成功']);
         }catch (\Exception $exception){
             DB::rollBack();
-            Log::info('更新备注异常：'.$exception->getMessage());
-            return Redirect::back()->withInput()->withErrors('更新失败');
+            Log::error('更新备注异常：'.$exception->getMessage());
+            return Response::json(['code'=>1,'msg'=>'更新失败']);
         }
 
     }
@@ -441,7 +448,7 @@ class ProjectController extends Controller
             }
             //检测大小
             if ($file->getSize() > $maxSize*1024*1024){
-                return Response::json(['code'=>1,'msg'=>"图片大小限制".$maxSize."M"]);
+                return Response::json(['code'=>1,'msg'=>"大小限制".$maxSize."M"]);
             }
         }else{
             Log::info('导入项目是文件上传不完整:'.$file->getErrorMessage());
@@ -454,7 +461,7 @@ class ProjectController extends Controller
             Log::info('上传文件失败：'.$exception->getMessage());
             return Response::json(['code'=>1,'msg'=>'文件上传失败']);
         }
-        $xlsFile = public_path('uploads/local').'/'.$newFile;
+        $xlsFile = public_path('uploads').'/'.$newFile;
         try{
             Excel::import(new ProjectImport(), $xlsFile);
             return Response::json(['code'=>0,'msg'=>'导入成功']);
