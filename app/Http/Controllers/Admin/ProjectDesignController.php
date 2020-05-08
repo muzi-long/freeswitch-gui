@@ -91,7 +91,7 @@ class ProjectDesignController extends Controller
     public function update(ProjectDesignRequest $request,$id)
     {
         $model = ProjectDesign::findOrFail($id);
-        $data = $request->all(['field_label','field_key','field_type','field_option','field_value','field_tips','sort','visiable']);
+        $data = $request->all(['field_label','field_key','field_type','field_option','field_value','field_tips','sort','visiable','required']);
         //验证field_key是否重复
         $hasExisit = ProjectDesign::where('field_key',$data['field_key'])->where('id','!=',$id)->count();
         if (in_array($data['field_key'],['company_name','name','phone']) || $hasExisit){
@@ -99,6 +99,9 @@ class ProjectDesignController extends Controller
         }
         if ($data['visiable']==null){
             $data['visiable'] = 2;
+        }
+        if ($data['required']==null){
+            $data['required'] = 2;
         }
         try{
             $model->update($data);

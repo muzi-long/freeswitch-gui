@@ -337,5 +337,19 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth','perm
 
     });
 
+    //公海库
+    Route::group([],function (){
+        Route::get('waste','WasteController@index')->name('admin.waste')->middleware('permission:crm.waste');
+        Route::get('waste/data','WasteController@data')->name('admin.waste.data')->middleware('permission:crm.waste');
+        Route::post('waste/retrieve','WasteController@retrieve')->name('admin.waste.retrieve')->middleware('permission:crm.waste.retrieve');
+    });
+
+    //跟进提醒
+    Route::group([],function (){
+        Route::get('remind','RemindController@index')->name('admin.remind')->middleware('permission:crm.remind');
+        Route::get('remind/data','RemindController@data')->name('admin.remind.data')->middleware('permission:crm.remind');
+        Route::post('remind/count','RemindController@count')->name('admin.remind.count')->middleware('permission:crm.remind.count');
+    });
+
 
 });

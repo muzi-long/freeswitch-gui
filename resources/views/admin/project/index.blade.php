@@ -114,7 +114,7 @@
                 <div class="layui-form-item">
                     <label for="" class="layui-form-label">文件</label>
                     <div class="layui-input-block">
-                        <button type="button" class="layui-btn layui-btn-normal" id="uploadBtn">
+                        <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" id="uploadBtn">
                             <i class="layui-icon">&#xe67c;</i>点击选择
                         </button>
                     </div>
@@ -122,7 +122,7 @@
             </div>
             <div class="layui-form-item">
                 <div class="layui-input-block">
-                    <button class="layui-btn" id="importBtn">确认导入</button>
+                    <button class="layui-btn layui-btn-sm" id="importBtn">确认导入</button>
                 </div>
             </div>
         </div>
@@ -167,7 +167,7 @@
                 var data = obj.data //获得当前行数据
                     ,layEvent = obj.event; //获得 lay-event 对应的值
                 if(layEvent === 'del'){
-                    layer.confirm('确认删除吗？', function(index){
+                    layer.confirm('删除后客户将进入公海库，所有人可捡回。确认删除吗？', function(index){
                         layer.close(index);
                         var load = layer.load();
                         $.post("{{ route('admin.project.destroy') }}",{_method:'delete',ids:[data.id]},function (res) {
