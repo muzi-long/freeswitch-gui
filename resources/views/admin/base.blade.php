@@ -34,6 +34,17 @@
                 window.open(url)
             }
         }
+        //呼叫
+        window.call = function (phone,exten="{{$exten}}") {
+            layer.confirm('请确认已分配了分机并登录成功？',function(index) {
+                layer.close(index);
+                var load = layer.load();
+                $.post("{{route('api.dial')}}",{exten:exten,phone:phone},function(res) {
+                    layer.close(load);
+                    layer.msg(res.msg,{time:2000})
+                });
+            });
+        }
     });
 </script>
 @yield('script')

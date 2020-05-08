@@ -25,8 +25,8 @@
                 </div>
                 <div class="layui-form-item">
                     <div class="layui-input-block">
-                        <button type="submit" lay-submit class="layui-btn">确认</button>
-                        <a href="{{route('admin.project')}}" class="layui-btn layui-btn-primary">返回</a>
+                        <button type="button" lay-submit lay-filter="go" class="layui-btn layui-btn-sm">确认</button>
+                        <a href="{{route('admin.project')}}" class="layui-btn layui-btn-sm layui-btn-primary">返回</a>
                     </div>
                 </div>
             </form>

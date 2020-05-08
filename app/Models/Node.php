@@ -11,4 +11,13 @@ class Node extends Model
         'name',
         'sort',
     ];
+
+    /**
+     * 节点所有的项目
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function projects()
+    {
+        return $this->hasMany('App\Models\Project','node_id','id');
+    }
 }

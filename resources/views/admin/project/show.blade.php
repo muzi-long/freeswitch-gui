@@ -24,7 +24,7 @@
                                     <td width="80" align="right">联系电话：</td>
                                     <td>{{$model->phone}}</td>
                                     <td width="80" align="right">跟进人：</td>
-                                    <td>{{$model->followMerchant->contact_name}}</td>
+                                    <td>{{$model->followUser->nickname}}</td>
                                 </tr>
                                 <tr>
                                     <td width="80" align="right">公司名称：</td>

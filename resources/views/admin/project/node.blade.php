@@ -4,7 +4,7 @@
     <div class="layui-card">
         <div class="layui-card-header layuiadmin-card-header-auto">
             <h2>更新节点</h2>
-            @include('home.project._btn')
+            @include('admin.project._btn')
         </div>
         <div class="layui-card-body">
             <form class="layui-form" action="{{route('admin.project.nodeStore',['id'=>$model->id])}}" method="post">
@@ -30,8 +30,8 @@
                 </div>
                 <div class="layui-form-item">
                     <div class="layui-input-block">
-                        <button type="submit" lay-submit class="layui-btn">确认</button>
-                        <a href="{{route('admin.project')}}" class="layui-btn layui-btn-primary">返回</a>
+                        <button type="button" lay-submit lay-filter="go" class="layui-btn layui-btn-sm">确认</button>
+                        <a href="{{route('admin.project')}}" class="layui-btn layui-btn-sm layui-btn-primary">返回</a>
                     </div>
                 </div>
             </form>

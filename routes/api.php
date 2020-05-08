@@ -15,3 +15,7 @@ use Illuminate\Http\Request;
 
 //文件上传接口
 Route::post('upload', 'ApiController@upload')->name('api.upload');
+//呼叫接口
+Route::post('dial','ApiController@dial')->name('api.dial');
+//挂断接口
+Route::post('hangup','ApiController@hangup')->name('api.hangup');

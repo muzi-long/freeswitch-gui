@@ -8,8 +8,8 @@ class ProjectRemark extends Model
 {
     protected $table = 'project_remark';
 
-    public function merchant()
+    public function user()
     {
-        return $this->hasOne('App\Models\Merchant','id','merchant_id')->withDefault();
+        return $this->hasOne('App\Models\User','id','user_id')->withDefault(['nickname'=>'-']);
     }
 }

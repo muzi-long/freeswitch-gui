@@ -33,7 +33,7 @@ class ProjectController extends Controller
     public function index()
     {
         $nodes = Node::orderBy('sort','asc')->get();
-        $merchants = User::get();
+        $merchants = User::where('id','!=',config('freeswitch.user_root_id'))->get();
         return View::make('admin.project.index',compact('nodes','merchants'));
     }
 
@@ -198,9 +198,9 @@ class ProjectController extends Controller
 
     /**
      * 更新项目
-     * @param Request $request
+     * @param ProjectRequest $request
      * @param $id
-     * @return \Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Http\JsonResponse
      */
     public function update(ProjectRequest $request,$id)
     {
@@ -228,7 +228,7 @@ class ProjectController extends Controller
                 'company_name' => $data['company_name'],
                 'name' => $data['name'],
                 'phone' => $data['phone'],
-                'updated_user_id' => $user->id,
+                'updated_user_id' => $request->user()->id,
                 'updated_at' => Carbon::now(),
             ]);
             foreach ($dataInfo as $d){
@@ -294,14 +294,14 @@ class ProjectController extends Controller
      * 更新节点
      * @param ProjectRequest $request
      * @param $id
-     * @return \Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Http\JsonResponse
      */
     public function nodeStore(ProjectRequest $request,$id)
     {
         $model = Project::findOrFail($id);
         $data = $request->all(['node_id','content']);
         $old = $model->node_id;
-        $user = Auth::guard()->user();
+        $user = Auth::user();
         DB::beginTransaction();
         try{
             DB::table('project_node')->insert([
@@ -309,13 +309,13 @@ class ProjectController extends Controller
                 'old' => $old,
                 'new' => $data['node_id'],
                 'content' => $data['content'],
-                'merchant_id' => $user->id,
+                'user_id' => $user->id,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ]);
             DB::table('project')->where('id',$id)->update([
                 'node_id' => $data['node_id'],
-                'updated_merchant_id' => $user->id,
+                'updated_user_id' => $user->id,
                 'updated_at' => Carbon::now()
             ]);
             DB::commit();
@@ -335,7 +335,7 @@ class ProjectController extends Controller
      */
     public function nodeList(Request $request,$id)
     {
-        $res = ProjectNode::with(['oldNode','newNode','merchant'])
+        $res = ProjectNode::with(['oldNode','newNode','user'])
             ->where('project_id',$id)
             ->orderByDesc('id')
             ->paginate($request->get('limit', 30));
@@ -363,7 +363,7 @@ class ProjectController extends Controller
      * 更新备注
      * @param ProjectRequest $request
      * @param $id
-     * @return \Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Http\JsonResponse
      */
     public function remarkStore(ProjectRequest $request,$id)
     {
@@ -376,15 +376,15 @@ class ProjectController extends Controller
                 'project_id' => $id,
                 'content' => $data['content'],
                 'next_follow_at' => $data['next_follow_at'],
-                'merchant_id' => $user->id,
+                'user_id' => $user->id,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ]);
             DB::table('project')->where('id',$id)->update([
                 'next_follow_at' => $data['next_follow_at'],
                 'follow_at' => Carbon::now(),
-                'follow_merchant_id' => $user->id,
-                'updated_merchant_id' => $user->id,
+                'follow_user_id' => $user->id,
+                'updated_user_id' => $user->id,
                 'updated_at' => Carbon::now()
             ]);
             DB::commit();
@@ -405,7 +405,7 @@ class ProjectController extends Controller
      */
     public function remarkList(Request $request,$id)
     {
-        $res = ProjectRemark::with(['merchant'])
+        $res = ProjectRemark::with(['user'])
             ->where('project_id',$id)
             ->orderByDesc('id')
             ->paginate($request->get('limit', 30));

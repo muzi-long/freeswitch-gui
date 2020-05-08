@@ -18,9 +18,9 @@ class ProjectNode extends Model
         return $this->hasOne('App\Models\Node','id','new')->withDefault(['name'=>'-']);
     }
 
-    public function merchant()
+    public function user()
     {
-        return $this->hasOne('App\Models\Merchant','id','merchant_id')->withDefault();
+        return $this->hasOne('App\Models\User','id','user_id')->withDefault(['nickname'=>'-']);
     }
 
 }

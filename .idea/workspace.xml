@@ -2,65 +2,19 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="003b7c19-25d9-476a-8425-57fc330161a6" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/app/Exports/ProjectExport.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/Admin/ProjectController.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/Admin/ProjectDesignController.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Admin/Project/ProjectDesignRequest.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Admin/Project/ProjectRequest.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Imports/ProjectImport.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Models/Project.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Models/ProjectDesign.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Models/ProjectNode.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Models/ProjectRemark.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/database/migrations/2019_11_12_180646_project_design.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/database/migrations/2019_11_14_105157_project_design_value.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/database/migrations/2019_11_14_110733_project.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/database/migrations/2019_11_14_182858_project_node.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/database/migrations/2019_11_14_193518_project_remark.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/views/admin/department/_form.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/views/admin/department/_js.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/views/admin/department/create.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/views/admin/department/edit.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/views/admin/department/index.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/views/admin/project/_btn.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/views/admin/project/_form.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/views/admin/project/_js.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/views/admin/project/create.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/views/admin/project/edit.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/views/admin/project/index.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/views/admin/project/node.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/views/admin/project/remark.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/views/admin/project/show.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/views/admin/project_design/_form.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/views/admin/project_design/_js.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/views/admin/project_design/create.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/views/admin/project_design/edit.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/views/admin/project_design/index.blade.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Admin/UserController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Admin/UserController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Models/User.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/User.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/composer.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/composer.lock" beforeDir="false" afterPath="$PROJECT_DIR$/composer.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/filesystems.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/filesystems.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/freeswitch.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/freeswitch.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/migrations/2014_10_12_000000_create_users_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2014_10_12_000000_create_users_table.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/migrations/2020_02_19_134600_gateway_outbound.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2020_02_19_134600_gateway_outbound.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/migrations/2020_04_26_101340_department.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2020_04_26_101340_department.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/migrations/2020_04_26_102133_menu.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2020_04_26_102133_menu.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/migrations/2020_04_26_102942_create_permission_tables.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2020_04_26_102942_create_permission_tables.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/seeds/DatabaseSeeder.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/seeds/DatabaseSeeder.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/seeds/MenuTableSeeder.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/seeds/MenuTableSeeder.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/seeds/UserTableSeeder.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/seeds/UserTableSeeder.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/admin/user/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/admin/user/create.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/admin/user/edit.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/admin/user/edit.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/admin/user/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/admin/user/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/admin.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/admin.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Admin/ProjectController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Admin/ProjectController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/Node.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Node.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/ProjectNode.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/ProjectNode.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/ProjectRemark.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/ProjectRemark.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Providers/AppServiceProvider.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Providers/AppServiceProvider.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/admin/base.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/admin/base.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/admin/project/_js.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/admin/project/_js.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/admin/project/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/admin/project/index.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/admin/project/node.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/admin/project/node.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/admin/project/remark.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/admin/project/remark.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/admin/project/show.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/admin/project/show.blade.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/routes/api.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/api.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/composer/autoload_classmap.php" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/composer/autoload_classmap.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/composer/autoload_files.php" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/composer/autoload_files.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/composer/autoload_psr4.php" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/composer/autoload_psr4.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/composer/autoload_static.php" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/composer/autoload_static.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/composer/installed.json" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/composer/installed.json" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -76,11 +30,10 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Admin/ProjectController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="431">
-              <caret line="295" column="31" lean-forward="true" selection-start-line="295" selection-start-column="31" selection-end-line="295" selection-end-column="31" />
+            <state relative-caret-position="300">
+              <caret line="33" column="5" lean-forward="true" selection-start-line="33" selection-start-column="5" selection-end-line="33" selection-end-column="5" />
               <folding>
                 <element signature="e#46#76#0#PHP" expanded="true" />
-                <element signature="e#1347#4743#0#PHP" />
               </folding>
             </state>
           </provider>
@@ -104,8 +57,9 @@
       <find>home.</find>
       <find>home</find>
       <find>home.base</find>
-      <find>merchant</find>
       <find>Merch</find>
+      <find>Merchant</find>
+      <find>merchant</find>
     </findStrings>
     <replaceStrings>
       <replace>department</replace>
@@ -124,12 +78,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/database/seeds/DialplanSeeder.php" />
-        <option value="$PROJECT_DIR$/database/seeds/DialplanTableSeeder.php" />
-        <option value="$PROJECT_DIR$/database/seeds/DatabaseSeeder.php" />
-        <option value="$PROJECT_DIR$/database/migrations/2020_04_26_101340_department.php" />
-        <option value="$PROJECT_DIR$/database/migrations/2020_02_19_134600_gateway_outbound.php" />
-        <option value="$PROJECT_DIR$/database/migrations/2020_04_26_102133_menu.php" />
         <option value="$PROJECT_DIR$/database/migrations/2020_04_26_102942_create_permission_tables.php" />
         <option value="$PROJECT_DIR$/resources/views/admin/department/create.blade.php" />
         <option value="$PROJECT_DIR$/resources/views/admin/department/edit.blade.php" />
@@ -158,22 +106,28 @@
         <option value="$PROJECT_DIR$/database/seeds/UserTableSeeder.php" />
         <option value="$PROJECT_DIR$/resources/views/admin/project/_btn.blade.php" />
         <option value="$PROJECT_DIR$/resources/views/admin/project/_form.blade.php" />
-        <option value="$PROJECT_DIR$/resources/views/admin/project/_js.blade.php" />
         <option value="$PROJECT_DIR$/resources/views/admin/project/create.blade.php" />
         <option value="$PROJECT_DIR$/resources/views/admin/project/edit.blade.php" />
-        <option value="$PROJECT_DIR$/resources/views/admin/project/node.blade.php" />
-        <option value="$PROJECT_DIR$/resources/views/admin/project/remark.blade.php" />
-        <option value="$PROJECT_DIR$/resources/views/admin/project/show.blade.php" />
         <option value="$PROJECT_DIR$/resources/views/admin/project_design/create.blade.php" />
         <option value="$PROJECT_DIR$/resources/views/admin/project_design/edit.blade.php" />
         <option value="$PROJECT_DIR$/resources/views/admin/project_design/index.blade.php" />
         <option value="$PROJECT_DIR$/config/freeswitch.php" />
         <option value="$PROJECT_DIR$/app/Http/Controllers/Admin/ProjectDesignController.php" />
-        <option value="$PROJECT_DIR$/resources/views/admin/project/index.blade.php" />
         <option value="$PROJECT_DIR$/routes/admin.php" />
-        <option value="$PROJECT_DIR$/routes/api.php" />
         <option value="$PROJECT_DIR$/app/Http/Controllers/ApiController.php" />
         <option value="$PROJECT_DIR$/config/filesystems.php" />
+        <option value="$PROJECT_DIR$/resources/views/admin/project/index.blade.php" />
+        <option value="$PROJECT_DIR$/resources/views/admin/project/show.blade.php" />
+        <option value="$PROJECT_DIR$/resources/views/admin/project/node.blade.php" />
+        <option value="$PROJECT_DIR$/app/Models/Node.php" />
+        <option value="$PROJECT_DIR$/app/Models/ProjectNode.php" />
+        <option value="$PROJECT_DIR$/resources/views/admin/project/_js.blade.php" />
+        <option value="$PROJECT_DIR$/app/Models/ProjectRemark.php" />
+        <option value="$PROJECT_DIR$/resources/views/admin/project/remark.blade.php" />
+        <option value="$PROJECT_DIR$/storage/logs/laravel.log" />
+        <option value="$PROJECT_DIR$/resources/views/admin/base.blade.php" />
+        <option value="$PROJECT_DIR$/app/Providers/AppServiceProvider.php" />
+        <option value="$PROJECT_DIR$/routes/api.php" />
         <option value="$PROJECT_DIR$/app/Http/Controllers/Admin/ProjectController.php" />
       </list>
     </option>
@@ -313,29 +267,6 @@
               <item name="freeswitch-gui-laravel" type="b2602c69:ProjectViewProjectNode" />
               <item name="freeswitch-gui-laravel" type="462c0819:PsiDirectoryNode" />
             </path>
-            <path>
-              <item name="freeswitch-gui-laravel" type="b2602c69:ProjectViewProjectNode" />
-              <item name="freeswitch-gui-laravel" type="462c0819:PsiDirectoryNode" />
-              <item name="app" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="freeswitch-gui-laravel" type="b2602c69:ProjectViewProjectNode" />
-              <item name="freeswitch-gui-laravel" type="462c0819:PsiDirectoryNode" />
-              <item name="app" type="462c0819:PsiDirectoryNode" />
-              <item name="Http" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="freeswitch-gui-laravel" type="b2602c69:ProjectViewProjectNode" />
-              <item name="freeswitch-gui-laravel" type="462c0819:PsiDirectoryNode" />
-              <item name="app" type="462c0819:PsiDirectoryNode" />
-              <item name="Http" type="462c0819:PsiDirectoryNode" />
-              <item name="Controllers" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="freeswitch-gui-laravel" type="b2602c69:ProjectViewProjectNode" />
-              <item name="freeswitch-gui-laravel" type="462c0819:PsiDirectoryNode" />
-              <item name="routes" type="462c0819:PsiDirectoryNode" />
-            </path>
           </expand>
           <select />
         </subPane>
@@ -405,7 +336,9 @@
       <workItem from="1588816258813" duration="5000" />
       <workItem from="1588829064390" duration="897000" />
       <workItem from="1588830773649" duration="2855000" />
-      <workItem from="1588833771932" duration="8432000" />
+      <workItem from="1588833771932" duration="11198000" />
+      <workItem from="1588902619159" duration="186000" />
+      <workItem from="1588903291343" duration="1385000" />
     </task>
     <task id="LOCAL-00001" summary="完善系统管理">
       <created>1588737340771</created>
@@ -421,17 +354,23 @@
       <option name="project" value="LOCAL" />
       <updated>1588763275999</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="做到crm的部门管理了">
+      <created>1588842281763</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1588842281763</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="88220000" />
+    <option name="totallyTimeSpent" value="92557000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="0" />
-    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.20042644" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.20469083" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -443,7 +382,7 @@
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" order="8" />
-      <window_info anchor="bottom" id="Version Control" order="9" />
+      <window_info anchor="bottom" id="Version Control" order="9" weight="0.32998884" />
       <window_info anchor="bottom" id="Terminal" order="10" weight="0.38127092" />
       <window_info anchor="bottom" id="Event Log" order="11" side_tool="true" weight="0.32998884" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
@@ -482,76 +421,6 @@
     <option name="LAST_COMMIT_MESSAGE" value="做到crm的部门管理了" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/resources/views/admin/user/create.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="480">
-          <caret line="36" column="52" lean-forward="true" selection-start-line="36" selection-start-column="52" selection-end-line="36" selection-end-column="52" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/admin/user/edit.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="130">
-          <caret line="37" column="30" selection-start-line="37" selection-start-column="30" selection-end-line="37" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/admin/user/index.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="480">
-          <caret line="66" column="54" selection-start-line="66" selection-start-column="54" selection-end-line="66" selection-end-column="54" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Admin/UserController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="480">
-          <caret line="133" column="16" selection-start-line="133" selection-start-column="16" selection-end-line="133" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../freeswitch-gui-laravel - 副本/database/migrations/2019_11_14_182858_project_node.php">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../freeswitch-gui-laravel - 副本/database/migrations/2019_11_14_105157_project_design_value.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-288" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../freeswitch-gui-laravel - 副本/database/migrations/2019_11_14_110733_project.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-96" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../freeswitch-gui-laravel - 副本/database/migrations/2019_11_12_180646_project_design.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-384" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../freeswitch-gui-laravel - 副本/database/migrations/2019_11_14_193518_project_remark.php">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/database/migrations/2019_11_14_193518_project_remark.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="160">
-          <caret line="19" column="44" selection-start-line="19" selection-start-column="44" selection-end-line="19" selection-end-column="44" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/database/migrations/2019_11_12_180646_project_design.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="160">
-          <caret line="22" column="85" selection-start-line="22" selection-start-column="85" selection-end-line="22" selection-end-column="85" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/database/migrations/2019_11_14_105157_project_design_value.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="352">
-          <caret line="22" column="74" selection-start-line="22" selection-start-column="74" selection-end-line="22" selection-end-column="74" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/database/migrations/2019_11_14_182858_project_node.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="608">
@@ -611,13 +480,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/database/seeds/MenuTableSeeder.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="674">
-          <caret line="173" column="56" selection-start-line="173" selection-start-column="56" selection-end-line="173" selection-end-column="56" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../freeswitch-gui-laravel - 副本/database/seeds/UserSeeder.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-9504" />
@@ -627,23 +489,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="96">
           <caret line="90" column="22" lean-forward="true" selection-start-line="66" selection-start-column="20" selection-end-line="90" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/database/seeds/UserTableSeeder.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="164">
-          <caret line="215" column="95" selection-start-line="215" selection-start-column="95" selection-end-line="215" selection-end-column="95" />
-          <folding>
-            <element signature="e#1267#3670#1#PHP" />
-            <element signature="e#1396#2117#1#PHP" />
-            <element signature="e#2139#2679#1#PHP" />
-            <element signature="e#2701#3173#1#PHP" />
-            <element signature="e#3195#3637#1#PHP" />
-            <element signature="e#3684#6221#1#PHP" />
-            <element signature="e#3787#6207#1#PHP" />
-            <element signature="e#6235#8387#1#PHP" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -658,27 +503,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="128">
           <caret line="4" column="31" selection-start-line="4" selection-start-column="31" selection-end-line="4" selection-end-column="31" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/admin/project/_js.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="41" column="33" selection-start-line="41" selection-start-column="33" selection-end-line="41" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/admin/project/node.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="610">
-          <caret line="42" column="19" selection-start-line="42" selection-start-column="19" selection-end-line="42" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/admin/project/remark.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="610">
-          <caret line="37" column="19" selection-start-line="37" selection-start-column="19" selection-end-line="37" selection-end-column="19" />
         </state>
       </provider>
     </entry>
@@ -721,13 +545,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="704">
           <caret line="22" column="41" selection-start-line="22" selection-start-column="41" selection-end-line="22" selection-end-column="41" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/admin/project/show.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="610">
-          <caret line="134" column="19" selection-start-line="134" selection-start-column="19" selection-end-line="134" selection-end-column="19" />
         </state>
       </provider>
     </entry>
@@ -796,13 +613,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../freeswitch-gui-laravel - 副本/routes/api.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="608">
-          <caret line="19" selection-start-line="19" selection-end-line="20" selection-end-column="66" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../freeswitch-gui-laravel - 副本/config/filesystems.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1826">
@@ -824,30 +634,162 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/routes/api.php">
+    <entry file="file://$PROJECT_DIR$/database/seeds/UserTableSeeder.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="512">
-          <caret line="16" column="66" selection-start-line="16" selection-start-column="66" selection-end-line="16" selection-end-column="66" />
+        <state relative-caret-position="260">
+          <caret line="215" column="95" selection-start-line="215" selection-start-column="95" selection-end-line="215" selection-end-column="95" />
+          <folding>
+            <element signature="e#1267#3670#1#PHP" />
+            <element signature="e#1396#2117#1#PHP" />
+            <element signature="e#2139#2679#1#PHP" />
+            <element signature="e#2701#3173#1#PHP" />
+            <element signature="e#3195#3637#1#PHP" />
+            <element signature="e#3684#6221#1#PHP" />
+            <element signature="e#3787#6207#1#PHP" />
+            <element signature="e#6235#8387#1#PHP" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/database/seeds/MenuTableSeeder.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-94">
+          <caret line="173" column="56" selection-start-line="173" selection-start-column="56" selection-end-line="173" selection-end-column="56" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Models/Node.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="672">
+          <caret line="21" column="5" selection-start-line="21" selection-start-column="5" selection-end-line="21" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../freeswitch-gui-laravel - 副本/app/Models/Node.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="224">
+          <caret line="7" column="1" lean-forward="true" selection-start-line="7" selection-start-column="1" selection-end-line="7" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Models/ProjectNode.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="704">
+          <caret line="22" column="91" selection-start-line="22" selection-start-column="91" selection-end-line="22" selection-end-column="91" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/admin/project/node.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="448">
+          <caret line="14" column="48" selection-start-line="14" selection-start-column="48" selection-end-line="14" selection-end-column="48" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Models/ProjectRemark.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="384">
+          <caret line="12" column="91" selection-start-line="12" selection-start-column="91" selection-end-line="12" selection-end-column="91" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/admin/project/remark.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="364">
+          <caret line="26" column="50" lean-forward="true" selection-start-line="26" selection-start-column="50" selection-end-line="26" selection-end-column="50" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../freeswitch-gui-laravel - 副本/resources/views/admin/base.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-480" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../freeswitch-gui-laravel - 副本/resources/views/admin/layout.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-5856" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/storage/logs/laravel.log">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/admin/project/show.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2974">
+          <caret line="22" column="36" selection-start-line="22" selection-start-column="36" selection-end-line="22" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../freeswitch-gui-laravel - 副本/resources/views/home/project/_js.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2304" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../freeswitch-gui-laravel - 副本/app/Providers/AppServiceProvider.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="546">
+          <caret line="38" column="11" lean-forward="true" selection-start-line="34" selection-start-column="8" selection-end-line="38" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Providers/AppServiceProvider.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="642">
+          <caret line="31" column="37" selection-start-line="31" selection-start-column="37" selection-end-line="31" selection-end-column="37" />
+          <folding>
+            <element signature="e#33#52#0#PHP" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/admin/base.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="770">
+          <caret line="46" column="9" selection-start-line="46" selection-start-column="9" selection-end-line="46" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../freeswitch-gui-laravel - 副本/resources/views/home/base.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="448">
+          <caret line="71" column="9" lean-forward="true" selection-start-line="61" selection-start-column="8" selection-end-line="71" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/admin/project/_js.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2688">
+          <caret line="84" column="42" selection-start-line="84" selection-start-column="42" selection-end-line="84" selection-end-column="42" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/resources/views/admin/project/index.blade.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="136" column="34" lean-forward="true" selection-start-line="136" selection-start-column="34" selection-end-line="136" selection-end-column="34" />
-          <folding>
-            <element signature="e#2220#2240#0#HTML" expanded="true" />
-          </folding>
+        <state relative-caret-position="1972">
+          <caret line="155" column="53" selection-start-line="155" selection-start-column="53" selection-end-line="155" selection-end-column="53" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../freeswitch-gui-laravel - 副本/routes/api.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="386">
+          <caret line="24" selection-start-line="24" selection-end-line="28" selection-end-column="65" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/routes/api.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="576">
+          <caret line="18" column="59" selection-start-line="18" selection-start-column="59" selection-end-line="18" selection-end-column="59" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Admin/ProjectController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="431">
-          <caret line="295" column="31" lean-forward="true" selection-start-line="295" selection-start-column="31" selection-end-line="295" selection-end-column="31" />
+        <state relative-caret-position="300">
+          <caret line="33" column="5" lean-forward="true" selection-start-line="33" selection-start-column="5" selection-end-line="33" selection-end-column="5" />
           <folding>
             <element signature="e#46#76#0#PHP" expanded="true" />
-            <element signature="e#1347#4743#0#PHP" />
           </folding>
         </state>
       </provider>

@@ -153,7 +153,7 @@
                             return d.node.name;
                         }}
                     ,{field: 'follow_merchant_id', title: '跟进人',templet:function (d) {
-                            return d.follow_merchant.contact_name;
+                            return d.follow_user.nickname;
                         }}
                     ,{field: 'follow_at', title: '跟进时间'}
                     ,{field: 'next_follow_at', title: '下次跟进时间'}

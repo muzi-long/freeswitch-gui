@@ -65,7 +65,7 @@
                     }}
                 ,{field: 'content', title: '备注'}
                 ,{field: 'username', title: '操作人',templet:function (d) {
-                        return d.merchant.contact_name;
+                        return d.user.nickname;
                     }}
                 ,{field: 'created_at', title: '操作时间'}
             ]]
@@ -82,7 +82,7 @@
                 {type: 'checkbox'}
                 ,{field: 'content', title: '备注'}
                 ,{field: 'username', title: '跟进人',templet:function (d) {
-                        return d.merchant.contact_name;
+                        return d.user.nickname;
                     }}
                 ,{field: 'created_at', title: '跟进时间'}
                 ,{field: 'next_follow_at', title: '下次跟进时间'}
