@@ -25,6 +25,8 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>'auth'],funct
     Route::get('/','IndexController@layout')->name('admin.layout');
     //后台首页
     Route::get('/index','IndexController@index')->name('admin.index');
+    //后台首页图表统计
+    Route::post('/index/chart','IndexController@chart')->name('admin.index.chart');
 });
 
 /*
@@ -351,5 +353,24 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth','perm
         Route::post('remind/count','RemindController@count')->name('admin.remind.count')->middleware('permission:crm.remind.count');
     });
 
+});
+
+/*
+|--------------------------------------------------------------------------
+| 数据监控模块
+|--------------------------------------------------------------------------
+*/
+Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth','permission:data']],function (){
+
+    //通话记录
+    Route::group([],function (){
+        Route::get('cdr','CdrController@index')->name('admin.cdr')->middleware('permission:data.cdr');
+        Route::get('cdr/data','CdrController@data')->name('admin.cdr.data')->middleware('permission:data.cdr');
+        //播放
+        Route::get('cdr/{uuid}/play','CdrController@play')->name('admin.cdr.play')->middleware('permission:data.cdr.play');
+        //下载
+        Route::get('cdr/{uuid}/download','CdrController@download')->name('admin.cdr.download')->middleware('permission:data.cdr.download');
+
+    });
 
 });

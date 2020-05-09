@@ -135,7 +135,7 @@ class MenuTableSeeder extends Seeder
                 ]
             ],
             [
-                'name' => '客户管理',
+                'name' => 'CRM管理',
                 'route' => null,
                 'url' => null,
                 'icon' => 'layui-icon-android',
@@ -191,6 +191,26 @@ class MenuTableSeeder extends Seeder
                         'type' => 1,
                         'permission_name' => 'crm.remind',
                     ],
+                ]
+            ],
+            [
+                'name' => '数据监控',
+                'route' => null,
+                'url' => null,
+                'icon' => 'layui-icon-slider',
+                'type' => 2,
+                'sort' => 2,
+                'permission_name' => 'data',
+                'child' => [
+                    [
+                        'name' => '通话记录',
+                        'route' => 'admin.cdr',
+                        'url' => null,
+                        'icon' => 'layui-icon-service',
+                        'type' => 1,
+                        'permission_name' => 'data.cdr',
+                    ],
+
                 ]
             ],
         ];

@@ -57,7 +57,7 @@
                         })
                     })
                     myechart.setOption({
-                        title: {text: "各节点项目分布情况", x: "center", textStyle: {fontSize: 14}},
+                        title: {text: "各节点客户分布情况", x: "center", textStyle: {fontSize: 14}},
                         tooltip: {trigger: "item", formatter: "{a} <br/>{b} : {c} ({d}%)"},
                         legend: {orient: "vertical", x: "left", data: legend},
                         series: [{

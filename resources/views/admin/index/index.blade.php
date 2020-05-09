@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="layui-row layui-col-space15">
-            {{--<div class="layui-col-md12">
+            <div class="layui-col-md12">
                 <div class="layui-row layui-col-space15">
                     <div class="layui-col-md4">
                         <div class="layui-card">
@@ -24,15 +24,15 @@
                                                 </a>
                                             </li>
                                             <li class="layui-col-xs3">
-                                                <a lay-href="{{route('admin.merchant')}}">
+                                                <a lay-href="{{route('admin.department')}}">
                                                     <i class="layui-icon layui-icon-template-1"></i>
-                                                    <cite>商户管理</cite>
+                                                    <cite>部门管理</cite>
                                                 </a>
                                             </li>
                                             <li class="layui-col-xs3">
-                                                <a lay-href="{{route('admin.member')}}">
+                                                <a lay-href="{{route('admin.node')}}">
                                                     <i class="layui-icon layui-icon-chat"></i>
-                                                    <cite>员工管理</cite>
+                                                    <cite>节点管理</cite>
                                                 </a>
                                             </li>
                                             <li class="layui-col-xs3">
@@ -74,26 +74,26 @@
                                         <ul class="layui-row layui-col-space10">
                                             <li class="layui-col-xs6">
                                                 <a  class="layadmin-backlog-body">
-                                                    <h3>商户数量</h3>
-                                                    <p><cite>{{$merchantNum}}</cite></p>
+                                                    <h3>部门数量</h3>
+                                                    <p><cite>{{$departmentCount}}</cite></p>
                                                 </a>
                                             </li>
                                             <li class="layui-col-xs6">
                                                 <a  class="layadmin-backlog-body">
-                                                    <h3>员工数量</h3>
-                                                    <p><cite>{{$memberNum}}</cite></p>
+                                                    <h3>用户数量</h3>
+                                                    <p><cite>{{$userCount}}</cite></p>
                                                 </a>
                                             </li>
                                             <li class="layui-col-xs6">
                                                 <a  class="layadmin-backlog-body">
-                                                    <h3>网关数量</h3>
-                                                    <p><cite>{{$gatewayNum}}</cite></p>
+                                                    <h3>总客户数</h3>
+                                                    <p><cite>{{$projectCount}}</cite></p>
                                                 </a>
                                             </li>
                                             <li class="layui-col-xs6">
                                                 <a  class="layadmin-backlog-body">
-                                                    <h3>分机数量</h3>
-                                                    <p><cite>{{$sipNum}}</cite></p>
+                                                    <h3>公海客户数量</h3>
+                                                    <p><cite>{{$wasteCount}}</cite></p>
                                                 </a>
                                             </li>
                                         </ul>
@@ -139,66 +139,106 @@
                     </div>
                     <div class="layui-col-md12">
                         <div class="layui-card">
-                            <div class="layui-card-header">呼叫统计</div>
-                            <div class="layui-card-body layui-text">
-                                <table class="layui-table">
-                                    <colgroup>
-                                        <col align="center"><col>
-                                    </colgroup>
-                                    <thead>
-                                    <tr>
-                                        <td rowspan="2"><b>商户</b></td>
-                                        <td rowspan="2"><b>分机</b></td>
-                                        <td align="center" colspan="3"><b>当日</b></td>
-                                        <td align="center" colspan="3"><b>本周</b></td>
-                                        <td align="center" colspan="3"><b>本月</b></td>
-                                    </tr>
-                                    <tr>
-                                        <td align="center">呼出</td>
-                                        <td align="center">接通</td>
-                                        <td align="center">接通率</td>
-                                        <td align="center">呼出</td>
-                                        <td align="center">接通</td>
-                                        <td align="center">接通率</td>
-                                        <td align="center">呼出</td>
-                                        <td align="center">接通</td>
-                                        <td align="center">接通率</td>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    @forelse($datas as $data)
-                                        @foreach($data->sips as $sip)
-                                        <tr>
-                                            @if($loop->first)
-                                            <td rowspan="{{count($data->sips)}}">{{$data->info->company_name}}</td>
-                                            @endif
-                                            <td>{{$sip->username}}</td>
-                                            <td align="center" style="color: red">{{$sip->todayCalls}}</td>
-                                            <td align="center" style="color: green">{{$sip->todaySuccessCalls}}</td>
-                                            <td align="center" style="color: #0000FF">{{$sip->todayRateCalls}}%</td>
-                                            <td align="center" style="color: red">{{$sip->weekCalls}}</td>
-                                            <td align="center" style="color: green">{{$sip->weekSuccessCalls}}</td>
-                                            <td align="center" style="color: #0000FF">{{$sip->weekRateCalls}}%</td>
-                                            <td align="center" style="color: red">{{$sip->monthCalls}}</td>
-                                            <td align="center" style="color: green">{{$sip->monthSuccessCalls}}</td>
-                                            <td align="center" style="color: #0000FF">{{$sip->monthRateCalls}}%</td>
-                                        </tr>
-                                        @endforeach
-                                    @empty
-                                        <tr><td colspan="11" align="center">暂无数据</td></tr>
-                                    @endforelse
-                                    </tbody>
-                                </table>
+                            <div class="layui-card-header">最近15天数据</div>
+                            <div class="layui-card-body">
+                                <div class="layui-row layui-col-space30">
+                                    <div class="layui-col-md6">
+                                        <div id="calls" style="height: 400px"></div>
+                                    </div>
+                                    <div class="layui-col-md6">
+                                        <div id="projects" style="height: 400px"></div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>--}}
+            </div>
         </div>
 @endsection
 
 @section('script')
     <script>
-        layui.use(['index', 'sample']);
+        layui.extend({
+            echarts: 'lib/extend/echarts' ,
+            echartsTheme: 'lib/extend/echartsTheme' ,
+        }).use(['layer','table','form','echarts','echartsTheme'],function () {
+            var $ = layui.jquery;
+            var layer = layui.layer;
+            var form = layui.form;
+            var table = layui.table;
+            var echarts = layui.echarts;
+            var echartsTheme = layui.echartsTheme;
+            var myechart1 = echarts.init(document.getElementById('calls'), echartsTheme);
+            $.post("{{route('admin.remind.count')}}", {}, function (res) {
+                if (res.code == 0) {
+                    var legend = [];
+                    var series = [];
+                    $.each(res.data, function (index, elem) {
+                        legend.push(index);
+                        series.push({
+                            value: elem,
+                            name: index
+                        })
+                    });
+                    myechart1.setOption({
+                        title: {text: "各节点客户分布", x: "center", textStyle: {fontSize: 14}},
+                        tooltip: {trigger: "item", formatter: "{a} <br/>{b} : {c} ({d}%)"},
+                        legend: {orient: "vertical", x: "left", data: legend},
+                        series: [{
+                            name: "客户数",
+                            type: "pie",
+                            radius: "55%",
+                            center: ["50%", "50%"],
+                            data: series
+                        }]
+                    });
+                }
+            });
+            window.onresize = myechart1.resize;
+
+            var myechart2 = echarts.init(document.getElementById('projects'), echartsTheme);
+            $.post("{{route('admin.index.chart')}}", {}, function (res) {
+                if (res.code == 0) {
+                    var months = [];
+                    var calls = [];
+                    var success = [];
+                    $.each(res.data.months, function (index, elem) {
+                        months.push(elem);
+                    });
+                    $.each(res.data.calls, function (index, elem) {
+                        calls.push(elem);
+                    });
+                    $.each(res.data.success, function (index, elem) {
+                        success.push(elem);
+                    });
+                    myechart2.setOption({
+                        title: {text: "本年度总呼叫量和接通量", subtext: ""},
+                        tooltip: {trigger: "axis"},
+                        legend: {data: ["总呼叫量", "接通量"]},
+                        calculable: !0,
+                        xAxis: [{
+                            type: "category",
+                            data: months
+                        }],
+                        yAxis: [{type: "value"}],
+                        series: [{
+                            name: "总呼叫量",
+                            type: "bar",
+                            data: calls,
+                            markPoint: {data: [{type: "max", name: "最大值"}, {type: "min", name: "最小值"}]},
+                            markLine: {data: [{type: "average", name: "平均值"}]}
+                        }, {
+                            name: "接通量",
+                            type: "bar",
+                            data: success,
+                            markPoint: {data: [{type: "max", name: "最大值"}, {type: "min", name: "最小值"}]},
+                            markLine: {data: [{type: "average", name: "平均值"}]}
+                        }]
+                    });
+                }
+            });
+            window.onresize = myechart2.resize;
+        })
     </script>
 @endsection

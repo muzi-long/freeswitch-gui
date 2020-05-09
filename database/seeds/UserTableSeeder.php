@@ -234,6 +234,23 @@ class UserTableSeeder extends Seeder
                     ],
                 ]
             ],
+            [
+                'name' => 'data',
+                'display_name' => '数据监控',
+                'child' => [
+                    [
+                        'name' => 'data.cdr',
+                        'display_name' => '通话记录',
+                        'child' => [
+                            ['name' => 'data.cdr.play', 'display_name' => '播放'],
+                            ['name' => 'data.cdr.download', 'display_name' => '下载'],
+                            ['name' => 'data.cdr.list_all', 'display_name' => '查看所有记录'],
+                            ['name' => 'data.cdr.list_department', 'display_name' => '查看部门记录'],
+                        ]
+                    ],
+
+                ]
+            ],
         ];
 
         foreach ($permissions as $pem1) {
