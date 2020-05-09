@@ -74,4 +74,11 @@ return [
         'image' => '图片上传',
         'textarea' => '文本框',
     ],
+    //redis key
+    'redis_key' => [
+        //服务端获取任务ID的key
+        'callcenter_task' => 'callcenter_task_id',
+        //自增ID的key,用于群呼时生成uuid
+        'callcenter_call' => 'callcenter_call_id',
+    ],
 ];

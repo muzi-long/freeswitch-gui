@@ -86,7 +86,7 @@ class ApiController extends Controller
         //验证分机是否登录
         $status = 0;
         $fs = new \Freeswitchesl();
-        $service = config('freeswitch.event_socket');
+        $service = config('freeswitch.esl');
         try{
             if ($fs->connect($service['host'],$service['port'],$service['password'])) {
                 $result = $fs->api("sofia_contact",$data['exten']);
@@ -146,7 +146,7 @@ class ApiController extends Controller
             if ($outbound) {
                 $dialStr .= "{effective_caller_id_number=".$outbound."}"."{effective_caller_id_name=".$outbound."}";
             }
-            $dialStr .= "{dgg_caller=".$data['phone']."}user/".$sip->username." gw".$gateway->id."_".$data['phone']."_";
+            $dialStr .= "{customer_caller=".$data['phone']."}user/".$sip->username." gw".$gateway->id."_".$data['phone']."_";
             //网关后缀SS
             if ($gateway->prefix){
                 $dialStr .=$gateway->prefix;
