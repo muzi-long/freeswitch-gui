@@ -67,7 +67,7 @@ class ApiController extends Controller
     {
         $data = $request->all(['exten','phone','user_data']);
         if ($data['exten'] == null || $data['phone'] == null) {
-            return Response::json(['code'=>1,'msg'=>'参数错误']);
+            return Response::json(['code'=>1,'msg'=>'号码不能为空']);
         }
 
         //检测10秒重复请求

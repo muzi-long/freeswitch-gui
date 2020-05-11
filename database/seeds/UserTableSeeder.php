@@ -248,7 +248,13 @@ class UserTableSeeder extends Seeder
                             ['name' => 'data.cdr.list_department', 'display_name' => '查看部门记录'],
                         ]
                     ],
+                    [
+                        'name' => 'data.cdr.count',
+                        'display_name' => '呼叫统计',
+                        'child' => [
 
+                        ]
+                    ],
                 ]
             ],
         ];

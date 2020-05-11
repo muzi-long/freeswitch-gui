@@ -90,6 +90,11 @@
                                 <a lay-href="{{route('admin.index')}}">控制台</a>
                             </dd>
                         </dl>
+                        <dl class="layui-nav-child">
+                            <dd data-name="console">
+                                <a lay-href="{{route('admin.index.onlinecall')}}">在线拨号</a>
+                            </dd>
+                        </dl>
                     </li>
                     @foreach(\Illuminate\Support\Facades\Cache::get('menus') as $menu1)
                         <li data-name="{{$menu1['name']}}" class="layui-nav-item">

@@ -27,6 +27,8 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>'auth'],funct
     Route::get('/index','IndexController@index')->name('admin.index');
     //后台首页图表统计
     Route::post('/index/chart','IndexController@chart')->name('admin.index.chart');
+    //在线拨号
+    Route::get('/index/onlinecall','IndexController@onlinecall')->name('admin.index.onlinecall');
 });
 
 /*
@@ -372,5 +374,5 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth','perm
         Route::get('cdr/{uuid}/download','CdrController@download')->name('admin.cdr.download')->middleware('permission:data.cdr.download');
 
     });
-
+    Route::get('cdr/count','CdrController@count')->name('admin.cdr.count')->middleware('permission:data.cdr.count');
 });

@@ -87,4 +87,6 @@ return array(
     'ed962a97bd972bc82007176b647d4e36' => $vendorDir . '/facade/ignition/src/helpers.php',
     '5e8fe2a5ffaded85af682684fe3bbf5a' => $vendorDir . '/mews/captcha/src/helpers.php',
     '377b22b161c09ed6e5152de788ca020a' => $vendorDir . '/spatie/laravel-permission/src/helpers.php',
+    'a38b85dec9d83a5d3b31723990f6f122' => $baseDir . '/bootstrap/Freeswitchesl.php',
+    '14cd3a4930749f01c4f7f007ebf2139a' => $baseDir . '/bootstrap/Snowflake.php',
 );

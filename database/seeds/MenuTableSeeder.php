@@ -210,7 +210,14 @@ class MenuTableSeeder extends Seeder
                         'type' => 1,
                         'permission_name' => 'data.cdr',
                     ],
-
+                    [
+                        'name' => '呼叫统计',
+                        'route' => 'admin.cdr.count',
+                        'url' => null,
+                        'icon' => 'layui-icon-ios',
+                        'type' => 1,
+                        'permission_name' => 'data.cdr.count',
+                    ],
                 ]
             ],
         ];

@@ -31,6 +31,13 @@ class UpdateRequest extends FormRequest
         ];
     }
 
+    public function attributes()
+    {
+        return [
+            'nickname' => '昵称',
+        ];
+    }
+
     protected function failedValidation(Validator $validator)
     {
         throw new HttpResponseException(response()->json(['code'=>1,'msg'=>$validator->errors()->first()]));

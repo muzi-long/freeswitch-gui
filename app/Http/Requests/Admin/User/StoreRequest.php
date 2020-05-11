@@ -27,8 +27,15 @@ class StoreRequest extends FormRequest
     {
         return [
             'phone'   => 'required|numeric|regex:/^1[3456789][0-9]{9}$/|unique:users',
-            'nickname'  => 'required|min:4|max:14|unique:users',
+            'nickname'  => 'required|min:2|max:14|unique:users',
             'password'  => 'required|confirmed|min:6|max:14'
+        ];
+    }
+
+    public function attributes()
+    {
+        return [
+            'nickname' => '昵称',
         ];
     }
 

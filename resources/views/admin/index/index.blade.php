@@ -139,7 +139,7 @@
                     </div>
                     <div class="layui-col-md12">
                         <div class="layui-card">
-                            <div class="layui-card-header">最近15天数据</div>
+                            <div class="layui-card-header">图表数据</div>
                             <div class="layui-card-body">
                                 <div class="layui-row layui-col-space30">
                                     <div class="layui-col-md6">

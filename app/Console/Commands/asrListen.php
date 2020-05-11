@@ -25,7 +25,6 @@ class asrListen extends Command
 
     protected $channel;
     protected $fs_record = '/usr/local/freeswitch/recordings/';
-    protected $record_table = null;
 
     /**
      * Create a new command instance.

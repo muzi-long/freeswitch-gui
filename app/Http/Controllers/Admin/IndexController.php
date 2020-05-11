@@ -66,5 +66,10 @@ class IndexController extends Controller
             });
         return Response::json(['code'=>0,'msg'=>'请求成功','data'=>$data]);
     }
+
+    public function onlinecall()
+    {
+        return View::make('admin.index.onlinecall');
+    }
     
 }
