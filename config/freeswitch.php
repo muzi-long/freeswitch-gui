@@ -25,19 +25,19 @@ return [
     //生成静态文件地址
     'swoole_http_url' => [
         //生成网关
-        'gateway' => 'http://127.0.0.1:8005/gateway',
+        'gateway' => 'http://127.0.0.1:8001/gateway',
         //生成分机
-        'directory' => 'http://127.0.0.1:8005/directory',
+        'directory' => 'http://127.0.0.1:8001/directory',
         //生成拨号计划
-        'dialplan' => 'http://127.0.0.1:8005/dialplan',
+        'dialplan' => 'http://127.0.0.1:8001/dialplan',
         //生成callcenter
-        'callcenter' => 'http://127.0.0.1:8005/callcenter',
+        'callcenter' => 'http://127.0.0.1:8001/callcenter',
     ],
 
     'esl' => [
         'host' => '127.0.0.1',
-        'password' => 'Clucone',
-        'port' => 8021,
+        'password' => 'dgg@1234.',
+        'port' => 8022,
     ],
 
     //队列响铃模式
