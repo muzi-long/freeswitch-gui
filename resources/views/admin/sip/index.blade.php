@@ -88,7 +88,7 @@
                                 dataTable.reload()
                             }
                             layer.close(index);
-                            var icon = result.code==0?6:5;
+                            var icon = result.code==0?1:2;
                             layer.msg(result.msg,{icon:icon})
                         });
                     })

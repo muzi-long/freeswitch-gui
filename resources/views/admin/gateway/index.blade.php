@@ -107,7 +107,7 @@
             $("#updateXml").click(function () {
                 layer.confirm('该操作将重新注册所有网关，确认操作吗？', function(index){
                     $.post("{{ route('admin.gateway.updateXml') }}",{_method:'post',_token:'{{csrf_token()}}'},function (result) {
-                        var icon = result.code==0?6:5;
+                        var icon = result.code==0?1:2;
                         layer.msg(result.msg,{icon:icon})
                     });
                 })

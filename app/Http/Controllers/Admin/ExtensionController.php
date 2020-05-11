@@ -142,7 +142,7 @@ class ExtensionController extends Controller
         try{
             $client = new Client();
             $res = $client->post('http://'.config('freeswitch.swoole_http_url.dialplan'),['form_params'=>['data'=>json_encode($data)]]);
-            return $res->getBody();
+            return response()->json(json_decode($res->getBody(),true));
         }catch (\Exception $exception){
             return response()->json(['code'=>1,'msg'=>'更新失败','data'=>$exception->getMessage()]);
         }

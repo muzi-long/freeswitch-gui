@@ -69,7 +69,7 @@
                                 obj.del(); //删除对应行（tr）的DOM结构
                             }
                             layer.close(index);
-                            var icon = result.code==0?6:5;
+                            var icon = result.code==0?1:2;
                             layer.msg(result.msg,{icon:icon})
                         });
                     });
