@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\Gateway\GatewayRequest;
+use App\Http\Requests\Admin\Gateway\GatewayRequest;
 use App\Models\Gateway;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
