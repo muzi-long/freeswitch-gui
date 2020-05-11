@@ -126,6 +126,7 @@ class UserTableSeeder extends Seeder
                             ['name' => 'fs.extension.create', 'display_name' => '添加'],
                             ['name' => 'fs.extension.edit', 'display_name' => '编辑'],
                             ['name' => 'fs.extension.destroy', 'display_name' => '删除'],
+                            ['name' => 'fs.extension.updateXml', 'display_name' => '更新配置'],
                         ]
                     ],
                 ]
