@@ -14,7 +14,7 @@ class ProjectImport implements ToModel
             'company_name' => $row[0],
             'name'     => $row[1],
             'phone'    => $row[2],
-            'created_merchant_id' => Auth::guard('merchant')->user()->id,
+            'created_user_id' => Auth::user()->id,
         ]);
     }
 }

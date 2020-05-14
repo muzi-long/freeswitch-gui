@@ -6,10 +6,10 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'App\\Console\\Commands\\asrListen' => $baseDir . '/app/Console/Commands/asrListen.php',
     'App\\Console\\Commands\\asrRecord' => $baseDir . '/app/Console/Commands/asrRecord.php',
     'App\\Console\\Commands\\callcenterListen' => $baseDir . '/app/Console/Commands/callcenterListen.php',
     'App\\Console\\Commands\\callcenterRun' => $baseDir . '/app/Console/Commands/callcenterRun.php',
+    'App\\Console\\Commands\\eslListen' => $baseDir . '/app/Console/Commands/eslListen.php',
     'App\\Console\\Commands\\submeter' => $baseDir . '/app/Console/Commands/submeter.php',
     'App\\Console\\Kernel' => $baseDir . '/app/Console/Kernel.php',
     'App\\Exceptions\\Handler' => $baseDir . '/app/Exceptions/Handler.php',

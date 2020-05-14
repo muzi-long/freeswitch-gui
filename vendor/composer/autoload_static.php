@@ -529,10 +529,10 @@ class ComposerStaticInita823d0d9fdfb372460e15358f4fe1e65
     );
 
     public static $classMap = array (
-        'App\\Console\\Commands\\asrListen' => __DIR__ . '/../..' . '/app/Console/Commands/asrListen.php',
         'App\\Console\\Commands\\asrRecord' => __DIR__ . '/../..' . '/app/Console/Commands/asrRecord.php',
         'App\\Console\\Commands\\callcenterListen' => __DIR__ . '/../..' . '/app/Console/Commands/callcenterListen.php',
         'App\\Console\\Commands\\callcenterRun' => __DIR__ . '/../..' . '/app/Console/Commands/callcenterRun.php',
+        'App\\Console\\Commands\\eslListen' => __DIR__ . '/../..' . '/app/Console/Commands/eslListen.php',
         'App\\Console\\Commands\\submeter' => __DIR__ . '/../..' . '/app/Console/Commands/submeter.php',
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
