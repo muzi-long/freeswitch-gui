@@ -114,8 +114,11 @@ class ApiController extends Controller
         }
 
         //呼叫字符串
-        $uuid = md5(\Snowflake::nextId(1).$data['exten'].$data['phone'].Redis::incr('fs_id'));
-        $dialStr = "originate {origination_uuid=".$uuid."}{origination_caller_id_number=".$sip->username."}{origination_caller_id_name=".$sip->username."}";
+        $aleg_uuid = md5(\Snowflake::nextId(1).$data['exten'].$data['phone'].Redis::incr('fs_id'));
+        $bleg_uuid = md5(\Snowflake::nextId(2).$data['phone'].$data['exten'].Redis::incr('fs_id'));
+        $dialStr  = "originate {origination_uuid=".$aleg_uuid."}";
+        $dialStr .= "{origination_caller_id_number=".$sip->username."}";
+        $dialStr .= "{origination_caller_id_name=".$sip->username."}";
         //设置变量
         if ($data['user_data']){
             $dialStr .= "{user_data=".encrypt($data['user_data'])."}";
@@ -144,14 +147,15 @@ class ApiController extends Controller
                 $outbound = Redis::lPop($gw_key);
             }
             if ($outbound) {
-                $dialStr .= "{effective_caller_id_number=".$outbound."}"."{effective_caller_id_name=".$outbound."}";
+                $dialStr .= "{effective_caller_id_number=".$outbound."}";
+                $dialStr .= "{effective_caller_id_name=".$outbound."}";
             }
-            $dialStr .= "{customer_caller=".$data['phone']."}user/".$sip->username." gw".$gateway->id."_".$data['phone']."_";
+            $dialStr .= "{customer_caller=".$data['phone']."}user/".$sip->username." gw".$gateway->id."_";
             //网关后缀SS
             if ($gateway->prefix){
                 $dialStr .=$gateway->prefix;
             }
-
+            $dialStr .= $data['phone']."_".$bleg_uuid;
         }else{ //内部呼叫
             $dialStr .="user/".$sip->username." ".$data["phone"];
         }
@@ -161,8 +165,8 @@ class ApiController extends Controller
             $fs->bgapi($dialStr);
             $fs->disconnect();
             //20分钟过期
-            Redis::setex($data['exten'],1200, $uuid);
-            return Response::json(['code'=>0,'msg'=>'呼叫成功','data'=>['uuid'=>$uuid,'time'=>date('Y-m-d H:i:s')]]);
+            Redis::setex($data['exten'],1200, $aleg_uuid);
+            return Response::json(['code'=>0,'msg'=>'呼叫成功','data'=>['uuid'=>$aleg_uuid,'time'=>date('Y-m-d H:i:s')]]);
         }catch (\Exception $exception){
             Log::info("呼叫错误：".$exception->getMessage());
             return Response::json(['code'=>1,'msg'=>'呼叫失败']);
@@ -184,7 +188,7 @@ class ApiController extends Controller
         }
         
         $fs = new \Freeswitchesl();
-        $service = config('freeswitch.event_socket');
+        $service = config('freeswitch.esl');
         try{
             if ($fs->connect($service['host'],$service['port'],$service['password'])) {
                 $fs->bgapi("uuid_kill",$uuid);

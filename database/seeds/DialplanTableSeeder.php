@@ -99,7 +99,7 @@ class DialplanTableSeeder extends Seeder
                     [
                         'display_name'  => '规则一',
                         'field'         => 'destination_number',
-                        'expression'    => '^(gw\d+)_(\d{6,11})_(\d{0,5})$',
+                        'expression'    => '^(gw\d+)_(\d{11,20})_([a-z0-9]{16,32})$',
                         'break'         => 'on-false',
                         'sort'          => 0,
                         'actions'       => [
@@ -116,22 +116,16 @@ class DialplanTableSeeder extends Seeder
                                 'sort'          => 1,
                             ],
                             [
-                                'display_name'  => '设置前缀',
-                                'application'   => 'set',
-                                'data'          => 'dialed_prefix=$3',
-                                'sort'          => 2,
-                            ],
-                            [
                                 'display_name'  => '设置被叫号码',
                                 'application'   => 'set',
                                 'data'          => 'dialed_extension=$2',
-                                'sort'          => 3,
+                                'sort'          => 2,
                             ],
                             [
-                                'display_name'  => '设置被叫号码到ableg',
+                                'display_name'  => '设置uuid到bleg',
                                 'application'   => 'export',
-                                'data'          => 'dgg_caller=$2',
-                                'sort'          => 4,
+                                'data'          => 'nolocal:origination_uuid=$3',
+                                'sort'          => 3,
                             ],
                             [
                                 'display_name'  => '主叫随被叫一起挂断',
@@ -146,33 +140,9 @@ class DialplanTableSeeder extends Seeder
                                 'sort'          => 6,
                             ],
                             [
-                                'display_name'  => '设置全程录音文件地址',
-                                'application'   => 'export',
-                                'data'          => 'record_file=$${base_dir}/recordings/${strftime(%Y)}/${strftime(%m)}/${strftime(%d)}/${uuid}${caller_id_number}${dialed_prefix}${dialed_extension}.wav',
-                                'sort'          => 7,
-                            ],
-                            [
-                                'display_name'  => '对AB都进行录音',
-                                'application'   => 'set',
-                                'data'          => 'RECORD_STEREO=true',
-                                'sort'          => 8,
-                            ],
-                            [
-                                'display_name'  => '桥接后再录音',
-                                'application'   => 'set',
-                                'data'          => 'RECORD_BRIDGE_REQ=true',
-                                'sort'          => 9,
-                            ],
-                            [
-                                'display_name'  => '执行录音',
-                                'application'   => 'record_session',
-                                'data'          => '${record_file}',
-                                'sort'          => 10,
-                            ],
-                            [
                                 'display_name'  => '呼叫',
                                 'application'   => 'bridge',
-                                'data'          => 'sofia/gateway/${gw}/${dialed_prefix}${dialed_extension}',
+                                'data'          => 'sofia/gateway/${gw}/${dialed_extension}',
                                 'sort'          => 11,
                             ],
                             [
@@ -190,7 +160,7 @@ class DialplanTableSeeder extends Seeder
                             [
                                 'display_name'  => '播放提示',
                                 'application'   => 'playback',
-                                'data'          => '/usr/local/freeswitch/sounds/dial_failed_tips.wav',
+                                'data'          => '/usr/local/freeswitch/sounds/${originate_disposition}.wav',
                                 'sort'          => 14,
                             ],
                             [
