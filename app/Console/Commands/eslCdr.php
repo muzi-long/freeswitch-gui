@@ -50,9 +50,9 @@ class eslCdr extends Command
                         if ($data['leg_type']=='A'){
                             if (!$data['update_data']['src']) continue;
                             $model = DB::table('sip')
-                                ->join('user','sip.id','=','user.sip_id')
+                                ->join('users','sip.id','=','users.sip_id')
                                 ->where('sip.username',$data['update_data']['src'])
-                                ->select(['user.id','user.depart_id'])
+                                ->select(['users.id','users.depart_id'])
                                 ->first();
                             if ($model == null) continue;
                             DB::table($data['table_name'])->updateOrInsert([

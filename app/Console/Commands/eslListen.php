@@ -112,7 +112,7 @@ class eslListen extends Command
                                 $halffile_a = $filepath . 'half_' . md5($otherUuid . time() . uniqid()) . '.wav';
                                 $fs->bgapi("uuid_record " . $otherUuid . " start " . $halffile_a . " 18");
                                 Redis::set($otherUuid,json_encode([
-                                    'uuid' => $otherUuid,
+                                    'uuid' => md5($otherUuid.$uuid),
                                     'leg_uuid' => $otherUuid,
                                     'record_file' => $halffile_a,
                                     'full_record_file' => $fullfile,
@@ -124,7 +124,7 @@ class eslListen extends Command
                                 $halffile_b = $filepath . 'half_' . md5($uuid . time() . uniqid()) . '.wav';
                                 $fs->bgapi("uuid_record " . $uuid . " start " . $halffile_b . " 18");
                                 Redis::set($uuid,json_encode([
-                                    'uuid' => $otherUuid,
+                                    'uuid' => md5($otherUuid.$uuid),
                                     'leg_uuid' => $uuid,
                                     'record_file' => $halffile_b,
                                     'full_record_file' => $fullfile,
@@ -219,7 +219,7 @@ class eslListen extends Command
                             $data = [
                                 'table_name' => $this->cdr_table,
                                 'leg_type' => 'B',
-                                'unique_id' => md5($otherUuid.$uuid),
+                                'uuid' => md5($otherUuid.$uuid),
                                 'update_data' => [
                                     'bleg_uuid' => $uuid,
                                     'bleg_start_at' => $start ? urldecode($start) : null,
