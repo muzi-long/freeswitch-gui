@@ -59,12 +59,13 @@
                 ,page: true //开启分页
                 ,cols: [[ //表头
                     //{checkbox: true,fixed: true}
-                    {field: 'id', title: 'ID', sort: true,width:80,fixed:'left'}
-                    ,{field: 'caller_id_number', title: '主叫号码',style:'color:green'}
-                    ,{field: 'destination_number', title: '被叫号码',style:'color:#2F4056'}
+                    {field: 'id', title: 'ID', sort: true,width:80}
+                    ,{field: 'uuid', title: '记录编号'}
+                    ,{field: 'src', title: '主叫号码',style:'color:green'}
+                    ,{field: 'dst', title: '被叫号码',style:'color:#2F4056'}
                     ,{field: 'aleg_start_at', title: '呼叫时间', sort: true}
                     ,{field: 'billsec', title: '通话时长(秒)', sort: true, style:'color: green'}
-                    ,{width: 220, align:'center', toolbar: '#options', title:'操作',fixed:'right'}
+                    ,{width: 220, align:'center', toolbar: '#options', title:'操作'}
                 ]]
             });
 
