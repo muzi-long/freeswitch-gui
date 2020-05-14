@@ -197,7 +197,7 @@ class eslListen extends Command
                             $record_file = $record_file ? str_replace($this->fs_dir,$this->url,$record_file) : null;
                         }else{
                             $record_file = null;
-                            continue;
+                            continue 2; //继续外层的while循环
                         }
                         $otherType = Arr::get($info,'Other-Type');
                         $otherUuid = Arr::get($info,'Other-Leg-Unique-ID');
