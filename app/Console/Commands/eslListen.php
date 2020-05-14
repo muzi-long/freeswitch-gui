@@ -109,11 +109,11 @@ class eslListen extends Command
                             //开启全程录音
                             $fullfile = $filepath . 'full_' . $cdr_uuid . '.wav';
                             $fs->bgapi("uuid_record {$uuid} start {$fullfile} 7200"); //录音
-                            Redis::set($otherUuid,json_encode([
+                            Redis::setex($otherUuid,1800,json_encode([
                                 'uuid' => $cdr_uuid,
                                 'full_record_file' => $fullfile,
                             ]));
-                            Redis::set($uuid,json_encode([
+                            Redis::setex($uuid,1800,json_encode([
                                 'uuid' => $cdr_uuid,
                                 'full_record_file' => $fullfile,
                             ]));
@@ -122,7 +122,7 @@ class eslListen extends Command
                                 //记录A分段录音数据
                                 $halffile_a = $filepath . 'half_' . md5($otherUuid . time() . uniqid()) . '.wav';
                                 $fs->bgapi("uuid_record " . $otherUuid . " start " . $halffile_a . " 18");
-                                Redis::set($otherUuid,json_encode([
+                                Redis::setex($otherUuid,1800,json_encode([
                                     'uuid' => $cdr_uuid,
                                     'leg_uuid' => $otherUuid,
                                     'record_file' => $halffile_a,
@@ -170,7 +170,7 @@ class eslListen extends Command
                                             'leg_uuid' => $data['leg_uuid'],
                                             'start_at' => $data['start_at'],
                                             'end_at' => date('Y-m-d H:i:s'),
-                                            'billsec' => strtotime(date('Y-m-d H:i:s'))-strtotime($data['start_time']),
+                                            'billsec' => strtotime(date('Y-m-d H:i:s'))-strtotime($data['start_at']),
                                             'record_file' => str_replace($this->fs_dir, $this->url, $data['record_file']),
                                         ],
                                         'type' => 2,
@@ -245,6 +245,7 @@ class eslListen extends Command
                             ];
                         }
                         Redis::rPush('esl_cdr_key',json_encode($data));
+                        Redis::get($uuid);
                         unset($data);
                         break;
                     default:

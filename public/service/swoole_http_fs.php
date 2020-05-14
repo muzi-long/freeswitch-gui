@@ -14,7 +14,7 @@ $conf = [
 ];
 
 
-$http = new \Swoole\Http\Server("0.0.0.0", 8001);
+$http = new \Swoole\Http\Server("0.0.0.0", 9501);
 $http->set([
     'worker_num' => 1,
 ]);
