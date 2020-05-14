@@ -52,6 +52,7 @@
                     ,{field: 'type', title: '对接方式',templet:function(d){
                         return d.type==1?'SIP':'IP';
                     }}
+                    ,{field: 'status', title: '状态'}
                     ,{field: 'created_at', title: '添加时间'}
                     ,{fixed: 'right', width: 220, align:'center', toolbar: '#options', title:'操作'}
                 ]]
