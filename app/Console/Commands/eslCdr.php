@@ -54,11 +54,10 @@ class eslCdr extends Command
                                 ->where('sip.username',$data['update_data']['src'])
                                 ->select(['users.id','users.depart_id'])
                                 ->first();
-                            if ($model == null) continue;
                             DB::table($data['table_name'])->updateOrInsert([
                                 'uuid' => $data['uuid'],
                             ],array_merge($data['update_data'],[
-                                'user_id' => $model->id,
+                                'user_id' => $model->id??null,
                                 'created_at' => date('Y-m-d H:i:s'),
                             ]));
                         }else{
