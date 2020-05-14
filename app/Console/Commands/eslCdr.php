@@ -52,7 +52,7 @@ class eslCdr extends Command
                             $model = DB::table('sip')
                                 ->join('users','sip.id','=','users.sip_id')
                                 ->where('sip.username',$data['update_data']['src'])
-                                ->select(['users.id','users.depart_id'])
+                                ->select(['users.id','users.department_id'])
                                 ->first();
                             DB::table($data['table_name'])->updateOrInsert([
                                 'uuid' => $data['uuid'],
