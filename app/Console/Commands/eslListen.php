@@ -152,7 +152,7 @@ class eslListen extends Command
                             if ($channel){
                                 $data = json_decode($channel,true);
                                 if (isset($data['record_file'])&&file_exists($data['record_file'])){
-                                    Redis::rPush('xdwh_cdr',json_encode([
+                                    Redis::rPush('esl_cdr_key',json_encode([
                                         'table' => $this->asr_table,
                                         'update_data' => [
                                             'uuid' => $data['uuid'],
@@ -230,7 +230,7 @@ class eslListen extends Command
                                 'type' => 1,
                             ];
                         }
-                        Redis::rPush('esl_record_key',json_encode($data));
+                        Redis::rPush('esl_cdr_key',json_encode($data));
                         unset($data);
                         break;
                     default:
