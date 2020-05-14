@@ -104,14 +104,10 @@ class eslListen extends Command
                             //开启全程录音
                             $fullfile = $filepath . 'full_' . md5($otherUuid . $uuid) . '.wav';
                             $fs->bgapi("uuid_record {$uuid} start {$fullfile} 7200"); //录音
-                            //指定通话唯一uuid
-                            $cdr_uuid = md5($otherUuid.Redis::incr('uuid_incr_key'));
                             Redis::set($otherUuid,json_encode([
-                                'uuid' => $cdr_uuid,
                                 'full_record_file' => $fullfile,
                             ]));
                             Redis::set($uuid,json_encode([
-                                'uuid' => $cdr_uuid,
                                 'full_record_file' => $fullfile,
                             ]));
                             if (Redis::get($this->asr_status_key)==1) {
@@ -120,7 +116,7 @@ class eslListen extends Command
                                 $halffile_a = $filepath . 'half_' . md5($otherUuid . time() . uniqid()) . '.wav';
                                 $fs->bgapi("uuid_record " . $otherUuid . " start " . $halffile_a . " 18");
                                 Redis::set($otherUuid,json_encode([
-                                    'uuid' => $uuid,
+                                    'uuid' => $otherUuid,
                                     'leg_uuid' => $otherUuid,
                                     'record_file' => $halffile_a,
                                     'full_record_file' => $fullfile,
@@ -132,7 +128,7 @@ class eslListen extends Command
                                 $halffile_b = $filepath . 'half_' . md5($uuid . time() . uniqid()) . '.wav';
                                 $fs->bgapi("uuid_record " . $uuid . " start " . $halffile_b . " 18");
                                 Redis::set($uuid,json_encode([
-                                    'uuid' => $uuid,
+                                    'uuid' => $otherUuid,
                                     'leg_uuid' => $uuid,
                                     'record_file' => $halffile_b,
                                     'full_record_file' => $fullfile,
@@ -205,11 +201,12 @@ class eslListen extends Command
                         $duration = (int)Arr::get($info,'variable_duration',0);
                         $billsec = (int)Arr::get($info,'variable_billsec',0);
                         $customer_caller = Arr::get($info,'variable_customer_caller',null);
+
                         if (empty($otherType) || $otherType == 'originatee') {
                             $data = [
                                 'table_name' => $this->cdr_table,
                                 'leg_type' => 'A',
-                                'uuid' => $channel['uuid'],
+                                'uuid' => $uuid,
                                 'update_data' => [
                                     'aleg_uuid' => $uuid,
                                     'src' => $CallerCallerIDNumber,
@@ -227,7 +224,7 @@ class eslListen extends Command
                             $data = [
                                 'table_name' => $this->cdr_table,
                                 'leg_type' => 'B',
-                                'uuid' => $channel['uuid'],
+                                'uuid' => $otherUuid,
                                 'update_data' => [
                                     'bleg_uuid' => $uuid,
                                     'bleg_start_at' => $start ? urldecode($start) : null,
