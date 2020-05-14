@@ -12,30 +12,31 @@ class Gateway extends Model
 
     /**
      * 查询网关状态
-     * @param $gateway
+     * @param $id
      * @return string
      */
-    public static function getStatus($gateway)
+    public function getStatus($id)
     {
         $fs = new \Freeswitchesl();
+        $service = config('freeswitch.esl');
         try{
-            $fs->connect(config('freeswitch.event_socket.host'),config('freeswitch.event_socket.port'),config('freeswitch.event_socket.password'));
+            $fs->connect($service['host'], $service['port'], $service['password']);
+            $result = $fs->api("sofia status gateway gw".$id);
+            $data = trim($result);
+            if ($data=="Invalid Gateway!"){
+                return $data;
+            }
+            foreach (explode("\n",$data) as $item){
+                $itemArr = explode("\t",$item);
+                if (trim($itemArr[0])=="State"){
+                    return $itemArr[1];
+                }
+            }
+            $fs->disconnect();
         }catch (\Exception $exception){
             Log::info('查询网关状态ESL连接异常：'.$exception->getMessage());
-            return 'connect failed';
+            return '连接失败';
         }
-        $result = $fs->api("sofia status gateway gw".$gateway->id);
-        $data = trim($result);
-        if ($data=="Invalid Gateway!"){
-            return $data;
-        }
-        foreach (explode("\n",$data) as $item){
-            $itemArr = explode("\t",$item);
-            if (trim($itemArr[0])=="State"){
-                return $itemArr[1];
-            }
-        }
-        $fs->disconnect();
     }
     //出局号码
     public function outbound(){

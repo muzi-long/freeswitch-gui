@@ -22,7 +22,7 @@ class GatewayController extends Controller
         if ($request->ajax()){
             $res = Gateway::orderByDesc('id')->paginate($request->get('limit', 30));
             foreach ($res->items() as $d){
-                $d->status = null;
+                $d->status = $d->getStatus($d->id);
             }
             $data = [
                 'code' => 0,

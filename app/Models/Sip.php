@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 
 class Sip extends Model
 {
@@ -29,27 +30,30 @@ class Sip extends Model
 
     /**
      * 查询分机状态
-     * @param $sip
+     * @param $username
      * @return string
      */
-    public static function getStatus($sip)
+    public function getStatus($username)
     {
+        $status = null;
         $fs = new \Freeswitchesl();
+        $service = config('freeswitch.esl');
         try{
-            $fs->connect(config('freeswitch.event_socket.host'),config('freeswitch.event_socket.port'),config('freeswitch.event_socket.password'));
+            $fs->connect($service['host'], $service['port'], $service['password']);
+            $result = $fs->api("sofia_contact", $username);
+            $result = trim($result);
+            //只有已注册的连接不用关闭
+            if ($result == 'error/user_not_registered') {
+                $status = '未注册';
+            }else{
+                $status = '已注册';
+            }
+            $fs->disconnect();
         }catch (\Exception $exception){
             Log::info('查询分机状态ESL连接异常：'.$exception->getMessage());
-            return 'connect failed';
+            $status = '连接失败';
         }
-        $result = $fs->api("sofia status profile internal reg ".$sip->username);
-        $data =  trim($result);
-        foreach (explode("\n",$data) as $item){
-            $itemArr = explode("\t",$item);
-            if (trim($itemArr[0])=="Ping-Status:"){
-                return $itemArr[1];
-            }
-        }
-        return "no exisit";
+        return $status;
     }
 
 }
