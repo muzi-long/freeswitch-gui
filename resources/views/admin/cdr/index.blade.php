@@ -92,7 +92,7 @@
                         }
                     })
                 } else if (layEvent === 'download'){
-                    location.href = '/admin/cdr/'+data.uuid+'/download';
+                    location.href = data.record_file;
                 }
             });
 
