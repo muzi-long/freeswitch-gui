@@ -193,7 +193,8 @@ class eslListen extends Command
                     case 'CHANNEL_HANGUP_COMPLETE':
                         $channel = Redis::get($uuid);
                         if ($channel){
-                            $record_file = Arr::get(json_decode($channel,true),'full_record_file',null);
+                            $channelData = json_decode($channel,true);
+                            $record_file = Arr::get($channelData,'full_record_file',null);
                             $record_file = $record_file ? str_replace($this->fs_dir,$this->url,$record_file) : null;
                         }else{
                             $record_file = null;
@@ -214,7 +215,7 @@ class eslListen extends Command
                             $data = [
                                 'table_name' => $this->cdr_table,
                                 'leg_type' => 'A',
-                                'uuid' => $channel['uuid'],
+                                'uuid' => $channelData['uuid'],
                                 'update_data' => [
                                     'aleg_uuid' => $uuid,
                                     'src' => $CallerCallerIDNumber,
@@ -232,7 +233,7 @@ class eslListen extends Command
                             $data = [
                                 'table_name' => $this->cdr_table,
                                 'leg_type' => 'B',
-                                'uuid' => $channel['uuid'],
+                                'uuid' => $channelData['uuid'],
                                 'update_data' => [
                                     'bleg_uuid' => $uuid,
                                     'bleg_start_at' => $start ? urldecode($start) : null,
