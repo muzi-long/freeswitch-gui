@@ -105,13 +105,13 @@ class eslListen extends Command
                             $fullfile = $filepath . 'full_' . md5($otherUuid . $uuid) . '.wav';
                             $fs->bgapi("uuid_record {$uuid} start {$fullfile} 7200"); //录音
                             //指定通话唯一uuid
-                            $uuid = md5($otherUuid.Redis::incr('uuid_incr_key'));
+                            $cdr_uuid = md5($otherUuid.Redis::incr('uuid_incr_key'));
                             Redis::set($otherUuid,json_encode([
-                                'uuid' => $uuid,
+                                'uuid' => $cdr_uuid,
                                 'full_record_file' => $fullfile,
                             ]));
                             Redis::set($uuid,json_encode([
-                                'uuid' => $uuid,
+                                'uuid' => $cdr_uuid,
                                 'full_record_file' => $fullfile,
                             ]));
                             if (Redis::get($this->asr_status_key)==1) {
