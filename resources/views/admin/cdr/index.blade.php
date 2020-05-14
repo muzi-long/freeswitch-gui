@@ -34,10 +34,11 @@
         <div class="layui-card-body">
             <table id="dataTable" lay-filter="dataTable"></table>
             <script type="text/html" id="options">
+                @{{#  if(d.billsec>0 && d.record_file){ }}
                 <div class="layui-btn-group">
                     <a class="layui-btn layui-btn-sm" lay-event="play">播放</a>
-                    <a class="layui-btn layui-btn-sm" lay-event="download">下载</a>
                 </div>
+                @{{# } }}
             </script>
         </div>
     </div>
@@ -74,25 +75,18 @@
                 var data = obj.data //获得当前行数据
                     ,layEvent = obj.event; //获得 lay-event 对应的值
                 if (layEvent === 'play'){
-                    var index = layer.load()
-                    $.get('/admin/cdr/'+data.uuid+'/play',function (res) {
-                        layer.close(index);
-                        if (res.code==0){
-                            var _html = '<div style="padding:20px;">';
-                            _html += '<audio controls="controls" autoplay src="'+res.data+'"></audio>';
-                            _html += '</div>';
-                            layer.open({
-                                title : '播放录音',
-                                type : 1,
-                                area : ['360px','auto'],
-                                content : _html
-                            })
-                        }else {
-                            layer.msg(res.msg,{icon:5})
-                        }
-                    })
-                } else if (layEvent === 'download'){
-                    location.href = data.record_file;
+                    if (data.billsec>0 && data.record_file){
+                        var _html = '<div style="padding:20px;">';
+                        _html += '<audio controls="controls" autoplay src="'+data.record_file+'"></audio>';
+                        _html += '</div>';
+                        layer.open({
+                            title : '播放录音',
+                            type : 1,
+                            area : ['360px','auto'],
+                            content : _html
+                        })
+                    }
+
                 }
             });
 
