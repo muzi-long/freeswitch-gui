@@ -14,12 +14,12 @@ class eslListen extends Command
                 'RECORD_START',
                 'RECORD_STOP',
                 'CHANNEL_HANGUP_COMPLETE',
-     * 多个事件以,隔开，例：CHANNEL_ANSWER,CHANNEL_HANGUP_COMPLETE
+     * 多个事件以空格隔开，例：CHANNEL_ANSWER RECORD_START RECORD_STOP CHANNEL_HANGUP_COMPLETE
      * 如果指定uuid则表示只监听指定的uuid的事件
      * The name and signature of the console command.
      * @var string
      */
-    protected $signature = 'esl:listen {event} {--aleg_uuid=} {--bleg_uuid=}';
+    protected $signature = 'esl:listen {event*} {--aleg_uuid=} {--bleg_uuid=}';
 
     /**
      * The console command description.
@@ -66,23 +66,15 @@ class eslListen extends Command
             'CHANNEL_HANGUP_COMPLETE',
         ];
         $argument = $this->argument('event');
-        if (strpos($argument,',')!==false){
-            $input = array_unique(explode(',',$argument));
-            foreach ($input as $name){
-                if (!in_array($name,$eventarr)){
-                    $this->error('event '.$name.' not allowed');
-                    return false;
-                }
-            }
-            $event = trim(implode(" ",$input));
-        }else{
-            $event = $argument;
-            if (!in_array($event,$eventarr)){
-                $this->error('event '.$event.' not allowed');
+        foreach ($argument as $name){
+            if (!in_array($name,$eventarr)){
+                $this->error('event '.$name.' not allowed');
                 return false;
             }
         }
+        $event = implode(" ",$argument);
         //======================  接收事件参数验证  ====================
+
         //====================== 是否监听指定的uuid的事件 ===============
         $aleg_uuid = $this->option('aleg_uuid');
         $bleg_uuid = $this->option('bleg_uuid');
