@@ -7,7 +7,6 @@ do
 		echo "$?"
 		echo "freeswitch process already started!"
 	else
-	    supervisorctl stop callcenter-run:*
 		echo "$?"
 		/usr/local/freeswitch/bin/freeswitch -u www -g www -ncwait
 		echo "freeswitch process has been restarted!"
@@ -15,7 +14,7 @@ do
 		echo "restart asr"
 		supervisorctl restart esl-listen:
 		supervisorctl restart callcenter-listen:*
-		supervisorctl start callcenter-run:*
+		supervisorctl restart callcenter-run:*
 	fi
 	sleep 5
 

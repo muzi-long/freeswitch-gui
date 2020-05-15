@@ -25,13 +25,13 @@ return [
     //生成静态文件地址
     'swoole_http_url' => [
         //生成网关
-        'gateway' => 'http://127.0.0.1:8001/gateway',
+        'gateway' => 'http://127.0.0.1:9501/gateway',
         //生成分机
-        'directory' => 'http://127.0.0.1:8001/directory',
+        'directory' => 'http://127.0.0.1:9501/directory',
         //生成拨号计划
-        'dialplan' => 'http://127.0.0.1:8001/dialplan',
+        'dialplan' => 'http://127.0.0.1:9501/dialplan',
         //生成callcenter
-        'callcenter' => 'http://127.0.0.1:8001/callcenter',
+        'callcenter' => 'http://127.0.0.1:9501/callcenter',
     ],
 
     'esl' => [
