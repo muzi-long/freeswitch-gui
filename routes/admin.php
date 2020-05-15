@@ -374,5 +374,15 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth','perm
         Route::get('cdr/{uuid}/download','CdrController@download')->name('admin.cdr.download')->middleware('permission:data.cdr.download');
 
     });
+    //通话统计
     Route::get('cdr/count','CdrController@count')->name('admin.cdr.count')->middleware('permission:data.cdr.count');
+    //语音合成
+    Route::group([],function (){
+        Route::get('audio','AudioController@index')->name('admin.audio')->middleware('permission:data.audio');
+        //播放
+        Route::get('audio/store','AudioController@store')->name('admin.audio.store')->middleware('permission:data.audio.store');
+        //下载
+        Route::get('audio/destroy','AudioController@destroy')->name('admin.audio.destroy')->middleware('permission:data.audio.destroy');
+
+    });
 });
