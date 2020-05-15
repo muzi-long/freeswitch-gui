@@ -81,4 +81,14 @@ return [
         //自增ID的key,用于群呼时生成uuid
         'callcenter_call' => 'callcenter_call_id',
     ],
+    'baidu' => [
+        'appId' => '15143241',
+        'appKey' => 'YI8bXhDcthkBrQNRQFDf2iCG',
+        'appSecret' => 'NQo5Nk9rEZVAndjthwQd8OtYvNfjBcFM',
+        'url' => [
+            'token' => 'https://openapi.baidu.com/oauth/2.0/token',
+            'tts' => 'http://tsn.baidu.com/text2audio',
+            'asr' => 'https://vop.baidu.com/pro_api',
+        ],
+    ],
 ];

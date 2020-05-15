@@ -16,7 +16,7 @@
             <table id="dataTable" lay-filter="dataTable"></table>
             <script type="text/html" id="options">
                 <div class="layui-btn-group">
-                    @can('pbx.audio.destroy')
+                    @can('data.audio.destroy')
                     <a class="layui-btn layui-btn-danger layui-btn-sm " lay-event="del">删除</a>
                     @endcan
                 </div>
@@ -35,20 +35,13 @@
             var dataTable = table.render({
                 elem: '#dataTable'
                 ,height: 500
-                ,url: "{{ route('admin.audio.data') }}" //数据接口
+                ,url: "{{ route('admin.audio') }}" //数据接口
                 ,page: true //开启分页
                 ,cols: [[ //表头
                     {checkbox: true,fixed: true}
                     //,{field: 'id', title: 'ID', sort: true,width:80}
                     ,{field: 'text', title: '文本'}
                     ,{field: 'url', title: '地址'}
-                    ,{field: 'auf', title: '采样率'}
-                    ,{field: 'aue', title: '编码'}
-                    ,{field: 'voice_name', title: '发音人'}
-                    ,{field: 'speed', title: '语速'}
-                    ,{field: 'volume', title: '音量'}
-                    ,{field: 'pitch', title: '音高'}
-                    ,{field: 'engine_type', title: '引擎'}
                     ,{fixed: 'right', width: 150, align:'center', toolbar: '#options', title:'操作'}
                 ]]
             });
@@ -63,7 +56,7 @@
                                 obj.del(); //删除对应行（tr）的DOM结构
                             }
                             layer.close(index);
-                            var icon = result.code==0?6:5;
+                            var icon = result.code==0?1:2;
                             layer.msg(result.msg,{icon:icon})
                         });
                     });
@@ -77,13 +70,13 @@
                 $.post("{{route('admin.audio.store')}}",parms,function (res) {
                     layer.closeAll('loading');
                     if (res.code==0){
-                        layer.msg(res.msg,{icon:6},function () {
+                        layer.msg(res.msg,{icon:1},function () {
                             dataTable.reload({
                                 page:{curr:1}
                             });
                         })
                     } else {
-                        layer.msg(res.msg,{icon:5})
+                        layer.msg(res.msg,{icon:2})
                     }
                 });
                 return false;

@@ -218,6 +218,14 @@ class MenuTableSeeder extends Seeder
                         'type' => 1,
                         'permission_name' => 'data.cdr.count',
                     ],
+                    [
+                        'name' => '语音合成',
+                        'route' => 'admin.audio',
+                        'url' => null,
+                        'icon' => 'layui-icon-ios',
+                        'type' => 1,
+                        'permission_name' => 'data.audio',
+                    ],
                 ]
             ],
         ];

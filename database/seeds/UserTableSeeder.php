@@ -256,6 +256,14 @@ class UserTableSeeder extends Seeder
 
                         ]
                     ],
+                    [
+                        'name' => 'data.audio',
+                        'display_name' => '语音合成',
+                        'child' => [
+                            ['name' => 'data.audio.create', 'display_name' => '添加'],
+                            ['name' => 'data.audio.destroy', 'display_name' => '删除'],
+                        ]
+                    ],
                 ]
             ],
         ];
