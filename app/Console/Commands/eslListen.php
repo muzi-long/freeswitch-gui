@@ -15,10 +15,11 @@ class eslListen extends Command
                 'RECORD_STOP',
                 'CHANNEL_HANGUP_COMPLETE',
      * 多个事件以,隔开，例：CHANNEL_ANSWER,CHANNEL_HANGUP_COMPLETE
+     * 如果指定uuid则表示只监听指定的uuid的事件
      * The name and signature of the console command.
      * @var string
      */
-    protected $signature = 'esl:listen {event}';
+    protected $signature = 'esl:listen {event} {--aleg_uuid=} {--bleg_uuid=}';
 
     /**
      * The console command description.
@@ -82,7 +83,16 @@ class eslListen extends Command
             }
         }
         //======================  接收事件参数验证  ====================
-
+        //====================== 是否监听指定的uuid的事件 ===============
+        $aleg_uuid = $this->option('aleg_uuid');
+        $bleg_uuid = $this->option('bleg_uuid');
+        if ($aleg_uuid){
+            $fs->filteruuid($aleg_uuid);
+        }
+        if ($bleg_uuid){
+            $fs->filteruuid($bleg_uuid);
+        }
+        //====================== 是否监听指定的uuid的事件 ===============
         $fs->events('plain', $event);
         while (true) {
             //录音目录
