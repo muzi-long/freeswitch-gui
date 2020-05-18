@@ -19,3 +19,5 @@ Route::post('upload', 'ApiController@upload')->name('api.upload');
 Route::post('dial','ApiController@dial')->name('api.dial');
 //挂断接口
 Route::post('hangup','ApiController@hangup')->name('api.hangup');
+//语音消息
+Route::post('voice','ApiController@voice')->name('api.voice');

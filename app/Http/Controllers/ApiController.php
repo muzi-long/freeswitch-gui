@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Audio;
 use App\Models\Gateway;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -62,6 +63,7 @@ class ApiController extends Controller
      * 拨打接口
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
+     * @throws \Exception
      */
     public function dial(Request $request)
     {
@@ -174,7 +176,11 @@ class ApiController extends Controller
 
     }
 
-
+    /**
+     * 挂断
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function hangup(Request $request)
     {
         $exten = $request->get('exten');
@@ -202,9 +208,52 @@ class ApiController extends Controller
             return Response::json(['code'=>1,'msg'=>'连接异常']);
         }
         return Response::json(['code'=>0,'msg'=>'已挂断']);
+    }
 
-        
-        
+    /**
+     * 语音消息接口
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function voice(Request $request)
+    {
+        $data = $request->all(['phone','text','gateway_id']);
+        //验证参数
+        if (!preg_match('/^1[34578][0-9]{9}$/',$data['phone'])){
+            return Response::json(['code'=>1,'msg'=>'号码格式不正确']);
+        }
+        //验证网关信息
+        $gw = Gateway::find($data['gateway_id']);
+        if ($gw == null){
+            return Response::json(['code'=>1,'msg'=>'网关不存在']);
+        }
+        //合成语音
+        $res = (new Audio())->tts($data['text']);
+        if ($res['code']!=0){
+            return Response::json(['code'=>1,'msg'=>'语音合成失败']);
+        }
+        //呼叫
+        try{
+            $fs = new \Freeswitchesl();
+            $service = config('freeswitch.esl');
+            $fs->connect($service['host'],$service['port'],$service['password']);
+            $dialStr = "originate {ignore_early_media=true}";
+            if ($gw->outbound_caller_id){
+                $dialStr .= "{effective_caller_id_number=".$gw->outbound_caller_id."}";
+                $dialStr .= "{effective_caller_id_name=".$gw->outbound_caller_id."}";
+            }
+            $dialStr .= "sofia/gateway/gw".$gw->id."/";
+            if ($gw->prefix){
+                $dialStr .= $gw->prefix.$data['phone'];
+            }
+            $dialStr .= " &playback(".$res['path'].")";
+                $fs->bgapi($dialStr);
+            $fs->disconnect();
+            return Response::json(['code'=>0,'msg'=>'呼叫成功']);
+        }catch (\Exception $exception){
+            Log::info('ESL连接异常：'.$exception->getMessage());
+            return Response::json(['code'=>1,'msg'=>'呼叫异常']);
+        }
     }
 
 }
