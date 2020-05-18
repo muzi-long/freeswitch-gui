@@ -222,7 +222,7 @@ class MenuTableSeeder extends Seeder
                         'name' => '语音合成',
                         'route' => 'admin.audio',
                         'url' => null,
-                        'icon' => 'layui-icon-ios',
+                        'icon' => 'layui-icon-mike',
                         'type' => 1,
                         'permission_name' => 'data.audio',
                     ],

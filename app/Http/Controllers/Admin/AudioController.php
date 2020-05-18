@@ -19,7 +19,7 @@ class AudioController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $res = Audio::orderBy('id')->paginate($request->get('limit', 30));
+            $res = Audio::orderBy('id','desc')->paginate($request->get('limit', 30));
             $data = [
                 'code' => 0,
                 'msg' => '正在请求中...',

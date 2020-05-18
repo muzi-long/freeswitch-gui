@@ -16,6 +16,9 @@
             <table id="dataTable" lay-filter="dataTable"></table>
             <script type="text/html" id="options">
                 <div class="layui-btn-group">
+                    <div class="layui-btn-group">
+                        <a class="layui-btn layui-btn-sm" lay-event="play">播放</a>
+                    </div>
                     @can('data.audio.destroy')
                     <a class="layui-btn layui-btn-danger layui-btn-sm " lay-event="del">删除</a>
                     @endcan
@@ -62,6 +65,18 @@
                             layer.msg(result.msg,{icon:icon})
                         });
                     });
+                }else if (layEvent === 'play'){
+                    if (data.url) {
+                        var _html = '<div style="padding:20px;">';
+                        _html += '<audio controls="controls" autoplay src="' + data.url + '"></audio>';
+                        _html += '</div>';
+                        layer.open({
+                            title: '播放录音',
+                            type: 1,
+                            area: ['360px', 'auto'],
+                            content: _html
+                        })
+                    }
                 }
             });
             //提交
