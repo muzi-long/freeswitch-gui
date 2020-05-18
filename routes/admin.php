@@ -380,9 +380,9 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth','perm
     Route::group([],function (){
         Route::get('audio','AudioController@index')->name('admin.audio')->middleware('permission:data.audio');
         //播放
-        Route::get('audio/store','AudioController@store')->name('admin.audio.store')->middleware('permission:data.audio.store');
+        Route::post('audio/store','AudioController@store')->name('admin.audio.store')->middleware('permission:data.audio.create');
         //下载
-        Route::get('audio/destroy','AudioController@destroy')->name('admin.audio.destroy')->middleware('permission:data.audio.destroy');
+        Route::delete('audio/destroy','AudioController@destroy')->name('admin.audio.destroy')->middleware('permission:data.audio.destroy');
 
     });
 });

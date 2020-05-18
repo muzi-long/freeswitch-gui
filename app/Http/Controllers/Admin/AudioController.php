@@ -1,11 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\Admin\pbx;
+namespace App\Http\Controllers\Admin;
 
 use App\Models\Audio;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Redis;
 
 class AudioController extends Controller
 {
@@ -51,11 +53,12 @@ class AudioController extends Controller
                     'path' => $res['data']['path'],
                     'text' => $text,
                     'user_id' => auth()->user()->id,
-                ]));
+                ]);
                 return response()->json(['code'=>0,'msg'=>'合成成功','data'=>['url'=>$res['data']['url']]]);
             }
             return response()->json($res);
         }catch (\Exception $exception){
+            Log::error('合成语音异常：'.$exception->getMessage());
             return response()->json(['code'=>1,'msg'=>'合成失败']);
         }
     }

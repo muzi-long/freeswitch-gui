@@ -5,9 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class Audio extends Model
 {
@@ -24,8 +26,8 @@ class Audio extends Model
     			$response = $client->get(config('freeswitch.baidu.url.token'),[
     				'query' => [
     					'grant_type' => 'client_credentials',
-    					'client_secret' => config('freeswitch.baidu.appKey'),
-    					'client_id' => config('freeswitch.baidu.appSecret'),
+    					'client_id' => config('freeswitch.baidu.appKey'),
+    					'client_secret' => config('freeswitch.baidu.appSecret'),
     				]
     			]);
     			$result = json_decode($response->getBody(),true);
@@ -52,23 +54,23 @@ class Audio extends Model
 					'cuid' => 'freeswitch',
 					'ctp' => 1,
 					'lan' => 'zh',
-					'spd' => 5 //语速0-15，默认为5中语速
-					'pit' => 5 //音调0-15，默认为5中音调
-					'vol' => 5 //音量0-15，默认为5中音量
-					'aue' => 6 //3为mp3格式(默认)； 4为pcm-16k；5为pcm-8k；6为wav（内容同pcm-16k）; 注意aue=4或者6是语音识别要求的格式
-					'per' => 4 //度小宇=1，度小美=0，度逍遥=3，度丫丫=4 ，度博文=106，度小童=110，度小萌=111，度米朵=103，度小娇=5
+					'spd' => 5, //语速0-15，默认为5中语速
+					'pit' => 5, //音调0-15，默认为5中音调
+					'vol' => 5, //音量0-15，默认为5中音量
+					'aue' => 6, //3为mp3格式(默认)； 4为pcm-16k；5为pcm-8k；6为wav（内容同pcm-16k）; 注意aue=4或者6是语音识别要求的格式
+					'per' => 4, //度小宇=1，度小美=0，度逍遥=3，度丫丫=4 ，度博文=106，度小童=110，度小萌=111，度米朵=103，度小娇=5
 				])
 			]);
-			if ($response->getHeader('Content-Type')=='audio/wav') {
+			if (in_array('audio/wav',$response->getHeader('Content-Type'))){
 				$file_url = Str::random().'.wav';
 				$file_path = public_path('uploads').'/'.$file_url;
-				Storage::disk('uploads')->put($file,$response->getBody());
-				return ['code'=>0,'msg'=>'合成成功','data'=>['url'=>$file_url,'path'=>$file_path];
+				Storage::disk('uploads')->put($file_url,$response->getBody());
+				return ['code'=>0,'msg'=>'合成成功','data'=>['url'=>'/uploads/'.$file_url,'path'=>$file_path]];
 			}
-			return ['code'=>1,'msg'=>'合成失败'];
+			return ['code'=>1,'msg'=>'合成失败','data'=>$response->getHeader('Content-Type')];
 
 		}catch(\Exception $exception){
-			return ['code'=>1,'msg'=>'合成异常'];
+			return ['code'=>1,'msg'=>'合成异常','data'=>$exception->getMessage()];
 		}
 
     }

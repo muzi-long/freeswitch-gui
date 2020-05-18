@@ -8,7 +8,7 @@
                     <textarea name="text" class="layui-textarea" placeholder="请输入要合成的文本"></textarea>
                 </div>
                 <div class="layui-form-item">
-                    <button lay-submit lay-filter="tts" class="layui-btn">合成</button>
+                    <button type="button" lay-submit lay-filter="tts" class="layui-btn">合成</button>
                 </div>
             </form>
         </div>
@@ -28,6 +28,7 @@
 @section('script')
     <script>
         layui.use(['layer','table','form'],function () {
+            var $ = layui.jquery;
             var layer = layui.layer;
             var form = layui.form;
             var table = layui.table;
@@ -42,6 +43,7 @@
                     //,{field: 'id', title: 'ID', sort: true,width:80}
                     ,{field: 'text', title: '文本'}
                     ,{field: 'url', title: '地址'}
+                    ,{field: 'path', title: '完整路径'}
                     ,{fixed: 'right', width: 150, align:'center', toolbar: '#options', title:'操作'}
                 ]]
             });
