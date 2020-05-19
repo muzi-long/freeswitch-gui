@@ -65,6 +65,13 @@ return [
         'Receiving'         => '电话呼入',
         'In a queue call'   => '通话中',
     ],
+    //群呼状态
+    'callcenter_call_status' => [
+        1 => '待呼叫',
+        2 => '呼叫失败',
+        3 => '漏接',
+        4 => '成功',
+    ],
     //字段类型
     'field_type' => [
         'input' => '输入框',

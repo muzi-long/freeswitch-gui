@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="layui-card">
-        <div class="layui-card-header">
+        <div class="layui-card-header ">
             <b>任务信息</b>
             <a class="layui-btn layui-btn-sm layui-btn-primary" href="{{route('admin.task')}}" ><i class="layui-icon layui-icon-left"></i>返回</a>
         </div>
@@ -113,6 +113,35 @@
         </div>
     </div>
 
+    <div class="layui-card">
+        <div class="layui-card-header layuiadmin-card-header-auto">
+            <b>呼叫记录</b>
+            <form class="layui-form">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label for="" class="layui-form-label">号码</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="phone" placeholder="请输入呼叫号码" maxlength="11" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <div class="layui-input-inline">
+                            <button type="button" lay-submit lay-filter="search" class="layui-btn layui-btn-sm">搜索</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="layui-card-body">
+            <table id="dataTable" lay-filter="dataTable"></table>
+            <script type="text/html" id="options">
+                @{{# if(d.billsec>0 && d.record_file){ }}
+                    <a class="layui-btn layui-btn-sm" lay-event="play">播放</a>
+                @{{# } }}
+            </script>
+        </div>
+    </div>
+
 @endsection
 
 @section('script')
@@ -123,6 +152,7 @@
             echarts: 'lib/extend/echarts' ,
             echartsTheme: 'lib/extend/echartsTheme' ,
         }).use(['layer','table','form','echarts','echartsTheme'],function () {
+            var $ = layui.jquery;
             var layer = layui.layer;
             var form = layui.form;
             var table = layui.table;
@@ -149,24 +179,56 @@
             });
             window.onresize = result_pie.resize
 
-            /*function agentStatus() {
-                $.post("{{route('admin.task.show',['id'=>$task->id])}}",{_token:"{{csrf_token()}}"},function (res) {
-                    if (res.code==0){
-                        var _html = '';
-                        $.each(res.data,function (index,item) {
-                            _html += '<tr>';
-                            _html += '<td>'+item.name+'</td>';
-                            _html += '<td>'+item.contact_name+'</td>';
-                            _html += '<td>'+item.status_name+'</td>';
-                            _html += '<td>'+item.state_name+'</td>';
-                            _html += '</tr>';
+            //呼叫记录
+            var dataTable = table.render({
+                elem: '#dataTable'
+                ,height: 500
+                ,url: "{{ route('admin.task.calls',['task_id'=>$task->id]) }}" //数据接口
+                ,page: true //开启分页
+                ,cols: [[ //表头
+                    {field: 'uuid', title: '通话编号'}
+                    ,{field: 'phone', title: '呼叫号码'}
+                    ,{field: 'status_name', title: '呼叫状态'}
+                    ,{field: 'datetime_originate_phone', title: '呼叫时间',width: 200}
+                    ,{field: 'datetime_entry_queue', title: '入队列时间',width: 200}
+                    ,{field: 'datetime_agent_answered', title: '坐席接通时间',width: 200}
+                    ,{field: 'datetime_end', title: '结束时间',width: 200}
+                    ,{field: 'agent_id', title: '接听坐席',templet:function (d) {
+                            return d.agent.display_name;
+                        }}
+                    ,{field: 'billsec', title: '通话时长（秒）'}
+                    ,{fixed: 'right', width: 100, align:'center', toolbar: '#options', title:'操作'}
+                ]]
+            });
+
+            //监听工具条
+            table.on('tool(dataTable)', function(obj){ //注：tool是工具条事件名，dataTable是table原始容器的属性 lay-filter="对应的值"
+                var data = obj.data //获得当前行数据
+                    ,layEvent = obj.event; //获得 lay-event 对应的值
+                if (layEvent === 'play'){
+                    if (data.billsec>0 && data.record_file) {
+                        var _html = '<div style="padding:20px;">';
+                        _html += '<audio controls="controls" autoplay src="' + data.record_file + '"></audio>';
+                        _html += '</div>';
+                        layer.open({
+                            title: '播放录音',
+                            type: 1,
+                            area: ['360px', 'auto'],
+                            content: _html
                         })
-                        $("#agentStatus").html(_html);
-                        setTimeout(agentStatus,5000)
                     }
-                })
-            }
-            agentStatus();*/
+                }
+            });
+            //搜索
+            form.on('submit(search)', function(data){
+                var parms = data.field;
+                dataTable.reload({
+                    where:parms,
+                    page:{curr:1}
+                });
+                return false;
+            });
+
         })
     </script>
 @endsection

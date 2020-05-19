@@ -258,6 +258,8 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth','perm
         Route::post('task/setStatus','TaskController@setStatus')->name('admin.task.setStatus')->middleware('permission:ai.task.setStatus');
         //导入号码
         Route::post('task/{id}/importCall','TaskController@importCall')->name('admin.task.importCall')->middleware('permission:callcenter.task.importCall');
+        //呼叫记录
+        Route::get('task/calls','TaskController@calls')->name('admin.task.calls');
     });
 
 });

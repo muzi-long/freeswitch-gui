@@ -26,6 +26,7 @@ class CreateCall extends Migration
             $table->string('agent_id')->nullable()->comment('接听坐席ID');
             $table->integer('billsec')->default(0)->comment('通话时长');
             $table->string('cause')->nullable()->comment('挂机原因');
+            $table->string('record_file')->nullable()->comment('录音地址');
             $table->timestamps();
             $table->foreign('task_id')->references('id')->on('task')->onDelete('cascade');
         });

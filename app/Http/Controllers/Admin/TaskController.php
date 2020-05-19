@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\Admin\Task\TaskRequest;
 use App\Models\Agent;
+use App\Models\Call;
 use App\Models\Gateway;
 use App\Models\Queue;
 use App\Models\Task;
@@ -12,6 +13,8 @@ use Faker\Provider\Uuid;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use DB;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Storage;
 use Log;
 use Illuminate\Support\Facades\Redis;
 
@@ -186,9 +189,9 @@ class TaskController extends Controller
             //上传到七牛云
             $newFile = Uuid::uuid().".".$file->getClientOriginalExtension();
             try{
-                $disk = QiniuStorage::disk('qiniu');
+                $disk = Storage::disk('uploads');
                 $disk->put($newFile,file_get_contents($file->getRealPath()));
-                $url = $disk->downloadUrl($newFile);
+                $url = public_path('uploads').'/'.$newFile;
             }catch (\Exception $exception){
                 return response()->json(['code'=>1,'msg'=>'文件上传失败','data'=>$exception->getMessage()]);
             }
@@ -235,6 +238,32 @@ class TaskController extends Controller
         }
         return response()->json(['code'=>1,'msg'=>'上传失败','data'=>$file->getErrorMessage()]);
 
+    }
+
+    /**
+     * 呼叫详情
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function calls(Request $request)
+    {
+        $data = $request->all(['task_id','phone']);
+        $res = Call::with('agent')
+            ->when($data['phone'],function ($q) use($data){
+                return $q->where('phone','like','%'.$data['phone'].'%');
+            })->where('task_id',$data['task_id'])
+            ->orderBy('id','asc')
+            ->paginate($request->get('limit', 30));
+        foreach ($res->items() as $item){
+            $item->status_name = Arr::get(config('freeswitch.callcenter_call_status'),$item->status,'-');
+        }
+        $data = [
+            'code' => 0,
+            'msg' => '正在请求中...',
+            'count' => $res->total(),
+            'data' => $res->items(),
+        ];
+        return response()->json($data);
     }
 
 }
