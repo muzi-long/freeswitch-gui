@@ -2,6 +2,7 @@
 
 @section('content')
     <div class="layui-card">
+        @can('data.audio.create')
         <div class="layui-card-header layuiadmin-card-header-auto">
             <form class="layui-form">
                 <div class="layui-form-item">
@@ -12,6 +13,7 @@
                 </div>
             </form>
         </div>
+        @endcan
         <div class="layui-card-body">
             <table id="dataTable" lay-filter="dataTable"></table>
             <script type="text/html" id="options">

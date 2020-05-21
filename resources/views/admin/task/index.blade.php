@@ -4,10 +4,16 @@
     <div class="layui-card">
         <div class="layui-card-header layuiadmin-card-header-auto">
             <div class="layui-btn-group">
+                @can('callcenter.task.destroy')
                 <button class="layui-btn layui-btn-sm layui-btn-danger" type="button" id="listDelete">删 除</button>
+                @endcan
+                @can('callcenter.task.setStatus')
                 <button class="layui-btn layui-btn-sm layui-btn-danger" type="button" id="setStatus1">停 止</button>
                 <button class="layui-btn layui-btn-sm" type="button" id="setStatus2">启 动</button>
+                @endcan
+                @can('callcenter.task.create')
                 <a class="layui-btn layui-btn-sm" href="{{ route('admin.task.create') }}">添 加</a>
+                @endcan
                 <a class="layui-btn layui-btn-sm" href="/template/outgoing.csv">模板下载</a>
             </div>
         </div>
@@ -15,10 +21,18 @@
             <table id="dataTable" lay-filter="dataTable"></table>
             <script type="text/html" id="options">
                 <div class="layui-btn-group">
+                    @can('callcenter.task.importCall')
                     <a class="layui-btn layui-btn-sm" lay-event="import">导入号码</a>
+                    @endcan
+                    @can('callcenter.task.show')
                     <a class="layui-btn layui-btn-sm" lay-event="show">详情</a>
+                    @endcan
+                    @can('callcenter.task.edit')
                     <a class="layui-btn layui-btn-sm" lay-event="edit">编辑</a>
+                    @endcan
+                    @can('callcenter.task.destroy')
                     <a class="layui-btn layui-btn-danger layui-btn-sm " lay-event="del">删除</a>
+                    @endcan
                 </div>
             </script>
             <script type="text/html" id="status">

@@ -19,7 +19,7 @@
                     @can('system.role.edit')
                         <a class="layui-btn layui-btn-sm" lay-event="edit">编辑</a>
                     @endcan
-                    @can('system.role.destroy')
+                    @can('system.role.permission')
                         <a class="layui-btn layui-btn-sm" lay-event="permission">权限</a>
                     @endcan
                     @can('system.role.destroy')

@@ -2,7 +2,6 @@
 
 @section('content')
     <div class="layui-card">
-
         <div class="layui-card-body">
             <div class="layui-row layui-col-space30">
                 <div class="layui-col-xs6">

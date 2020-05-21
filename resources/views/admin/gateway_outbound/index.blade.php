@@ -5,9 +5,15 @@
         <div class="layui-card-header layuiadmin-card-header-auto">
             <form class="layui-form" >
                 <div class="layui-btn-group">
+                    @can('fs.gateway_outbound.create')
                     <button type="button" class="layui-btn layui-btn-sm" id="create_btn">添 加</button>
+                    @endcan
+                    @can('fs.gateway_outbound.destroy')
                     <button class="layui-btn layui-btn-sm layui-btn-danger" type="button" id="listDelete">删 除</button>
+                    @endcan
+                    @can('fs.gateway_outbound.import')
                     <button class="layui-btn layui-btn-sm" type="button" id="importBtn" >导 入</button>
+                    @endcan
                     <button class="layui-btn layui-btn-sm" lay-submit lay-filter="search" >搜 索</button>
                 </div>
                 <div class="layui-form-item">
@@ -35,7 +41,9 @@
             <table id="dataTable" lay-filter="dataTable"></table>
             <script type="text/html" id="options">
                 <div class="layui-btn-group">
+                    @can('fs.gateway_outbound.edit')
                     <a class="layui-btn layui-btn-sm" lay-event="edit">编辑</a>
+                    @endcan
                 </div>
             </script>
         </div>

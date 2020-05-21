@@ -5,9 +5,15 @@
         <div class="layui-card-header layuiadmin-card-header-auto">
             <form class="layui-form">
                 <div class="layui-btn-group">
+                    @can('callcenter.queue.destroy')
                     <button class="layui-btn layui-btn-sm layui-btn-danger" type="button" id="listDelete">删 除</button>
+                    @endcan
+                    @can('callcenter.queue.create')
                     <a class="layui-btn layui-btn-sm" href="{{ route('admin.queue.create') }}">添 加</a>
+                    @endcan
+                    @can('callcenter.queue.updateXml')
                     <button class="layui-btn layui-btn-sm" type="button" id="updateXml">更新配置</button>
+                    @endcan
                     <button class="layui-btn layui-btn-sm" lay-submit lay-filter="search" >搜 索</button>
                 </div>
                 <div class="layui-form-item">
@@ -24,9 +30,15 @@
             <table id="dataTable" lay-filter="dataTable"></table>
             <script type="text/html" id="options">
                 <div class="layui-btn-group">
+                    @can('callcenter.queue.edit')
                     <a class="layui-btn layui-btn-sm" lay-event="edit">编辑</a>
+                    @endcan
+                    @can('callcenter.queue.agent')
                     <a class="layui-btn layui-btn-sm" lay-event="agent">分配坐席</a>
+                    @endcan
+                    @can('callcenter.queue.destroy')
                     <a class="layui-btn layui-btn-danger layui-btn-sm " lay-event="del">删除</a>
+                    @endcan
                 </div>
             </script>
         </div>

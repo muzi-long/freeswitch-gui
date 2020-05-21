@@ -5,10 +5,16 @@
         <div class="layui-card-header layuiadmin-card-header-auto">
             <form class="layui-form">
                 <div class="layui-btn-group">
+                    @can('crm.project.create')
                     <a class="layui-btn layui-btn-sm" href="{{ route('admin.project.create') }}">添 加</a>
+                    @endcan
                     <button lay-submit lay-filter="search" class="layui-btn layui-btn-sm" >搜索</button>
+                    @can('crm.project.import')
                     <button type="button" id="import_project" class="layui-btn layui-btn-sm">导入</button>
+                    @endcan
+                    @can('crm.project.downloadTemplate')
                     <a href="{{route('admin.project.downloadTemplate')}}" class="layui-btn layui-btn-sm layui-btn-warm">模板下载</a>
+                    @endcan
                 </div>
                 <div class="layui-form-item">
                     <div class="layui-inline">
@@ -95,11 +101,21 @@
             <table id="dataTable" lay-filter="dataTable"></table>
             <script type="text/html" id="options">
                 <div class="layui-btn-group">
+                    @can('crm.project.show')
                     <a class="layui-btn layui-btn-sm" lay-event="show">详情</a>
+                    @endcan
+                    @can('crm.project.edit')
                     <a class="layui-btn layui-btn-sm" lay-event="edit">编辑</a>
+                    @endcan
+                    @can('crm.project.node')
                     <a class="layui-btn layui-btn-sm" lay-event="node">节点</a>
+                    @endcan
+                    @can('crm.project.remark')
                     <a class="layui-btn layui-btn-sm" lay-event="remark">备注</a>
+                    @endcan
+                    @can('crm.project.destroy')
                     <a class="layui-btn layui-btn-danger layui-btn-sm " lay-event="del">删除</a>
+                    @endcan
                 </div>
             </script>
         </div>

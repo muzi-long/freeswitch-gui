@@ -4,9 +4,15 @@
     <div class="layui-card">
         <div class="layui-card-header layuiadmin-card-header-auto">
             <div class="layui-btn-group">
+                @can('fs.gateway.destroy')
                 <button class="layui-btn layui-btn-sm layui-btn-danger" id="listDelete">删 除</button>
+                @endcan
+                @can('fs.gateway.create')
                 <a class="layui-btn layui-btn-sm" href="{{ route('admin.gateway.create') }}">添 加</a>
+                @endcan
+                @can('fs.gateway.updateXml')
                 <button class="layui-btn layui-btn-sm" id="updateXml">更新配置</button>
+                @endcan
             </div>
 
         </div>
@@ -14,8 +20,12 @@
             <table id="dataTable" lay-filter="dataTable"></table>
             <script type="text/html" id="options">
                 <div class="layui-btn-group">
+                    @can('fs.gateway.edit')
                     <a class="layui-btn layui-btn-sm" lay-event="edit">编辑</a>
+                    @endcan
+                    @can('fs.gateway.destroy')
                     <a class="layui-btn layui-btn-danger layui-btn-sm " lay-event="del">删除</a>
+                    @endcan
                 </div>
             </script>
         </div>

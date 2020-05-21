@@ -34,7 +34,9 @@
             <table id="dataTable" lay-filter="dataTable"></table>
             <script type="text/html" id="options">
                 <div class="layui-btn-group">
+                    @can('crm.waste.retrieve')
                     <a class="layui-btn layui-btn-sm layui-btn-warm" lay-event="retrieve">拾回</a>
+                    @endcan
                 </div>
             </script>
         </div>

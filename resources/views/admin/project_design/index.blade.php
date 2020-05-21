@@ -10,15 +10,21 @@
     <div class="layui-card">
         <div class="layui-card-header layuiadmin-card-header-auto">
             <div class="layui-btn-group">
+                @can('crm.project-design.create')
                 <a class="layui-btn layui-btn-sm" href="{{ route('admin.project-design.create') }}">添 加</a>
+                @endcan
             </div>
         </div>
         <div class="layui-card-body">
             <table id="dataTable" lay-filter="dataTable"></table>
             <script type="text/html" id="options">
                 <div class="layui-btn-group">
+                    @can('crm.project-design.edit')
                     <a class="layui-btn layui-btn-sm" lay-event="edit">编辑</a>
+                    @endcan
+                    @can('crm.project-design.destroy')
                     <a class="layui-btn layui-btn-danger layui-btn-sm " lay-event="del">删除</a>
+                    @endcan
                 </div>
             </script>
         </div>

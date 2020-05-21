@@ -5,8 +5,12 @@
         <div class="layui-card-header layuiadmin-card-header-auto">
             <form class="layui-form">
                 <div class="layui-btn-group">
+                    @can('crm.node.destroy')
                     <button class="layui-btn layui-btn-sm layui-btn-danger" type="button" id="listDelete">删 除</button>
+                    @endcan
+                    @can('crm.node.create')
                     <a class="layui-btn layui-btn-sm" href="{{ route('admin.node.create') }}">添 加</a>
+                    @endcan
                 </div>
             </form>
         </div>
@@ -14,8 +18,12 @@
             <table id="dataTable" lay-filter="dataTable"></table>
             <script type="text/html" id="options">
                 <div class="layui-btn-group">
+                    @can('crm.node.edit')
                     <a class="layui-btn layui-btn-sm" lay-event="edit">编辑</a>
+                    @endcan
+                    @can('crm.node.destroy')
                     <a class="layui-btn layui-btn-danger layui-btn-sm " lay-event="del">删除</a>
+                    @endcan
                 </div>
             </script>
         </div>
