@@ -3,7 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Redis;
 
 class Sip extends Model
 {
@@ -18,6 +20,18 @@ class Sip extends Model
         'gateway_id',
     ];
 
+    protected $appends = ['status','state'];
+
+    public function getStateAttribute()
+    {
+        $state = Redis::get($this->username.'_state')??0;
+        return $this->attributes['state'] = Arr::get(config('freeswitch.channel_callstate'),$state,'-');
+    }
+
+    public function getStatusAttribute()
+    {
+        return $this->attributes['status'] = $this->getStatus($this->username);
+    }
 
     /**
      * 所属网关

@@ -60,6 +60,7 @@ class eslListen extends Command
         }
         //======================  接收事件参数验证  ====================
         $eventarr = [
+            'CHANNEL_CALLSTATE',
             'CHANNEL_ANSWER',
             'RECORD_START',
             'RECORD_STOP',
@@ -95,11 +96,22 @@ class eslListen extends Command
                 $info                   = $fs->serialize($received_parameters, "json");
                 $info                   = json_decode($info,true);
                 $eventname              = Arr::get($info,"Event-Name"); //事件名称
-                $uuid                   = Arr::get($info,"Unique-ID"); //事件名称
-                $CallerCallerIDNumber   = Arr::get($info,"Caller-Caller-ID-Number"); //事件名称
-                $CallerCalleeIDNumber   = Arr::get($info,"Caller-Destination-Number"); //事件名称
+                $uuid                   = Arr::get($info,"Unique-ID"); //UUID
+                $CallerCallerIDNumber   = Arr::get($info,"Caller-Caller-ID-Number"); //主叫
+                $CallerCalleeIDNumber   = Arr::get($info,"Caller-Destination-Number"); //被叫
 
                 switch ($eventname){
+                    //呼叫状态
+                    case 'CHANNEL_CALLSTATE':
+                        //是分机号才记录
+                        if (preg_match('/\d{4,5}/',$CallerCallerIDNumber)){
+                            $status = Arr::get($info,'Channel-Call-State');
+                            $uniqueid = Arr::get($info,'Caller-Unique-ID');
+                            Redis::set($CallerCallerIDNumber.'_state',$status);
+                            Redis::setex($CallerCallerIDNumber.'_uuid',1200, $uniqueid);
+                        }
+                        break;
+                    //通道应答
                     case 'CHANNEL_ANSWER':
                         $otherUuid = Arr::get($info,"Other-Leg-Unique-ID");
                         $cdr_uuid = md5($uuid.Redis::incr('cdr_uuid_incr_key'));
@@ -150,6 +162,7 @@ class eslListen extends Command
                             unset($fullfile);
                         }
                         break;
+                    //开始说话
                     case 'RECORD_START':
                         $channel = Redis::get($uuid);
                         if ($channel){
@@ -159,6 +172,7 @@ class eslListen extends Command
                             Redis::set($uuid,json_encode($data));
                         }
                         break;
+                    //结束说话
                     case 'RECORD_STOP':
                         if (Redis::get($this->asr_status_key)==1) {
                             $channel = Redis::get($uuid);
@@ -192,6 +206,7 @@ class eslListen extends Command
                             unset($channel);
                         }
                         break;
+                    //挂断
                     case 'CHANNEL_HANGUP_COMPLETE':
                         $channel = Redis::get($uuid);
                         if ($channel){
@@ -214,6 +229,7 @@ class eslListen extends Command
                         $customer_caller = Arr::get($info,'variable_customer_caller',null);
 
                         if (empty($otherType) || $otherType == 'originatee') {
+                            Redis::del($CallerCallerIDNumber.'_uuid');
                             $data = [
                                 'table_name' => $this->cdr_table,
                                 'leg_type' => 'A',

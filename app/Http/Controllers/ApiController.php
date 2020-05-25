@@ -73,10 +73,10 @@ class ApiController extends Controller
         }
 
         //检测10秒重复请求
-        if(Redis::get('check_'.$data['exten'])!=null){
+        if(Redis::get($data['exten'].'_check')!=null){
             return Response::json(['code'=>1,'msg'=>'重复请求，请稍后再试']);
         }else{
-            Redis::setex('check_'.$data['exten'],10,'exist');
+            Redis::setex($data['exten'].'_check',10,'exist');
         }
 
         //验证分机信息
@@ -167,7 +167,7 @@ class ApiController extends Controller
             $fs->bgapi($dialStr);
             $fs->disconnect();
             //20分钟过期
-            Redis::setex($data['exten'],1200, $aleg_uuid);
+            Redis::setex($data['exten'].'_uuid',1200, $aleg_uuid);
             return Response::json(['code'=>0,'msg'=>'呼叫成功','data'=>['uuid'=>$aleg_uuid,'time'=>date('Y-m-d H:i:s')]]);
         }catch (\Exception $exception){
             Log::info("呼叫错误：".$exception->getMessage());
@@ -184,9 +184,9 @@ class ApiController extends Controller
     public function hangup(Request $request)
     {
         $exten = $request->get('exten');
-        $uuid = !empty($exten) ? Redis::get($exten) : '';
-        if(empty($uuid)){
-            return Response::json(['code'=>0,'msg'=>'无通话']);
+        $uuid = Redis::get($exten.'_uuid');
+        if($uuid == null){
+            return Response::json(['code'=>0,'msg'=>'已挂断']);
         }
         $sip = Sip::where('username',$exten)->first();
         if ($sip == null) {
@@ -199,7 +199,7 @@ class ApiController extends Controller
             if ($fs->connect($service['host'],$service['port'],$service['password'])) {
                 $fs->bgapi("uuid_kill",$uuid);
                 $fs->disconnect();
-                Redis::del($exten);
+                Redis::del($exten.'_uuid');
                 return Response::json(['code'=>0,'msg'=>'已挂断']);
             }
             

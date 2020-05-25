@@ -52,6 +52,14 @@ return [
         'random'                        => '随机振铃',
     ],
 
+    //呼叫状态
+    'channel_callstate' => [
+        'DOWN' => '空闲',
+        'RINGING' => '响铃',
+        'ACTIVE' => '通话中',
+        'HANGUP' => '已挂断',
+    ],
+
     //坐席状态status
     'agent_status' => [
         'Logged Out'    => '签出',

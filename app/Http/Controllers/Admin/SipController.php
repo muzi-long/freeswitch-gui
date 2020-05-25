@@ -31,7 +31,7 @@ class SipController extends Controller
             }
             $res = $query->orderByDesc('id')->paginate($request->get('limit', 30));
             foreach ($res->items() as $d){
-                $d->status = $d->getStatus($d->username);
+                //$d->status = $d->getStatus($d->username);
             }
             $data = [
                 'code' => 0,
