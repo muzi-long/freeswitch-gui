@@ -256,4 +256,56 @@ class ApiController extends Controller
         }
     }
 
+    /**
+     * fromExten 监听分机
+     * toExten 被监听分机
+     * type 监听模式
+     * type: 1 客户听不到监听者说话
+     * type: 2 只能听
+     * type: 3 三方正常通话
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function chanspy(Request $request)
+    {
+        $data = $request->all(['fromExten','toExten','type']);
+        //验证被监听
+        $uuid = Redis::get($data['toExten'].'_uuid');
+        $state = Redis::get($data['toExten'].'_state');
+        if ($uuid == null || $state != 'ACTIVE'){
+            return Response::json(['code'=>1,'msg'=>'被监听分机未在通话中']);
+        }
+        //验证监听，是否登录
+        $fs = new \Freeswitchesl();
+        $service = config('freeswitch.esl');
+        try{
+            $fs->connect($service['host'],$service['port'],$service['password']);
+            $result = $fs->api("sofia_contact",$data['fromExten']);
+            //只有已注册的连接不用关闭
+            if (trim($result) == 'error/user_not_registered') {
+                $fs->disconnect();
+                return Response::json(['code'=>1,'msg'=>'监听分机未注册']);
+            }
+            $dailStr  = "originate ";
+            $dailStr .= "{origination_caller_id_number=".$data['fromExten']."}";
+            $dailStr .= "{origination_caller_id_name=".$data['fromExten']."}";
+            $dailStr .= "user/".$data['fromExten'];
+            if ($data['type']==3){
+                $dailStr .= " &three_way(".$uuid.")";
+            }elseif ($data['type']==2){
+                $dailStr .= " &{eavesdrop_whisper_aleg=false}{eavesdrop_whisper_bleg=false}eavesdrop(".$uuid.")";
+            }elseif ($data['type']==1){
+                $dailStr .= " &{eavesdrop_whisper_aleg=true}{eavesdrop_whisper_bleg=false}eavesdrop(".$uuid.")";
+            }else{
+                return Response::json(['code'=>1,'msg'=>'监听模式错误']);
+            }
+            $fs->bgapi($dailStr);
+            return Response::json(['code'=>0,'msg'=>'监听成功']);
+        }catch (\Exception $exception){
+            Log::info('监听ESL连接异常：'.$exception->getMessage());
+            return Response::json(['code'=>1,'msg'=>'连接异常']);
+        }
+
+    }
+
 }

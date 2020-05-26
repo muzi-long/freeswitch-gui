@@ -378,6 +378,8 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth','perm
     });
     //通话统计
     Route::get('cdr/count','CdrController@count')->name('admin.cdr.count')->middleware('permission:data.cdr.count');
+    //分机监控
+    Route::get('monitor/index','MonitorController@index')->name('admin.monitor')->middleware('permission:data.monitor');
     //语音合成
     Route::group([],function (){
         Route::get('audio','AudioController@index')->name('admin.audio')->middleware('permission:data.audio');

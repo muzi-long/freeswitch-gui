@@ -20,12 +20,18 @@ class Sip extends Model
         'gateway_id',
     ];
 
-    protected $appends = ['status','state'];
+    protected $appends = ['status','state','state_name'];
 
     public function getStateAttribute()
     {
-        $state = Redis::get($this->username.'_state')??0;
-        return $this->attributes['state'] = Arr::get(config('freeswitch.channel_callstate'),$state,'-');
+        $state = Redis::get($this->username.'_state')??'DOWN';
+        return $this->attributes['state'] = $state;
+    }
+
+    public function getStateNameAttribute()
+    {
+        $state = Redis::get($this->username.'_state')??'DOWN';
+        return $this->attributes['state_name'] = Arr::get(config('freeswitch.channel_callstate'),$state,'未知');
     }
 
     public function getStatusAttribute()

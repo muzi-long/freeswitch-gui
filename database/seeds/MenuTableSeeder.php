@@ -226,6 +226,14 @@ class MenuTableSeeder extends Seeder
                         'type' => 1,
                         'permission_name' => 'data.audio',
                     ],
+                    [
+                        'name' => '分机监控',
+                        'route' => 'admin.monitor',
+                        'url' => null,
+                        'icon' => 'layui-icon-link',
+                        'type' => 1,
+                        'permission_name' => 'data.monitor',
+                    ],
                 ]
             ],
         ];

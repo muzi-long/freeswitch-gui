@@ -257,6 +257,13 @@ class UserTableSeeder extends Seeder
                         ]
                     ],
                     [
+                        'name' => 'data.monitor',
+                        'display_name' => '分机监控',
+                        'child' => [
+
+                        ]
+                    ],
+                    [
                         'name' => 'data.audio',
                         'display_name' => '语音合成',
                         'child' => [

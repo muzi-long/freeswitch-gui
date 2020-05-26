@@ -21,3 +21,5 @@ Route::post('dial','ApiController@dial')->name('api.dial');
 Route::post('hangup','ApiController@hangup')->name('api.hangup');
 //语音消息
 Route::post('voice','ApiController@voice')->name('api.voice');
+//监听
+Route::post('chanspy','ApiController@chanspy')->name('api.chanspy');

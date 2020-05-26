@@ -45,6 +45,19 @@
                 });
             });
         }
+        //监听
+        window.chanspy = function(exten,type) {
+            layer.confirm('请确认已分配了分机并登录成功？',function() {
+                var parm = {
+                    fromExten:'{{$exten}}',
+                    toExten:exten,
+                    type:type,
+                };
+                $.post('{{route('api.chanspy')}}',parm,function(res) {
+                    layer.msg(res.msg,{time:2000})
+                });
+            })
+        }
     });
 </script>
 @yield('script')

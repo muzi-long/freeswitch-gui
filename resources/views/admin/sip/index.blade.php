@@ -61,7 +61,7 @@
                     ,{field: 'outbound_caller_id_name', title: '出局名称'}
                     ,{field: 'outbound_caller_id_number', title: '出局号码'}
                     ,{field: 'status', title: '注册状态'}
-                    ,{field: 'state', title: '呼叫状态'}
+                    ,{field: 'state_name', title: '呼叫状态'}
                     ,{field: 'created_at', title: '添加时间'}
                     ,{fixed: 'right', width: 220, align:'center', toolbar: '#options', title:'操作'}
                 ]]
