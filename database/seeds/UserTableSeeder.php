@@ -273,6 +273,20 @@ class UserTableSeeder extends Seeder
                     ],
                 ]
             ],
+            [
+                'name' => 'api',
+                'display_name' => '接口文档',
+                'child' => [
+                    [
+                        'name' => 'api.list',
+                        'display_name' => '文档列表',
+                        'child' => [
+
+                        ]
+                    ],
+                
+                ]
+            ],
         ];
 
         foreach ($permissions as $pem1) {
