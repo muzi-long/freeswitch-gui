@@ -15,5 +15,5 @@
 @endsection
 
 @section('script')
-    @include('admin.role._form')
+    @include('admin.role._js')
 @endsection
