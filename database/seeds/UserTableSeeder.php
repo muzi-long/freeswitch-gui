@@ -24,7 +24,7 @@ class UserTableSeeder extends Seeder
 
         //用户
         $user = \App\Models\User::create([
-            'phone' => '18908221080',
+            'phone' => '18999999999',
             'nickname' => '超级管理员',
             'password' => '123456',
             'api_token' => hash('sha256', Str::random(60)),
@@ -284,7 +284,7 @@ class UserTableSeeder extends Seeder
 
                         ]
                     ],
-                
+
                 ]
             ],
         ];

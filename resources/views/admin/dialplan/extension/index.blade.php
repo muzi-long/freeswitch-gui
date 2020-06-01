@@ -4,13 +4,13 @@
     <div class="layui-card">
         <div class="layui-card-header layuiadmin-card-header-auto">
             <div class="layui-btn-group">
-                @can('fs.gateway.destroy')
+                @can('fs.extension.destroy')
                 <button class="layui-btn layui-btn-sm layui-btn-danger" id="listDelete">删 除</button>
                 @endcan
-                @can('fs.gateway.create')
+                @can('fs.extension.create')
                 <a class="layui-btn layui-btn-sm" href="{{ route('admin.extension.create') }}">添 加</a>
                 @endcan
-                @can('fs.gateway.updateXml')
+                @can('fs.extension.updateXml')
                 <button class="layui-btn layui-btn-sm" id="updateXml">更新配置</button>
                 @endcan
             </div>
@@ -20,14 +20,14 @@
             <table id="dataTable" lay-filter="dataTable"></table>
             <script type="text/html" id="options">
                 <div class="layui-btn-group">
-                    @can('fs.gateway.show')
+                    @can('fs.extension.show')
                     <a class="layui-btn layui-btn-sm" lay-event="show">详情</a>
                     @endcan
-                    @can('fs.gateway.edit')
+                    @can('fs.extension.edit')
                     <a class="layui-btn layui-btn-sm" lay-event="edit">编辑</a>
                     @endcan
                     <a class="layui-btn layui-btn-sm" lay-event="condition">拨号规则</a>
-                    @can('fs.gateway.destroy')
+                    @can('fs.extension.destroy')
                     <a class="layui-btn layui-btn-danger layui-btn-sm " lay-event="del">删除</a>
                     @endcan
                 </div>
