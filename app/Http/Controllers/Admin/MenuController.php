@@ -67,11 +67,13 @@ class MenuController extends Controller
             'type',
             'permission_id',
         ]);
-        if ($data['route'] && $data['url']){
-            return Response::json(['code'=>1,'msg'=>'路由与链接只可启用一个']);
-        }
-        if (!$data['route'] && !$data['url']){
-            return Response::json(['code'=>1,'msg'=>'路由与链接至少启用一个']);
+        if ($data['type']==1){
+            if ($data['route'] && $data['url']){
+                return Response::json(['code'=>1,'msg'=>'路由与链接只可启用一个']);
+            }
+            if (!$data['route'] && !$data['url']){
+                return Response::json(['code'=>1,'msg'=>'路由与链接至少启用一个']);
+            }
         }
         try {
             Menu::create($data);
@@ -114,11 +116,13 @@ class MenuController extends Controller
             'type',
             'permission_id',
         ]);
-        if ($data['route'] && $data['url']){
-            return Response::json(['code'=>1,'msg'=>'路由与链接只可启用一个']);
-        }
-        if (!$data['route'] && !$data['url']){
-            return Response::json(['code'=>1,'msg'=>'路由与链接至少启用一个']);
+        if ($data['type']==1){
+            if ($data['route'] && $data['url']){
+                return Response::json(['code'=>1,'msg'=>'路由与链接只可启用一个']);
+            }
+            if (!$data['route'] && !$data['url']){
+                return Response::json(['code'=>1,'msg'=>'路由与链接至少启用一个']);
+            }
         }
         try {
             $model->update($data);
