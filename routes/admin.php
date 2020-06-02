@@ -348,6 +348,7 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth','perm
         Route::get('waste','WasteController@index')->name('admin.waste')->middleware('permission:crm.waste');
         Route::get('waste/data','WasteController@data')->name('admin.waste.data')->middleware('permission:crm.waste');
         Route::post('waste/retrieve','WasteController@retrieve')->name('admin.waste.retrieve')->middleware('permission:crm.waste.retrieve');
+        Route::get('waste/{id}/show','WasteController@show')->name('admin.waste.show')->middleware('permission:crm.waste.show');
     });
 
     //跟进提醒

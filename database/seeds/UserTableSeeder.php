@@ -224,6 +224,7 @@ class UserTableSeeder extends Seeder
                         'display_name' => '公海库',
                         'child' => [
                             ['name' => 'crm.waste.retrieve', 'display_name' => '拾回'],
+                            ['name' => 'crm.waste.show', 'display_name' => '跟进记录'],
                         ]
                     ],
                     [

@@ -62,7 +62,7 @@ class ProjectController extends Controller
                     return $query->whereIn('owner_user_id',$user_ids);
                 }else{
                     return $query->where('owner_user_id',$user->id);
-                }               
+                }
             })
             //姓名
             ->when($data['name'],function ($query) use($data){
@@ -255,6 +255,7 @@ class ProjectController extends Controller
         DB::beginTransaction();
         try{
             DB::table('project')->where('id',$id)->update([
+                'owner_user_id' => null,
                 'deleted_user_id' => Auth::guard()->user()->id,
                 'deleted_at' => Carbon::now(),
             ]);

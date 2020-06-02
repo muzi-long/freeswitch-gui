@@ -8,46 +8,7 @@
         var upload = layui.upload;
         var laydate = layui.laydate;
 
-        form.on('submit(go)',function (data) {
-            var load = layer.load();
-            $.post(data.form.action,data.field,function (res) {
-                layer.close(load);
-                layer.msg(res.msg,{icon:res.code==0?1:2},function () {
-                    if (res.code==0){
-                        location.reload();
-                    }
-                })
-            });
-            return false;
-        })
 
-        //图片
-        $(".uploadPic").each(function (index,elem) {
-            upload.render({
-                elem: $(elem)
-                ,url: '{{ route("api.upload") }}'
-                ,multiple: false
-                ,data:{"_token":"{{ csrf_token() }}"}
-                ,done: function(res){
-                    //如果上传失败
-                    if(res.code == 0){
-                        layer.msg(res.msg,{icon:1},function () {
-                            $(elem).parent('.layui-upload').find('.layui-upload-box').html('<li><img src="'+res.url+'" /><p>上传成功</p></li>');
-                            $(elem).parent('.layui-upload').find('.layui-upload-input').val(res.url);
-                        })
-                    }else {
-                        layer.msg(res.msg,{icon:2})
-                    }
-                }
-            });
-        })
-
-        laydate.render({
-            elem: '#next_follow_at',
-            type: 'datetime'
-        });
-
-        @if(isset($model))
         //节点进度
         var dataTableNode = table.render({
             elem: '#dataTableNode'
@@ -89,23 +50,22 @@
             ]]
         });
 
-        //删除
-        $("#destroyBtn").click(function () {
-            layer.confirm('删除后客户将进入公海库，所有人可拾回。确认删除吗？', function(index){
-                layer.closeAll();
+        $("#retrieve").click(function () {
+            layer.confirm('确认拾回吗？', function(index){
+                layer.close(index);
                 var load = layer.load();
-                $.post("{{ route('admin.project.destroy') }}",{_method:'delete',ids:["{{$model->id}}"]},function (res) {
+                $.post("{{ route('admin.waste.retrieve') }}",{id:{{$model->id}}},function (res) {
                     layer.close(load);
                     if (res.code == 0) {
                         layer.msg(res.msg, {icon: 1}, function () {
-                            location.href = "{{route('admin.project')}}";
+                            location.href='{{route('admin.waste')}}'
                         })
                     } else {
                         layer.msg(res.msg, {icon: 2})
                     }
                 });
             });
-        });
-        @endif
+        })
+
     });
 </script>

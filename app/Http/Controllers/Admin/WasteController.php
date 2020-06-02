@@ -11,10 +11,15 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Str;
 
 class WasteController extends Controller
 {
 
+    /**
+     * 公海库列表
+     * @return \Illuminate\Contracts\View\View
+     */
     public function index()
     {
         return View::make('admin.waste.index');
@@ -40,6 +45,7 @@ class WasteController extends Controller
             ->when($data['phone'],function ($query) use($data){
                 return $query->where('phone',$data['phone']);
             })
+            ->orderBy('deleted_at','desc')
             ->paginate($request->get('limit', 30));
         $data = [
             'code' => 0,
@@ -51,6 +57,11 @@ class WasteController extends Controller
 
     }
 
+    /**
+     * 拾回
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function retrieve(Request $request)
     {
         $id = $request->get('id');
@@ -75,6 +86,17 @@ class WasteController extends Controller
             return Response::json(['code'=>1,'msg'=>'拾回失败']);
         }
 
+    }
+
+    /**
+     * 项目详情
+     * @param $id
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function show($id)
+    {
+        $model = Project::onlyTrashed()->with('designs')->findOrFail($id);
+        return View::make('admin.waste.show',compact('model'));
     }
 
 }

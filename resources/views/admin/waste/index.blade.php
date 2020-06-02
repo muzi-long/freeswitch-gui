@@ -34,9 +34,13 @@
             <table id="dataTable" lay-filter="dataTable"></table>
             <script type="text/html" id="options">
                 <div class="layui-btn-group">
+                    @can('crm.waste.show')
+                        <a class="layui-btn layui-btn-sm" lay-event="show">跟进记录</a>
+                    @endcan
                     @can('crm.waste.retrieve')
                     <a class="layui-btn layui-btn-sm layui-btn-warm" lay-event="retrieve">拾回</a>
                     @endcan
+
                 </div>
             </script>
         </div>
@@ -85,6 +89,8 @@
                             }
                         });
                     });
+                } else if(layEvent === 'show'){
+                    location.href = '/admin/waste/'+data.id+'/show';
                 }
             });
 

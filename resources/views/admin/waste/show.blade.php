@@ -4,7 +4,12 @@
     <div class="layui-card">
         <div class="layui-card-header layuiadmin-card-header-auto">
             <h2>客户详情</h2>
-            @include('admin.project._btn')
+            <div class="layui-btn-group">
+                <a href="{{route('admin.waste')}}" class="layui-btn layui-btn-sm layui-btn-primary">返回列表</a>
+                @can('crm.waste.retrieve')
+                    <a class="layui-btn layui-btn-sm layui-btn-warm" id="retrieve">拾回</a>
+                @endcan
+            </div>
         </div>
         <div class="layui-card-body">
             <div class="layui-row">
@@ -22,7 +27,7 @@
                                 </tr>
                                 <tr>
                                     <td width="80" align="right">联系电话：</td>
-                                    <td>{{$model->phone}}</td>
+                                    <td>*********</td>
                                     <td width="80" align="right">跟进人：</td>
                                     <td>{{$model->followUser->nickname}}</td>
                                 </tr>
@@ -132,5 +137,5 @@
 @endsection
 
 @section('script')
-    @include('admin.project._js')
+    @include('admin.waste._js')
 @endsection

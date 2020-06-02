@@ -183,7 +183,7 @@
                 var data = obj.data //获得当前行数据
                     ,layEvent = obj.event; //获得 lay-event 对应的值
                 if(layEvent === 'del'){
-                    layer.confirm('删除后客户将进入公海库，所有人可捡回。确认删除吗？', function(index){
+                    layer.confirm('删除后客户将进入公海库，所有人可拾回。确认删除吗？', function(index){
                         layer.close(index);
                         var load = layer.load();
                         $.post("{{ route('admin.project.destroy') }}",{_method:'delete',ids:[data.id]},function (res) {
