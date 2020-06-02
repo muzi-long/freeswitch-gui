@@ -48,6 +48,7 @@
             var dataTable = table.render({
                 elem: '#dataTable'
                 ,height: 500
+                ,toolbar: true
                 ,url: "{{ route('admin.cdr.count') }}" //数据接口
                 ,page: false //开启分页
                 ,cols: [[
