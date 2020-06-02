@@ -87,11 +87,13 @@
                         </a>
                         <dl class="layui-nav-child">
                             <dd data-name="console" class="layui-this">
+                                <i class="layui-icon layui-icon-layouts"></i>
                                 <a lay-href="{{route('admin.index')}}">控制台</a>
                             </dd>
                         </dl>
                         <dl class="layui-nav-child">
                             <dd data-name="console">
+                                <i class="layui-icon layui-icon-headset"></i>
                                 <a lay-href="{{route('admin.index.onlinecall')}}">在线拨号</a>
                             </dd>
                         </dl>
