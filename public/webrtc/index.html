@@ -1,0 +1,232 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <script src="js/jquery.js" type="text/javascript"></script>
+    <script src="js/sip.js" type="text/javascript"></script>
+</head>
+<body>
+<video id="remoteVideo" name="remoteVideo" style=" background:#0C6"></video>
+<video id="localVideo" name="localVideo" muted="muted" style="background:#f00"></video>
+<br>
+<input type="input" id='number' placeholder="number">
+<input type="checkbox" id="autopickup" name="autopickup" value="1" />自动接听
+<br>
+<input type="button" onClick="callphone()" id='ringout' value="拨号">
+<input type="button" onClick="acceptphone()" id='acceptphone' value="接听">
+<input type="button" onClick="hangup()" id='hangup' value="挂机">
+<input type="button" onClick="hold()" id='hold' value="保持"><br>
+<br>
+<input type="number" id='dtmf' placeholder="dtmf"><br>
+<input type="button" onClick="senddtmf()" value="send dtmf"><br>
+<br>
+<div style="background:#0C6;width:100%; height:20px;">注册状态：<span id='state'>已断开</span></div>
+<div style="background:#0ff;width:100%; height:20px;">呼叫状态：<span id='state0'></span></div>
+<div style="background:#fC6;width:100%; overflow:visible">对端状态：<span id='state2'></span></div>
+<div style="background:#cc0;width:100%; overflow:visible">本端状态：<span id='state3'></span></div>
+<div id="play"></div>
+
+<script type="text/javascript">
+    var userAgentSession;
+    var holdstate = false;
+    var userAgent = new SIP.UA({
+        uri: '1001@106.13.223.130',
+        wsServers: ['wss://backedn-robot.dgg.net:7443'],
+        authorizationUser: '1001',
+        password: 'dgg1234',
+        displayName: '1001',
+        hackIpInContact: true,
+        rtcpMuxPolicy: 'negotiate',
+        hackWssInTransport: true, // 设置为true 则注册时 transport=wss; false:transport=ws;
+        rel100: SIP.C.supported.SUPPORTED,
+        /**
+         * sip.js生成的随机contact字符串 设置后会以此为后缀 可以搭配 cusContactName使用,根据自身业务进行使用
+         *  设置前: sofia/internal/sip:admin10@df7jal23ls0d.invalid;
+         *  设置后: sofia/internal/sip:admin10@192.168.0.253;
+         *
+         */
+        hackIpInContact: "106.13.223.130",
+        userAgentString: "myAwesomeApp",
+        registerOptions: {
+            expires: 300,
+            registrar: 'sip:backedn-robot.dgg.net',
+        },
+        /**
+         * 此处是笔者自定义的参数,因为注册到fs时,sip.js会随机生成contact字符串,如:sofia/internal/sip:admin10@df7jal23ls0d.invalid;
+         *  笔者自己添加了一个参数,对sip.js的源码进行了修改 ,修改后效果  sofia/internal/sip:1012@192.168.0.253 不需要的可以不理会此参数
+         * 此处纠正问题,官方提供了一个参数[contactName],使用此参数即可,sip.js使用官方的即可
+         * contactName:"1012"
+         */
+        // cusContactName: "1012"
+        contactName:"1001"
+
+    });
+    //注册成功
+    userAgent.on('registered', function () {
+        $('#state').text('已连接');
+    });
+    //未注册成功
+    userAgent.on('unregistered', function () {
+        $('#state').text('已断开');
+    });
+    //监听来电
+    userAgent.on('invite', function (session) {
+        userAgentSession = session;
+        userAgentSession.on('bye', function (request) {//挂机
+            $('#state0').html('bye:');
+        });
+        userAgentSession.on('terminated', function (message, cause) {//结束
+            $('#state0').html('terminated:' + message + '|cause:' + cause);
+        });
+        play('ringin', 'start');
+        alert('来电事件');
+        if ($('#autopickup').is(':checked')) {
+            acceptphone();
+        }
+    });
+    //监听是否接了电话
+    userAgent.on('accepted', function (data) {
+        $('#state3').text('accepted:' + data);
+    });
+    //监听拒接
+    userAgent.on('rejected', function (response, cause) {
+        $('#state3').text('rejected:' + response + '|cause:' + cause);
+    });
+    //监听拨号
+    userAgent.on('progress', function (response) {
+        $('#state3').text('progress:' + response);
+    });
+    //错误
+    userAgent.on('failed', function (response, cause) {
+        $('#state3').text('failed:' + response + '|cause:' + cause);
+    });
+    //监听结束
+    userAgent.on('ended', function (response, cause) {
+        $('#state3').text('ended:' + response + '|cause:' + cause);
+    });
+    //播放音乐
+    function play(type, action) {
+        if (action == 'start') {
+            if (type == 'ringin') {
+                audio = 'ringin.wav';
+                loop = ' loop="loop"';
+            } else if (type == 'ringout') {
+                audio = 'ringout.wav';
+                loop = ' loop="loop"';
+            } else if (type == 'hangup') {
+                audio = 'hangup.wav';
+                loop = '';
+            }
+            if (type != '') {
+                $('#play').html('<audio autoplay="autoplay" ' + loop + '><source src="audio/' + audio + '"'
+                    + 'type="audio/wav"/><source src="audio/' + audio + '" type="audio/mpeg"/></audio>');
+            }
+        } else if (action == 'end') {
+            $('#play').html('');
+        }
+    }
+    //接听来电
+    function acceptphone() {
+        userAgentSession.accept({
+            media: {
+                render: {
+                    remote: document.getElementById('remoteVideo'),
+                    local: document.getElementById('localVideo')
+                },
+                constraints: {
+                    audio: true,
+                    video: false
+                }
+            }
+        });
+        play('ringin', 'end');
+        alert('摘机事件');
+    }
+    //发送dtmf
+    function senddtmf() {
+        var dtmf = $('#dtmf').val();
+        if (dtmf){
+            userAgentSession.dtmf(dtmf);
+        }
+    }
+    //挂机
+    function hangup() {
+        play('hangup', 'start');
+        userAgentSession.terminate();
+        play('hangup', 'end');
+        alert('挂机事件');
+    }
+    //呼叫保持
+    function hold() {
+        if (holdstate) {
+            holdstate = false;
+            userAgentSession.unhold();
+        } else {
+            userAgentSession = true;
+            sss.hold();
+        }
+    }
+    //拨打电话，呼出
+    function callphone() {
+        var phone = $('#number').val();
+        if (!phone) return false;
+        var options = {
+            media: {
+                constraints: {
+                    audio: true,
+                    video: false
+                },
+                render: {
+                    remote: document.getElementById('remoteVideo'),
+                    local: document.getElementById('localVideo')
+                }
+            }
+        };
+        userAgentSession = userAgent.invite('sip:' + phone + '@xdwh.dgg.net', options);
+        //接听
+        userAgentSession.on('accepted', function (data) {
+            $('#state0').html('接听');
+        });
+        //取消呼叫
+        userAgentSession.on('cancel', function () {
+            $('#state0').html('取消呼叫');
+        });
+        //呼叫失败
+        userAgentSession.on('failed', function (response, cause) {
+            $('#state0').html('呼叫失败');
+        });
+        //无法接通
+        userAgentSession.on('rejected', function (response, cause) {
+            $('#state0').html('无法接通');
+        });
+        //挂机
+        userAgentSession.on('bye', function (request) {
+            $('#state0').html('挂机');
+        });
+        //结束
+        userAgentSession.on('terminated', function (message, cause) {
+            $('#state0').html('结束');
+        });
+        //拨号中
+        userAgentSession.on('progress', function (response) {
+            $('#state0').html('拨号中');
+            if (response.status_code === 183 && response.body && this.hasOffer && !this.dialog) {
+                if (!response.hasHeader('require') || response.getHeader('require').indexOf('100rel') === -1) {
+                    if (this.mediaHandler.hasDescription(response)) {
+                        if (!this.createDialog(response, 'UAC')) return;
+                        this.hasAnswer = true;
+                        this.dialog.pracked.push(response.getHeader('rseq'));
+                        this.status = 11;
+                        this.mute();
+                        this.mediaHandler.setDescription(response).catch((reason) => {
+                            this.logger.warn(reason);
+                            this.failed(response, C.causes.BAD_MEDIA_DESCRIPTION);
+                            this.terminate({status_code: 488, reason_phrase: 'Bad Media Description'});
+                        })
+                    }
+                }
+            }
+        });
+    }
+</script>
+</body>
+</html>

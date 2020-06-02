@@ -2,7 +2,7 @@
 while true
 do
 	ps -ef | grep "bin/freeswitch" | grep -v "grep"
-	if [ $? -eq 0  ] 
+	if [ $? -eq 0  ]
 	then
 		echo "$?"
 		echo "freeswitch process already started!"
@@ -13,6 +13,7 @@ do
 		sleep 1
 		echo "restart asr"
 		supervisorctl restart esl-listen:
+		supervisorctl restart esl-cdr:*
 		supervisorctl restart callcenter-listen:*
 		supervisorctl restart callcenter-run:*
 	fi
