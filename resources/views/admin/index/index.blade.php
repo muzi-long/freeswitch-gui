@@ -162,7 +162,7 @@
         layui.extend({
             echarts: 'lib/extend/echarts' ,
             echartsTheme: 'lib/extend/echartsTheme' ,
-        }).use(['layer','table','form','echarts','echartsTheme'],function () {
+        }).use(['layer','table','form','echarts','echartsTheme','index'],function () {
             var $ = layui.jquery;
             var layer = layui.layer;
             var form = layui.form;
