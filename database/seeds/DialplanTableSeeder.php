@@ -262,9 +262,15 @@ class DialplanTableSeeder extends Seeder
                                 'sort'          => 5,
                             ],
                             [
-                                'display_name'  => '设置网关出局号码',
+                                'display_name'  => '设置网关出局名称',
                                 'application'   => 'set',
                                 'data'          => 'effective_caller_id_name=',
+                                'sort'          => 6,
+                            ],
+                            [
+                                'display_name'  => '设置网关出局号码',
+                                'application'   => 'set',
+                                'data'          => 'effective_caller_id_number=',
                                 'sort'          => 6,
                             ],
                             [
