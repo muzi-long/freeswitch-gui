@@ -117,7 +117,7 @@
                                     </tr>
                                     <tr>
                                         <td>基于系统</td>
-                                        <td>freeswitch1.8+laravel6.*+LayuiAdmin</td>
+                                        <td>laravel6.*+LayuiAdmin</td>
                                     </tr>
                                     <tr>
                                         <td>主要特色</td>
