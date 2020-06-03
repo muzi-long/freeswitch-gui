@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\Dialplan\ConditionRequest;
+use App\Http\Requests\Admin\Dialplan\ConditionRequest;
 use App\Models\Condition;
 use App\Models\Extension;
 use Illuminate\Http\Request;

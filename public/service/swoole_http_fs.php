@@ -20,7 +20,7 @@ $http->set([
 ]);
 $http->on('request', function ($request, $response) use($conf) {
     if($request->server['request_method'] == 'POST'){
-        
+
         if(isset($request->post['data']) && !empty($request->post['data'])){
             $data = json_decode($request->post['data'],true);
             $uri = $request->server['request_uri'];
@@ -88,13 +88,15 @@ $http->on('request', function ($request, $response) use($conf) {
                                 $xml .= "\t\t<extension name=\"" . $exten['name'] . "\" continue=\"" . $exten['continue'] . "\" >\n";
                                 if(isset($exten['condition']) && !empty($exten['condition'])){
                                     foreach($exten['condition'] as $condition){
-                                        $xml .= "\t\t\t<condition field=\"" . $condition['field'] . "\" expression=\"" . $condition['expression'] . "\" break=\"" . $condition['break'] . "\">\n";
                                         if(isset($condition['action']) && !empty($condition['action'])){
+                                            $xml .= "\t\t\t<condition field=\"" . $condition['field'] . "\" expression=\"" . $condition['expression'] . "\" break=\"" . $condition['break'] . "\">\n";
                                             foreach ($condition['action'] as $action){
                                                 $xml .= "\t\t\t\t<action application=\"" . $action['application'] . "\" data=\"" . $action['data'] . "\" />\n";
                                             }
+                                            $xml .= "\t\t\t</condition>\n";
+                                        }else{
+                                            $xml .= "\t\t\t<condition field=\"" . $condition['field'] . "\" expression=\"" . $condition['expression'] . "\" break=\"" . $condition['break'] . "\" />\n";
                                         }
-                                        $xml .= "\t\t\t</condition>\n";
                                     }
                                 }
                                 $xml .= "\t\t</extension>\n";
@@ -175,14 +177,14 @@ $http->on('request', function ($request, $response) use($conf) {
             }catch(\Exception $e){
                 $response->end(json_encode(['code'=>1,'msg'=>'error','data'=>$e->getMessage()]));
             }
-            
+
         }else{
             $response->end(json_encode(['code'=>1,'msg'=>'data error']));
         }
     }else{
         $response->end("hello word!");
     }
-    
+
 });
 $http->start();
 
