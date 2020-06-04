@@ -112,7 +112,7 @@ class UserController extends Controller
             return Response::json(['code'=>1,'msg'=>'原密码不正确']);
         }
         try{
-            $request->user()->fill(['password' => bcrypt($data['new_password'])])->save();
+            $request->user()->fill(['password' => $data['new_password']])->save();
             return Response::json(['code'=>0,'msg'=>'密码修改成功']);
         }catch (\Exception $exception){
             Log::error('修改密码异常：'.$exception->getMessage());
@@ -333,5 +333,5 @@ class UserController extends Controller
         }
     }
 
-    
+
 }
