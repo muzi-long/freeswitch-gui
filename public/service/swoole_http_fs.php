@@ -1,5 +1,8 @@
 <?php
 
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+
 $conf = [
     'host' => '127.0.0.1',
     'port' => '8022',
@@ -169,6 +172,18 @@ $http->on('request', function ($request, $response) use($conf) {
                     case '/favicon.ico':
                         $response->status(404);
                         $response->end();
+                        break;
+                    case '/firewall':
+                        //调用系统命令添加firewall
+                        if (isset($data['ip'])&&!empty($data['ip'])){
+                            exec('sudo /usr/bin/firewall-cmd --permanent --add-rich-rule="rule family="ipv4" source address="'.$data['ip'].'" accept"');
+                            exec('sudo /usr/bin/firewall-cmd --reload');
+                        }
+                        $return = ['code'=>0,'msg'=>'请求成功'];
+                        break;
+                    case '/dial':
+                        exec("/www/server/php/73/bin/php /www/wwwroot/lumen/artisan esl:listen --aleg_uuid={$data['aleg_uuid']} --bleg_uuid={$data['bleg_uuid']} --dial_str={$data['dialStr']} > /dev/null 2>&1 & ");
+                        $return = ['code'=>0,'msg'=>'请求成功'];
                         break;
                     default:
                         $return = ['code'=>1,'msg'=>'uri error'];
