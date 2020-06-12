@@ -37,8 +37,8 @@ return [
 
     'esl' => [
         'host' => '127.0.0.1',
-        'password' => 'dgg@1234.',
-        'port' => 8022,
+        'password' => 'ClueCon',
+        'port' => 8021,
     ],
 
     //队列响铃模式
