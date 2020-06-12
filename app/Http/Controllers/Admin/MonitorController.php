@@ -26,7 +26,7 @@ class MonitorController extends Controller
                 $list[$d->id]['state'] = $d->state;
                 $list[$d->id]['state_name'] = $d->state_name;
                 $total++;
-                if ($d->state == 'RINGING' || $d->state == 'EARLY'){
+                if ($d->state == 'RINGING' || $d->state == 'EARLY' || $d->state == 'RING_WAIT'){
                     $ring++;
                 }elseif ($d->state == 'ACTIVE'){
                     $active++;
