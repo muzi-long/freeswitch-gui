@@ -58,6 +58,7 @@ return [
         'DOWN' => '空闲',
         'HANGUP' => '空闲',
         'RINGING' => '响铃',
+        'RING_WAIT' => '响铃',
         'EARLY' => '响铃',
         'ACTIVE' => '通话中',
 
