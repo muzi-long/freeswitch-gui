@@ -56,9 +56,11 @@ return [
     //呼叫状态
     'channel_callstate' => [
         'DOWN' => '空闲',
+        'HANGUP' => '空闲',
         'RINGING' => '响铃',
+        'EARLY' => '响铃',
         'ACTIVE' => '通话中',
-        'HANGUP' => '已挂断',
+
     ],
 
     //坐席状态status

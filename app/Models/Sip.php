@@ -32,7 +32,7 @@ class Sip extends Model
 
     public function getStatusNameAttribute()
     {
-        return $this->attributes['status'] = Arr::get([0=>'未注册',1=>'已注册'],$this->state,'-');;
+        return $this->attributes['status'] = Arr::get([0=>'未注册',1=>'已注册'],$this->status,'-');;
     }
 
     /**
