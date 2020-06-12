@@ -109,7 +109,7 @@ class eslListen extends Command
                             $state = Arr::get($info,'Channel-Call-State');
                             $uniqueid = Arr::get($info,'Caller-Unique-ID');
                             Redis::setex($CallerCallerIDNumber.'_uuid',1200, $uniqueid);
-                            DB::table('sip')->where('username',$CallerCallerIDNumber)->update(['state',$state]);
+                            DB::table('sip')->where('username',$CallerCallerIDNumber)->update(['state'=>$state]);
                         }
                         break;
                     //通道应答

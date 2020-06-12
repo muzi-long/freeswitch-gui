@@ -74,11 +74,11 @@ class eslCustom extends Command
                 switch ($eventname){
                     //注册
                     case 'sofia::register':
-                        DB::table('sip')->where('username',$username)->update(['status',1]);
+                        DB::table('sip')->where('username',$username)->update(['status'=>1]);
                         break;
                     //注销
                     case 'sofia::unregister':
-                        DB::table('sip')->where('username',$username)->update(['status',0]);
+                        DB::table('sip')->where('username',$username)->update(['status'=>0]);
                         break;
                     default:
                         break;
