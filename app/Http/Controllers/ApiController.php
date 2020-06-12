@@ -86,28 +86,17 @@ class ApiController extends Controller
         }
 
         //验证分机是否登录
-        $status = 0;
+        if ($sip->status == 0){
+            return Response::json(['code'=>1,'msg'=>'当前外呼号未登录']);
+        }
+
         $fs = new \Freeswitchesl();
         $service = config('freeswitch.esl');
         try{
-            if ($fs->connect($service['host'],$service['port'],$service['password'])) {
-                $result = $fs->api("sofia_contact",$data['exten']);
-                $result = trim($result);
-                //只有已注册的连接不用关闭
-                if ($result == 'error/user_not_registered') {
-                    $fs->disconnect();
-                }else{
-                    $status = 1;
-                }
-            }
-            
+            $fs->connect($service['host'],$service['port'],$service['password']);
         }catch (\Exception $exception){
-            Log::info('查询分机状态异常：'.$exception->getMessage());
-            return Response::json(['code'=>1,'msg'=>'ESL无法连接']);
-        }
-        
-        if ($status == 0){
-            return Response::json(['code'=>1,'msg'=>'当前外呼号未登录']);
+            Log::info('拨打电话连接esl异常：'.$exception->getMessage());
+            return Response::json(['code'=>1,'msg'=>'无法连接外呼服务']);
         }
 
         //验证手机号码
@@ -162,7 +151,7 @@ class ApiController extends Controller
             $dialStr .="user/".$sip->username." ".$data["phone"];
         }
         $dialStr .=" XML default";
-        
+
         try{
             $fs->bgapi($dialStr);
             $fs->disconnect();
@@ -192,7 +181,7 @@ class ApiController extends Controller
         if ($sip == null) {
             return Response::json(['code'=>1,'msg'=>' 外呼号不存在']);
         }
-        
+
         $fs = new \Freeswitchesl();
         $service = config('freeswitch.esl');
         try{
@@ -202,7 +191,7 @@ class ApiController extends Controller
                 Redis::del($exten.'_uuid');
                 return Response::json(['code'=>0,'msg'=>'已挂断']);
             }
-            
+
         }catch (\Exception $exception){
             Log::info('ESL连接异常：'.$exception->getMessage());
             return Response::json(['code'=>1,'msg'=>'连接异常']);
@@ -272,20 +261,20 @@ class ApiController extends Controller
         //验证被监听
         $uuid = Redis::get($data['toExten'].'_uuid');
         $state = Redis::get($data['toExten'].'_state');
-        if ($uuid == null || $state != 'ACTIVE'){
+        $toSip = Sip::where('username',$data['toExten'])->first();
+        if ($uuid == null || $toSip->state != 'ACTIVE'){
             return Response::json(['code'=>1,'msg'=>'被监听分机未在通话中']);
         }
         //验证监听，是否登录
+        $fromSip = Sip::where('username',$data['fromExten'])->first();
+        if ($fromSip->status == 0){
+            return Response::json(['code'=>1,'msg'=>'监听分机未注册']);
+        }
+
         $fs = new \Freeswitchesl();
         $service = config('freeswitch.esl');
         try{
             $fs->connect($service['host'],$service['port'],$service['password']);
-            $result = $fs->api("sofia_contact",$data['fromExten']);
-            //只有已注册的连接不用关闭
-            if (trim($result) == 'error/user_not_registered') {
-                $fs->disconnect();
-                return Response::json(['code'=>1,'msg'=>'监听分机未注册']);
-            }
             $dailStr  = "originate ";
             $dailStr .= "{origination_caller_id_number=".$data['fromExten']."}";
             $dailStr .= "{origination_caller_id_name=".$data['fromExten']."}";

@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Arr;
@@ -105,17 +106,17 @@ class eslListen extends Command
                     case 'CHANNEL_CALLSTATE':
                         //是分机号才记录
                         if (preg_match('/\d{4,5}/',$CallerCallerIDNumber)){
-                            $status = Arr::get($info,'Channel-Call-State');
+                            $state = Arr::get($info,'Channel-Call-State');
                             $uniqueid = Arr::get($info,'Caller-Unique-ID');
-                            Redis::set($CallerCallerIDNumber.'_state',$status);
                             Redis::setex($CallerCallerIDNumber.'_uuid',1200, $uniqueid);
+                            DB::table('sip')->where('username',$CallerCallerIDNumber)->update(['state',$state]);
                         }
                         break;
                     //通道应答
                     case 'CHANNEL_ANSWER':
                         $otherUuid = Arr::get($info,"Other-Leg-Unique-ID");
                         $cdr_uuid = md5($uuid.Redis::incr('cdr_uuid_incr_key'));
-                        Redis::set($uuid,json_encode([
+                        Redis::setex($uuid,1800,json_encode([
                             'uuid' => $cdr_uuid,
                             'full_record_file' => null,
                         ]));
@@ -213,6 +214,7 @@ class eslListen extends Command
                             $channelData = json_decode($channel,true);
                             $record_file = Arr::get($channelData,'full_record_file',null);
                             $record_file = $record_file ? str_replace($this->fs_dir,$this->url,$record_file) : null;
+                            Redis::del($uuid);
                         }else{
                             $record_file = null;
                             continue 2; //继续外层的while循环
@@ -278,5 +280,5 @@ class eslListen extends Command
         $this->cdr_table = 'cdr';
         $this->asr_table = 'asr';
     }
-    
+
 }

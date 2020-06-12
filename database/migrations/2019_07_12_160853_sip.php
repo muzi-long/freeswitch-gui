@@ -22,6 +22,8 @@ class Sip extends Migration
             $table->string('effective_caller_id_number')->nullable()->comment('外显号码，针对分机与分机');
             $table->string('outbound_caller_id_name')->nullable()->comment('出局名称，针对中继');
             $table->string('outbound_caller_id_number')->nullable()->comment('出局名称，针对中继');
+            $table->string('state')->default('DOWN')->comment('呼叫状态,\'DOWN\' => \'空闲\',\'RINGING\' => \'响铃\',\'ACTIVE\' => \'通话中\',\'HANGUP\' => \'已挂断\',');
+            $table->tinyInteger('status')->default(0)->comment('注册状态，0未注册，1已注册');
             $table->unsignedBigInteger('gateway_id')->nullable()->comment('网关ID');
             $table->timestamps();
         });

@@ -18,25 +18,21 @@ class Sip extends Model
         'outbound_caller_id_name',
         'outbound_caller_id_number',
         'gateway_id',
+        'state',
+        'status'
     ];
 
-    protected $appends = ['status','state','state_name'];
+    protected $appends = ['status_name','state_name'];
 
-    public function getStateAttribute()
-    {
-        $state = Redis::get($this->username.'_state')??'DOWN';
-        return $this->attributes['state'] = $state;
-    }
 
     public function getStateNameAttribute()
     {
-        $state = Redis::get($this->username.'_state')??'DOWN';
-        return $this->attributes['state_name'] = Arr::get(config('freeswitch.channel_callstate'),$state,'未知');
+        return $this->attributes['state_name'] = Arr::get(config('freeswitch.channel_callstate'),$this->state,'DOWN');
     }
 
-    public function getStatusAttribute()
+    public function getStatusNameAttribute()
     {
-        return $this->attributes['status'] = $this->getStatus($this->username);
+        return $this->attributes['status'] = Arr::get([0=>'未注册',1=>'已注册'],$this->state,'-');;
     }
 
     /**
@@ -46,34 +42,6 @@ class Sip extends Model
     public function gateway()
     {
         return $this->hasOne('App\Models\Gateway','id','gateway_id')->withDefault(['name'=>'未分配']);
-    }
-
-    /**
-     * 查询分机状态
-     * @param $username
-     * @return string
-     */
-    public function getStatus($username)
-    {
-        $status = null;
-        $fs = new \Freeswitchesl();
-        $service = config('freeswitch.esl');
-        try{
-            $fs->connect($service['host'], $service['port'], $service['password']);
-            $result = $fs->api("sofia_contact", $username);
-            $result = trim($result);
-            //只有已注册的连接不用关闭
-            if ($result == 'error/user_not_registered') {
-                $status = '未注册';
-            }else{
-                $status = '已注册';
-            }
-            $fs->disconnect();
-        }catch (\Exception $exception){
-            Log::info('查询分机状态ESL连接异常：'.$exception->getMessage());
-            $status = '连接失败';
-        }
-        return $status;
     }
 
 }

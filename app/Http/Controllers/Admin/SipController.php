@@ -30,9 +30,6 @@ class SipController extends Controller
                 $query = $query->where('username',$username);
             }
             $res = $query->orderByDesc('id')->paginate($request->get('limit', 30));
-            foreach ($res->items() as $d){
-                //$d->status = $d->getStatus($d->username);
-            }
             $data = [
                 'code' => 0,
                 'msg' => '正在请求中...',
@@ -200,7 +197,7 @@ class SipController extends Controller
             return response()->json(json_decode($res->getBody(),true));
         }catch (\Exception $exception){
             return response()->json(['code'=>1,'msg'=>'更新失败','data'=>$exception->getMessage()]);
-        }   
+        }
     }
 
     /**
@@ -242,5 +239,5 @@ class SipController extends Controller
             }
         }
     }
-    
+
 }
