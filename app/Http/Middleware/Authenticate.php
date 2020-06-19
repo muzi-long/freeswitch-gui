@@ -2,20 +2,31 @@
 
 namespace App\Http\Middleware;
 
+use Closure;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
+use Illuminate\Support\Facades\Response;
 
 class Authenticate extends Middleware
 {
-    /**
-     * Get the path the user should be redirected to when they are not authenticated.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return string|null
-     */
-    protected function redirectTo($request)
+
+    protected function unauthenticated($request, array $guards)
     {
-        if (! $request->expectsJson()) {
-            return route('login');
+
+        if ($request->expectsJson()){
+            return Response::json(['code'=>1,'msg'=>'当前用户未登录']);
+        }else{
+            if (in_array('backend',$guards)){ //跳后台
+                $url = route('backend.admin.login');
+            }elseif (in_array('frontend',$guards)){ //跳前台
+                $url = route('front.staff.login');
+            }else{
+                $url = null;
+            }
+            throw new AuthenticationException(
+                'Unauthenticated.', $guards, $url
+            );
         }
     }
+
 }

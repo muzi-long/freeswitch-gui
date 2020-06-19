@@ -41,6 +41,16 @@ return [
             'provider' => 'users',
         ],
 
+        'backend' => [
+            'driver' => 'session',
+            'provider' => 'admin',
+        ],
+
+        'frontend' => [
+            'driver' => 'session',
+            'provider' => 'staff',
+        ],
+
         'api' => [
             'driver' => 'token',
             'provider' => 'users',
@@ -66,9 +76,14 @@ return [
     */
 
     'providers' => [
-        'users' => [
+        /*'users' => [
             'driver' => 'eloquent',
             'model' => App\User::class,
+        ],*/
+
+        'admin' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Admin::class,
         ],
 
         // 'users' => [
