@@ -1,0 +1,39 @@
+html,body{
+    width: 100%;
+    height: 100%;
+}
+.login-bg{
+    position: relative;
+    left:0;
+    top:0;
+    width: 100%;
+    height: 100%;
+    min-width: 1200px;
+    background: url("../images/login-bg.png") no-repeat center center;
+    background-size: cover;
+}
+.login-box{
+    width: 460px;
+    height: 260px;
+    padding:20px;
+    border-radius: 8px;
+    opacity: .7;
+    background:rgba(255,255,255,0.7);
+    position: absolute;
+    top:50%;
+    left: 50%;
+    margin-top: -250px;
+    margin-left: -250px;
+}
+.login-title{
+    margin-bottom: 20px;
+    border-bottom: 1px solid #ccc;
+    padding:0 20px 20px 20px;
+}
+
+
+
+
+
+
+

@@ -27,8 +27,6 @@ Route::group(['namespace'=>'Backend','prefix'=>'backend','middleware'=>'auth:bac
     Route::get('/index','IndexController@index')->name('backend.index');
     //后台首页图表统计
     Route::post('/index/chart','IndexController@chart')->name('backend.index.chart');
-    //在线拨号
-    Route::get('/index/onlinecall','IndexController@onlinecall')->name('backend.index.onlinecall');
 });
 
 /*
