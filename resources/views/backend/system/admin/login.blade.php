@@ -15,7 +15,7 @@
         <h1 class="login-title">
             <center>外呼系统</center>
         </h1>
-        <form class="layui-form" action="{{route('backend.admin.login')}}"  method="post">
+        <form class="layui-form" action="{{route('backend.system.admin.login')}}"  method="post">
             {{csrf_field()}}
             <div class="layui-form-item field-loginform-username required">
                 <label class="layui-form-label" for="loginform-username">帐号</label>

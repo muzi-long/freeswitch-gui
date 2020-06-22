@@ -59,8 +59,8 @@
                         <cite>{{auth()->user()->nickname ?? auth()->user()->username}}</cite>
                     </a>
                     <dl class="layui-nav-child">
-                        <dd><a lay-href="{{route('backend.admin.changeMyPasswordForm')}}">修改密码</a></dd>
-                        <dd><a href="{{route('backend.admin.logout')}}">退出</a></dd>
+                        <dd><a lay-href="{{route('backend.system.admin.changeMyPasswordForm')}}">修改密码</a></dd>
+                        <dd><a href="{{route('backend.system.admin.logout')}}">退出</a></dd>
                     </dl>
                 </li>
 
@@ -92,7 +92,7 @@
                             </dd>
                         </dl>
                     </li>
-                    {{--@foreach(\Illuminate\Support\Facades\Cache::get('menus') as $menu1)
+                    @foreach(\Illuminate\Support\Facades\Cache::get('backend_menus',[]) as $menu1)
                         <li data-name="{{$menu1['name']}}" class="layui-nav-item">
                             <a
                                @if($menu1['type']==1 && ($menu1['route'] || $menu1['url']))
@@ -141,7 +141,7 @@
                                 </dl>
                             @endif
                         </li>
-                    @endforeach--}}
+                    @endforeach
                 </ul>
             </div>
         </div>

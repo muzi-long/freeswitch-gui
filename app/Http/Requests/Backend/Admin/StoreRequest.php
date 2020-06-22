@@ -26,8 +26,9 @@ class StoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'phone'   => 'required|numeric|regex:/^1[3456789][0-9]{9}$/|unique:users',
-            'nickname'  => 'required|min:2|max:14|unique:users',
+            'phone'   => 'required|numeric|regex:/^1[3456789][0-9]{9}$/|unique:admin',
+            'username'   => 'required|string|max:20|unique:admin',
+            'nickname'  => 'required|min:2|max:14',
             'password'  => 'required|confirmed|min:6|max:14'
         ];
     }

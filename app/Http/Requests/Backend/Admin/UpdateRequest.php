@@ -26,8 +26,9 @@ class UpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            'phone' => 'required|numeric|regex:/^1[34578][0-9]{9}$/|unique:users,phone,'.$this->id.',id',
-            'nickname'  => 'required|min:4|max:14',
+            'phone' => 'required|numeric|regex:/^1[34578][0-9]{9}$/|unique:admin,phone,'.$this->id.',id',
+            'username'   => 'required|string|max:20|unique:admin,username,'.$this->id.',id',
+            'nickname'  => 'required|min:2|max:14',
         ];
     }
 

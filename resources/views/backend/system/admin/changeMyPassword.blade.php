@@ -1,14 +1,19 @@
-@extends('admin.base')
+@extends('backend.base')
 
 @section('content')
     <div class="layui-card">
         <div class="layui-card-header  layuiadmin-card-header-auto">
-            <h2>重置密码</h2>
+            <h2>更改密码</h2>
         </div>
         <div class="layui-card-body">
-            <form class="layui-form" action="{{route('admin.user.resetPassword',['id'=>$user->id])}}" >
+            <form class="layui-form" action="{{route('backend.system.admin.changeMyPassword')}}" >
                 {{csrf_field()}}
-                {{method_field('put')}}
+                <div class="layui-form-item">
+                    <label for="" class="layui-form-label">原密码</label>
+                    <div class="layui-input-inline">
+                        <input type="password" name="old_password" lay-verify="required" placeholder="请输入原密码" class="layui-input">
+                    </div>
+                </div>
                 <div class="layui-form-item">
                     <label for="" class="layui-form-label">新密码</label>
                     <div class="layui-input-inline">
@@ -25,7 +30,6 @@
                     <label for="" class="layui-form-label"></label>
                     <div class="layui-input-block">
                         <button type="button" class="layui-btn layui-btn-sm" lay-submit lay-filter="go">确 认</button>
-                        <a  class="layui-btn layui-btn-sm" href="{{route('admin.user')}}" >返 回</a>
                     </div>
                 </div>
         </form>
@@ -39,18 +43,7 @@
             var $ = layui.jquery;
             var layer = layui.layer;
             var form = layui.form;
-            form.on('submit(go)',function (data) {
-                var load = layer.load();
-                $.post(data.form.action,data.field,function (res) {
-                    layer.close(load);
-                    layer.msg(res.msg,{icon:res.code==0?1:2},function () {
-                        if (res.code==0){
-                            location.reload();
-                        }
-                    })
-                });
-                return false;
-            })
+            var table = layui.table;
         })
     </script>
 @endsection

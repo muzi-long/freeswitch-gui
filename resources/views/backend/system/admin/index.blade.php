@@ -1,15 +1,15 @@
-@extends('admin.base')
+@extends('backend.base')
 
 @section('content')
     <div class="layui-card">
 
         <div class="layui-card-header layuiadmin-card-header-auto">
             <div class="layui-btn-group">
-                @can('system.user.destroy')
+                @can('backend.system.admin.destroy')
                     <button class="layui-btn layui-btn-sm layui-btn-danger" id="listDelete">删 除</button>
                 @endcan
-                @can('system.user.create')
-                    <a class="layui-btn layui-btn-sm" href="{{ route('admin.user.create') }}">添 加</a>
+                @can('backend.system.admin.create')
+                    <a class="layui-btn layui-btn-sm" href="{{ route('backend.system.admin.create') }}">添 加</a>
                 @endcan
             </div>
         </div>
@@ -18,19 +18,19 @@
             <table id="dataTable" lay-filter="dataTable"></table>
             <script type="text/html" id="options">
                 <div class="layui-btn-group">
-                    @can('system.user.edit')
+                    @can('backend.system.admin.edit')
                         <a class="layui-btn layui-btn-sm" lay-event="edit">编辑</a>
                     @endcan
-                    @can('system.user.resetPassword')
+                    @can('backend.system.admin.resetPassword')
                         <a class="layui-btn layui-btn-sm" lay-event="resetPassword">重置密码</a>
                     @endcan
-                    @can('system.user.role')
+                    @can('backend.system.admin.role')
                         <a class="layui-btn layui-btn-sm" lay-event="role">角色</a>
                     @endcan
-                    @can('system.user.permission')
+                    @can('backend.system.admin.permission')
                         <a class="layui-btn layui-btn-sm" lay-event="permission">权限</a>
                     @endcan
-                    @can('system.user.destroy')
+                    @can('backend.system.admin.destroy')
                         <a class="layui-btn layui-btn-danger layui-btn-sm " lay-event="del">删除</a>
                     @endcan
                 </div>
@@ -53,19 +53,14 @@
                 var dataTable = table.render({
                     elem: '#dataTable'
                     , height: 'full-200'
-                    , url: "{{ route('admin.user') }}"
+                    , url: "{{ route('backend.system.admin') }}"
                     , page: true //开启分页
                     , cols: [[ //表头
                         {checkbox: true, fixed: true}
                         , {field: 'id', title: 'ID', sort: true, width: 80}
                         , {field: 'nickname', title: '昵称'}
-                        , {field: 'phone', title: '帐号'}
-                        , {field: 'department_id', title: '部门',templet:function (d) {
-                                return d.department.name;
-                            }}
-                        , {field: 'sip_id', title: '分机',templet:function (d) {
-                                return d.sip.username;
-                            }}
+                        , {field: 'username', title: '帐号'}
+                        , {field: 'phone', title: '手机号码'}
                         , {field: 'last_login_at', title: '最近登录时间'}
                         , {field: 'last_login_ip', title: '最近登录IP'}
                         , {field: 'created_at', title: '创建时间'}
@@ -82,7 +77,7 @@
                         layer.confirm('确认删除吗？', function (index) {
                             layer.close(index);
                             var load = layer.load();
-                            $.post("{{ route('admin.user.destroy') }}", {
+                            $.post("{{ route('backend.system.admin.destroy') }}", {
                                 _method: 'delete',
                                 ids: [data.id]
                             }, function (res) {
@@ -97,13 +92,13 @@
                             });
                         });
                     } else if (layEvent === 'edit') {
-                        location.href = '/admin/user/' + data.id + '/edit';
+                        location.href = '/backend/system/admin/' + data.id + '/edit';
                     } else if (layEvent === 'role') {
-                        location.href = '/admin/user/' + data.id + '/role';
+                        location.href = '/backend/system/admin/' + data.id + '/role';
                     } else if (layEvent === 'permission') {
-                        location.href = '/admin/user/' + data.id + '/permission';
+                        location.href = '/backend/system/admin/' + data.id + '/permission';
                     } else if (layEvent === 'resetPassword') {
-                        location.href = '/admin/user/' + data.id + '/resetPassword';
+                        location.href = '/backend/system/admin/' + data.id + '/resetPassword';
                     }
                 });
 
@@ -121,7 +116,7 @@
                         layer.confirm('确认删除吗？', function (index) {
                             layer.close(index);
                             var load = layer.load();
-                            $.post("{{ route('admin.user.destroy') }}", {
+                            $.post("{{ route('backend.system.admin.destroy') }}", {
                                 _method: 'delete',
                                 ids: [data.id]
                             }, function (res) {

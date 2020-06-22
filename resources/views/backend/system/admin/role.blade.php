@@ -1,4 +1,4 @@
-@extends('admin.base')
+@extends('backend.base')
 
 @section('content')
     <style>
@@ -9,7 +9,7 @@
             <h2>分配角色</h2>
         </div>
         <div class="layui-card-body">
-            <form class="layui-form" action="{{route('admin.user.assignRole',['id'=>$user->id])}}" method="post">
+            <form class="layui-form" action="{{route('backend.system.admin.assignRole',['id'=>$user->id])}}" method="post">
                 {{csrf_field()}}
                 {{method_field('put')}}
                 <div class="layui-form-item">
@@ -19,6 +19,10 @@
                 <div class="layui-form-item">
                     <label for="" class="layui-form-label">手机</label>
                     <div class="layui-word-aux layui-form-mid">{{ $user->phone }}</div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="" class="layui-form-label">帐号</label>
+                    <div class="layui-word-aux layui-form-mid">{{ $user->username }}</div>
                 </div>
                 <div class="layui-form-item">
                     <label for="" class="layui-form-label">角色</label>
@@ -33,7 +37,7 @@
                 <div class="layui-form-item">
                     <div class="layui-input-block">
                         <button type="button" class="layui-btn layui-btn-sm" lay-submit lay-filter="go">确 认</button>
-                        <a class="layui-btn layui-btn-sm" href="{{route('admin.user')}}" >返 回</a>
+                        <a class="layui-btn layui-btn-sm" href="{{route('backend.system.admin')}}" >返 回</a>
                     </div>
                 </div>
             </form>
@@ -42,7 +46,7 @@
 @endsection
 
 @section('script')
-    @include('admin.user._js')
+    @include('backend.system.admin._js')
 @endsection
 
 

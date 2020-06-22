@@ -1,4 +1,4 @@
-@extends('admin.base')
+@extends('backend.base')
 
 @section('content')
     <div class="layui-card">
@@ -6,7 +6,7 @@
             <h2>分配直接权限，直接权限与角色拥有的角色权限可叠加</h2>
         </div>
         <div class="layui-card-body">
-            <form action="{{route('admin.user.assignPermission',['id'=>$user->id])}}" method="post" class="layui-form">
+            <form action="{{route('backend.system.admin.assignPermission',['id'=>$user->id])}}" method="post" class="layui-form">
                 {{csrf_field()}}
                 {{method_field('put')}}
                 <div class="layui-form-item">
@@ -16,6 +16,10 @@
                 <div class="layui-form-item">
                     <label for="" class="layui-form-label">手机</label>
                     <div class="layui-word-aux layui-form-mid">{{ $user->phone }}</div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="" class="layui-form-label">帐号</label>
+                    <div class="layui-word-aux layui-form-mid">{{ $user->username }}</div>
                 </div>
                 <div class="layui-form-item">
                     <label for="" class="layui-form-label">权限</label>
@@ -52,7 +56,7 @@
                     <label for="" class="layui-form-label"></label>
                     <div class="layui-input-block">
                         <button type="button" class="layui-btn layui-btn-sm" lay-submit lay-filter="go" >确 认</button>
-                        <a href="{{route('admin.user')}}"  class="layui-btn layui-btn-sm" >返 回</a>
+                        <a href="{{route('backend.system.admin')}}"  class="layui-btn layui-btn-sm" >返 回</a>
                     </div>
                 </div>
             </form>
@@ -108,6 +112,6 @@
             });
         });
     </script>
-    @include('admin.user._js')
+    @include('backend.system.admin._js')
 @endsection
 

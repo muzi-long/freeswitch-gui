@@ -3,17 +3,12 @@
 @section('content')
     <div class="layui-card">
         <div class="layui-card-header  layuiadmin-card-header-auto">
-            <h2>更改密码</h2>
+            <h2>重置密码</h2>
         </div>
         <div class="layui-card-body">
-            <form class="layui-form" action="{{route('backend.admin.changeMyPassword')}}" >
+            <form class="layui-form" action="{{route('backend.system.admin.resetPassword',['id'=>$user->id])}}" >
                 {{csrf_field()}}
-                <div class="layui-form-item">
-                    <label for="" class="layui-form-label">原密码</label>
-                    <div class="layui-input-inline">
-                        <input type="password" name="old_password" lay-verify="required" placeholder="请输入原密码" class="layui-input">
-                    </div>
-                </div>
+                {{method_field('put')}}
                 <div class="layui-form-item">
                     <label for="" class="layui-form-label">新密码</label>
                     <div class="layui-input-inline">
@@ -30,6 +25,7 @@
                     <label for="" class="layui-form-label"></label>
                     <div class="layui-input-block">
                         <button type="button" class="layui-btn layui-btn-sm" lay-submit lay-filter="go">确 认</button>
+                        <a  class="layui-btn layui-btn-sm" href="{{route('backend.system.admin')}}" >返 回</a>
                     </div>
                 </div>
         </form>
@@ -43,7 +39,7 @@
             var $ = layui.jquery;
             var layer = layui.layer;
             var form = layui.form;
-            var table = layui.table;
+
         })
     </script>
 @endsection
