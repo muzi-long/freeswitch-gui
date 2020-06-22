@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Requests\Backend\Admin;
+namespace App\Http\Requests\Backend\System\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class ResetPasswordRequest extends FormRequest
+class UpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,7 +26,16 @@ class ResetPasswordRequest extends FormRequest
     public function rules()
     {
         return [
-            'new_password' => 'required|string|min:6|max:14|confirmed'
+            'phone' => 'required|numeric|regex:/^1[34578][0-9]{9}$/|unique:admin,phone,'.$this->id.',id',
+            'username'   => 'required|string|max:20|unique:admin,username,'.$this->id.',id',
+            'nickname'  => 'required|min:2|max:14',
+        ];
+    }
+
+    public function attributes()
+    {
+        return [
+            'nickname' => '昵称',
         ];
     }
 

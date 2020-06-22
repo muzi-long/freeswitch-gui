@@ -32,6 +32,14 @@ class BackendMenu extends Seeder
                         'type' => 1,
                         'permission_name' => 'backend.system.admin',
                     ],
+                    [
+                        'name' => '角色管理',
+                        'route' => 'backend.system.role',
+                        'url' => null,
+                        'icon' => 'layui-icon-group',
+                        'type' => 1,
+                        'permission_name' => 'backend.system.role',
+                    ],
                 ]
             ],
         ];

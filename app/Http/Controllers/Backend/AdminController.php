@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Backend\Admin\ChangePasswordRequest;
-use App\Http\Requests\Backend\Admin\ResetPasswordRequest;
-use App\Http\Requests\Backend\Admin\StoreRequest;
-use App\Http\Requests\Backend\Admin\UpdateRequest;
+use App\Http\Requests\Backend\System\Admin\ChangePasswordRequest;
+use App\Http\Requests\Backend\System\Admin\ResetPasswordRequest;
+use App\Http\Requests\Backend\System\Admin\StoreRequest;
+use App\Http\Requests\Backend\System\Admin\UpdateRequest;
 use App\Models\Admin;
 use App\Models\Permission;
 use App\Models\Role;

@@ -58,5 +58,21 @@ Route::group(['namespace'=>'Backend','prefix'=>'system','middleware'=>['auth:bac
         Route::put('admin/{id}/assignPermission','AdminController@assignPermission')->name('backend.system.admin.assignPermission')->middleware('permission:backend.system.admin.permission');
     });
 
+    //角色管理
+    Route::group([],function (){
+        Route::get('role','RoleController@index')->name('backend.system.role')->middleware('permission:backend.system.role');
+        //添加
+        Route::get('role/create','RoleController@create')->name('backend.system.role.create')->middleware('permission:backend.system.role.create');
+        Route::post('role/store','RoleController@store')->name('backend.system.role.store')->middleware('permission:backend.system.role.create');
+        //编辑
+        Route::get('role/{id}/edit','RoleController@edit')->name('backend.system.role.edit')->middleware('permission:backend.system.role.edit');
+        Route::put('role/{id}/update','RoleController@update')->name('backend.system.role.update')->middleware('permission:backend.system.role.edit');
+        //删除
+        Route::delete('role/destroy','RoleController@destroy')->name('backend.system.role.destroy')->middleware('permission:backend.system.role.destroy');
+        //分配权限
+        Route::get('role/{id}/permission','RoleController@permission')->name('backend.system.role.permission')->middleware('permission:backend.system.role.permission');
+        Route::put('role/{id}/assignPermission','RoleController@assignPermission')->name('backend.system.role.assignPermission')->middleware('permission:backend.system.role.permission');
+    });
+
 });
 

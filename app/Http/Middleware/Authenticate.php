@@ -10,22 +10,6 @@ use Illuminate\Support\Facades\Response;
 class Authenticate extends Middleware
 {
 
-    protected function authenticate($request, array $guards)
-    {
-        if (empty($guards)) {
-            $guards = [null];
-        }
-
-        foreach ($guards as $guard) {
-            if ($this->auth->guard($guard)->check()) {
-                config(['auth.defaults.guard'=>$guard]);
-                return $this->auth->shouldUse($guard);
-            }
-        }
-
-        $this->unauthenticated($request, $guards);
-    }
-
     protected function unauthenticated($request, array $guards)
     {
 

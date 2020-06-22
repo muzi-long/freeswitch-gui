@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Requests\Backend\Admin;
+namespace App\Http\Requests\Backend\System\Role;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class ChangePasswordRequest extends FormRequest
+class UpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,8 +26,8 @@ class ChangePasswordRequest extends FormRequest
     public function rules()
     {
         return [
-            'old_password' => 'required|string|min:6|max:14',
-            'new_password' => 'required|string|min:6|max:14|confirmed'
+            'name'=>'required|unique:roles,name,'.$this->id.',id|max:200',
+            'display_name'  => 'required'
         ];
     }
 
@@ -35,5 +35,4 @@ class ChangePasswordRequest extends FormRequest
     {
         throw new HttpResponseException(response()->json(['code'=>1,'msg'=>$validator->errors()->first()]));
     }
-
 }
