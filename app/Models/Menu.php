@@ -16,7 +16,7 @@ class Menu extends Model
         'sort',
         'type',
         'permission_id',
-        'guard',
+        'guard_name',
     ];
 
     //子权限

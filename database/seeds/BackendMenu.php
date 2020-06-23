@@ -40,6 +40,22 @@ class BackendMenu extends Seeder
                         'type' => 1,
                         'permission_name' => 'backend.system.role',
                     ],
+                    [
+                        'name' => '权限管理',
+                        'route' => 'backend.system.permission',
+                        'url' => null,
+                        'icon' => 'layui-icon-key',
+                        'type' => 1,
+                        'permission_name' => 'backend.system.permission',
+                    ],
+                    [
+                        'name' => '菜单管理',
+                        'route' => 'backend.system.menu',
+                        'url' => null,
+                        'icon' => 'layui-icon-menu-fill',
+                        'type' => 1,
+                        'permission_name' => 'backend.system.menu',
+                    ],
                 ]
             ],
         ];

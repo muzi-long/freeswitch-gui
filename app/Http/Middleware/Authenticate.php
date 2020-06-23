@@ -17,9 +17,9 @@ class Authenticate extends Middleware
             return Response::json(['code'=>1,'msg'=>'当前用户未登录']);
         }else{
             if (in_array('backend',$guards)){ //跳后台
-                $url = route('backend.admin.login');
+                $url = route('backend.system.admin.login');
             }elseif (in_array('frontend',$guards)){ //跳前台
-                $url = route('front.staff.login');
+                $url = route('frontend.staff.login');
             }else{
                 $url = null;
             }

@@ -74,5 +74,31 @@ Route::group(['namespace'=>'Backend','prefix'=>'system','middleware'=>['auth:bac
         Route::put('role/{id}/assignPermission','RoleController@assignPermission')->name('backend.system.role.assignPermission')->middleware('permission:backend.system.role.permission');
     });
 
+    //权限管理
+    Route::group([],function (){
+        Route::get('permission','PermissionController@index')->name('backend.system.permission')->middleware('permission:backend.system.permission');
+        //添加
+        Route::get('permission/create','PermissionController@create')->name('backend.system.permission.create')->middleware('permission:backend.system.permission.create');
+        Route::post('permission/store','PermissionController@store')->name('backend.system.permission.store')->middleware('permission:backend.system.permission.create');
+        //编辑
+        Route::get('permission/{id}/edit','PermissionController@edit')->name('backend.system.permission.edit')->middleware('permission:backend.system.permission.edit');
+        Route::put('permission/{id}/update','PermissionController@update')->name('backend.system.permission.update')->middleware('permission:backend.system.permission.edit');
+        //删除
+        Route::delete('permission/destroy','PermissionController@destroy')->name('backend.system.permission.destroy')->middleware('permission:backend.system.permission.destroy');
+    });
+
+    //菜单管理
+    Route::group([],function (){
+        Route::get('menu','MenuController@index')->name('backend.system.menu')->middleware('permission:backend.system.menu');
+        //添加
+        Route::get('menu/create','MenuController@create')->name('backend.system.menu.create')->middleware('permission:backend.system.menu.create');
+        Route::post('menu/store','MenuController@store')->name('backend.system.menu.store')->middleware('permission:backend.system.menu.create');
+        //编辑
+        Route::get('menu/{id}/edit','MenuController@edit')->name('backend.system.menu.edit')->middleware('permission:backend.system.permission.edit');
+        Route::put('menu/{id}/update','MenuController@update')->name('backend.system.menu.update')->middleware('permission:backend.system.permission.edit');
+        //删除
+        Route::delete('menu/destroy','MenuController@destroy')->name('backend.system.menu.destroy')->middleware('permission:backend.system.permission.destroy');
+    });
+
 });
 

@@ -22,7 +22,9 @@ class RoleController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()){
-            $res = Role::where('guard_name','=',config('freeswitch.backend_guard'))->paginate($request->get('limit', 30));
+            $res = Role::where('guard_name','=',config('freeswitch.backend_guard'))
+                ->orderBy('id','desc')
+                ->paginate($request->get('limit', 30));
             $data = [
                 'code' => 0,
                 'msg' => '正在请求中...',
@@ -53,7 +55,7 @@ class RoleController extends Controller
         $data = $request->only(['name','display_name']);
         try{
             Role::create($data);
-            return Response::json(['code'=>0,'msg'=>'添加成功']);
+            return Response::json(['code'=>0,'msg'=>'添加成功','url'=>route('backend.system.role')]);
         }catch (\Exception $exception){
             Log::error('添加角色异常：'.$exception->getMessage());
             return Response::json(['code'=>1,'msg'=>'添加失败']);
@@ -83,7 +85,7 @@ class RoleController extends Controller
         $data = $request->only(['name','display_name']);
         try{
             $role->update($data);
-            return Response::json(['code'=>0,'msg'=>'更新成功']);
+            return Response::json(['code'=>0,'msg'=>'更新成功','url'=>route('backend.system.role')]);
 
         }catch (\Exception $exception){
             Log::error('更新角色异常：'.$exception->getMessage());
