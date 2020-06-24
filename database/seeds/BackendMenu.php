@@ -58,6 +58,33 @@ class BackendMenu extends Seeder
                     ],
                 ]
             ],
+            [
+                'name' => '呼叫中心',
+                'route' => null,
+                'url' => null,
+                'icon' => 'layui-icon-ios',
+                'type' => 2,
+                'sort' => 2,
+                'permission_name' => 'backend.call',
+                'child' => [
+                    [
+                        'name' => 'FS管理',
+                        'route' => 'backend.call.freeswitch',
+                        'url' => null,
+                        'icon' => 'layui-icon-windows',
+                        'type' => 1,
+                        'permission_name' => 'backend.call.freeswitch',
+                    ],
+                    [
+                        'name' => '拨号计划',
+                        'route' => 'backend.call.extension',
+                        'url' => null,
+                        'icon' => 'layui-icon-chart',
+                        'type' => 1,
+                        'permission_name' => 'backend.call.extension',
+                    ],
+                ]
+            ],
         ];
         $permissions = \App\Models\Permission::where('guard_name',$guard)->pluck('id','name')->toArray();
         foreach ($datas as $k1 => $d1){

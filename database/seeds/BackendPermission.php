@@ -78,6 +78,32 @@ class BackendPermission extends Seeder
                     ],
                 ]
             ],
+            [
+                'name' => 'backend.call',
+                'display_name' => '呼叫中心',
+                'child' => [
+                    [
+                        'name' => 'backend.call.freeswitch',
+                        'display_name' => 'FS管理',
+                        'child' => [
+                            ['name' => 'backend.call.freeswitch.create', 'display_name' => '添加'],
+                            ['name' => 'backend.call.freeswitch.edit', 'display_name' => '编辑'],
+                            ['name' => 'backend.call.freeswitch.destroy', 'display_name' => '删除'],
+                        ]
+                    ],
+                    [
+                        'name' => 'backend.call.extension',
+                        'display_name' => '拨号计划',
+                        'child' => [
+                            ['name' => 'backend.call.extension.create', 'display_name' => '添加'],
+                            ['name' => 'backend.call.extension.edit', 'display_name' => '编辑'],
+                            ['name' => 'backend.call.extension.destroy', 'display_name' => '删除'],
+                            ['name' => 'backend.call.extension.show', 'display_name' => '详情'],
+                            ['name' => 'backend.call.extension.updateXml', 'display_name' => '更新配置'],
+                        ]
+                    ],
+                ]
+            ],
         ];
 
         foreach ($permissions as $pem1) {

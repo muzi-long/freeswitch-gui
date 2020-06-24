@@ -102,3 +102,67 @@ Route::group(['namespace'=>'Backend','prefix'=>'system','middleware'=>['auth:bac
 
 });
 
+
+/*
+|--------------------------------------------------------------------------
+| 呼叫管理模块
+|--------------------------------------------------------------------------
+*/
+Route::group(['namespace'=>'Backend','prefix'=>'call','middleware'=>['auth:backend']],function (){
+
+    //FS管理
+    Route::group([],function (){
+        Route::get('freeswitch','FreeswitchController@index')->name('backend.call.freeswitch')->middleware('permission:backend.call.freeswitch');
+        //添加
+        Route::get('freeswitch/create','FreeswitchController@create')->name('backend.call.freeswitch.create')->middleware('permission:backend.call.freeswitch.create');
+        Route::post('freeswitch/store','FreeswitchController@store')->name('backend.call.freeswitch.store')->middleware('permission:backend.call.freeswitch.create');
+        //编辑
+        Route::get('freeswitch/{id}/edit','FreeswitchController@edit')->name('backend.call.freeswitch.edit')->middleware('permission:backend.call.freeswitch.edit');
+        Route::put('freeswitch/{id}/update','FreeswitchController@update')->name('backend.call.freeswitch.update')->middleware('permission:backend.call.freeswitch.edit');
+        //删除
+        Route::delete('freeswitch/destroy','FreeswitchController@destroy')->name('backend.call.freeswitch.destroy')->middleware('permission:backend.call.freeswitch.destroy');
+    });
+
+    //拨号计划
+    Route::group([],function (){
+        Route::get('extension','ExtensionController@index')->name('backend.call.extension')->middleware('permission:backend.call.extension');
+        //详情
+        Route::get('extension/{id}/show','ExtensionController@show')->name('backend.call.extension.show')->middleware('permission:backend.call.extension.show');
+        //添加
+        Route::get('extension/create','ExtensionController@create')->name('backend.call.extension.create')->middleware('permission:backend.call.extension.create');
+        Route::post('extension/store','ExtensionController@store')->name('backend.call.extension.store')->middleware('permission:backend.call.extension.create');
+        //编辑
+        Route::get('extension/{id}/edit','ExtensionController@edit')->name('backend.call.extension.edit')->middleware('permission:backend.call.extension.edit');
+        Route::put('extension/{id}/update','ExtensionController@update')->name('backend.call.extension.update')->middleware('permission:backend.call.extension.edit');
+        //删除
+        Route::delete('extension/destroy','ExtensionController@destroy')->name('backend.call.extension.destroy')->middleware('permission:backend.call.extension.destroy');
+        //更新配置
+        Route::post('extension/updateXml','ExtensionController@updateXml')->name('backend.call.extension.updateXml')->middleware('permission:backend.call.extension.updateXml');
+    });
+    //拨号规则，同属拨号计划权限
+    Route::group([],function (){
+        Route::get('extension/{extension_id}/condition','ConditionController@index')->name('backend.call.condition');
+        //添加
+        Route::get('extension/{extension_id}/condition/create','ConditionController@create')->name('backend.call.condition.create');
+        Route::post('extension/{extension_id}/condition/store','ConditionController@store')->name('backend.call.condition.store');
+        //编辑
+        Route::get('extension/{extension_id}/condition/{id}/edit','ConditionController@edit')->name('backend.call.condition.edit');
+        Route::put('extension/{extension_id}/condition/{id}/update','ConditionController@update')->name('backend.call.condition.update');
+        //删除
+        Route::delete('condition/destroy','ConditionController@destroy')->name('backend.call.condition.destroy');
+    });
+    //拨号应用，同属拨号计划权限
+    Route::group([],function (){
+        Route::get('condition/{condition_id}/action','ActionController@index')->name('backend.call.action');
+        Route::get('condition/{condition_id}/action/data','ActionController@data')->name('backend.call.action.data');
+        //添加
+        Route::get('condition/{condition_id}/action/create','ActionController@create')->name('backend.call.action.create');
+        Route::post('condition/{condition_id}/action/store','ActionController@store')->name('backend.call.action.store');
+        //编辑
+        Route::get('condition/{condition_id}/action/{id}/edit','ActionController@edit')->name('backend.call.action.edit');
+        Route::put('condition/{condition_id}/action/{id}/update','ActionController@update')->name('backend.call.action.update');
+        //删除
+        Route::delete('action/destroy','ActionController@destroy')->name('backend.call.action.destroy');
+    });
+
+});
