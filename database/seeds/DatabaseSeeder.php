@@ -15,5 +15,6 @@ class DatabaseSeeder extends Seeder
         $this->call(BackendMenu::class);
         $this->call(FrontendPermission::class);
         $this->call(FrontendMenu::class);
+        $this->call(DialplanTableSeeder::class);
     }
 }

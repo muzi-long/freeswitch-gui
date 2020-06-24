@@ -6,7 +6,7 @@
             <form class="layui-form" action="{{route('backend.call.extension.updateXml')}}">
                 <div class="layui-btn-group">
                     @can('backend.call.extension.destroy')
-                    <button class="layui-btn layui-btn-sm layui-btn-danger" id="listDelete">删 除</button>
+                    <button class="layui-btn layui-btn-sm layui-btn-danger" type="button" id="listDelete">删 除</button>
                     @endcan
                     @can('backend.call.extension.create')
                     <a class="layui-btn layui-btn-sm" href="{{ route('backend.call.extension.create') }}">添 加</a>
