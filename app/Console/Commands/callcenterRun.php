@@ -57,7 +57,7 @@ class callcenterRun extends Command
     		foreach ($res as $key => $task) {
     			Redis::rPush($redis_key,$task->id);
     		}
-    		
+
     	}
 
     	//启动服务
@@ -75,8 +75,8 @@ class callcenterRun extends Command
                     //redis自增ID的key,用于生成uuid
                     $callKey = config('freeswitch.redis_key.callcenter_call');
                     while (true){
-                        
-                        $task = Task::with(['queue','gateway'])
+
+                        $task = Task::with(['queue.agents','gateway'])
                             ->where('status',2)
                             ->where('id',$task_id)
                             ->first();
@@ -100,7 +100,7 @@ class callcenterRun extends Command
                             sleep(10);
                             continue;
                         }
-                        
+
                         //检测网关信息
                         if ($task->gateway==null){
                             Log::info("任务ID：".$task->name." 的网关不存在，任务停止");
@@ -126,6 +126,12 @@ class callcenterRun extends Command
                         //检测队列
                         if ($task->queue==null){
                             Log::info("任务ID：".$task->name." 的队列不存在，任务停止");
+                            $task->update(['status'=>1]);
+                            break;
+                        }
+                        //检测队列是否有坐席
+                        if ($task->queue->agents->isEmpty()){
+                            Log::info("任务ID：".$task->name." 的队列无坐席存在，任务停止");
                             $task->update(['status'=>1]);
                             break;
                         }
@@ -171,19 +177,19 @@ class callcenterRun extends Command
                             $fs->bgapi($dail_string);
                             usleep(500);
                         }
-                        
+
                     }
                     $fs->disconnect();
                 }
 
             });
             $process->start();
-            
+
         }
 
-       
+
     }
 
-    
+
 
 }
