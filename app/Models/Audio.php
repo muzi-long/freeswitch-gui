@@ -3,11 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Arr;
 use GuzzleHttp\Client;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
-use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -15,7 +12,7 @@ class Audio extends Model
 {
     protected $table = 'audio';
     protected $fillable = ['text','url','path','user_id'];
-    
+
 
     public function getAccessToken(){
     	$key = 'baidu_token';

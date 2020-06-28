@@ -1,0 +1,15 @@
+
+j	php:S37766"URefactor this function to reduce its Cognitive Complexity from 101 to the 15 allowed.(õŸ‘
+g	php:S1192‘"LDefine a constant instead of duplicating this literal "Y-m-d H:i:s" 6 times.(×›¯ýÿÿÿÿ
+d	php:S1192Ž"IDefine a constant instead of duplicating this literal "leg_uuid" 4 times.(ôÊ Œùÿÿÿÿ
+Šphp:S1386"vThis function "handle" has 204 lines, which is greater than the 150 lines authorized. Split it into smaller functions.(õŸ‘
+`php:S101"MRename class "eslListen" to match the regular expression ^[A-Z][a-zA-Z0-9]*$.(¼š‹U
+c	php:S1192‹"MDefine a constant instead of duplicating this literal "uuid_record " 3 times.(ºä¼õ
+d	php:S1192‘"IDefine a constant instead of duplicating this literal "start_at" 7 times.(×›¯ýÿÿÿÿ
+^	php:S1192‹"HDefine a constant instead of duplicating this literal " start " 3 times.(ºä¼õ
+]	php:S1192’"GDefine a constant instead of duplicating this literal "end_at" 4 times.(¢çÅœ
+b	php:S1192"LDefine a constant instead of duplicating this literal "record_file" 8 times.(ñÕñÚ
+f	php:S1192y"QDefine a constant instead of duplicating this literal "full_record_file" 6 times.(Í‡×Ð
+Y	php:S1854ß">Remove this useless assignment to local variable '$otherUuid'.(²±š¬øÿÿÿÿ
+a	php:S1192¹"LDefine a constant instead of duplicating this literal "update_data" 3 times.(§÷ÅB
+a	php:S1192Š"FDefine a constant instead of duplicating this literal "half_" 3 times.(ÛŸ†£ûÿÿÿÿ

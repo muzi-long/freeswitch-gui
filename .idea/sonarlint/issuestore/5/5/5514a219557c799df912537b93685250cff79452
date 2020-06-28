@@ -1,0 +1,10 @@
+
+F	php:S1481d"1Remove this unused "$joined_time" local variable.(§êÐ×
+a	php:S1192J"LDefine a constant instead of duplicating this literal "Y-m-d H:i:s" 3 times.(¥Ïž³
+[	php:S1192="FDefine a constant instead of duplicating this literal "agent" 4 times.(„«î¥
+mphp:S101
+"TRename class "callcenterListen" to match the regular expression ^[A-Z][a-zA-Z0-9]*$.(­æÎ¥ùÿÿÿÿ
+K	php:S1185 "6Remove this method "__construct" to simply inherit it.(ƒöÙƒ
+c	php:S1192;"IDefine a constant instead of duplicating this literal "CC-Agent" 4 times.(ÁôÚýùÿÿÿÿ
+i	php:S3776*"TRefactor this function to reduce its Cognitive Complexity from 34 to the 15 allowed.(õŸ‘
+a	php:S1192>"GDefine a constant instead of duplicating this literal "status" 4 times.(©±‡¸üÿÿÿÿ

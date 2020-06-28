@@ -76,7 +76,7 @@ class TaskController extends Controller
     public function show(Request $request, $id)
     {
         $task = Task::withCount(['calls','hasCalls','missCalls','successCalls','failCalls'])->findOrFail($id);
-        $percent = $task->calls_count>0?100*round(($task->has_calls_count)/($task->calls_count),4):'0.00%';
+        $percent = $task->calls_count>0?100*round(($task->has_calls_count)/($task->calls_count),4).'%':'0.00%';
         if ($request->isMethod('post')){
             $tiers = DB::table('queue_agent')->where('queue_id',$task->queue_id)->pluck('agent_id');
             $agents = Agent::whereIn('id',$tiers)->get();

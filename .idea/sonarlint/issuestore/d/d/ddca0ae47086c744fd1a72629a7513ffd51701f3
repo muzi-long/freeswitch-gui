@@ -1,0 +1,17 @@
+
+j	php:S1142Ï"OReduce the number of returns of this function 5, down to the maximum allowed 3.(ìîœ¸üÿÿÿÿ
+^	php:S1192„"HDefine a constant instead of duplicating this literal "toExten" 4 times.(‚Ñ½÷
+i	php:S1142D"OReduce the number of returns of this function 9, down to the maximum allowed 3.(ô¿ìáùÿÿÿÿ
+M	php:S1481‡"+Remove this unused "$state" local variable.(¯ž¯˜úÿÿÿÿ8¤àä™ª.
+i	php:S1142"OReduce the number of returns of this function 4, down to the maximum allowed 3.(óŠ×Åûÿÿÿÿ
+[	php:S1192F"FDefine a constant instead of duplicating this literal "exten" 9 times.(Â•‡‹
+e	php:S1142­"OReduce the number of returns of this function 5, down to the maximum allowed 3.(¶ÇÈþ
+_	php:S1192F"JDefine a constant instead of duplicating this literal "user_data" 3 times.(Â•‡‹
+j	php:S1142‚"OReduce the number of returns of this function 5, down to the maximum allowed 3.(ß™çÕùÿÿÿÿ
+n	php:S3776D"TRefactor this function to reduce its Cognitive Complexity from 28 to the 15 allowed.(ô¿ìáùÿÿÿÿ
+d	php:S1192^"ODefine a constant instead of duplicating this literal "freeswitch.esl" 4 times.(Ç¼¤‚
+a	php:S1192Ÿ"FDefine a constant instead of duplicating this literal "_uuid" 4 times.(Áª‹õþÿÿÿÿ
+`	php:S1192„"JDefine a constant instead of duplicating this literal "fromExten" 5 times.(‚Ñ½÷
+^	php:S1192`"IDefine a constant instead of duplicating this literal "password" 4 times.(‰ÅÏâ
+c	php:S1192S"IDefine a constant instead of duplicating this literal "username" 5 times.(‹Éåëùÿÿÿÿ
+\	php:S1192F"GDefine a constant instead of duplicating this literal "phone" 12 times.(Â•‡‹

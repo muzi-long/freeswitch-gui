@@ -1,0 +1,11 @@
+
+`	php:S1192ž"JDefine a constant instead of duplicating this literal "sip_start" 3 times.(˜‚ƒ»
+d	php:S1192"JDefine a constant instead of duplicating this literal "username" 13 times.(áñ˜ìúÿÿÿÿ
+c	php:S1192Õ"HDefine a constant instead of duplicating this literal "content" 5 times.(œñéìúÿÿÿÿ
+^	php:S1192A"IDefine a constant instead of duplicating this literal "password" 5 times.(¥àÿä
+`	php:S1192?"LDefine a constant instead of duplicating this literal "gateway_id" 12 times.(Øµ©^
+^	php:S1192ž"HDefine a constant instead of duplicating this literal "sip_end" 3 times.(˜‚ƒ»
+u	php:S1192C"[Define a constant instead of duplicating this literal "effective_caller_id_number" 7 times.(ÔÃßÉûÿÿÿÿ
+j	php:S1142Ô"OReduce the number of returns of this function 7, down to the maximum allowed 3.(¨¥‡íøÿÿÿÿ
+n	php:S1192B"YDefine a constant instead of duplicating this literal "effective_caller_id_name" 7 times.(”â¢¼
+^	php:S11925"IDefine a constant instead of duplicating this literal "gateways" 4 times.(üéæ—
