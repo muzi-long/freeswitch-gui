@@ -133,12 +133,12 @@ class QueueController extends Controller
             $client = new Client();
             $res = $client->post(config('freeswitch.swoole_http_url.callcenter'),[
                 'form_params'=>[
-                    'data'=>['queues'=>$queues->toArray(),'agents'=>json_encode($agents)]
+                    'data'=>json_encode(['queues'=>$queues->toArray(),'agents'=>$agents]),
                 ],
                 'timeout'=>30
             ]);
             return response()->json(json_decode($res->getBody(),true));
-            
+
         }catch (\Exception $exception){
             return response()->json(['code'=>1,'msg'=>'更新失败','data'=>$exception->getMessage()]);
         }
@@ -166,5 +166,5 @@ class QueueController extends Controller
         return back()->withErrors(['error'=>'更新失败']);
     }
 
-    
+
 }

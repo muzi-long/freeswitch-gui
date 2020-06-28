@@ -6,6 +6,7 @@ use App\Models\Agent;
 use App\Models\Call;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class callcenterListen extends Command
 {
@@ -58,14 +59,14 @@ class callcenterListen extends Command
                     case 'agent-status-change':
                         $agent_name     = $fs->getHeader($received_parameters,"CC-Agent");
                         $status         = $fs->getHeader($received_parameters,"CC-Agent-Status");
-                        $id             = (int)str_after($agent_name,'agent');
+                        $id             = (int)Str::after($agent_name,'agent');
                         Agent::where('id',$id)->update(['status'=>urldecode($status)]);
                         break;
                     //坐席呼叫状态
                     case 'agent-state-change':
                         $agent_name     = $fs->getHeader($received_parameters,"CC-Agent");
                         $state          = $fs->getHeader($received_parameters,"CC-Agent-State");
-                        $id             = (int)str_after($agent_name,'agent');
+                        $id             = (int)Str::after($agent_name,'agent');
                         Agent::where('id',$id)->update(['state'=>urldecode($state)]);
                         break;
                     //呼叫进入队列
@@ -77,7 +78,7 @@ class callcenterListen extends Command
                     case 'bridge-agent-start':
                         $datetime       = $fs->getHeader($received_parameters,"CC-Agent-Answered-Time");
                         $agent_name     = $fs->getHeader($received_parameters,"CC-Agent");
-                        $id             = (int)str_after($agent_name,'agent');
+                        $id             = (int)Str::after($agent_name,'agent');
                         //录音
                         $filepath       = $this->fs_dir . '/recordings/' . date('Y') . '/' . date('m') . '/' . date('d') . '/';
                         $callcenter_file = $filepath . 'callcenter_' . md5($uuid . time() . uniqid()) . '.wav';
@@ -89,7 +90,7 @@ class callcenterListen extends Command
                     case 'bridge-agent-end':
                         $datetime       = $fs->getHeader($received_parameters,"CC-Bridge-Terminated-Time");
                         $agent_name     = $fs->getHeader($received_parameters,"CC-Agent");
-                        $id             = (int)str_after($agent_name,'agent');
+                        $id             = (int)Str::after($agent_name,'agent');
                         Call::where('uuid',$uuid)->update(['datetime_end'=>date('Y-m-d H:i:s',$datetime),'status'=>4,'agent_id'=>$id]);
                         break;
                     //桥接结束，通话结束

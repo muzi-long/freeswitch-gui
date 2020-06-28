@@ -27,12 +27,9 @@ class WasteController extends Controller
 
     public function data(Request $request)
     {
-        $memberIds = User::pluck('id');
         $data = $request->all(['company_name','name','phone']);
         $res = Project::onlyTrashed()
-            ->where(function ($query) use($memberIds){
-                return $query->whereIn('created_user_id',$memberIds);
-            })
+            ->where('owner_user_id',-1)
             //公司名称
             ->when($data['company_name'],function ($query) use($data){
                 return $query->where('company_name',$data['company_name']);

@@ -56,7 +56,7 @@ class ProjectController extends Controller
         $res = Project::with(['node','followUser'])
             ->where(function ($query) use($user){
                 if ($user->hasPermissionTo('crm.project.list_all')) {
-                    # code...
+                    return $query->where('owner_user_id','>',0);
                 }elseif ($user->hasPermissionTo('crm.project.list_department')) {
                     $user_ids = User::where('department_id',$user->department_id)->pluck('id')->toArray();
                     return $query->whereIn('owner_user_id',$user_ids);
@@ -255,7 +255,7 @@ class ProjectController extends Controller
         DB::beginTransaction();
         try{
             DB::table('project')->where('id',$id)->update([
-                'owner_user_id' => null,
+                'owner_user_id' => -1,
                 'deleted_user_id' => Auth::guard()->user()->id,
                 'deleted_at' => Carbon::now(),
             ]);

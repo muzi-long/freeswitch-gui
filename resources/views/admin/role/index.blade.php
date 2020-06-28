@@ -102,7 +102,7 @@
                             $.post("{{ route('admin.role.destroy') }}", {
                                 _method: 'delete',
                                 ids: ids
-                            }, function (result) {
+                            }, function (res) {
                                 layer.close(load);
                                 if (res.code == 0) {
                                     layer.msg(res.msg, {icon: 1}, function () {

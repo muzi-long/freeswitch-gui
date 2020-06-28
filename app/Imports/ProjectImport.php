@@ -15,6 +15,7 @@ class ProjectImport implements ToModel
             'name'     => $row[1],
             'phone'    => $row[2],
             'created_user_id' => Auth::user()->id,
+            'owner_user_id' => 0,
         ]);
     }
 }

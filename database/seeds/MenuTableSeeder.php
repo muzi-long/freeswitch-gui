@@ -168,6 +168,14 @@ class MenuTableSeeder extends Seeder
                         'permission_name' => 'crm.project-design',
                     ],
                     [
+                        'name' => '待分配',
+                        'route' => 'admin.assignment',
+                        'url' => null,
+                        'icon' => 'layui-icon-transfer',
+                        'type' => 1,
+                        'permission_name' => 'crm.assignment',
+                    ],
+                    [
                         'name' => '客户管理',
                         'route' => 'admin.project',
                         'url' => null,
