@@ -75,10 +75,10 @@ class Task extends Model
         return $this->hasMany('App\Models\Call','task_id','id')->where('status',4);
     }
 
-    //呼叫失败数 status=5
+    //呼叫失败数 status=2
     public function failCalls()
     {
-        return $this->hasMany('App\Models\Call','task_id','id')->where('status',5);
+        return $this->hasMany('App\Models\Call','task_id','id')->where('status',2);
     }
 
 }
