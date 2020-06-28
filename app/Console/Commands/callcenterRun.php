@@ -137,15 +137,14 @@ class callcenterRun extends Command
                         }
                         //并发数调节
                         $channel = 0;
-                        if ($task->max_channel){
-                            $channel = $task->max_channel;
-                        }else{
-                            //队列总空闲坐席数
-                            $wait_num = $fs->api("callcenter_config queue count agents queue".$task->queue->id." Available Waiting");
-                            $channel = (int)$wait_num;
+                        $members = $fs->api("callcenter_config queue count members queue".$task->queue->id);
+                        $members = (int)$members;
+                        if ($task->max_channel > $members){
+                            $channel = $task->max_channel - $members;
                         }
                         //如果通道数还是0，则不需要呼叫
                         if ($channel == 0) {
+                            Log::info("任务ID：".$task->name." 的并发不需要呼叫，成员数：".$members);
                         	sleep(5);
                         	continue;
                         }
