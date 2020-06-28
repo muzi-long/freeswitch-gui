@@ -39,7 +39,7 @@ class CreateCallcenterTable extends Migration
             $table->string('originate_type')->default('user')->comment('呼叫类型：user-分机，group-分机组，gateway-网关');
             $table->string('originate_number')->comment('呼叫号码');
             $table->string('status')->default('Available')->comment('Logged Out签出，Available空闲，Available (On Demand)一次空闲，On Break未忙');
-            $table->string('state')->nullable()->comment('坐席呼叫状态');
+            $table->string('state')->default('Waiting')->comment('坐席呼叫状态,\'Idle\'=> \'空闲（不接收呼叫）\',\'Waiting\'=> \'等待\',\'Receiving\'=> \'电话呼入\',\'In a queue call\'   => \'通话中\',');
             $table->integer('max_no_answer')->default(3)->comment('最大无应答次数，超过次数，status变为On Break状态');
             $table->integer('wrap_up_time')->default(1)->comment('通话完成间隔时间，成功处理一个通话后，多久才会有电话进入等待时长');
             $table->integer('reject_delay_time')->default(10)->comment('挂机间隔时间，来电拒接后多久才会有电话进入的等待时长');

@@ -255,7 +255,7 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth','perm
         //删除
         Route::delete('task/destroy','TaskController@destroy')->name('admin.task.destroy')->middleware('permission:callcenter.task.destroy');
         //设置状态
-        Route::post('task/setStatus','TaskController@setStatus')->name('admin.task.setStatus')->middleware('permission:ai.task.setStatus');
+        Route::post('task/setStatus','TaskController@setStatus')->name('admin.task.setStatus')->middleware('permission:callcenter.task.setStatus');
         //导入号码
         Route::post('task/{id}/importCall','TaskController@importCall')->name('admin.task.importCall')->middleware('permission:callcenter.task.importCall');
         //呼叫记录

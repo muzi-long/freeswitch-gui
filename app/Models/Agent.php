@@ -29,16 +29,16 @@ class Agent extends Model
             'user'      => '分机',
             'group'     => '分机组',
             'gateway'   => '网关',
-        ],$this->originate_type);
+        ],$this->originate_type,'-');
     }
 
     public function getStatusNameAttribute()
     {
-        return $this->attributes['status_name'] = Arr::get(config('freeswitch.agent_status'),$this->status);
+        return $this->attributes['status_name'] = Arr::get(config('freeswitch.agent_status'),$this->status,'-');
     }
     public function getStateNameAttribute()
     {
-        return $this->attributes['state_name'] = Arr::get(config('freeswitch.agent_state'),$this->state);
+        return $this->attributes['state_name'] = Arr::get(config('freeswitch.agent_state'),$this->state,'-');
     }
 
 
