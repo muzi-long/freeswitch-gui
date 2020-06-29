@@ -145,7 +145,7 @@ class callcenterRun extends Command
                         //如果通道数还是0，则不需要呼叫
                         if ($channel == 0) {
                             Log::info("任务ID：".$task->name." 的并发不需要呼叫，成员数：".$members);
-                        	sleep(5);
+                        	sleep(10);
                         	continue;
                         }
                         //否则进行呼叫
@@ -174,9 +174,9 @@ class callcenterRun extends Command
                             $dail_string = "originate ".$varStr."sofia/gateway/gw".$task->gateway->id."/".$phone." &callcenter(queue".$task->queue->id.")";
                             Log::info("呼叫：".$dail_string);
                             $fs->bgapi($dail_string);
-                            usleep(500);
+                            sleep(1);
                         }
-
+                        sleep(6);
                     }
                     $fs->disconnect();
                 }
