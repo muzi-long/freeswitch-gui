@@ -91,8 +91,8 @@
             });
 
             //时间选择
-            laydate.render({type: 'datetime', elem: '#start_stamp_start'});
-            laydate.render({type: 'datetime', elem: '#start_stamp_end'});
+            laydate.render({type: 'datetime', elem: '#start_at_start'});
+            laydate.render({type: 'datetime', elem: '#start_at_end'});
 
             //监听搜索提交
             form.on('submit(*)', function(data){

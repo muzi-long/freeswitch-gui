@@ -9,12 +9,6 @@
                     <a class="layui-btn layui-btn-sm" href="{{ route('admin.project.create') }}">添 加</a>
                     @endcan
                     <button lay-submit lay-filter="search" class="layui-btn layui-btn-sm" >搜索</button>
-                    @can('crm.project.import')
-                    <button type="button" id="import_project" class="layui-btn layui-btn-sm">导入</button>
-                    @endcan
-                    @can('crm.project.downloadTemplate')
-                    <a href="{{route('admin.project.downloadTemplate')}}" class="layui-btn layui-btn-sm layui-btn-warm">模板下载</a>
-                    @endcan
                 </div>
                 <div class="layui-form-item">
                     <div class="layui-inline">
