@@ -175,7 +175,7 @@ class callcenterRun extends Command
                             $dail_string = "originate ".$varStr."sofia/gateway/gw".$task->gateway->id."/".$phone." &callcenter(queue".$task->queue->id.")";
                             Log::info("呼叫：".$dail_string);
                             $fs->bgapi($dail_string);
-                            sleep(1);
+                            sleep(2);
                         }
                         sleep(6);
                     }
