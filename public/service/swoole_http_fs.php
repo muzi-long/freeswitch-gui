@@ -52,7 +52,7 @@ $http->on('request', function ($request, $response) use($conf) {
                             $xml .= "</include>";
                             file_put_contents($conf['gateway']."gw".$d['id'].".xml",$xml);
                         }
-                        exec($command."\""."sofia profile external restart reloadxml"."\"");
+                        exec($command."\""."sofia profile external restart"."\"");
                         $return = ['code'=>0,'msg'=>'网关更新成功'];
                         break;
                     case '/directory': //分机
