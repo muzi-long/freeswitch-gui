@@ -260,7 +260,7 @@ class ApiController extends Controller
         $data = $request->all(['fromExten','toExten','type']);
         //验证被监听
         $uuid = Redis::get($data['toExten'].'_uuid');
-        $state = Redis::get($data['toExten'].'_state');
+
         $toSip = Sip::where('username',$data['toExten'])->first();
         if ($uuid == null || $toSip->state != 'ACTIVE'){
             return Response::json(['code'=>1,'msg'=>'被监听分机未在通话中']);
