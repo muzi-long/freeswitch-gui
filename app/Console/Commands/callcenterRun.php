@@ -98,12 +98,13 @@ class callcenterRun extends Command
                         if ( $now_time < strtotime($task->time_start) || $now_time > strtotime($task->time_end) ) {
                         	//延迟10秒
                             sleep(10);
+                            Log::info("任务ID：".$task->id."运行时间不满足");
                             continue;
                         }
 
                         //检测网关信息
                         if ($task->gateway==null){
-                            Log::info("任务ID：".$task->name." 的网关不存在，任务停止");
+                            Log::info("任务ID：".$task->id." 的网关不存在，任务停止");
                             $task->update(['status'=>1]);
                             break;
                         }
@@ -125,13 +126,13 @@ class callcenterRun extends Command
 
                         //检测队列
                         if ($task->queue==null){
-                            Log::info("任务ID：".$task->name." 的队列不存在，任务停止");
+                            Log::info("任务ID：".$task->id." 的队列不存在，任务停止");
                             $task->update(['status'=>1]);
                             break;
                         }
                         //检测队列是否有坐席
                         if ($task->queue->agents->isEmpty()){
-                            Log::info("任务ID：".$task->name." 的队列无坐席存在，任务停止");
+                            Log::info("任务ID：".$task->id." 的队列无坐席存在，任务停止");
                             $task->update(['status'=>1]);
                             break;
                         }
