@@ -1,12 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="003b7c19-25d9-476a-8425-57fc330161a6" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/freeswitch-gui-laravel.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/freeswitch-gui-laravel.iml" afterDir="false" />
+    <list default="true" id="003b7c19-25d9-476a-8425-57fc330161a6" name="Default Changelist" comment="修改群呼拨打频率时间">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/seeds/UserTableSeeder.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/seeds/UserTableSeeder.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/admin/dialplan/extension/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/admin/dialplan/extension/index.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/admin/user/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/admin/user/create.blade.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -16,45 +31,6 @@
   <component name="ComposerSettings" doNotAsk="true" synchronizationState="SYNCHRONIZE">
     <pharConfigPath>$PROJECT_DIR$/composer.json</pharConfigPath>
     <execution />
-  </component>
-  <component name="FindInProjectRecents">
-    <findStrings>
-      <find>validation</find>
-      <find>captcha</find>
-      <find>static/admin/</find>
-      <find>permission</find>
-      <find>destroy</find>
-      <find>admin.user.destroy</find>
-      <find>google</find>
-      <find>node</find>
-      <find>$permission</find>
-      <find>$model</find>
-      <find>$user</find>
-      <find>home.</find>
-      <find>home</find>
-      <find>home.base</find>
-      <find>Merch</find>
-      <find>merchant</find>
-      <find>Merchant</find>
-      <find>options</find>
-      <find>LAY-index-heapcol</find>
-      <find>堆积柱状图</find>
-      <find>直接</find>
-      <find>array_get</find>
-      <find>time</find>
-      <find>$record_table</find>
-    </findStrings>
-    <replaceStrings>
-      <replace>department</replace>
-      <replace>$model</replace>
-      <replace>$user</replace>
-      <replace>Arr::get</replace>
-    </replaceStrings>
-    <dirStrings>
-      <dir>D:\wnmp\www\freeswitch-gui-laravel\vendor\mews\captcha</dir>
-      <dir>D:\wnmp\www\freeswitch-gui-laravel\resources\views\admin\project_design</dir>
-      <dir>D:\wnmp\www\freeswitch-gui-laravel\public</dir>
-    </dirStrings>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -184,21 +160,23 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SONARLINT_PRECOMMIT_ANALYSIS" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/resources/views/admin" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="nodejs_package_manager_path" value="npm" />
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="D:\wnmp\www\freeswitch-gui-laravel\bootstrap" />
-      <recent name="D:\wnmp\www\freeswitch-gui-laravel\resources\views\admin\index" />
-      <recent name="D:\wnmp\www\freeswitch-gui-laravel\resources\views\admin\cdr" />
-      <recent name="D:\wnmp\www\freeswitch-gui-laravel\app\Console\Commands" />
-      <recent name="D:\wnmp\www\freeswitch-gui-laravel\app\Console" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\wnmp\www\freeswitch-gui-laravel\app\Http\Requests\Admin\Sip" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="E:\www\freeswitch-gui-laravel\resources\views\admin" />
+      <recent name="E:\www\freeswitch-gui-laravel\public\sounds" />
+      <recent name="E:\www\freeswitch-gui-laravel\resources\views\admin\waste" />
+      <recent name="D:\wnmp\www\freeswitch-gui-laravel\bootstrap" />
+      <recent name="D:\wnmp\www\freeswitch-gui-laravel\resources\views\admin\index" />
     </key>
   </component>
   <component name="RunManager">
@@ -245,35 +223,35 @@
       <workItem from="1589192287265" duration="2344000" />
       <workItem from="1590977225072" duration="821000" />
       <workItem from="1590995615562" duration="139000" />
-      <workItem from="1590995773330" duration="302000" />
-    </task>
-    <task id="LOCAL-00001" summary="完善系统管理">
-      <created>1588737340771</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1588737340771</updated>
-    </task>
-    <task id="LOCAL-00002" summary="做到crm的部门管理了">
-      <created>1588763275999</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1588763275999</updated>
-    </task>
-    <task id="LOCAL-00003" summary="做到crm的部门管理了">
-      <created>1588842281763</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1588842281763</updated>
-    </task>
-    <task id="LOCAL-00004" summary="完成客户管理">
-      <created>1588904691526</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1588904691526</updated>
+      <workItem from="1590995773330" duration="405000" />
+      <workItem from="1591059261049" duration="6960000" />
+      <workItem from="1591069409122" duration="2541000" />
+      <workItem from="1591075769790" duration="3311000" />
+      <workItem from="1591087581246" duration="6101000" />
+      <workItem from="1591149896243" duration="12079000" />
+      <workItem from="1591178334224" duration="1976000" />
+      <workItem from="1591233247413" duration="645000" />
+      <workItem from="1591252652353" duration="3621000" />
+      <workItem from="1591584723320" duration="1896000" />
+      <workItem from="1591587499431" duration="1686000" />
+      <workItem from="1591600679001" duration="840000" />
+      <workItem from="1591608906159" duration="2093000" />
+      <workItem from="1591611166538" duration="641000" />
+      <workItem from="1591838912366" duration="1474000" />
+      <workItem from="1591873333178" duration="3791000" />
+      <workItem from="1591923275478" duration="66000" />
+      <workItem from="1591924621438" duration="685000" />
+      <workItem from="1591926917630" duration="4712000" />
+      <workItem from="1592295279095" duration="1342000" />
+      <workItem from="1593316598552" duration="16077000" />
+      <workItem from="1593340486390" duration="1042000" />
+      <workItem from="1593394895488" duration="1195000" />
+      <workItem from="1593476479524" duration="2229000" />
+      <workItem from="1593482529329" duration="7321000" />
+      <workItem from="1593496150615" duration="966000" />
+      <workItem from="1593503501229" duration="735000" />
+      <workItem from="1593511363426" duration="1575000" />
+      <workItem from="1593658178265" duration="802000" />
     </task>
     <task id="LOCAL-00005" summary="添加公海库功能">
       <created>1588926100307</created>
@@ -324,23 +302,362 @@
       <option name="project" value="LOCAL" />
       <updated>1589192556260</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="完善拨号计划详情，默认帐号改为18999999999">
+      <created>1590996111804</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1590996111804</updated>
+    </task>
+    <task id="LOCAL-00013" summary="修改readme">
+      <created>1591059353642</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1591059353643</updated>
+    </task>
+    <task id="LOCAL-00014" summary="修改菜单验证">
+      <created>1591060352537</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1591060352537</updated>
+    </task>
+    <task id="LOCAL-00015" summary="修改接口文档图标">
+      <created>1591060805826</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1591060805826</updated>
+    </task>
+    <task id="LOCAL-00016" summary="修改图标">
+      <created>1591061365000</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1591061365000</updated>
+    </task>
+    <task id="LOCAL-00017" summary="公海客户添加可查看跟进记录，隐藏电话号码">
+      <created>1591065390193</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1591065390193</updated>
+    </task>
+    <task id="LOCAL-00018" summary="填充一些节点和客户记录">
+      <created>1591077463565</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1591077463565</updated>
+    </task>
+    <task id="LOCAL-00019" summary="完成webrtc功能demo,已测试分机与分机之间正常通话">
+      <created>1591092800945</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1591092800945</updated>
+    </task>
+    <task id="LOCAL-00020" summary="添加callstate事件监听">
+      <created>1591151732473</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1591151732473</updated>
+    </task>
+    <task id="LOCAL-00021" summary="移除信息">
+      <created>1591153717013</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1591153717013</updated>
+    </task>
+    <task id="LOCAL-00022" summary="更新拨号计划">
+      <created>1591154038177</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1591154038177</updated>
+    </task>
+    <task id="LOCAL-00023" summary="添加配置">
+      <created>1591154217905</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1591154217905</updated>
+    </task>
+    <task id="LOCAL-00024" summary="修复拨号计划bug">
+      <created>1591164107485</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1591164107485</updated>
+    </task>
+    <task id="LOCAL-00025" summary="修复首页快捷方式无法点击">
+      <created>1591166867902</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1591166867902</updated>
+    </task>
+    <task id="LOCAL-00026" summary="添加音频文件">
+      <created>1591178628699</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1591178628699</updated>
+    </task>
+    <task id="LOCAL-00027" summary="解决修改密码被双重加密的问题">
+      <created>1591253841677</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1591253841677</updated>
+    </task>
+    <task id="LOCAL-00028" summary="添加音频文件">
+      <created>1591610773772</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1591610773772</updated>
+    </task>
+    <task id="LOCAL-00029" summary="增加swoole-http功能">
+      <created>1591611779281</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1591611779281</updated>
+    </task>
+    <task id="LOCAL-00030" summary="更改网关更新配置rescan改为restart">
+      <created>1591839758681</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1591839758682</updated>
+    </task>
+    <task id="LOCAL-00031" summary="增加分机注册和呼叫状态">
+      <created>1591930014428</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1591930014428</updated>
+    </task>
+    <task id="LOCAL-00032" summary="更改事件监听">
+      <created>1591931490402</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1591931490402</updated>
+    </task>
+    <task id="LOCAL-00033" summary="通话记录进程修改为一个">
+      <created>1591931593755</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1591931593755</updated>
+    </task>
+    <task id="LOCAL-00034" summary="修改分机状态">
+      <created>1591932384070</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1591932384070</updated>
+    </task>
+    <task id="LOCAL-00035" summary="更改fs连接为默认连接">
+      <created>1591932452600</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1591932452600</updated>
+    </task>
+    <task id="LOCAL-00036" summary="添加呼叫状态">
+      <created>1591932631677</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1591932631677</updated>
+    </task>
+    <task id="LOCAL-00037" summary="添加RING_WAIT统计为响铃">
+      <created>1591932729746</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1591932729746</updated>
+    </task>
+    <task id="LOCAL-00038" summary="修改数据库字段默认值">
+      <created>1593323670312</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1593323670312</updated>
+    </task>
+    <task id="LOCAL-00039" summary="修改群呼">
+      <created>1593325325774</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1593325325774</updated>
+    </task>
+    <task id="LOCAL-00040" summary="修改群呼并发">
+      <created>1593328829891</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1593328829891</updated>
+    </task>
+    <task id="LOCAL-00041" summary="修改群呼并发">
+      <created>1593330476654</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1593330476654</updated>
+    </task>
+    <task id="LOCAL-00042" summary="修改群呼并发">
+      <created>1593330956747</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1593330956747</updated>
+    </task>
+    <task id="LOCAL-00043" summary="添加待分配库">
+      <created>1593337189328</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1593337189328</updated>
+    </task>
+    <task id="LOCAL-00044" summary="修改群呼">
+      <created>1593396046864</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1593396046864</updated>
+    </task>
+    <task id="LOCAL-00045" summary="修改视图">
+      <created>1593476768223</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1593476768223</updated>
+    </task>
+    <task id="LOCAL-00046" summary="修改redis配置">
+      <created>1593478885830</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1593478885830</updated>
+    </task>
+    <task id="LOCAL-00047" summary="修改redis配置">
+      <created>1593478894076</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1593478894076</updated>
+    </task>
+    <task id="LOCAL-00048" summary="修改群呼运行">
+      <created>1593485808807</created>
+      <option name="number" value="00048" />
+      <option name="presentableId" value="LOCAL-00048" />
+      <option name="project" value="LOCAL" />
+      <updated>1593485808807</updated>
+    </task>
+    <task id="LOCAL-00049" summary="修改监听">
+      <created>1593497012241</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1593497012241</updated>
+    </task>
+    <task id="LOCAL-00050" summary="修改esl信息">
+      <created>1593503535876</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1593503535876</updated>
+    </task>
+    <task id="LOCAL-00051" summary="修改swoole-http">
+      <created>1593503794397</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1593503794397</updated>
+    </task>
+    <task id="LOCAL-00052" summary="修改.env">
+      <created>1593504106244</created>
+      <option name="number" value="00052" />
+      <option name="presentableId" value="LOCAL-00052" />
+      <option name="project" value="LOCAL" />
+      <updated>1593504106244</updated>
+    </task>
+    <task id="LOCAL-00053" summary="修改群呼拨打频率时间">
+      <created>1593512313680</created>
+      <option name="number" value="00053" />
+      <option name="presentableId" value="LOCAL-00053" />
+      <option name="project" value="LOCAL" />
+      <updated>1593512313680</updated>
+    </task>
+    <option name="localTasksCounter" value="54" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="2" />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="完善系统管理" />
-    <MESSAGE value="做到crm的部门管理了" />
-    <MESSAGE value="完成客户管理" />
-    <MESSAGE value="添加公海库功能" />
-    <MESSAGE value="完成图表统计功能" />
-    <MESSAGE value="更改用户表备注" />
-    <MESSAGE value="添加事件监听" />
-    <MESSAGE value="完成统计功能" />
-    <MESSAGE value="更新配置文件" />
-    <MESSAGE value="更新网关请求" />
-    <option name="LAST_COMMIT_MESSAGE" value="更新网关请求" />
+    <MESSAGE value="修复拨号计划bug" />
+    <MESSAGE value="修复首页快捷方式无法点击" />
+    <MESSAGE value="解决修改密码被双重加密的问题" />
+    <MESSAGE value="添加音频文件" />
+    <MESSAGE value="增加swoole-http功能" />
+    <MESSAGE value="更改网关更新配置rescan改为restart" />
+    <MESSAGE value="增加分机注册和呼叫状态" />
+    <MESSAGE value="更改事件监听" />
+    <MESSAGE value="通话记录进程修改为一个" />
+    <MESSAGE value="修改分机状态" />
+    <MESSAGE value="更改fs连接为默认连接" />
+    <MESSAGE value="添加呼叫状态" />
+    <MESSAGE value="添加RING_WAIT统计为响铃" />
+    <MESSAGE value="修改数据库字段默认值" />
+    <MESSAGE value="修改群呼并发" />
+    <MESSAGE value="添加待分配库" />
+    <MESSAGE value="修改群呼" />
+    <MESSAGE value="修改视图" />
+    <MESSAGE value="修改redis配置" />
+    <MESSAGE value="修改群呼运行" />
+    <MESSAGE value="修改监听" />
+    <MESSAGE value="修改esl信息" />
+    <MESSAGE value="修改swoole-http" />
+    <MESSAGE value="修改.env" />
+    <MESSAGE value="修改群呼拨打频率时间" />
+    <option name="LAST_COMMIT_MESSAGE" value="修改群呼拨打频率时间" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="840" y="356" key="#Notifications" timestamp="1593658546775">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="840" y="356" key="#Notifications/0.0.1920.1040@0.0.1920.1040" timestamp="1593658546775" />
+    <state x="690" y="275" key="#com.jetbrains.php.actions.copyPaste.importReferences.PhpImportReferencesDialog" timestamp="1593335304393">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="690" y="275" key="#com.jetbrains.php.actions.copyPaste.importReferences.PhpImportReferencesDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1593335304393" />
+    <state x="552" y="249" key="Vcs.Push.Dialog.v2" timestamp="1593512322217">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="552" y="249" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1593512322217" />
+    <state x="652" y="293" key="git4idea.merge.GitPullDialog" timestamp="1593476485670">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="652" y="293" key="git4idea.merge.GitPullDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1593476485670" />
   </component>
 </project>
