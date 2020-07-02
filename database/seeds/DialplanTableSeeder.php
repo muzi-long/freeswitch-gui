@@ -58,7 +58,7 @@ class DialplanTableSeeder extends Seeder
                     [
                         'display_name'  => '规则一',
                         'field'         => 'destination_number',
-                        'expression'    => '^(\d{4,5})$',
+                        'expression'    => '^(\d{4,5})_([a-z0-9]{16,32})$',
                         'break'         => 'on-false',
                         'sort'          => 0,
                         'actions'       => [
@@ -79,6 +79,12 @@ class DialplanTableSeeder extends Seeder
                                 'application'   => 'set',
                                 'data'          => 'hangup_after_bridge=true',
                                 'sort'          => 2,
+                            ],
+                            [
+                                'display_name'  => '设置uuid到bleg',
+                                'application'   => 'export',
+                                'data'          => 'nolocal:origination_uuid=$3',
+                                'sort'          => 3,
                             ],
                             [
                                 'display_name'  => '呼叫',
