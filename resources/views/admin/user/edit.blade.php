@@ -48,7 +48,7 @@
                         <select name="sip_id" lay-search>
                             <option value="">无</option>
                             @foreach($sips as $p1)
-                                <option value="{{$p1->id}}" {{ isset($user) && $p1->id == $user->sip_id ? 'selected' : '' }} {{ isset($user) && in_array($p1->id,$user_sip) ? 'disabled' : '' }} >{{$p1->username}}</option>
+                                <option value="{{$p1->id}}" {{ isset($user) && $p1->id == $user->sip_id ? 'selected' : '' }} {{ in_array($p1->id,$user_sip)&&$p1->id!=$user->sip_id ? 'disabled' : '' }} >{{$p1->username}}</option>
                             @endforeach
                         </select>
                     </div>
