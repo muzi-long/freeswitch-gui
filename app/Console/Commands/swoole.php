@@ -178,15 +178,15 @@ class swoole extends Command
                                 }
                                 break;
                             case 'CHANNEL_HANGUP_COMPLETE':
-                                $otherType = array_get($json,'Other-Type',null);
+                                $otherType = Arr::get($json,'Other-Type',null);
                                 //A的挂机事件到来时线束进程
                                 if (empty($otherType) || $otherType == 'originatee') {
-                                    $src = array_get($json,'Caller-Caller-ID-Number',null);
-                                    $dst = array_get($json,'Caller-Callee-ID-Number',null);
-                                    $customer_caller = array_get($json,'variable_customer_caller',null);
+                                    $src = Arr::get($json,'Caller-Caller-ID-Number',null);
+                                    $dst = Arr::get($json,'Caller-Callee-ID-Number',null);
+                                    $customer_caller = Arr::get($json,'variable_customer_caller',null);
                                     $dst = !empty($customer_caller)?$customer_caller:$dst;
-                                    $start = array_get($json,'variable_start_stamp',null);
-                                    $user_data = array_get($json,'variable_user_data',null);
+                                    $start = Arr::get($json,'variable_start_stamp',null);
+                                    $user_data = Arr::get($json,'variable_user_data',null);
                                     $record_file = str_replace($this->fs_dir,$this->url,$fullfile);
                                     $billsec = $answer_time!=0?time()-$answer_time:0;
                                     try{
