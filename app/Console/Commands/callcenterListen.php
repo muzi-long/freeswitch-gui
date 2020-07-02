@@ -103,7 +103,6 @@ class callcenterListen extends Command
                         if ($cause == 'Cancel') {
                             $billsec = 0;
                         }else{
-
                             if ($leaving_time && $answered_time){
                                 $billsec = $leaving_time - $answered_time > 0 ? $leaving_time - $answered_time : 0;
                             }else{

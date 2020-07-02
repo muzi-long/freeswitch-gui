@@ -40,7 +40,8 @@ return [
         'password' => 'dgg@1234.',
         'port' => 8022,
     ],
-
+    //拨打电话队列
+    'fs_dial_key' => 'fs_dial_list',
     //队列响铃模式
     'strategy' => [
         'top-down'                      => '顺序振铃',

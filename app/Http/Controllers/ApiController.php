@@ -71,7 +71,10 @@ class ApiController extends Controller
         if ($data['exten'] == null || $data['phone'] == null) {
             return Response::json(['code'=>1,'msg'=>'号码不能为空']);
         }
-
+        //验证手机号码
+        if (!preg_match('/\d{4,12}/', $data['phone'])) {
+            return Response::json(['code'=>1,'msg'=>'客户电话号码格式不正确']);
+        }
         //检测10秒重复请求
         if(Redis::get($data['exten'].'_check')!=null){
             return Response::json(['code'=>1,'msg'=>'重复请求，请稍后再试']);
@@ -88,20 +91,6 @@ class ApiController extends Controller
         //验证分机是否登录
         if ($sip->status == 0){
             return Response::json(['code'=>1,'msg'=>'当前外呼号未登录']);
-        }
-
-        $fs = new \Freeswitchesl();
-        $service = config('freeswitch.esl');
-        try{
-            $fs->connect($service['host'],$service['port'],$service['password']);
-        }catch (\Exception $exception){
-            Log::info('拨打电话连接esl异常：'.$exception->getMessage());
-            return Response::json(['code'=>1,'msg'=>'无法连接外呼服务']);
-        }
-
-        //验证手机号码
-        if (!preg_match('/\d{4,12}/', $data['phone'])) {
-            return Response::json(['code'=>1,'msg'=>'客户电话号码格式不正确']);
         }
 
         //呼叫字符串
@@ -148,13 +137,16 @@ class ApiController extends Controller
             }
             $dialStr .= $data['phone']."_".$bleg_uuid;
         }else{ //内部呼叫
-            $dialStr .="user/".$sip->username." ".$data["phone"];
+            $dialStr .="user/".$sip->username." ".$data["phone"]."_".$bleg_uuid;
         }
         $dialStr .=" XML default";
 
         try{
-            $fs->bgapi($dialStr);
-            $fs->disconnect();
+            Redis::rPush(config('freeswitch.fs_dial_key'),json_encode([
+                'aleg_uuid' => $aleg_uuid,
+                'bleg_uuid' => $bleg_uuid,
+                'dial_str'  => base64_encode($dialStr),
+            ]));
             //20分钟过期
             Redis::setex($data['exten'].'_uuid',1200, $aleg_uuid);
             return Response::json(['code'=>0,'msg'=>'呼叫成功','data'=>['uuid'=>$aleg_uuid,'time'=>date('Y-m-d H:i:s')]]);
