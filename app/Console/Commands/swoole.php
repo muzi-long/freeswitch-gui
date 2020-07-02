@@ -211,6 +211,7 @@ class swoole extends Command
                                             'dst' => $dst,
                                             'duration' => 0,
                                             'billsec' => $billsec,
+                                            'aleg_start_at' => urldecode($start),
                                             'record_file' => $record_file,
                                             'user_data' => $user_data,
                                             'created_at' => date('Y-m-d H:i:s'),
