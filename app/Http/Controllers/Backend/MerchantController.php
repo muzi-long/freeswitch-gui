@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Backend\Platform\Merchant\StoreRequest;
 use App\Http\Requests\Backend\Platform\Merchant\UpdateRequest;
+use App\Models\Freeswitch;
 use App\Models\Merchant;
 use App\Models\Staff;
 use Illuminate\Http\Request;
@@ -52,7 +53,8 @@ class MerchantController extends Controller
      */
     public function create()
     {
-        return View::make('backend.platform.merchant.create');
+        $fs = Freeswitch::orderBy('id','desc')->get();
+        return View::make('backend.platform.merchant.create',compact('fs'));
     }
 
     /**
@@ -76,6 +78,7 @@ class MerchantController extends Controller
             'queue_num',
             'task_num',
             'expire_at',
+            'freeswitch_id',
         ]);
         DB::beginTransaction();
         try {
@@ -91,6 +94,7 @@ class MerchantController extends Controller
                 'task_num' => $data['task_num'],
                 'expire_at' => $data['expire_at'],
                 'created_at' => date('Y-m-d H:i:s'),
+                'freeswitch_id' => $data['freeswitch_id'],
             ]);
             DB::table('staff')->insert([
                 'username' => $data['username'],
@@ -117,7 +121,8 @@ class MerchantController extends Controller
     {
         $model = Merchant::findOrFail($id);
         $staff = Staff::where('merchant_id',$id)->where('is_merchant',1)->first();
-        return View::make('backend.platform.merchant.edit',compact('model','staff'));
+        $fs = Freeswitch::orderBy('id','desc')->get();
+        return View::make('backend.platform.merchant.edit',compact('model','staff','fs'));
     }
 
     /**
@@ -143,6 +148,7 @@ class MerchantController extends Controller
             'queue_num',
             'task_num',
             'expire_at',
+            'freeswitch_id',
         ]);
         DB::beginTransaction();
         try {
@@ -158,6 +164,7 @@ class MerchantController extends Controller
                 'task_num' => $data['task_num'],
                 'expire_at' => $data['expire_at'],
                 'updated_at' => date('Y-m-d H:i:s'),
+                'freeswitch_id' => $data['freeswitch_id'],
             ]);
             DB::table('staff')
                 ->where('merchant_id',$merchant->id)

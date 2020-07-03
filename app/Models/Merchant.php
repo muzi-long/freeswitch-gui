@@ -20,6 +20,7 @@ class Merchant extends Model
         'queue_num',
         'task_num',
         'expire_at',
+        'freeswitch_id',
     ];
 
 }

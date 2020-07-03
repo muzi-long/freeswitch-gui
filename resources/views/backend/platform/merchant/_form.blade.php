@@ -45,6 +45,17 @@
                 <input class="layui-input" type="text" name="expire_at" value="{{$model->expire_at??''}}" id="expire_at" lay-verify="required" readonly placeholder="如：商户帐号有效期" >
             </div>
         </div>
+        <div class="layui-form-item">
+            <label for="" class="layui-form-label">服务器</label>
+            <div class="layui-input-inline">
+                <select name="freeswitch_id" >
+                    <option value="0">无</option>
+                    @foreach($fs as $d)
+                        <option value="0" {{isset($model)&&$model->freeswitch_id==$d->id?'selected':''}} >{{$d->name}}({{$d->external_ip}})</option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
         @if(isset($staff))
             <div class="layui-form-item">
                 <label for="" class="layui-form-label">登录时间</label>
