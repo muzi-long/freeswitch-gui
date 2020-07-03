@@ -18,6 +18,7 @@ class Merchant extends Migration
             $table->string('company_name')->nullable()->comment('公司名称');
             $table->string('contact_name')->nullable()->comment('联系人');
             $table->string('contact_phone')->nullable()->comment('联系电话');
+            $table->unsignedInteger('staff_num')->default(0)->comment('员工数量');
             $table->unsignedInteger('sip_num')->default(0)->comment('分机数量');
             $table->unsignedInteger('gateway_num')->default(0)->comment('网关数量');
             $table->unsignedInteger('agent_num')->default(0)->comment('坐席数量');

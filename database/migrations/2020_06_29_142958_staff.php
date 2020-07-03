@@ -22,6 +22,8 @@ class Staff extends Migration
             $table->dateTime('last_login_at')->nullable()->comment('最后登录时间');
             $table->ipAddress('last_login_ip')->nullable()->comment('最后登录IP地址');
             $table->tinyInteger('is_merchant')->default(0)->comment('是否是商户');
+            $table->unsignedBigInteger('department_id')->default(0)->comment('部门ID');
+            $table->unsignedBigInteger('sip_id')->default(0)->comment('分机ID');
             $table->softDeletes();
             $table->timestamps();
         });

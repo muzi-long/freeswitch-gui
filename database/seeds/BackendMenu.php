@@ -85,6 +85,25 @@ class BackendMenu extends Seeder
                     ],
                 ]
             ],
+            [
+                'name' => '平台管理',
+                'route' => null,
+                'url' => null,
+                'icon' => 'layui-icon-templeate-1',
+                'type' => 2,
+                'sort' => 2,
+                'permission_name' => 'backend.platform',
+                'child' => [
+                    [
+                        'name' => '商户管理',
+                        'route' => 'backend.platform.merchant',
+                        'url' => null,
+                        'icon' => 'layui-icon-user',
+                        'type' => 1,
+                        'permission_name' => 'backend.platform.merchant',
+                    ],
+                ]
+            ],
         ];
         $permissions = \App\Models\Permission::where('guard_name',$guard)->pluck('id','name')->toArray();
         foreach ($datas as $k1 => $d1){

@@ -105,7 +105,7 @@ Route::group(['namespace'=>'Backend','prefix'=>'system','middleware'=>['auth:bac
 
 /*
 |--------------------------------------------------------------------------
-| 呼叫管理模块
+| 呼叫中心管理模块
 |--------------------------------------------------------------------------
 */
 Route::group(['namespace'=>'Backend','prefix'=>'call','middleware'=>['auth:backend']],function (){
@@ -164,5 +164,28 @@ Route::group(['namespace'=>'Backend','prefix'=>'call','middleware'=>['auth:backe
         //删除
         Route::delete('action/destroy','ActionController@destroy')->name('backend.call.action.destroy');
     });
+
+});
+
+/*
+|--------------------------------------------------------------------------
+| 平台管理模块
+|--------------------------------------------------------------------------
+*/
+Route::group(['namespace'=>'Backend','prefix'=>'platform','middleware'=>['auth:backend']],function (){
+
+    //商户管理
+    Route::group([],function (){
+        Route::get('merchant','MerchantController@index')->name('backend.platform.merchant')->middleware('permission:backend.platform.merchant');
+        //添加
+        Route::get('merchant/create','MerchantController@create')->name('backend.platform.merchant.create')->middleware('permission:backend.platform.merchant.create');
+        Route::post('merchant/store','MerchantController@store')->name('backend.platform.merchant.store')->middleware('permission:backend.platform.merchant.create');
+        //编辑
+        Route::get('merchant/{id}/edit','MerchantController@edit')->name('backend.platform.merchant.edit')->middleware('permission:backend.platform.merchant.edit');
+        Route::put('merchant/{id}/update','MerchantController@update')->name('backend.platform.merchant.update')->middleware('permission:backend.platform.merchant.edit');
+        //删除
+        Route::delete('merchant/destroy','MerchantController@destroy')->name('backend.platform.merchant.destroy')->middleware('permission:backend.platform.merchant.destroy');
+    });
+
 
 });

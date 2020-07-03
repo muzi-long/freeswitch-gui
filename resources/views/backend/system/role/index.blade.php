@@ -5,7 +5,7 @@
         <div class="layui-card-header layuiadmin-card-header-auto">
             <div class="layui-btn-group">
                 @can('backend.system.role.destroy')
-                    <button class="layui-btn layui-btn-sm layui-btn-danger" id="listDelete">删 除</button>
+                    <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" id="listDelete">删 除</button>
                 @endcan
                 @can('backend.system.role.create')
                     <a class="layui-btn layui-btn-sm" href="{{ route('backend.system.role.create') }}">添 加</a>
@@ -102,7 +102,7 @@
                             $.post("{{ route('backend.system.role.destroy') }}", {
                                 _method: 'delete',
                                 ids: ids
-                            }, function (result) {
+                            }, function (res) {
                                 layer.close(load);
                                 if (res.code == 0) {
                                     layer.msg(res.msg, {icon: 1}, function () {

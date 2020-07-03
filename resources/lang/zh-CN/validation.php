@@ -134,6 +134,16 @@ return [
             'rule-name' => 'custom-message',
         ],
         'captcha' => '验证码错误',
+        'company_name' => '公司名称',
+        'contact_name' => '联系人',
+        'contact_phone' => '联系电话',
+        'staff_num' => '员工数量',
+        'sip_num' => '分机数量',
+        'gateway_num' => '网关数量',
+        'agent_num' => '坐席数量',
+        'queue_num' => '队列数量',
+        'task_num' => '任务数量',
+        'expire_at' => '到期时间',
     ],
 
     /*

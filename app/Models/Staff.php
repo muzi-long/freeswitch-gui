@@ -17,6 +17,8 @@ class Staff extends Model
         'nickname',
         'last_login_at',
         'last_login_ip',
+        'department_id',
+        'sip_id',
     ];
 
     /**

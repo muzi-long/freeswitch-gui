@@ -104,6 +104,30 @@ class BackendPermission extends Seeder
                     ],
                 ]
             ],
+            [
+                'name' => 'backend.platform',
+                'display_name' => '平台管理',
+                'child' => [
+                    [
+                        'name' => 'backend.platform.merchant',
+                        'display_name' => '商户管理',
+                        'child' => [
+                            ['name' => 'backend.platform.merchant.create', 'display_name' => '添加'],
+                            ['name' => 'backend.platform.merchant.edit', 'display_name' => '编辑'],
+                            ['name' => 'backend.platform.merchant.destroy', 'display_name' => '删除'],
+                        ]
+                    ],
+                    [
+                        'name' => 'backend.platform.staff',
+                        'display_name' => '员工管理',
+                        'child' => [
+                            ['name' => 'backend.platform.staff.create', 'display_name' => '添加'],
+                            ['name' => 'backend.platform.staff.edit', 'display_name' => '编辑'],
+                            ['name' => 'backend.platform.staff.destroy', 'display_name' => '删除'],
+                        ]
+                    ],
+                ]
+            ],
         ];
 
         foreach ($permissions as $pem1) {

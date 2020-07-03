@@ -13,6 +13,7 @@ class Merchant extends Model
         'company_name',
         'contact_name',
         'contact_phone',
+        'staff_num',
         'sip_num',
         'gateway_num',
         'agent_num',

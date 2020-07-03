@@ -80,13 +80,13 @@
                     ,layEvent = obj.event; //获得 lay-event 对应的值
                 if(layEvent === 'del'){
                     layer.confirm('确认删除吗？', function(index){
-                        $.post("{{ route('backend.call.extension.destroy') }}",{_method:'delete',ids:[data.id]},function (result) {
-                            if (result.code==0){
+                        $.post("{{ route('backend.call.extension.destroy') }}",{_method:'delete',ids:[data.id]},function (res) {
+                            if (res.code==0){
                                 obj.del(); //删除对应行（tr）的DOM结构
                             }
                             layer.close(index);
-                            var icon = result.code==0?1:2;
-                            layer.msg(result.msg,{icon:icon})
+                            var icon = res.code==0?1:2;
+                            layer.msg(res.msg,{icon:icon})
                         });
                     });
                 } else if(layEvent === 'edit'){
@@ -110,13 +110,13 @@
                 }
                 if (ids.length>0){
                     layer.confirm('确认删除吗？', function(index){
-                        $.post("{{ route('backend.call.extension.destroy') }}",{_method:'delete',ids:ids},function (result) {
-                            if (result.code==0){
+                        $.post("{{ route('backend.call.extension.destroy') }}",{_method:'delete',ids:ids},function (res) {
+                            if (res.code==0){
                                 dataTable.reload()
                             }
                             layer.close(index);
-                            var icon = result.code==0?6:5;
-                            layer.msg(result.msg,{icon:icon})
+                            var icon = res.code==0?1:2;
+                            layer.msg(res.msg,{icon:icon})
                         });
                     })
                 }else {
