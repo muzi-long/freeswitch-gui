@@ -1,8 +1,0 @@
-
-cphp:S101
-"JRename class "eslCdr" to match the regular expression ^[A-Z][a-zA-Z0-9]*$.(Ğ¸ÔÂúÿÿÿÿ
-K	php:S1185"6Remove this method "__construct" to simply inherit it.(ƒöÙƒ
-i	php:S3776)"TRefactor this function to reduce its Cognitive Complexity from 21 to the 15 allowed.(õŸ‘
-f	php:S11923"LDefine a constant instead of duplicating this literal "update_data" 5 times.(…ºÉ§øÿÿÿÿ
-`	php:S11929"KDefine a constant instead of duplicating this literal "table_name" 3 times.(É“Ûí
-Iphp:S1213"0Add curly braces around the nested statement(s).(…ºÉ§øÿÿÿÿ
