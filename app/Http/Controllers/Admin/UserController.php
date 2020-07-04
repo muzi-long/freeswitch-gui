@@ -16,7 +16,7 @@ use App\Models\User;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
@@ -57,7 +57,7 @@ class UserController extends Controller
      */
     protected function loggedOut()
     {
-        Cache::forget('menus');
+        Session::forget('menus');
         return Redirect::route('admin.user.login');
     }
 
@@ -78,7 +78,7 @@ class UserController extends Controller
             'last_login_ip' => $request->ip(),
         ]);
         $menus = $user->menus();
-        Cache::put('menus',$menus);
+        Session::put('menus',$menus);
     }
 
     /**

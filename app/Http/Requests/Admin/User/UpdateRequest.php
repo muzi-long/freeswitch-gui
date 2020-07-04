@@ -27,7 +27,7 @@ class UpdateRequest extends FormRequest
     {
         return [
             'phone' => 'required|numeric|regex:/^1[34578][0-9]{9}$/|unique:users,phone,'.$this->id.',id',
-            'nickname'  => 'required|min:4|max:14',
+            'nickname'  => 'required|min:2|max:14',
         ];
     }
 

@@ -7,11 +7,8 @@ use App\Models\Cdr;
 use App\Models\Department;
 use App\Models\Project;
 use App\Models\User;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\View;
-use Illuminate\Support\Facades\Cache;
 
 class IndexController extends Controller
 {
@@ -71,5 +68,5 @@ class IndexController extends Controller
     {
         return View::make('admin.index.onlinecall');
     }
-    
+
 }

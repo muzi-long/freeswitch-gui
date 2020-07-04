@@ -98,7 +98,7 @@
                             </dd>
                         </dl>
                     </li>
-                    @foreach(\Illuminate\Support\Facades\Cache::get('menus') as $menu1)
+                    @foreach(\Illuminate\Support\Facades\Session::get('menus') as $menu1)
                         <li data-name="{{$menu1['name']}}" class="layui-nav-item">
                             <a
                                @if($menu1['type']==1 && ($menu1['route'] || $menu1['url']))
