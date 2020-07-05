@@ -83,7 +83,7 @@ class DialplanTableSeeder extends Seeder
                             [
                                 'display_name'  => '设置uuid到bleg',
                                 'application'   => 'export',
-                                'data'          => 'nolocal:origination_uuid=$3',
+                                'data'          => 'nolocal:origination_uuid=$2',
                                 'sort'          => 3,
                             ],
                             [
