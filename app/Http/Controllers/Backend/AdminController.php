@@ -13,11 +13,11 @@ use App\Models\Role;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\View;
 
 class AdminController extends Controller
@@ -59,7 +59,7 @@ class AdminController extends Controller
      */
     protected function loggedOut()
     {
-        Cache::forget('backend_menus');
+        Session::forget('backend_menus');
         return Redirect::route('backend.system.admin.login');
     }
 
@@ -81,7 +81,7 @@ class AdminController extends Controller
         ]);
         //缓存后台菜单
         $menus = $user->menus();
-        Cache::put('backend_menus',$menus);
+        Session::put('backend_menus',$menus);
 
     }
 
