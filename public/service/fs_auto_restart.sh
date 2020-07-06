@@ -12,10 +12,9 @@ do
 		echo "freeswitch process has been restarted!"
 		sleep 1
 		echo "restart asr"
-		#supervisorctl restart esl-listen:
-		#supervisorctl restart esl-cdr:*
+		supervisorctl restart esl-listen:
+		supervisorctl restart esl-cdr:*
 		supervisorctl restart esl-custom:
-		supervisorctl restart swoole-cdr:*
 		supervisorctl restart callcenter:
 	fi
 	sleep 5
