@@ -102,6 +102,14 @@ class BackendMenu extends Seeder
                         'type' => 1,
                         'permission_name' => 'backend.platform.merchant',
                     ],
+                    [
+                        'name' => '员工管理',
+                        'route' => 'backend.platform.staff',
+                        'url' => null,
+                        'icon' => 'layui-icon-username',
+                        'type' => 1,
+                        'permission_name' => 'backend.platform.staff',
+                    ],
                 ]
             ],
         ];

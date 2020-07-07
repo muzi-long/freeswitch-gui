@@ -3,44 +3,38 @@
 @section('content')
     <div class="layui-card">
         <div class="layui-card-header layuiadmin-card-header-auto">
-            <form action="{{route('backend.platform.merchant')}}" class="layui-form">
+            <form action="{{route('backend.platform.staff')}}" class="layui-form">
                 <div class="layui-btn-group">
-                    @can('backend.platform.merchant.destroy')
+                    @can('backend.platform.staff.destroy')
                         <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" id="listDelete">删 除</button>
                     @endcan
-                    @can('backend.platform.merchant.create')
-                        <a class="layui-btn layui-btn-sm" href="{{ route('backend.platform.merchant.create') }}">添 加</a>
+                    @can('backend.platform.staff.create')
+                        <a class="layui-btn layui-btn-sm" href="{{ route('backend.platform.staff.create') }}">添 加</a>
                     @endcan
                         <button type="button" class="layui-btn layui-btn-sm" lay-submit lay-filter="search" >搜 索</button>
                 </div>
                 <div class="layui-form-item">
                     <div class="layui-inline">
-                        <label for="" class="layui-form-label">服务器</label>
+                        <label for="" class="layui-form-label">所属商户</label>
                         <div class="layui-input-block">
-                            <select name="freeswitch_id" >
-                                <option value="0">无</option>
-                                @foreach($fs as $d)
-                                    <option value="{{$d->id}}">{{$d->name}}({{$d->external_ip}})</option>
+                            <select name="merchant_id" >
+                                <option value="">请选择</option>
+                                @foreach($merchants as $d)
+                                    <option value="{{$d->id}}">{{$d->company_name}}</option>
                                 @endforeach
                             </select>
                         </div>
                     </div>
                     <div class="layui-inline">
-                        <label for="" class="layui-form-label">公司名称</label>
+                        <label for="" class="layui-form-label">姓名</label>
                         <div class="layui-input-block">
-                            <input type="text" name="company_name" class="layui-input">
+                            <input type="text" name="nickname" class="layui-input">
                         </div>
                     </div>
                     <div class="layui-inline">
-                        <label for="" class="layui-form-label">联系人</label>
+                        <label for="" class="layui-form-label">帐号</label>
                         <div class="layui-input-block">
-                            <input type="text" name="contact_name" class="layui-input">
-                        </div>
-                    </div>
-                    <div class="layui-inline">
-                        <label for="" class="layui-form-label">联系电话</label>
-                        <div class="layui-input-block">
-                            <input type="text" name="contact_phone" class="layui-input">
+                            <input type="text" name="username" class="layui-input">
                         </div>
                     </div>
                 </div>
@@ -50,10 +44,10 @@
             <table id="dataTable" lay-filter="dataTable"></table>
             <script type="text/html" id="options">
                 <div class="layui-btn-group">
-                    @can('backend.platform.merchant.edit')
+                    @can('backend.platform.staff.edit')
                         <a class="layui-btn layui-btn-sm" lay-event="edit">编辑</a>
                     @endcan
-                    @can('backend.platform.merchant.destroy')
+                    @can('backend.platform.staff.destroy')
                         <a class="layui-btn layui-btn-danger layui-btn-sm" lay-event="del">删除</a>
                     @endcan
                 </div>
@@ -74,21 +68,24 @@
                 var dataTable = table.render({
                     elem: '#dataTable'
                     , height: 500
-                    , url: "{{ route('backend.platform.merchant') }}" //数据接口
+                    , url: "{{ route('backend.platform.staff') }}" //数据接口
                     , page: true //开启分页
                     , cols: [[ //表头
                         {checkbox: true, fixed: true}
                         , {field: 'id', title: 'ID', sort: true, width: 80}
-                        , {field: 'company_name', title: '公司名称'}
-                        , {field: 'contact_name', title: '联系人'}
-                        , {field: 'contact_phone', title: '联系电话'}
-                        , {field: 'staff_num', title: '员工数量（总）'}
-                        , {field: 'sip_num', title: '分机数量'}
-                        , {field: 'gateway_num', title: '网关数量'}
-                        , {field: 'agent_num', title: '坐席数量'}
-                        , {field: 'queue_num', title: '队列数量'}
-                        , {field: 'task_num', title: '任务数量'}
-                        , {field: 'expire_at', title: '到期时间',width:150}
+                        , {field: 'nickname', title: '姓名'}
+                        , {field: 'username', title: '帐号'}
+                        , {field: 'company_name', title: '所属商户',templet: function (d) {
+                                return d.merchant.company_name;
+                            }}
+                        , {field: 'department_id', title: '部门',templet: function (d) {
+                                return d.department.name;
+                            }}
+                        , {field: 'sip_id', title: '分机',templet: function (d) {
+                                return d.sip.username;
+                            }}
+                        , {field: 'last_login_at', title: '登录时间'}
+                        , {field: 'last_login_ip', title: '登录IP'}
                         , {field: 'created_at', title: '创建时间'}
                         , {width: 180, align: 'center', toolbar: '#options',title: '操作'}
                     ]]
@@ -102,7 +99,7 @@
                         layer.confirm('确认删除吗？', function (index) {
                             layer.close(index)
                             var load = layer.load();
-                            $.post("{{ route('backend.platform.merchant.destroy') }}", {
+                            $.post("{{ route('backend.platform.staff.destroy') }}", {
                                 _method: 'delete',
                                 ids: [data.id]
                             }, function (res) {
@@ -117,7 +114,7 @@
                             });
                         });
                     } else if (layEvent === 'edit') {
-                        location.href = '/backend/platform/merchant/' + data.id + '/edit';
+                        location.href = '/backend/platform/staff/' + data.id + '/edit';
                     }
                 });
 
@@ -135,7 +132,7 @@
                         layer.confirm('确认删除吗？', function (index) {
                             layer.close(index);
                             var load = layer.load();
-                            $.post("{{ route('backend.platform.merchant.destroy') }}", {
+                            $.post("{{ route('backend.platform.staff.destroy') }}", {
                                 _method: 'delete',
                                 ids: ids
                             }, function (res) {

@@ -24,8 +24,12 @@ class MerchantController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()){
-            $data = $request->all(['company_name','contact_name','contact_phone']);
-            $res = Merchant::when($data['company_name'],function ($q) use ($data){
+            $data = $request->all(['freeswitch_id','company_name','contact_name','contact_phone']);
+            $res = Merchant::query()
+            ->when($data['freeswitch_id'],function ($q) use ($data){
+                return $q->where('freeswitch_id',$data['freeswitch_id']);
+            })
+            ->when($data['company_name'],function ($q) use ($data){
                 return $q->where('company_name','like','%'.$data['company_name'].'%');
             })
             ->when($data['contact_name'],function ($q) use ($data){
@@ -44,7 +48,8 @@ class MerchantController extends Controller
             ];
             return Response::json($data);
         }
-        return View::make('backend.platform.merchant.index');
+        $fs = Freeswitch::orderBy('id','desc')->get();
+        return View::make('backend.platform.merchant.index',compact('fs'));
     }
 
     /**

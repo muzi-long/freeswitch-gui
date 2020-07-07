@@ -15,7 +15,7 @@ class Staff extends Migration
     {
         Schema::create('staff', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('merchant_id')->comment('商户ID');
+            $table->unsignedBigInteger('merchant_id')->default(0)->comment('商户ID');
             $table->string('username')->unique()->comment('帐号');
             $table->string('password')->comment('密码');
             $table->string('nickname',60)->nullable()->comment('姓名/昵称');

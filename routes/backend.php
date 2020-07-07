@@ -187,5 +187,17 @@ Route::group(['namespace'=>'Backend','prefix'=>'platform','middleware'=>['auth:b
         Route::delete('merchant/destroy','MerchantController@destroy')->name('backend.platform.merchant.destroy')->middleware('permission:backend.platform.merchant.destroy');
     });
 
+    //员工管理
+    Route::group([],function (){
+        Route::get('staff','StaffController@index')->name('backend.platform.staff')->middleware('permission:backend.platform.staff');
+        //添加
+        Route::get('staff/create','StaffController@create')->name('backend.platform.staff.create')->middleware('permission:backend.platform.staff.create');
+        Route::post('staff/store','StaffController@store')->name('backend.platform.staff.store')->middleware('permission:backend.platform.staff.create');
+        //编辑
+        Route::get('staff/{id}/edit','StaffController@edit')->name('backend.platform.staff.edit')->middleware('permission:backend.platform.staff.edit');
+        Route::put('staff/{id}/update','StaffController@update')->name('backend.platform.staff.update')->middleware('permission:backend.platform.staff.edit');
+        //删除
+        Route::delete('staff/destroy','StaffController@destroy')->name('backend.platform.staff.destroy')->middleware('permission:backend.platform.staff.destroy');
+    });
 
 });

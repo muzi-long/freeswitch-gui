@@ -27,6 +27,31 @@ class Staff extends Model
      */
     public function merchant()
     {
-        return $this->hasOne(Merchant::class,'id','merchant_id');
+        return $this->hasOne(Merchant::class,'id','merchant_id')->withDefault([
+            'company_name' => '-',
+        ]);
     }
+
+    /**
+     * 部门信息
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function department()
+    {
+        return $this->hasOne(Department::class,'id','department_id')->withDefault([
+            'name' => '-',
+        ]);
+    }
+
+    /**
+     * 分机信息
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function sip()
+    {
+        return $this->hasOne(Sip::class,'id','sip_id')->withDefault([
+            'username' => '-',
+        ]);
+    }
+
 }

@@ -51,7 +51,7 @@
                 <select name="freeswitch_id" >
                     <option value="0">无</option>
                     @foreach($fs as $d)
-                        <option value="0" {{isset($model)&&$model->freeswitch_id==$d->id?'selected':''}} >{{$d->name}}({{$d->external_ip}})</option>
+                        <option value="{{$d->id}}" {{isset($model)&&$model->freeswitch_id==$d->id?'selected':''}} >{{$d->name}}({{$d->external_ip}})</option>
                     @endforeach
                 </select>
             </div>
