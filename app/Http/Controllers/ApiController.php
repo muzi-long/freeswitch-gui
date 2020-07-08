@@ -142,11 +142,17 @@ class ApiController extends Controller
         $dialStr .=" XML default";
 
         try{
-            $fs = new \Freeswitchesl();
+            /*$fs = new \Freeswitchesl();
             $service = config('freeswitch.esl');
             $fs->connect($service['host'],$service['port'],$service['password']);
             $fs->bgapi($dialStr);
-            $fs->disconnect();
+            $fs->disconnect();*/
+
+            Redis::rPush(config('freeswitch.fs_dial_key'),json_encode([
+                'ableg_uuid' => $aleg_uuid,
+                'bleg_uuid' => $bleg_uuid,
+                'dial_str' => $dialStr,
+            ]));
             //20分钟过期
             Redis::setex($data['exten'].'_uuid',1200, $aleg_uuid);
             return Response::json(['code'=>0,'msg'=>'呼叫成功','data'=>['uuid'=>$aleg_uuid,'time'=>date('Y-m-d H:i:s')]]);
