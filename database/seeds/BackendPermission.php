@@ -102,6 +102,16 @@ class BackendPermission extends Seeder
                             ['name' => 'backend.call.extension.updateXml', 'display_name' => '更新配置'],
                         ]
                     ],
+                    [
+                        'name' => 'backend.call.gateway',
+                        'display_name' => '网关管理',
+                        'child' => [
+                            ['name' => 'backend.call.gateway.create', 'display_name' => '添加'],
+                            ['name' => 'backend.call.gateway.edit', 'display_name' => '编辑'],
+                            ['name' => 'backend.call.gateway.destroy', 'display_name' => '删除'],
+                            ['name' => 'backend.call.gateway.updateXml', 'display_name' => '更新配置'],
+                        ]
+                    ],
                 ]
             ],
             [

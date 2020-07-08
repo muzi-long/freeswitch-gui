@@ -83,6 +83,14 @@ class BackendMenu extends Seeder
                         'type' => 1,
                         'permission_name' => 'backend.call.extension',
                     ],
+                    [
+                        'name' => '网关管理',
+                        'route' => 'backend.call.gateway',
+                        'url' => null,
+                        'icon' => 'layui-icon-service',
+                        'type' => 1,
+                        'permission_name' => 'backend.call.gateway',
+                    ],
                 ]
             ],
             [

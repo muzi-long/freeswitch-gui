@@ -149,12 +149,18 @@ class ExtensionController extends Controller
             }
         }
         $data = $extension;
-        $freeswitch = Freeswitch::find($request->input('fs_id'));
+        $fs = Freeswitch::find($request->input('fs_id'));
         try{
             $client = new Client();
-            $res = $client->post('http://'.$freeswitch->internal_ip.':'.$freeswitch->swoole_http_port.'/dialplan',[
+            $res = $client->post('http://'.$fs->internal_ip.':'.$fs->swoole_http_port.'/dialplan',[
                 'form_params'=>[
-                    'data'=>json_encode($data)
+                    'data'=>json_encode($data),
+                    'conf'=>json_encode([
+                        'host' => $fs->internal_ip,
+                        'port' => $fs->esl_port,
+                        'password' => $fs->esl_password,
+                        'path' => $fs->fs_install_path,
+                    ]),
                 ],
                 'timeout' => 10,
             ]);

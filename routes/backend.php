@@ -165,6 +165,21 @@ Route::group(['namespace'=>'Backend','prefix'=>'call','middleware'=>['auth:backe
         Route::delete('action/destroy','ActionController@destroy')->name('backend.call.action.destroy');
     });
 
+    //网关管理
+    Route::group([],function (){
+        Route::get('gateway','GatewayController@index')->name('backend.call.gateway')->middleware('permission:backend.call.gateway');
+        //添加
+        Route::get('gateway/create','GatewayController@create')->name('backend.call.gateway.create')->middleware('permission:backend.call.gateway.create');
+        Route::post('gateway/store','GatewayController@store')->name('backend.call.gateway.store')->middleware('permission:backend.call.gateway.create');
+        //编辑
+        Route::get('gateway/{id}/edit','GatewayController@edit')->name('backend.call.gateway.edit')->middleware('permission:backend.call.gateway.edit');
+        Route::put('gateway/{id}/update','GatewayController@update')->name('backend.call.gateway.update')->middleware('permission:backend.call.gateway.edit');
+        //删除
+        Route::delete('gateway/destroy','GatewayController@destroy')->name('backend.call.gateway.destroy')->middleware('permission:backend.call.gateway.destroy');
+        //更新配置
+        Route::post('gateway/updateXml','GatewayController@updateXml')->name('backend.call.gateway.updateXml')->middleware('permission:backend.call.gateway.updateXml');
+    });
+
 });
 
 /*

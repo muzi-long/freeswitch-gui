@@ -4,26 +4,23 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Sip extends Model
+class Gateway extends Model
 {
-    protected $table = 'sip';
+    protected $table = 'gateway';
     protected $fillable = [
+        'name',
+        'realm',
         'username',
         'password',
-        'effective_caller_id_name',
-        'effective_caller_id_number',
-        'outbound_caller_id_name',
-        'outbound_caller_id_number',
-        'state',
-        'status',
+        'prefix',
+        'outbound_caller_id',
+        'type',
         'freeswitch_id',
         'merchant_id',
-        'gateway_id',
-        'staff_id',
     ];
 
     /**
-     * 所属FS
+     * 所属网关
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
     public function freeswitch()
@@ -41,17 +38,6 @@ class Sip extends Model
     {
         return $this->hasOne(Merchant::class,'id','merchant_id')->withDefault([
             'company_name' => '-',
-        ]);
-    }
-
-    /**
-     * 绑定网关
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
-     */
-    public function gateway()
-    {
-        return $this->hasOne(Gateway::class,'id','gateway_id')->withDefault([
-            'name' => '-',
         ]);
     }
 
