@@ -149,7 +149,7 @@ class ApiController extends Controller
             $fs->disconnect();*/
 
             Redis::rPush(config('freeswitch.fs_dial_key'),json_encode([
-                'ableg_uuid' => $aleg_uuid,
+                'aleg_uuid' => $aleg_uuid,
                 'bleg_uuid' => $bleg_uuid,
                 'dial_str' => $dialStr,
             ]));
