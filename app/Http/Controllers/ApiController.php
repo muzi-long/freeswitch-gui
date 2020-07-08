@@ -151,7 +151,7 @@ class ApiController extends Controller
             Redis::rPush(config('freeswitch.fs_dial_key'),json_encode([
                 'aleg_uuid' => $aleg_uuid,
                 'bleg_uuid' => $bleg_uuid,
-                'dial_str' => $dialStr,
+                'dial_str' => base64_encode($dialStr),
             ]));
             //20分钟过期
             Redis::setex($data['exten'].'_uuid',1200, $aleg_uuid);
