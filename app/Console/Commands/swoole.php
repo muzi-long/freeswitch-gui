@@ -156,15 +156,15 @@ class swoole extends Command
                                 break;
                             case 'RECORD_STOP':
                                 if (Redis::get($this->asr_status_key)==1) {
-                                    $data = $leg[$uuid];
-                                    if (isset($data['record_file'])&&file_exists($data['record_file'])){
+                                    $res = $leg[$uuid];
+                                    if (isset($res['record_file'])&&file_exists($res['record_file'])){
                                         DB::table('asr')->insert([
-                                            'uuid' => $data['uuid'],
-                                            'leg_uuid' => $data['leg_uuid'],
-                                            'start_at' => $data['start_at'],
+                                            'uuid' => $res['uuid'],
+                                            'leg_uuid' => $res['leg_uuid'],
+                                            'start_at' => $res['start_at'],
                                             'end_at' => date('Y-m-d H:i:s'),
-                                            'billsec' => strtotime(date('Y-m-d H:i:s'))-strtotime($data['start_at']),
-                                            'record_file' => str_replace($this->fs_dir, $this->url, $data['record_file']),
+                                            'billsec' => strtotime(date('Y-m-d H:i:s'))-strtotime($res['start_at']),
+                                            'record_file' => str_replace($this->fs_dir, $this->url, $res['record_file']),
                                             'created_at' => date('Y-m-d H:i:s'),
                                         ]);
                                     }
@@ -176,7 +176,7 @@ class swoole extends Command
                                         'start_at' => date('Y-m-d H:i:s'),
                                         'end_at' => null,
                                     ]);
-                                    unset($data);
+                                    unset($res);
                                     unset($halffile);
                                 }
                                 break;
