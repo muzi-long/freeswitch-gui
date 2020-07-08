@@ -81,6 +81,24 @@ class swoole extends Command
                 //录音目录
                 $filepath = $this->fs_dir . '/recordings/' . date('Y') . '/' . date('m') . '/' . date('d') . '/';
                 $fullfile = $filepath . 'full_' . md5($data['aleg_uuid'] . $data['bleg_uuid']) . '.wav';
+                $leg = [
+                    $data['aleg_uuid'] => [
+                        'uuid' => $data['aleg_uuid'],
+                        'leg_uuid' => $data['aleg_uuid'],
+                        'record_file' => null,
+                        'full_record_file' => $fullfile,
+                        'start_at' => null,
+                        'end_at' => null,
+                    ],
+                    $data['bleg_uuid'] => [
+                        'uuid' => $data['aleg_uuid'],
+                        'leg_uuid' => $data['bleg_uuid'],
+                        'record_file' => null,
+                        'full_record_file' => $fullfile,
+                        'start_at' => null,
+                        'end_at' => null,
+                    ],
+                ];
                 $fs->events('plain', implode(" ",$eventarr));
                 while (true) {
                     $received_parameters = $fs->recvEvent();
@@ -113,68 +131,53 @@ class swoole extends Command
                                         //记录A分段录音数据
                                         $halffile_a = $filepath . 'half_' . md5($otherUuid . time() . uniqid()) . '.wav';
                                         $fs->bgapi("uuid_record " . $otherUuid . " start " . $halffile_a . " 18");
-                                        Redis::set($otherUuid,json_encode([
-                                            'uuid' => $otherUuid,
-                                            'leg_uuid' => $otherUuid,
+                                        $leg[$otherUuid] = array_merge($leg[$otherUuid],[
                                             'record_file' => $halffile_a,
-                                            'full_record_file' => $fullfile,
                                             'start_at' => date('Y-m-d H:i:s'),
-                                            'end_at' => null,
-                                        ]));
+                                        ]);
 
                                         //记录B分段录音数据
                                         $halffile_b = $filepath . 'half_' . md5($uuid . time() . uniqid()) . '.wav';
                                         $fs->bgapi("uuid_record " . $uuid . " start " . $halffile_b . " 18");
-                                        Redis::set($uuid,json_encode([
-                                            'uuid' => $otherUuid,
-                                            'leg_uuid' => $uuid,
+                                        $leg[$uuid] = array_merge($leg[$uuid],[
                                             'record_file' => $halffile_b,
-                                            'full_record_file' => $fullfile,
                                             'start_at' => date('Y-m-d H:i:s'),
-                                            'end_at' => null,
-                                        ]));
+                                        ]);
                                         unset($halffile_a);
                                         unset($halffile_b);
                                     }
                                 }
                                 break;
                             case 'RECORD_START':
-                                $channel = Redis::get($uuid);
-                                if ($channel){
-                                    $data = array_merge(json_decode($channel,true),[
-                                        'start_time' => date('Y-m-d H:i:s'),
-                                    ]);
-                                    Redis::set($uuid,json_encode($data));
-                                }
+                                $leg[$uuid] = array_merge($leg[$uuid],[
+                                    'start_time' => date('Y-m-d H:i:s'),
+                                    'end_at' => null,
+                                ]);
                                 break;
                             case 'RECORD_STOP':
                                 if (Redis::get($this->asr_status_key)==1) {
-                                    $channel = Redis::get($uuid);
-                                    if ($channel){
-                                        $data = json_decode($channel,true);
-                                        if (isset($data['record_file'])&&file_exists($data['record_file'])){
-                                            DB::table('asr')->insert([
-                                                'uuid' => $data['uuid'],
-                                                'leg_uuid' => $data['leg_uuid'],
-                                                'start_at' => $data['start_at'],
-                                                'end_at' => date('Y-m-d H:i:s'),
-                                                'billsec' => strtotime(date('Y-m-d H:i:s'))-strtotime($data['start_at']),
-                                                'record_file' => str_replace($this->fs_dir, $this->url, $data['record_file']),
-                                                'created_at' => date('Y-m-d H:i:s'),
-                                            ]);
-                                        }
-                                        //结束说话 后接着开启分段录音
-                                        $halffile = $filepath . 'half_' . md5($uuid . time() . uniqid()) . '.wav';
-                                        $fs->bgapi("uuid_record " . $uuid . " start " . $halffile . " 18");
-                                        Redis::set($uuid,json_encode(array_merge($data,[
-                                            'record_file' => $halffile,
-                                            'start_at' => date('Y-m-d H:i:s'),
-                                            'end_at' => null,
-                                        ])));
-                                        unset($data);
-                                        unset($halffile);
+                                    $data = $leg[$uuid];
+                                    if (isset($data['record_file'])&&file_exists($data['record_file'])){
+                                        DB::table('asr')->insert([
+                                            'uuid' => $data['uuid'],
+                                            'leg_uuid' => $data['leg_uuid'],
+                                            'start_at' => $data['start_at'],
+                                            'end_at' => date('Y-m-d H:i:s'),
+                                            'billsec' => strtotime(date('Y-m-d H:i:s'))-strtotime($data['start_at']),
+                                            'record_file' => str_replace($this->fs_dir, $this->url, $data['record_file']),
+                                            'created_at' => date('Y-m-d H:i:s'),
+                                        ]);
                                     }
-                                    unset($channel);
+                                    //结束说话 后接着开启分段录音
+                                    $halffile = $filepath . 'half_' . md5($uuid . time() . uniqid()) . '.wav';
+                                    $fs->bgapi("uuid_record " . $uuid . " start " . $halffile . " 18");
+                                    $leg[$uuid] = array_merge($leg[$uuid],[
+                                        'record_file' => $halffile,
+                                        'start_at' => date('Y-m-d H:i:s'),
+                                        'end_at' => null,
+                                    ]);
+                                    unset($data);
+                                    unset($halffile);
                                 }
                                 break;
                             case 'CHANNEL_HANGUP_COMPLETE':
