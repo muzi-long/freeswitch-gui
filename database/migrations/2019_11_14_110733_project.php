@@ -25,7 +25,7 @@ class Project extends Migration
             $table->unsignedBigInteger('created_user_id')->nullable()->comment('创建人ID');
             $table->unsignedBigInteger('updated_user_id')->nullable()->comment('更新人ID');
             $table->unsignedBigInteger('deleted_user_id')->nullable()->comment('删除人ID');
-            $table->unsignedBigInteger('owner_user_id')->nullable()->comment('拥有人ID，-1公海库，0待分配，>0用户ID');
+            $table->bigInteger('owner_user_id')->nullable()->comment('拥有人ID，-1公海库，0待分配，>0用户ID');
             $table->softDeletes();
             $table->timestamps();
         });
