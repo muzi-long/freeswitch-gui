@@ -73,7 +73,7 @@ class GatewayController extends Controller
         //验证是否超过商户最大网关数量
         $count = Gateway::where('merchant_id',$merchant->id)->count();
         if ($merchant->gateway_num - $count < 1){
-            return Response::json(['code'=>1,'msg'=>'超出商户最大风头数量【'.$merchant->gateway_num.'】']);
+            return Response::json(['code'=>1,'msg'=>'超出商户最大网关数量【'.$merchant->gateway_num.'】']);
         }
         $data['freeswitch_id'] = $merchant->freeswitch_id;
         try {
