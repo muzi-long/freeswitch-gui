@@ -180,6 +180,24 @@ Route::group(['namespace'=>'Backend','prefix'=>'call','middleware'=>['auth:backe
         Route::post('gateway/updateXml','GatewayController@updateXml')->name('backend.call.gateway.updateXml')->middleware('permission:backend.call.gateway.updateXml');
     });
 
+    //分机管理
+    Route::group([],function (){
+        Route::get('sip','SipController@index')->name('backend.call.sip')->middleware('permission:backend.call.sip');
+        //添加
+        Route::get('sip/create','SipController@create')->name('backend.call.sip.create')->middleware('permission:backend.call.sip.create');
+        Route::post('sip/store','SipController@store')->name('backend.call.sip.store')->middleware('permission:backend.call.sip.create');
+        //批量添加
+        Route::get('sip/createList','SipController@createList')->name('backend.call.sip.createList')->middleware('permission:backend.call.sip.createList');
+        Route::post('sip/createList','SipController@storeList')->name('backend.call.sip.storeList')->middleware('permission:backend.call.sip.createList');
+        //编辑
+        Route::get('sip/{id}/edit','SipController@edit')->name('backend.call.sip.edit')->middleware('permission:backend.call.sip.edit');
+        Route::put('sip/{id}/update','SipController@update')->name('backend.call.sip.update')->middleware('permission:backend.call.sip.edit');
+        //删除
+        Route::delete('sip/destroy','SipController@destroy')->name('backend.call.sip.destroy')->middleware('permission:backend.call.sip.destroy');
+        //更新配置
+        Route::post('sip/updateXml','SipController@updateXml')->name('backend.call.sip.updateXml')->middleware('permission:backend.call.sip.updateXml');
+    });
+
 });
 
 /*

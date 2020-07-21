@@ -26,10 +26,17 @@ class UpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            'username' => 'required|numeric|min:1000|max:99999|unique:sip',
+            'username' => 'required|numeric|min:1000|max:9999|unique:sip,username,'.$this->id.',id',
             'password' => 'required',
             'merchant_id' => 'required',
             'gateway_id' => 'required',
+        ];
+    }
+
+    public function attributes()
+    {
+        return [
+            'username' => '分机号',
         ];
     }
 

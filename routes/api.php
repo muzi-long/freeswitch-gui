@@ -13,4 +13,6 @@ use Illuminate\Http\Request;
 |
 */
 
+//通过商户ID获取网关信息
+Route::post('getGatewayByMerchantId','ApiController@getGatewayByMerchantId')->name('getGatewayByMerchantId');
 

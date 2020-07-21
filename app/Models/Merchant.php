@@ -23,4 +23,13 @@ class Merchant extends Model
         'freeswitch_id',
     ];
 
+    /**
+     * 所有的网关
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function gateway()
+    {
+        return $this->hasMany(Gateway::class,'merchant_id','id');
+    }
+
 }

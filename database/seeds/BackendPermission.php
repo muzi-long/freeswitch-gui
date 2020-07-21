@@ -112,6 +112,17 @@ class BackendPermission extends Seeder
                             ['name' => 'backend.call.gateway.updateXml', 'display_name' => '更新配置'],
                         ]
                     ],
+                    [
+                        'name' => 'backend.call.sip',
+                        'display_name' => '分机管理',
+                        'child' => [
+                            ['name' => 'backend.call.sip.create', 'display_name' => '添加'],
+                            ['name' => 'backend.call.sip.createList', 'display_name' => '批量添加'],
+                            ['name' => 'backend.call.sip.edit', 'display_name' => '编辑'],
+                            ['name' => 'backend.call.sip.destroy', 'display_name' => '删除'],
+                            ['name' => 'backend.call.sip.updateXml', 'display_name' => '更新配置'],
+                        ]
+                    ],
                 ]
             ],
             [

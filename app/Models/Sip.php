@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 
 class Sip extends Model
 {
@@ -20,7 +21,35 @@ class Sip extends Model
         'merchant_id',
         'gateway_id',
         'staff_id',
+        'last_register_time',
+        'last_unregister_time',
     ];
+    protected $appends = [
+        'status_name',
+        'state_name',
+    ];
+    protected $state_arr = [
+        'DOWN'      => '空闲',
+        'HANGUP'    => '空闲',
+        'RINGING'   => '响铃',
+        'RING_WAIT' => '响铃',
+        'EARLY'     => '响铃',
+        'ACTIVE'    => '通话中',
+    ];
+    protected $status_arr = [
+        0   => '未注册',
+        1   => '已注册',
+    ];
+
+    public function getStatusNameAttribute()
+    {
+        return $this->attributes['status_name'] = Arr::get($this->status_arr,$this->status,'-');
+    }
+
+    public function getStateNameAttribute()
+    {
+        return $this->attributes['state_name'] = Arr::get($this->state_arr,$this->state,'-');
+    }
 
     /**
      * 所属FS

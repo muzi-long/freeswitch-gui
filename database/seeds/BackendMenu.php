@@ -91,6 +91,14 @@ class BackendMenu extends Seeder
                         'type' => 1,
                         'permission_name' => 'backend.call.gateway',
                     ],
+                    [
+                        'name' => '分机管理',
+                        'route' => 'backend.call.sip',
+                        'url' => null,
+                        'icon' => 'layui-icon-cellphone',
+                        'type' => 1,
+                        'permission_name' => 'backend.call.sip',
+                    ],
                 ]
             ],
             [
