@@ -244,11 +244,10 @@ Route::group(['namespace'=>'Backend','prefix'=>'platform','middleware'=>['auth:b
 
     //帐单管理
     Route::group([],function (){
-        Route::get('bill','BillController@index')->name('backend.platform.bill');
+        Route::get('bill','BillController@index')->name('backend.platform.bill')->middleware('permission:backend.platform.bill');
         //添加
-        Route::get('bill/create','BillController@create')->name('backend.platform.bill.create');
-        Route::post('bill/store','BillController@store')->name('backend.platform.bill.store');
-
+        Route::get('bill/create','BillController@create')->name('backend.platform.bill.create')->middleware('permission:backend.platform.bill.create');
+        Route::post('bill/store','BillController@store')->name('backend.platform.bill.store')->middleware('permission:backend.platform.bill.create');
     });
 
 

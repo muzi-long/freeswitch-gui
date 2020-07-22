@@ -155,6 +155,13 @@ class BackendPermission extends Seeder
                             ['name' => 'backend.platform.staff.destroy', 'display_name' => '删除'],
                         ]
                     ],
+                    [
+                        'name' => 'backend.platform.bill',
+                        'display_name' => '帐单管理',
+                        'child' => [
+                            ['name' => 'backend.platform.bill.create', 'display_name' => '添加'],
+                        ]
+                    ],
                 ]
             ],
         ];

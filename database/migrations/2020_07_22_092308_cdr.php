@@ -34,6 +34,7 @@ class Cdr extends Migration
             $table->string('record_file')->nullable()->comment('录音地址');
             $table->text('user_data')->nullable()->comment('扩展数据');
             $table->string('callback_url')->nullable()->comment('接收话单的回调地址');
+            $table->unsignedBigInteger('nibble_total_billed')->default(0)->comment('本次通话的费用');
             $table->timestamps();
         });
         \DB::statement("ALTER TABLE `cdr` comment '话单'");

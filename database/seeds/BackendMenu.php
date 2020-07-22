@@ -134,6 +134,14 @@ class BackendMenu extends Seeder
                         'type' => 1,
                         'permission_name' => 'backend.platform.staff',
                     ],
+                    [
+                        'name' => '帐单管理',
+                        'route' => 'backend.platform.bill',
+                        'url' => null,
+                        'icon' => 'layui-icon-dollar',
+                        'type' => 1,
+                        'permission_name' => 'backend.platform.bill',
+                    ],
                 ]
             ],
         ];

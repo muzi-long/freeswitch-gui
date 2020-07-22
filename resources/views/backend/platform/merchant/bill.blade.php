@@ -4,6 +4,7 @@
     <div class="layui-card">
         <div class="layui-card-body">
             <div class="layui-row">
+                @can('backend.platform.bill')
                 <div class="layui-col-md8">
                     <form class="layui-form">
                         <div class="layui-form-item">
@@ -33,6 +34,9 @@
                     </form>
                     <table id="dataTable" lay-filter="dataTable"></table>
                 </div>
+                @endcan
+
+                @can('backend.platform.bill.create')
                 <div class="layui-col-md4">
                     <form class="layui-form" >
                         <div class="layui-form-item">
@@ -80,6 +84,7 @@
                         </div>
                     </form>
                 </div>
+                @endcan
             </div>
         </div>
     </div>

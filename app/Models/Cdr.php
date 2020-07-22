@@ -28,6 +28,7 @@ class Cdr extends Model
         'record_file',
         'user_data',
         'callback_url',
+        'nibble_total_billed',
     ];
 
 }

@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\View;
 
 class BillController extends Controller
 {
@@ -53,6 +54,8 @@ class BillController extends Controller
             ];
             return Response::json($data);
         }
+        $merchants = Merchant::get();
+        return View::make('backend.platform.bill.index',compact('merchants'));
     }
 
     public function store(Request $request)
