@@ -198,6 +198,13 @@ Route::group(['namespace'=>'Backend','prefix'=>'call','middleware'=>['auth:backe
         Route::post('sip/updateXml','SipController@updateXml')->name('backend.call.sip.updateXml')->middleware('permission:backend.call.sip.updateXml');
     });
 
+    //通话记录
+    Route::group([],function (){
+        Route::get('cdr','CdrController@index')->name('backend.call.cdr')->middleware('permission:backend.call.cdr');
+        //删除
+        Route::delete('cdr/destroy','CdrController@destroy')->name('backend.call.cdr.destroy')->middleware('permission:backend.call.cdr.destroy');
+    });
+
 });
 
 /*

@@ -123,6 +123,13 @@ class BackendPermission extends Seeder
                             ['name' => 'backend.call.sip.updateXml', 'display_name' => '更新配置'],
                         ]
                     ],
+                    [
+                        'name' => 'backend.call.cdr',
+                        'display_name' => '通话记录',
+                        'child' => [
+                            ['name' => 'backend.call.cdr.destroy', 'display_name' => '删除'],
+                        ]
+                    ],
                 ]
             ],
             [

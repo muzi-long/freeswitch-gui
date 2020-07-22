@@ -21,6 +21,7 @@ class Merchant extends Model
         'task_num',
         'expire_at',
         'freeswitch_id',
+        'money',
     ];
 
     /**

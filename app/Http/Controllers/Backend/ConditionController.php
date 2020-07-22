@@ -73,7 +73,11 @@ class ConditionController extends Controller
         }
     }
 
-
+    /**
+     * 删除
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function destroy(Request $request)
     {
         $ids = $request->get('ids');

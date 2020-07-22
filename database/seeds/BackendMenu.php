@@ -99,6 +99,14 @@ class BackendMenu extends Seeder
                         'type' => 1,
                         'permission_name' => 'backend.call.sip',
                     ],
+                    [
+                        'name' => '通话记录',
+                        'route' => 'backend.call.cdr',
+                        'url' => null,
+                        'icon' => 'layui-icon-service',
+                        'type' => 1,
+                        'permission_name' => 'backend.call.cdr',
+                    ],
                 ]
             ],
             [

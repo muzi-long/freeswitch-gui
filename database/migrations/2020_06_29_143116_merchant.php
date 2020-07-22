@@ -26,6 +26,7 @@ class Merchant extends Migration
             $table->unsignedInteger('task_num')->default(0)->comment('任务数量');
             $table->dateTime('expire_at')->nullable()->comment('到期时间');
             $table->unsignedBigInteger('freeswitch_id')->default(0)->comment('Freeswitch ID');
+            $table->bigInteger('money')->default(0)->comment('余额');
             $table->softDeletes();
             $table->timestamps();
         });

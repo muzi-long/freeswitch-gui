@@ -22,6 +22,7 @@ class Department extends Migration
             $table->softDeletes();
             $table->timestamps();
         });
+        \DB::statement("ALTER TABLE `department` comment '部门'");
     }
 
     /**

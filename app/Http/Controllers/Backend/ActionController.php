@@ -72,15 +72,24 @@ class ActionController extends Controller
         }
     }
 
+
+    /**
+     * 删除
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function destroy(Request $request)
     {
         $ids = $request->get('ids');
         if (empty($ids)){
-            return response()->json(['code'=>1,'msg'=>'请选择删除项']);
+            return Response::json(['code'=>1,'msg'=>'请选择删除项']);
         }
-        if (Action::destroy($ids)){
-            return response()->json(['code'=>0,'msg'=>'删除成功']);
+        try{
+            Action::destroy($ids);
+            return Response::json(['code'=>0,'msg'=>'删除成功']);
+        }catch (\Exception $exception){
+            Log::error('删除拨号应用异常：'.$exception->getMessage());
+            return Response::json(['code'=>1,'msg'=>'删除失败']);
         }
-        return response()->json(['code'=>1,'msg'=>'删除失败']);
     }
 }
