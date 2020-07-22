@@ -50,6 +50,9 @@
             <table id="dataTable" lay-filter="dataTable"></table>
             <script type="text/html" id="options">
                 <div class="layui-btn-group">
+                    @can('backend.platform.merchant.bill')
+                        <a class="layui-btn layui-btn-sm" lay-event="bill">帐单</a>
+                    @endcan
                     @can('backend.platform.merchant.edit')
                         <a class="layui-btn layui-btn-sm" lay-event="edit">编辑</a>
                     @endcan
@@ -118,6 +121,14 @@
                         });
                     } else if (layEvent === 'edit') {
                         location.href = '/backend/platform/merchant/' + data.id + '/edit';
+                    } else if (layEvent === 'bill'){
+                        layer.open({
+                            type : 2,
+                            title : '帐单',
+                            shadeClose : true,
+                            area : ['80%','80%'],
+                            content : '/backend/platform/merchant/' + data.id + '/bill'
+                        })
                     }
                 });
 

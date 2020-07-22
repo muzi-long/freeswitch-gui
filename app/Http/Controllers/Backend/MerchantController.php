@@ -206,4 +206,15 @@ class MerchantController extends Controller
         }
     }
 
+    /**
+     * 帐单
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function bill($id)
+    {
+        $merchant = Merchant::find($id);
+        return view('backend.platform.merchant.bill', compact('merchant'));
+    }
+
 }

@@ -23,6 +23,12 @@ class Merchant extends Model
         'freeswitch_id',
         'money',
     ];
+    protected $appends = ['money_format'];
+
+    public function getMoneyFormatAttribute()
+    {
+        return $this->attributes['money_format'] = round($this->money/100,3);
+    }
 
     /**
      * 所有的网关

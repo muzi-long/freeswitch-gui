@@ -143,6 +143,7 @@ class BackendPermission extends Seeder
                             ['name' => 'backend.platform.merchant.create', 'display_name' => '添加'],
                             ['name' => 'backend.platform.merchant.edit', 'display_name' => '编辑'],
                             ['name' => 'backend.platform.merchant.destroy', 'display_name' => '删除'],
+                            ['name' => 'backend.platform.merchant.bill', 'display_name' => '帐单'],
                         ]
                     ],
                     [

@@ -225,6 +225,8 @@ Route::group(['namespace'=>'Backend','prefix'=>'platform','middleware'=>['auth:b
         Route::put('merchant/{id}/update','MerchantController@update')->name('backend.platform.merchant.update')->middleware('permission:backend.platform.merchant.edit');
         //删除
         Route::delete('merchant/destroy','MerchantController@destroy')->name('backend.platform.merchant.destroy')->middleware('permission:backend.platform.merchant.destroy');
+        //帐单
+        Route::get('merchant/{id}/bill','MerchantController@bill')->name('backend.platform.merchant.bill')->middleware('permission:backend.platform.merchant.bill');
     });
 
     //员工管理
@@ -239,5 +241,15 @@ Route::group(['namespace'=>'Backend','prefix'=>'platform','middleware'=>['auth:b
         //删除
         Route::delete('staff/destroy','StaffController@destroy')->name('backend.platform.staff.destroy')->middleware('permission:backend.platform.staff.destroy');
     });
+
+    //帐单管理
+    Route::group([],function (){
+        Route::get('bill','BillController@index')->name('backend.platform.bill');
+        //添加
+        Route::get('bill/create','BillController@create')->name('backend.platform.bill.create');
+        Route::post('bill/store','BillController@store')->name('backend.platform.bill.store');
+
+    });
+
 
 });
