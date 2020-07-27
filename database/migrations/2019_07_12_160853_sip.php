@@ -30,6 +30,7 @@ class Sip extends Migration
             $table->unsignedBigInteger('merchant_id')->default(0)->comment('商户ID');
             $table->unsignedBigInteger('gateway_id')->default(0)->comment('网关ID');
             $table->unsignedBigInteger('staff_id')->default(0)->comment('员工ID');
+            $table->unsignedBigInteger('rate_id')->default(0)->comment('费率ID');
             $table->timestamps();
         });
         \DB::statement("ALTER TABLE `sip` comment '分机'");

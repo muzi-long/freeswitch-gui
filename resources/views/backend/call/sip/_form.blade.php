@@ -24,6 +24,17 @@
     </div>
 </div>
 <div class="layui-form-item">
+    <label for="" class="layui-form-label">费率</label>
+    <div class="layui-input-inline">
+        <select name="rate_id" >
+            <option value="0">无</option>
+            @foreach($rates as $d)
+                <option value="{{$d->id}}" {{isset($model)&&$model->rate_id==$d->id?'selected':''}} >{{$d->name}}（{{$d->cost_format}}元/{{$d->time}}秒）</option>
+            @endforeach
+        </select>
+    </div>
+</div>
+<div class="layui-form-item">
     <label for="" class="layui-form-label">分机号</label>
     <div class="layui-input-inline">
         <input class="layui-input" type="text" name="username" lay-verify="required" value="{{$model->username??old('username')}}" maxlength="4" placeholder="如：1000">

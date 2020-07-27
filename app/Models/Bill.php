@@ -26,12 +26,12 @@ class Bill extends Model
 
     public function getMoneyFormatAttribute()
     {
-        return $this->attributes['money_format'] = round($this->money/100,3);
+        return $this->attributes['money_format'] = round($this->money/100,2);
     }
 
     public function getTotalFormatAttribute()
     {
-        return $this->attributes['total_format'] = round($this->total/100,3);
+        return $this->attributes['total_format'] = round($this->total/100,2);
     }
 
 }

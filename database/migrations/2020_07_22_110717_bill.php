@@ -25,6 +25,7 @@ class Bill extends Migration
             $table->string('admin_name')->nullable()->comment('操作人名称');
             $table->timestamps();
         });
+        \DB::statement("ALTER TABLE `bill` comment '商户帐单流水'");
     }
 
     /**

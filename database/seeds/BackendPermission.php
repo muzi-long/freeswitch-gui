@@ -124,6 +124,15 @@ class BackendPermission extends Seeder
                         ]
                     ],
                     [
+                        'name' => 'backend.call.rate',
+                        'display_name' => '费率管理',
+                        'child' => [
+                            ['name' => 'backend.call.rate.create', 'display_name' => '添加'],
+                            ['name' => 'backend.call.rate.edit', 'display_name' => '编辑'],
+                            ['name' => 'backend.call.rate.destroy', 'display_name' => '删除'],
+                        ]
+                    ],
+                    [
                         'name' => 'backend.call.cdr',
                         'display_name' => '通话记录',
                         'child' => [

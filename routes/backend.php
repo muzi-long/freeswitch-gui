@@ -198,6 +198,19 @@ Route::group(['namespace'=>'Backend','prefix'=>'call','middleware'=>['auth:backe
         Route::post('sip/updateXml','SipController@updateXml')->name('backend.call.sip.updateXml')->middleware('permission:backend.call.sip.updateXml');
     });
 
+    //分机管理
+    Route::group([],function (){
+        Route::get('rate','RateController@index')->name('backend.call.rate')->middleware('permission:backend.call.rate');
+        //添加
+        Route::get('rate/create','RateController@create')->name('backend.call.rate.create')->middleware('permission:backend.call.rate.create');
+        Route::post('rate/store','RateController@store')->name('backend.call.rate.store')->middleware('permission:backend.call.rate.create');
+        //编辑
+        Route::get('rate/{id}/edit','RateController@edit')->name('backend.call.rate.edit')->middleware('permission:backend.call.rate.edit');
+        Route::put('rate/{id}/update','RateController@update')->name('backend.call.rate.update')->middleware('permission:backend.call.rate.edit');
+        //删除
+        Route::delete('rate/destroy','RateController@destroy')->name('backend.call.rate.destroy')->middleware('permission:backend.call.rate.destroy');
+    });
+
     //通话记录
     Route::group([],function (){
         Route::get('cdr','CdrController@index')->name('backend.call.cdr')->middleware('permission:backend.call.cdr');

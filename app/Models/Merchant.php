@@ -27,7 +27,7 @@ class Merchant extends Model
 
     public function getMoneyFormatAttribute()
     {
-        return $this->attributes['money_format'] = round($this->money/100,3);
+        return $this->attributes['money_format'] = round($this->money/100,2);
     }
 
     /**

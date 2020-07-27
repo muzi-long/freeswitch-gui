@@ -3,28 +3,14 @@
 @section('content')
     <div class="layui-card">
         <div class="layui-card-header layuiadmin-card-header-auto">
-            <form class="layui-form" action="{{route('backend.call.gateway.updateXml')}}">
+            <form class="layui-form" >
                 <div class="layui-btn-group">
-                    @can('backend.call.gateway.destroy')
+                    @can('backend.call.rate.destroy')
                         <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" id="listDelete">删除</button>
                     @endcan
-                    @can('backend.call.gateway.create')
-                        <a class="layui-btn layui-btn-sm" href="{{ route('backend.call.gateway.create') }}">添加</a>
+                    @can('backend.call.rate.create')
+                        <a class="layui-btn layui-btn-sm" href="{{ route('backend.call.rate.create') }}">添加</a>
                     @endcan
-                    @can('backend.call.gateway.updateXml')
-                        <button class="layui-btn layui-btn-sm" type="button" lay-submit lay-filter="go" >更新配置</button>
-                    @endcan
-                </div>
-                <div class="layui-form-item">
-                    <label for="" class="layui-form-label">FS服务</label>
-                    <div class="layui-input-inline">
-                        <select name="fs_id" lay-verify="required">
-                            <option value=""></option>
-                            @foreach($fs as $d)
-                                <option value="{{$d->id}}">{{$d->name}}({{$d->external_ip}})</option>
-                            @endforeach
-                        </select>
-                    </div>
                 </div>
             </form>
         </div>
@@ -32,10 +18,10 @@
             <table id="dataTable" lay-filter="dataTable"></table>
             <script type="text/html" id="options">
                 <div class="layui-btn-group">
-                    @can('backend.call.gateway.edit')
+                    @can('backend.call.rate.edit')
                         <a class="layui-btn layui-btn-sm" lay-event="edit">编辑</a>
                     @endcan
-                    @can('backend.call.gateway.destroy')
+                    @can('backend.call.rate.destroy')
                         <a class="layui-btn layui-btn-danger layui-btn-sm" lay-event="del">删除</a>
                     @endcan
                 </div>
@@ -56,32 +42,15 @@
                 var dataTable = table.render({
                     elem: '#dataTable'
                     , height: 500
-                    , url: "{{ route('backend.call.gateway') }}" //数据接口
+                    , url: "{{ route('backend.call.rate') }}" //数据接口
                     , page: true //开启分页
                     , cols: [[ //表头
                         {checkbox: true, fixed: true}
                         ,{field: 'id', title: 'ID', sort: true,width:80}
                         ,{field: 'name', title: '名称'}
-                        ,{field: 'realm', title: '地址'}
-                        ,{field: 'username', title: '帐号',templet:function(d){
-                                return d.type==1?d.username:'';
-                            }}
-                        ,{field: 'password', title: '密码',templet:function(d){
-                                return d.type==1?d.password:'';
-                            }}
-                        ,{field: 'prefix', title: '前缀'}
-                        ,{field: 'outbound_caller_id', title: '出局号码'}
-                        //,{field: 'status', title: '状态'}
-                        ,{field: 'type', title: '对接方式',templet:function(d){
-                                return d.type==1?'SIP':'IP';
-                            }}
-                        ,{field: 'status', title: '状态'}
-                        ,{field: 'freeswitch_id', title: '服务器',templet:function(d){
-                                return d.freeswitch.name;
-                            }}
-                        ,{field: 'merchant_id', title: '所属商户',templet:function(d){
-                                return d.merchant.company_name;
-                            }}
+                        ,{field: 'cost_format', title: '费用(元)'}
+                        ,{field: 'time', title: '周期(秒)'}
+                        ,{field: 'description', title: '描述'}
                         ,{field: 'created_at', title: '添加时间'}
                         , {fixed: 'right', width: 140, align: 'center', toolbar: '#options',title: '操作'}
                     ]]
@@ -95,7 +64,7 @@
                         layer.confirm('确认删除吗？', function (index) {
                             layer.close(index)
                             var load = layer.load();
-                            $.post("{{ route('backend.call.gateway.destroy') }}", {
+                            $.post("{{ route('backend.call.rate.destroy') }}", {
                                 _method: 'delete',
                                 ids: [data.id]
                             }, function (res) {
@@ -110,7 +79,7 @@
                             });
                         });
                     } else if (layEvent === 'edit') {
-                        location.href = '/backend/call/gateway/' + data.id + '/edit';
+                        location.href = '/backend/call/rate/' + data.id + '/edit';
                     }
                 });
 
@@ -128,7 +97,7 @@
                         layer.confirm('确认删除吗？', function (index) {
                             layer.close(index);
                             var load = layer.load();
-                            $.post("{{ route('backend.call.gateway.destroy') }}", {
+                            $.post("{{ route('backend.call.rate.destroy') }}", {
                                 _method: 'delete',
                                 ids: ids
                             }, function (res) {

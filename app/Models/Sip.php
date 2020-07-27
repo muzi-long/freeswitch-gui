@@ -21,6 +21,7 @@ class Sip extends Model
         'merchant_id',
         'gateway_id',
         'staff_id',
+        'rate_id',
         'last_register_time',
         'last_unregister_time',
     ];

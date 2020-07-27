@@ -100,6 +100,14 @@ class BackendMenu extends Seeder
                         'permission_name' => 'backend.call.sip',
                     ],
                     [
+                        'name' => '费率管理',
+                        'route' => 'backend.call.rate',
+                        'url' => null,
+                        'icon' => 'layui-icon-senior',
+                        'type' => 1,
+                        'permission_name' => 'backend.call.rate',
+                    ],
+                    [
                         'name' => '通话记录',
                         'route' => 'backend.call.cdr',
                         'url' => null,

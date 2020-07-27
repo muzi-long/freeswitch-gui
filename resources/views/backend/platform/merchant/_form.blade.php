@@ -1,7 +1,7 @@
 {{csrf_field()}}
 
 <div class="layui-row layui-col-space10">
-    <div class="layui-col-md3">
+    <div class="layui-col-md5">
         <div class="layui-form-item">
             <label for="" class="layui-form-label">姓名</label>
             <div class="layui-input-inline">
@@ -48,13 +48,14 @@
         <div class="layui-form-item">
             <label for="" class="layui-form-label">服务器</label>
             <div class="layui-input-inline">
-                <select name="freeswitch_id" >
+                <select name="freeswitch_id" lay-verify="required" @if(isset($model)&&$model->freeswitch_id) disabled @endif >
                     <option value="0">无</option>
                     @foreach($fs as $d)
                         <option value="{{$d->id}}" {{isset($model)&&$model->freeswitch_id==$d->id?'selected':''}} >{{$d->name}}({{$d->external_ip}})</option>
                     @endforeach
                 </select>
             </div>
+            <div class="layui-form-mid layui-word-aux">选定后不可更改</div>
         </div>
         @if(isset($staff))
             <div class="layui-form-item">

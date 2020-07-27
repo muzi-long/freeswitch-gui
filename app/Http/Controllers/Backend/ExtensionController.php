@@ -136,7 +136,7 @@ class ExtensionController extends Controller
         $condition = DB::table('condition')->orderBy('sort')->get()->groupBy('extension_id')->toArray();
         $action = DB::table('action')->orderBy('sort')->get()->groupBy('condition_id')->toArray();
         if (empty($extension)){
-            return response()->json(['code'=>1,'msg'=>'无数据需要更新']);
+            return Response::json(['code'=>1,'msg'=>'无数据需要更新']);
         }
         foreach ($condition as $key1 => $value1) {
             foreach ($value1 as $key2 => $value2) {

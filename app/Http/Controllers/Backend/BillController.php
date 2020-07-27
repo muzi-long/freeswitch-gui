@@ -17,7 +17,7 @@ class BillController extends Controller
     /**
      * 列表
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Http\JsonResponse
      */
     public function index(Request $request)
     {
@@ -78,6 +78,7 @@ class BillController extends Controller
         $data['admin_id'] = auth()->user()->id;
         $data['admin_name'] = auth()->user()->nickname;
         $data['created_at'] = date('Y-m-d H:i:s');
+        $data['merchant_name'] = $merchant->company_name;
         DB::beginTransaction();
         try {
             DB::table('merchant')->where('id',$data['merchant_id'])->increment('money',$change_money);

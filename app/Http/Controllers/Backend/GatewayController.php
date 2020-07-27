@@ -154,11 +154,11 @@ class GatewayController extends Controller
         $fs_id = $request->input('fs_id');
         $fs = Freeswitch::find($fs_id);
         if ($fs == null) {
-            return response()->json(['code' => 1, 'msg' => '请选择服务器']);
+            return Response::json(['code' => 1, 'msg' => '请选择服务器']);
         }
         $gateway = Gateway::where('freeswitch_id', $fs_id)->get()->toArray();
         if (empty($gateway)) {
-            return response()->json(['code' => 1, 'msg' => '无数据需要更新']);
+            return Response::json(['code' => 1, 'msg' => '无数据需要更新']);
         }
         try {
             $client = new Client();

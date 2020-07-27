@@ -9,6 +9,7 @@ use App\Http\Requests\Backend\Call\Sip\UpdateRequest;
 use App\Models\Freeswitch;
 use App\Models\Gateway;
 use App\Models\Merchant;
+use App\Models\Rate;
 use App\Models\Sip;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
@@ -61,7 +62,8 @@ class SipController extends Controller
     public function create()
     {
         $merchants = Merchant::orderBy('id', 'desc')->get();
-        return View::make('backend.call.sip.create', compact('merchants'));
+        $rates = Rate::orderByDesc('id')->get();
+        return View::make('backend.call.sip.create', compact('merchants','rates'));
     }
 
     public function store(StoreRequest $request)
@@ -71,6 +73,7 @@ class SipController extends Controller
             'password',
             'merchant_id',
             'gateway_id',
+            'rate_id',
         ]);
         $merchant = Merchant::find($data['merchant_id']);
         if ($merchant == null || $merchant->freeswitch_id == 0) {
@@ -98,7 +101,8 @@ class SipController extends Controller
     public function createList()
     {
         $merchants = Merchant::orderBy('id', 'desc')->get();
-        return View::make('backend.call.sip.create_list', compact('merchants'));
+        $rates = Rate::orderByDesc('id')->get();
+        return View::make('backend.call.sip.create_list', compact('merchants','rates'));
     }
 
     public function storeList(ListStoreRequest $request)
@@ -121,6 +125,7 @@ class SipController extends Controller
                         'freeswitch_id' => $merchant->freeswitch_id,
                         'merchant_id' => $data['merchant_id'],
                         'gateway_id' => $data['gateway_id'],
+                        'rate_id' => $data['rate_id'],
                         'username'  => $i,
                         'password'  => $data['password'],
                         'created_at' => date('Y-m-d H:i:s'),
@@ -148,7 +153,8 @@ class SipController extends Controller
         $model = Sip::findOrFail($id);
         $merchants = Merchant::orderBy('id', 'desc')->get();
         $gateways = Gateway::where('merchant_id',$model->merchant_id)->get();
-        return View::make('backend.call.sip.edit', compact('model','merchants','gateways'));
+        $rates = Rate::orderByDesc('id')->get();
+        return View::make('backend.call.sip.edit', compact('model','merchants','gateways','rates'));
     }
 
     public function update(UpdateRequest $request, $id)
@@ -158,6 +164,7 @@ class SipController extends Controller
             'username',
             'password',
             'gateway_id',
+            'rate_id',
         ]);
         try {
             $model->update($data);
@@ -197,11 +204,11 @@ class SipController extends Controller
         $fs_id = $request->input('freeswitch_id');
         $fs = Freeswitch::find($fs_id);
         if ($fs == null) {
-            return response()->json(['code' => 1, 'msg' => '请选择服务器']);
+            return Response::json(['code' => 1, 'msg' => '请选择服务器']);
         }
         $sips = DB::table('sip')->where('freeswitch_id',$fs_id)->get()->toArray();
         if (empty($sips)){
-            return response()->json(['code'=>1,'msg'=>'无数据需要更新']);
+            return Response::json(['code'=>1,'msg'=>'无数据需要更新']);
         }
         try{
             $client = new Client();
