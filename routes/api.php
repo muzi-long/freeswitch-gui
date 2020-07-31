@@ -15,4 +15,6 @@ use Illuminate\Http\Request;
 
 //通过商户ID获取网关信息
 Route::post('getGatewayByMerchantId','ApiController@getGatewayByMerchantId')->name('getGatewayByMerchantId');
+//通过商户ID获取部门信息
+Route::post('getDepartmentByMerchantId','ApiController@getDepartmentByMerchantId')->name('getDepartmentByMerchantId');
 

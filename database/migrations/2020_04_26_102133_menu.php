@@ -22,7 +22,7 @@ class Menu extends Migration
             $table->string('icon')->nullable()->comment('图标');
             $table->unsignedInteger('sort')->nullable()->comment('排序');
             $table->unsignedTinyInteger('type')->default(1)->comment('类型，1链接、2按钮');
-            $table->unsignedTinyInteger('permission_id')->nullable()->comment('对应权限ID');
+            $table->unsignedBigInteger('permission_id')->nullable()->comment('对应权限ID');
             $table->string('guard_name',40)->nullable()->comment('backend后台菜单，frontend前台菜单');
             $table->timestamps();
         });

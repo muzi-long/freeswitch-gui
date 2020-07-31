@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Department;
 use App\Models\Gateway;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -15,20 +16,41 @@ class ApiController extends Controller
 
     /**
      * 通过商户ID获取网关信息
-     * @param int $merchant_id
+     * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function getGatewayByMerchantId(Request $request)
     {
         $merchant_id = $request->input('merchant_id');
-        $gateway = Gateway::where('merchant_id',$merchant_id)
+        $data = Gateway::where('merchant_id',$merchant_id)
             ->select([
                 'id',
                 'merchant_id',
                 'name',
             ])
             ->get();
-        return Response::json(['code'=>0,'msg'=>'请求成功','data'=>$gateway]);
+        return Response::json(['code'=>0,'msg'=>'请求成功','data'=>$data]);
+    }
+
+
+    /**
+     * 通过商户ID获取部门信息
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getDepartmentByMerchantId(Request $request)
+    {
+        $merchant_id = $request->input('merchant_id');
+        $data = Department::with('childs')
+            ->where('parent_id',0)
+            ->where('merchant_id',$merchant_id)
+            ->select([
+                'id',
+                'merchant_id',
+                'name',
+            ])
+            ->get();
+        return Response::json(['code'=>0,'msg'=>'请求成功','data'=>$data]);
     }
 
 

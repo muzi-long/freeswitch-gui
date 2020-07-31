@@ -176,6 +176,25 @@ class BackendMenu extends Seeder
                     ],
                 ]
             ],
+            [
+                'name' => 'CRM管理',
+                'route' => null,
+                'url' => null,
+                'icon' => 'layui-icon-android',
+                'type' => 2,
+                'sort' => 2,
+                'permission_name' => 'backend.crm',
+                'child' => [
+                    [
+                        'name' => '部门管理',
+                        'route' => 'backend.crm.department',
+                        'url' => null,
+                        'icon' => 'layui-icon-group',
+                        'type' => 1,
+                        'permission_name' => 'backend.crm.department',
+                    ],
+                ]
+            ],
         ];
         $permissions = \App\Models\Permission::where('guard_name',$guard)->pluck('id','name')->toArray();
         foreach ($datas as $k1 => $d1){

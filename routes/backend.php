@@ -307,3 +307,29 @@ Route::group(['namespace'=>'Backend','prefix'=>'platform','middleware'=>['auth:b
 
 
 });
+
+/*
+|--------------------------------------------------------------------------
+| CRM管理模块
+|--------------------------------------------------------------------------
+*/
+Route::group(['namespace'=>'Backend','prefix'=>'crm','middleware'=>['auth:backend']],function (){
+
+    //部门管理
+    Route::group([],function (){
+        Route::get('department','DepartmentController@index')->name('backend.crm.department')->middleware('permission:backend.crm.department');
+        //添加
+        Route::get('department/create','DepartmentController@create')->name('backend.crm.department.create')->middleware('permission:backend.crm.department.create');
+        Route::post('department/store','DepartmentController@store')->name('backend.crm.department.store')->middleware('permission:backend.crm.department.create');
+        //编辑
+        Route::get('department/{id}/edit','DepartmentController@edit')->name('backend.crm.department.edit')->middleware('permission:backend.crm.department.edit');
+        Route::put('department/{id}/update','DepartmentController@update')->name('backend.crm.department.update')->middleware('permission:backend.crm.department.edit');
+        //删除
+        Route::delete('department/destroy','DepartmentController@destroy')->name('backend.crm.department.destroy')->middleware('permission:backend.crm.department.destroy');
+
+    });
+
+
+
+
+});

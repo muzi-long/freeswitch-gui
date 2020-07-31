@@ -201,6 +201,21 @@ class BackendPermission extends Seeder
                     ],
                 ]
             ],
+            [
+                'name' => 'backend.crm',
+                'display_name' => 'CRM管理',
+                'child' => [
+                    [
+                        'name' => 'backend.crm.department',
+                        'display_name' => '部门管理',
+                        'child' => [
+                            ['name' => 'backend.crm.department.create', 'display_name' => '添加'],
+                            ['name' => 'backend.crm.department.edit', 'display_name' => '编辑'],
+                            ['name' => 'backend.crm.department.destroy', 'display_name' => '删除'],
+                        ]
+                    ],
+                ]
+            ],
         ];
 
         foreach ($permissions as $pem1) {
