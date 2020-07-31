@@ -36,6 +36,7 @@ class CreatePermissionTables extends Migration
             $table->string('name');
             $table->string('display_name');
             $table->string('guard_name');
+            $table->unsignedBigInteger('merchant_id')->default(0)->comment('商户ID，0为后台的');
             $table->timestamps();
         });
         \DB::statement("ALTER TABLE `".$tableNames['roles']."` comment '角色'");

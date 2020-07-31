@@ -45,7 +45,7 @@
                                 @endif
                             </dl>
                         @empty
-                            <div style="text-align: center;padding:20px 0;">
+                            <div style="text-align: left;padding:8px 0 20px 0;">
                                 无数据
                             </div>
                         @endforelse

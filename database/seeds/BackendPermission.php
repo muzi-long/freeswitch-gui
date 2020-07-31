@@ -171,6 +171,34 @@ class BackendPermission extends Seeder
                             ['name' => 'backend.platform.bill.create', 'display_name' => '添加'],
                         ]
                     ],
+                    [
+                        'name' => 'backend.platform.staff_permission',
+                        'display_name' => '权限管理',
+                        'child' => [
+                            ['name' => 'backend.platform.staff_permission.create', 'display_name' => '添加权限'],
+                            ['name' => 'backend.platform.staff_permission.edit', 'display_name' => '编辑权限'],
+                            ['name' => 'backend.platform.staff_permission.destroy', 'display_name' => '删除权限'],
+                        ]
+                    ],
+                    [
+                        'name' => 'backend.platform.staff_role',
+                        'display_name' => '角色管理',
+                        'child' => [
+                            ['name' => 'backend.platform.staff_role.create', 'display_name' => '添加角色'],
+                            ['name' => 'backend.platform.staff_role.edit', 'display_name' => '编辑角色'],
+                            ['name' => 'backend.platform.staff_role.destroy', 'display_name' => '删除角色'],
+                            ['name' => 'backend.platform.staff_role.permission', 'display_name' => '分配权限'],
+                        ]
+                    ],
+                    [
+                        'name' => 'backend.platform.staff_menu',
+                        'display_name' => '菜单管理',
+                        'child' => [
+                            ['name' => 'backend.platform.staff_menu.create', 'display_name' => '添加'],
+                            ['name' => 'backend.platform.staff_menu.edit', 'display_name' => '编辑'],
+                            ['name' => 'backend.platform.staff_menu.destroy', 'display_name' => '删除'],
+                        ]
+                    ],
                 ]
             ],
         ];

@@ -263,5 +263,47 @@ Route::group(['namespace'=>'Backend','prefix'=>'platform','middleware'=>['auth:b
         Route::post('bill/store','BillController@store')->name('backend.platform.bill.store')->middleware('permission:backend.platform.bill.create');
     });
 
+    //权限管理
+    Route::group([],function (){
+        Route::get('staff_permission','StaffPermissionController@index')->name('backend.platform.staff_permission')->middleware('permission:backend.platform.staff_permission');
+        //添加
+        Route::get('staff_permission/create','StaffPermissionController@create')->name('backend.platform.staff_permission.create')->middleware('permission:backend.platform.staff_permission.create');
+        Route::post('staff_permission/store','StaffPermissionController@store')->name('backend.platform.staff_permission.store')->middleware('permission:backend.platform.staff_permission.create');
+        //编辑
+        Route::get('staff_permission/{id}/edit','StaffPermissionController@edit')->name('backend.platform.staff_permission.edit')->middleware('permission:backend.platform.staff_permission.edit');
+        Route::put('staff_permission/{id}/update','StaffPermissionController@update')->name('backend.platform.staff_permission.update')->middleware('permission:backend.platform.staff_permission.edit');
+        //删除
+        Route::delete('staff_permission/destroy','StaffPermissionController@destroy')->name('backend.platform.staff_permission.destroy')->middleware('permission:backend.platform.staff_permission.destroy');
+    });
+
+    //角色管理
+    Route::group([],function (){
+        Route::get('staff_role','StaffRoleController@index')->name('backend.platform.staff_role')->middleware('permission:backend.platform.staff_role');
+        //添加
+        Route::get('staff_role/create','StaffRoleController@create')->name('backend.platform.staff_role.create')->middleware('permission:backend.platform.staff_role.create');
+        Route::post('staff_role/store','StaffRoleController@store')->name('backend.platform.staff_role.store')->middleware('permission:backend.platform.staff_role.create');
+        //编辑
+        Route::get('staff_role/{id}/edit','StaffRoleController@edit')->name('backend.platform.staff_role.edit')->middleware('permission:backend.platform.staff_role.edit');
+        Route::put('staff_role/{id}/update','StaffRoleController@update')->name('backend.platform.staff_role.update')->middleware('permission:backend.platform.staff_role.edit');
+        //删除
+        Route::delete('staff_role/destroy','StaffRoleController@destroy')->name('backend.platform.staff_role.destroy')->middleware('permission:backend.platform.staff_role.destroy');
+        //分配权限
+        Route::get('staff_role/{id}/permission','StaffRoleController@permission')->name('backend.platform.staff_role.permission')->middleware('permission:backend.platform.staff_role.permission');
+        Route::put('staff_role/{id}/assignPermission','StaffRoleController@assignPermission')->name('backend.platform.staff_role.assignPermission')->middleware('permission:backend.platform.staff_role.permission');
+    });
+
+    //菜单管理
+    Route::group([],function (){
+        Route::get('staff_menu','StaffMenuController@index')->name('backend.platform.staff_menu')->middleware('permission:backend.platform.staff_menu');
+        //添加
+        Route::get('staff_menu/create','StaffMenuController@create')->name('backend.platform.staff_menu.create')->middleware('permission:backend.platform.staff_menu.create');
+        Route::post('staff_menu/store','StaffMenuController@store')->name('backend.platform.staff_menu.store')->middleware('permission:backend.platform.staff_menu.create');
+        //编辑
+        Route::get('staff_menu/{id}/edit','StaffMenuController@edit')->name('backend.platform.staff_menu.edit')->middleware('permission:backend.platform.staff_menu.edit');
+        Route::put('staff_menu/{id}/update','StaffMenuController@update')->name('backend.platform.staff_menu.update')->middleware('permission:backend.platform.staff_menu.edit');
+        //删除
+        Route::delete('staff_menu/destroy','StaffMenuController@destroy')->name('backend.platform.staff_menu.destroy')->middleware('permission:backend.platform.staff_menu.destroy');
+    });
+
 
 });

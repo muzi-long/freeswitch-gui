@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\View;
 use App\Models\Permission;
 
-class MenuController extends Controller
+class StaffMenuController extends Controller
 {
     /**
      * 菜单列表
@@ -22,7 +22,7 @@ class MenuController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()){
-            $res = Menu::where('guard_name',config('freeswitch.backend_guard'))
+            $res = Menu::where('guard_name',config('freeswitch.frontend_guard'))
                 ->orderBy('sort','asc')
                 ->orderBy('id','asc')
                 ->paginate($request->get('limit', 30));
@@ -39,7 +39,7 @@ class MenuController extends Controller
             ];
             return Response::json($data);
         }
-        return View::make('backend.system.menu.index');
+        return View::make('backend.platform.staff_menu.index');
     }
 
     /**
@@ -49,14 +49,14 @@ class MenuController extends Controller
     public function create()
     {
         $menus = Menu::with('childs')
-            ->where('guard_name',config('freeswitch.backend_guard'))
+            ->where('guard_name',config('freeswitch.frontend_guard'))
             ->where('parent_id', 0)
             ->get();
         $permissions = Permission::with('childs')
-            ->where('guard_name',config('freeswitch.backend_guard'))
+            ->where('guard_name',config('freeswitch.frontend_guard'))
             ->where('parent_id', 0)
             ->get();
-        return View::make('backend.system.menu.create', compact('menus','permissions','menus'));
+        return View::make('backend.platform.staff_menu.create', compact('menus','permissions','menus'));
     }
 
     /**
@@ -85,9 +85,9 @@ class MenuController extends Controller
             }
         }
         try {
-            $data['guard_name'] = config('freeswitch.backend_guard');
+            $data['guard_name'] = config('freeswitch.frontend_guard');
             Menu::create($data);
-            return Response::json(['code'=>0,'msg'=>'添加成功','url'=>route('backend.system.menu')]);
+            return Response::json(['code'=>0,'msg'=>'添加成功','url'=>route('backend.platform.staff_menu')]);
         } catch (\Exception $exception) {
             Log::error('添加菜单异常：'.$exception->getMessage());
             return Response::json(['code'=>1,'msg'=>'添加失败']);
@@ -103,14 +103,14 @@ class MenuController extends Controller
     {
         $menu = Menu::findOrFail($id);
         $menus = Menu::with('childs')
-            ->where('guard_name',config('freeswitch.backend_guard'))
+            ->where('guard_name',config('freeswitch.frontend_guard'))
             ->where('parent_id', 0)
             ->get();
         $permissions = Permission::with('childs')
-            ->where('guard_name',config('freeswitch.backend_guard'))
+            ->where('guard_name',config('freeswitch.frontend_guard'))
             ->where('parent_id', 0)
             ->get();
-        return View::make('backend.system.menu.edit', compact('menu', 'menus','permissions'));
+        return View::make('backend.platform.staff_menu.edit', compact('menu', 'menus','permissions'));
     }
 
     /**
@@ -142,7 +142,7 @@ class MenuController extends Controller
         }
         try {
             $model->update($data);
-            return Response::json(['code'=>0,'msg'=>'更新成功','url'=>route('backend.system.menu')]);
+            return Response::json(['code'=>0,'msg'=>'更新成功','url'=>route('backend.platform.staff_menu')]);
         } catch (\Exception $exception) {
             Log::error('更新菜单异常：'.$exception->getMessage());
             return Response::json(['code'=>1,'msg'=>'更新失败']);

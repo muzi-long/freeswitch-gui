@@ -6,7 +6,7 @@
             <h2>分配权限</h2>
         </div>
         <div class="layui-card-body">
-            <form action="{{route('backend.system.role.assignPermission',['id'=>$role->id])}}" method="post" class="layui-form">
+            <form action="{{route('backend.platform.staff_role.assignPermission',['id'=>$role->id])}}" method="post" class="layui-form">
                 {{csrf_field()}}
                 {{method_field('put')}}
                 <div class="layui-form-item">
@@ -52,7 +52,7 @@
                     <label for="" class="layui-form-label"></label>
                     <div class="layui-input-block">
                         <button type="button" class="layui-btn layui-btn-sm" lay-submit lay-filter="go" >确 认</button>
-                        <a href="{{route('backend.system.role')}}"  class="layui-btn layui-btn-sm" >返 回</a>
+                        <a href="{{route('backend.platform.staff_role')}}"  class="layui-btn layui-btn-sm" >返 回</a>
                     </div>
                 </div>
             </form>
@@ -109,6 +109,6 @@
             });
         })
     </script>
-    @include('backend.system.role._js')
+    @include('backend.platform.staff_role._js')
 @endsection
 

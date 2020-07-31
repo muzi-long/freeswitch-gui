@@ -150,6 +150,30 @@ class BackendMenu extends Seeder
                         'type' => 1,
                         'permission_name' => 'backend.platform.bill',
                     ],
+                    [
+                        'name' => '权限管理',
+                        'route' => 'backend.platform.staff_permission',
+                        'url' => null,
+                        'icon' => 'layui-icon-key',
+                        'type' => 1,
+                        'permission_name' => 'backend.platform.staff_permission',
+                    ],
+                    [
+                        'name' => '角色管理',
+                        'route' => 'backend.platform.staff_role',
+                        'url' => null,
+                        'icon' => 'layui-icon-group',
+                        'type' => 1,
+                        'permission_name' => 'backend.platform.staff_role',
+                    ],
+                    [
+                        'name' => '菜单管理',
+                        'route' => 'backend.platform.staff_menu',
+                        'url' => null,
+                        'icon' => 'layui-icon-menu-fill',
+                        'type' => 1,
+                        'permission_name' => 'backend.platform.staff_menu',
+                    ],
                 ]
             ],
         ];
