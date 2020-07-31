@@ -193,6 +193,14 @@ class BackendMenu extends Seeder
                         'type' => 1,
                         'permission_name' => 'backend.crm.department',
                     ],
+                    [
+                        'name' => '节点管理',
+                        'route' => 'backend.crm.node',
+                        'url' => null,
+                        'icon' => 'layui-icon-cellphone-fine',
+                        'type' => 1,
+                        'permission_name' => 'backend.crm.node',
+                    ],
                 ]
             ],
         ];

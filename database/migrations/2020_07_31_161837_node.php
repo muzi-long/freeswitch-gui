@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class Department extends Migration
+class Node extends Migration
 {
     /**
      * Run the migrations.
@@ -13,17 +13,16 @@ class Department extends Migration
      */
     public function up()
     {
-        Schema::create('department', function (Blueprint $table) {
+        Schema::create('node', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('merchant_id')->default(0)->comment('商户ID');
-            $table->unsignedBigInteger('parent_id')->default(0)->comment('上级部门ID，0为一级部门');
-            $table->string('name')->comment('名称');
+            $table->string('name')->comment('进度节点名称');
             $table->integer('sort')->default(10)->comment('排序');
             $table->unsignedBigInteger('created_staff_id')->default(0)->comment('创建人ID，0表示后台用户创建的');
             $table->softDeletes();
             $table->timestamps();
         });
-        \DB::statement("ALTER TABLE `department` comment '部门'");
+        \DB::statement("ALTER TABLE `node` comment '进度节点'");
     }
 
     /**
@@ -33,6 +32,6 @@ class Department extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('department');
+        Schema::dropIfExists('node');
     }
 }

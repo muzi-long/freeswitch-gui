@@ -329,6 +329,20 @@ Route::group(['namespace'=>'Backend','prefix'=>'crm','middleware'=>['auth:backen
 
     });
 
+    //节点管理
+    Route::group([],function (){
+        Route::get('node','NodeController@index')->name('backend.crm.node')->middleware('permission:backend.crm.node');
+        //添加
+        Route::get('node/create','NodeController@create')->name('backend.crm.node.create')->middleware('permission:backend.crm.node.create');
+        Route::post('node/store','NodeController@store')->name('backend.crm.node.store')->middleware('permission:backend.crm.node.create');
+        //编辑
+        Route::get('node/{id}/edit','NodeController@edit')->name('backend.crm.node.edit')->middleware('permission:backend.crm.node.edit');
+        Route::put('node/{id}/update','NodeController@update')->name('backend.crm.node.update')->middleware('permission:backend.crm.node.edit');
+        //删除
+        Route::delete('node/destroy','NodeController@destroy')->name('backend.crm.node.destroy')->middleware('permission:backend.crm.node.destroy');
+
+    });
+
 
 
 

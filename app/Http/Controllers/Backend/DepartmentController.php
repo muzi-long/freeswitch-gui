@@ -12,6 +12,11 @@ use Illuminate\Support\Facades\View;
 
 class DepartmentController extends Controller
 {
+    /**
+     * 列表
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Http\JsonResponse
+     */
     public function index(Request $request)
     {
         if ($request->ajax()){
