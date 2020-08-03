@@ -317,7 +317,7 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth','perm
         Route::get('assignment','AssignmentController@index')->name('admin.assignment')->middleware('permission:crm.assignment');
         Route::get('assignment/data','AssignmentController@data')->name('admin.assignment.data')->middleware('permission:crm.assignment');
         //删除
-        Route::delete('assignment/destroy','AssignmentController@destroy')->name('admin.assignment.destroy')->middleware('permission:crm.assignment.to');
+        Route::delete('assignment/destroy','AssignmentController@destroy')->name('admin.assignment.destroy')->middleware('permission:crm.assignment.destroy');
         //分配
         Route::post('assignment/to','AssignmentController@to')->name('admin.assignment.to')->middleware('permission:crm.assignment.to');
         //导入
