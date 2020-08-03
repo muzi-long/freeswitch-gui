@@ -164,7 +164,7 @@ class eslListen extends Command
                         }else{
                             //更新A接听时间
                             DB::table('cdr')->where('uuid',$uuid)->update([
-                                'aleg_start_at' => date('Y-m-d H:i:s'),
+                                'aleg_answer_at' => date('Y-m-d H:i:s'),
                                 'updated_at' => date('Y-m-d H:i:s'),
                             ]);
                         }
@@ -221,7 +221,7 @@ class eslListen extends Command
                             $table = 'cdr';
                             $cdr = DB::table($table)->where('uuid',$data['pid'])->whereNull('aleg_end_at')->first();
                             if ($cdr != null){
-                                $callsec = $cdr->bcalltime != null ? time()-strtotime($cdr->bleg_answer_at) : 0;
+                                $callsec = $cdr->bleg_answer_at != null ? time()-strtotime($cdr->bleg_answer_at) : 0;
                                 //更新通话时长
                                 DB::table($table)->where('uuid',$data['pid'])->update([
                                     'aleg_end_at' => date('Y-m-d H:i:s'),

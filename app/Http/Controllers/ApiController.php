@@ -156,6 +156,7 @@ class ApiController extends Controller
                 'src' => $data['exten'],
                 'dst' => $data['phone'],
                 'user_data' => $data['user_data'],
+                'aleg_start_at' => date('Y-m-d H:i:s'),
             ]);
             //20分钟过期
             Redis::setex($data['exten'].'_uuid',1200, $aleg_uuid);
