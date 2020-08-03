@@ -209,6 +209,23 @@ class BackendMenu extends Seeder
                         'type' => 1,
                         'permission_name' => 'backend.crm.project-design',
                     ],
+                    [
+                        'name' => '待分配',
+                        'route' => 'backend.crm.assignment',
+                        'url' => null,
+                        'icon' => 'layui-icon-transfer',
+                        'type' => 1,
+                        'permission_name' => 'backend.crm.assignment',
+                    ],
+
+                    [
+                        'name' => '公海库',
+                        'route' => 'backend.crm.waste',
+                        'url' => null,
+                        'icon' => 'layui-icon-404',
+                        'type' => 1,
+                        'permission_name' => 'backend.crm.waste',
+                    ],
                 ]
             ],
         ];

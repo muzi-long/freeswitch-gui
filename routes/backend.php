@@ -357,5 +357,21 @@ Route::group(['namespace'=>'Backend','prefix'=>'crm','middleware'=>['auth:backen
 
     });
 
+    //待分配
+    Route::group([],function (){
+        Route::get('assignment','AssignmentController@index')->name('backend.crm.assignment')->middleware('permission:backend.crm.assignment');
+        //删除
+        Route::delete('assignment/destroy','AssignmentController@destroy')->name('backend.crm.assignment.destroy')->middleware('permission:backend.crm.assignment.destroy');
+    });
+
+
+    //公海库
+    Route::group([],function (){
+        Route::get('waste','WasteController@index')->name('backend.crm.waste')->middleware('permission:backend.crm.waste');
+        //跟进记录
+        Route::get('waste/{id}/show','WasteController@show')->name('backend.crm.waste.show')->middleware('permission:backend.crm.waste.show');
+        //删除
+        Route::get('waste/destroy','WasteController@destroy')->name('backend.crm.waste.destroy')->middleware('permission:backend.crm.waste.destroy');
+    });
 
 });

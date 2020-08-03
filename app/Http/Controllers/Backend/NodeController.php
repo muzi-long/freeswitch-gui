@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Merchant;
 use App\Models\Node;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\View;
@@ -96,10 +97,14 @@ class NodeController extends Controller
         if (empty($ids)){
             return Response::json(['code'=>1,'msg'=>'请选择删除项']);
         }
-        if (Node::destroy($ids)){
+        DB::beginTransaction();
+        try {
+            DB::table('node')->whereIn('id',$ids)->delete();
             return Response::json(['code'=>0,'msg'=>'删除成功']);
+        }catch (\Exception $exception){
+            Log::error('删除公海库记录异常：'.$exception->getMessage(),$ids);
+            return Response::json(['code'=>1,'msg'=>'删除失败']);
         }
-        return Response::json(['code'=>1,'msg'=>'删除失败']);
     }
 
 }
