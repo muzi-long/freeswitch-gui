@@ -25,7 +25,8 @@ class DepartmentController extends Controller
                 ->when($data['merchant_id'],function ($q) use($data){
                     return $q->where('merchant_id',$data['merchant_id']);
                 })
-                ->orderBy('merchant_id')->get();
+                ->orderBy('merchant_id')
+                ->paginate($request->get('limit', 30));
             $data = [
                 'code' => 0,
                 'msg' => '正在请求中...',

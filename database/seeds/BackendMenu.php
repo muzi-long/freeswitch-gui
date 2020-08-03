@@ -201,6 +201,14 @@ class BackendMenu extends Seeder
                         'type' => 1,
                         'permission_name' => 'backend.crm.node',
                     ],
+                    [
+                        'name' => '客户配置',
+                        'route' => 'backend.crm.project-design',
+                        'url' => null,
+                        'icon' => 'layui-icon-set-fill',
+                        'type' => 1,
+                        'permission_name' => 'backend.crm.project-design',
+                    ],
                 ]
             ],
         ];

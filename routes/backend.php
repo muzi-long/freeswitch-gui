@@ -343,7 +343,19 @@ Route::group(['namespace'=>'Backend','prefix'=>'crm','middleware'=>['auth:backen
 
     });
 
+    //客户属性
+    Route::group([],function (){
+        Route::get('project-design','ProjectDesignController@index')->name('backend.crm.project-design')->middleware('permission:backend.crm.project-design');
+        //添加
+        Route::get('project-design/create','ProjectDesignController@create')->name('backend.crm.project-design.create')->middleware('permission:backend.crm.project-design.create');
+        Route::post('project-design/store','ProjectDesignController@store')->name('backend.crm.project-design.store')->middleware('permission:backend.crm.project-design.create');
+        //编辑
+        Route::get('project-design/{id}/edit','ProjectDesignController@edit')->name('backend.crm.project-design.edit')->middleware('permission:backend.crm.project-design.edit');
+        Route::put('project-design/{id}/update','ProjectDesignController@update')->name('backend.crm.project-design.update')->middleware('permission:backend.crm.project-design.edit');
+        //删除
+        Route::delete('project-design/destroy','ProjectDesignController@destroy')->name('backend.crm.project-design.destroy')->middleware('permission:backend.crm.project-design.destroy');
 
+    });
 
 
 });

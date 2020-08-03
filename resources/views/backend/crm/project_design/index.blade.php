@@ -1,15 +1,21 @@
 @extends('backend.base')
 
 @section('content')
+    <style>
+        .layui-table tbody .layui-table-cell{
+            height:50px;
+            line-height: 50px;
+        }
+    </style>
     <div class="layui-card">
         <div class="layui-card-header layuiadmin-card-header-auto">
             <form class="layui-form">
                 <div class="layui-btn-group">
-                    @can('backend.crm.node.destroy')
+                    @can('backend.crm.project-design.destroy')
                         <button class="layui-btn layui-btn-sm layui-btn-danger" type="button" id="listDelete">删 除</button>
                     @endcan
-                    @can('backend.crm.node.create')
-                        <a class="layui-btn layui-btn-sm" href="{{ route('backend.crm.node.create') }}">添 加</a>
+                    @can('backend.crm.project-design.create')
+                        <a class="layui-btn layui-btn-sm" href="{{ route('backend.crm.project-design.create') }}">添 加</a>
                     @endcan
                         <button class="layui-btn layui-btn-sm" type="button" lay-submit lay-filter="search" >搜索</button>
                 </div>
@@ -32,10 +38,10 @@
             <table id="dataTable" lay-filter="dataTable"></table>
             <script type="text/html" id="options">
                 <div class="layui-btn-group">
-                    @can('backend.crm.node.edit')
+                    @can('backend.crm.project-design.edit')
                     <a class="layui-btn layui-btn-sm" lay-event="edit">编辑</a>
                     @endcan
-                    @can('backend.crm.node.destroy')
+                    @can('backend.crm.project-design.destroy')
                     <a class="layui-btn layui-btn-danger layui-btn-sm " lay-event="del">删除</a>
                     @endcan
                 </div>
@@ -55,17 +61,28 @@
             var dataTable = table.render({
                 elem: '#dataTable'
                 ,height: 500
-                ,url: "{{ route('backend.crm.node') }}" //数据接口
+                ,url: "{{ route('backend.crm.project-design') }}" //数据接口
                 ,page: true //开启分页
                 ,cols: [[ //表头
-                    {checkbox: true}
-                    ,{field: 'id', title: 'ID', sort: true,width:80}
-                    ,{field: 'name', title: '名称'}
-                    , {field: 'merchant_id', title: '所属商户',templet: function (d) {
+                    {checkbox: true,fixed: true}
+                    //,{field: 'id', title: 'ID', sort: true,width:80}
+                    ,{field: 'merchant_id', title: '所属商户',templet: function (d) {
                             return d.merchant.company_name;
                         }}
+                    ,{field: 'field_label', title: '字段名称'}
+                    ,{field: 'field_key', title: '字段Key'}
+                    ,{field: 'field_type_name', title: '字段类型'}
+                    ,{field: 'field_option', title: '字段配置项'}
+                    ,{field: 'field_value', title: '默认值'}
                     ,{field: 'sort', title: '排序'}
-                    ,{ width: 150, align:'center', toolbar: '#options', title:'操作'}
+                    ,{field: 'visiable', title: '可见性',templet:function (d) {
+                            return d.visiable==1?'显示':'隐藏';
+                        }}
+                    ,{field: 'visiable', title: '是否必填',templet:function (d) {
+                            return d.required==1?'是':'否';
+                        }}
+                    ,{field: 'created_at', title: '创建时间'}
+                    ,{fixed: 'right', width: 150, align:'center', toolbar: '#options', title:'操作'}
                 ]]
             });
 
@@ -75,7 +92,7 @@
                     ,layEvent = obj.event; //获得 lay-event 对应的值
                 if(layEvent === 'del'){
                     layer.confirm('确认删除吗？', function(index){
-                        $.post("{{ route('backend.crm.node.destroy') }}",{_method:'delete',ids:[data.id]},function (result) {
+                        $.post("{{ route('backend.crm.project-design.destroy') }}",{_method:'delete',ids:[data.id]},function (result) {
                             if (result.code==0){
                                 obj.del(); //删除对应行（tr）的DOM结构
                             }
@@ -85,7 +102,7 @@
                         });
                     });
                 } else if(layEvent === 'edit'){
-                    location.href = '/backend/crm/node/'+data.id+'/edit';
+                    location.href = '/backend/crm/project-design/'+data.id+'/edit';
                 }
             });
 
@@ -101,7 +118,7 @@
                 }
                 if (ids.length>0){
                     layer.confirm('确认删除吗？', function(index){
-                        $.post("{{ route('backend.crm.node.destroy') }}",{_method:'delete',ids:ids},function (result) {
+                        $.post("{{ route('backend.crm.project-design.destroy') }}",{_method:'delete',ids:ids},function (result) {
                             layer.close(index);
                             var icon = result.code==0?1:2;
                             layer.msg(result.msg,{icon:icon},function () {
@@ -115,7 +132,6 @@
                     layer.msg('请选择删除项',{icon:5})
                 }
             })
-
             //搜索
             form.on('submit(search)',function (data) {
                 dataTable.reload({

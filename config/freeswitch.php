@@ -23,24 +23,6 @@ return [
         'playback'          => '播放',
     ],
 
-    //生成静态文件地址
-    'swoole_http_url' => [
-        //生成网关
-        'gateway' => 'http://127.0.0.1:9501/gateway',
-        //生成分机
-        'directory' => 'http://127.0.0.1:9501/directory',
-        //生成拨号计划
-        'dialplan' => 'http://127.0.0.1:9501/dialplan',
-        //生成callcenter
-        'callcenter' => 'http://127.0.0.1:9501/callcenter',
-    ],
-
-    'esl' => [
-        'host' => '127.0.0.1',
-        'password' => 'ClueCon',
-        'port' => 8021,
-    ],
-
     //队列响铃模式
     'strategy' => [
         'top-down'                      => '顺序振铃',
@@ -100,14 +82,12 @@ return [
         //自增ID的key,用于群呼时生成uuid
         'callcenter_call' => 'callcenter_call_id',
     ],
-    'baidu' => [
-        'appId' => '15143241',
-        'appKey' => 'YI8bXhDcthkBrQNRQFDf2iCG',
-        'appSecret' => 'NQo5Nk9rEZVAndjthwQd8OtYvNfjBcFM',
-        'url' => [
-            'token' => 'https://openapi.baidu.com/oauth/2.0/token',
-            'tts' => 'http://tsn.baidu.com/text2audio',
-            'asr' => 'https://vop.baidu.com/pro_api',
-        ],
+
+    //
+    'project_design_default_field' => [
+        'company_name',
+        'contact_name',
+        'contact_phone'
     ],
+
 ];

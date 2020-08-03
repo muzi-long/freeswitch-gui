@@ -223,6 +223,15 @@ class BackendPermission extends Seeder
                             ['name' => 'backend.crm.node.destroy', 'display_name' => '删除'],
                         ]
                     ],
+                    [
+                        'name' => 'backend.crm.project-design',
+                        'display_name' => '客户配置',
+                        'child' => [
+                            ['name' => 'backend.crm.project-design.create', 'display_name' => '添加'],
+                            ['name' => 'backend.crm.project-design.edit', 'display_name' => '编辑'],
+                            ['name' => 'backend.crm.project-design.destroy', 'display_name' => '删除'],
+                        ]
+                    ],
                 ]
             ],
         ];
