@@ -29,11 +29,9 @@ class eslListen extends Command
      */
     protected $description = 'esl listen events';
     protected $fs_dir = '/usr/local/freeswitch';
+    protected $recording_dir = 'recordings';
     public $url = null;
-    public $machineId = 2;
-    public $asr_table = null;
-    public $cdr_table = null;
-    public $asr_status_key = 'asr_status_key'; //控制是否开启分段录音asr识别的redis key
+    public $hash_table = 'esl_listen';
 
     /**
      * Create a new command instance.
@@ -43,7 +41,9 @@ class eslListen extends Command
     public function __construct()
     {
         parent::__construct();
-        $this->url = config('app.url');
+        if ($this->url == null){
+            $this->url = config('app.url');
+        }
     }
 
     /**
@@ -90,7 +90,7 @@ class eslListen extends Command
         $fs->events('plain', $event);
         while (true) {
             //录音目录
-            $filepath = $this->fs_dir . '/recordings/' . date('Y') . '/' . date('m') . '/' . date('d') . '/';
+            $filepath = $this->fs_dir . '/' .$this->recording_dir. '/' . date('Y') . '/' . date('m') . '/' . date('d') . '/';
             $received_parameters = $fs->recvEvent();
             if (!empty($received_parameters)) {
                 $this->setTable();
@@ -114,159 +114,125 @@ class eslListen extends Command
                         break;
                     //通道应答
                     case 'CHANNEL_ANSWER':
-                        $otherUuid = Arr::get($info,"Other-Leg-Unique-ID");
-                        $cdr_uuid = md5($uuid.Redis::incr('cdr_uuid_incr_key'));
-                        Redis::setex($uuid,1800,json_encode([
-                            'uuid' => $cdr_uuid,
+                        Redis::hset($this->hash_table,$uuid,json_encode([
+                            'pid' => $uuid,
+                            'unique_id' => $uuid,
+                            'record_file' => null,
                             'full_record_file' => null,
+                            'start_time' => date('Y-m-d H:i:s'),
+                            'end_time' => null,
                         ]));
+                        $otherUuid = Arr::get($info,"Other-Leg-Unique-ID");
                         if ($otherUuid) { //被叫应答后
                             //开启全程录音
-                            $fullfile = $filepath . 'full_' . $cdr_uuid . '.wav';
+                            $fullfile = $filepath . 'full_' . md5($otherUuid . $uuid) . '.wav';
                             $fs->bgapi("uuid_record {$uuid} start {$fullfile} 7200"); //录音
-                            Redis::setex($otherUuid,1800,json_encode([
-                                'uuid' => $cdr_uuid,
-                                'full_record_file' => $fullfile,
-                            ]));
-                            Redis::setex($uuid,1800,json_encode([
-                                'uuid' => $cdr_uuid,
-                                'full_record_file' => $fullfile,
-                            ]));
-                            if (Redis::get($this->asr_status_key)==1) {
 
-                                //记录A分段录音数据
-                                $halffile_a = $filepath . 'half_' . md5($otherUuid . time() . uniqid()) . '.wav';
-                                $fs->bgapi("uuid_record " . $otherUuid . " start " . $halffile_a . " 18");
-                                Redis::setex($otherUuid,1800,json_encode([
-                                    'uuid' => $cdr_uuid,
-                                    'leg_uuid' => $otherUuid,
-                                    'record_file' => $halffile_a,
-                                    'full_record_file' => $fullfile,
-                                    'start_at' => date('Y-m-d H:i:s'),
-                                    'end_at' => null,
-                                ]));
+                            //记录A分段录音数据
+                            $halffile_a = $filepath . 'half_' . md5($otherUuid . time() . uniqid()) . '.wav';
+                            $fs->bgapi("uuid_record " . $otherUuid . " start " . $halffile_a . " 18");
+                            $a_data = json_decode(Redis::hget($this->hash_table,$otherUuid),true);
+                            $a_data = array_merge($a_data,[
+                                'record_file' => $halffile_a,
+                                'full_record_file' => str_replace($this->fs_dir,$this->url,$fullfile),
+                            ]);
+                            Redis::hset($this->hash_table,$otherUuid,json_encode($a_data));
+                            unset($a_data);
+                            unset($halffile_a);
 
-                                //记录B分段录音数据
-                                $halffile_b = $filepath . 'half_' . md5($uuid . time() . uniqid()) . '.wav';
-                                $fs->bgapi("uuid_record " . $uuid . " start " . $halffile_b . " 18");
-                                Redis::set($uuid,json_encode([
-                                    'uuid' => $cdr_uuid,
-                                    'leg_uuid' => $uuid,
-                                    'record_file' => $halffile_b,
-                                    'full_record_file' => $fullfile,
-                                    'start_at' => date('Y-m-d H:i:s'),
-                                    'end_at' => null,
-                                ]));
-                                unset($halffile_a);
-                                unset($halffile_b);
-                            }
+                            //记录B分段录音数据
+                            $halffile_b = $filepath . 'half_' . md5($uuid . time() . uniqid()) . '.wav';
+                            $fs->bgapi("uuid_record " . $uuid . " start " . $halffile_b . " 18");
+                            $b_data = json_decode(Redis::hget($this->hash_table,$uuid),true);
+                            $b_data = array_merge($b_data,[
+                                'pid' => $otherUuid,
+                                'record_file' => $halffile_b,
+                                'full_record_file' => str_replace($this->fs_dir,$this->url,$fullfile),
+                            ]);
+                            Redis::hset($this->hash_table,$uuid,json_encode($b_data));
+                            unset($b_data);
+                            unset($halffile_b);
+
+                            //更新B接听时间
+                            DB::table('cdr')->where('uuid',$otherUuid)->update([
+                                'bleg_answer_at' => date('Y-m-d H:i:s'),
+                                'record_file' => str_replace($this->fs_dir,$this->url,$fullfile),
+                                'updated_at' => date('Y-m-d H:i:s'),
+                            ]);
                             unset($fullfile);
+
+                        }else{
+                            //更新A接听时间
+                            DB::table('cdr')->where('uuid',$uuid)->update([
+                                'aleg_start_at' => date('Y-m-d H:i:s'),
+                                'updated_at' => date('Y-m-d H:i:s'),
+                            ]);
                         }
+                        unset($otherUuid);
                         break;
                     //开始说话
                     case 'RECORD_START':
-                        $channel = Redis::get($uuid);
-                        if ($channel){
-                            $data = array_merge(json_decode($channel,true),[
-                                'start_at' => date('Y-m-d H:i:s'),
+                        if (Redis::hexists($this->hash_table,$uuid)){
+                            $data = json_decode(Redis::hget($this->hash_table,$uuid),true);
+                            $data = array_merge($data,[
+                                'start_time' => date('Y-m-d H:i:s'),
                             ]);
-                            Redis::set($uuid,json_encode($data));
+                            Redis::hset($this->hash_table,$uuid,json_encode($data));
+                            unset($data);
                         }
                         break;
                     //结束说话
                     case 'RECORD_STOP':
-                        if (Redis::get($this->asr_status_key)==1) {
-                            $channel = Redis::get($uuid);
-                            if ($channel){
-                                $data = json_decode($channel,true);
-                                if (isset($data['record_file'])&&file_exists($data['record_file'])){
-                                    Redis::rPush('esl_cdr_key',json_encode([
-                                        'table' => $this->asr_table,
-                                        'update_data' => [
-                                            'uuid' => $data['uuid'],
-                                            'leg_uuid' => $data['leg_uuid'],
-                                            'start_at' => $data['start_at'],
-                                            'end_at' => date('Y-m-d H:i:s'),
-                                            'billsec' => strtotime(date('Y-m-d H:i:s'))-strtotime($data['start_at']),
-                                            'record_file' => str_replace($this->fs_dir, $this->url, $data['record_file']),
-                                        ],
-                                        'type' => 2,
-                                    ]));
-                                }
-                                //结束说话 后接着开启分段录音
-                                $halffile = $filepath . 'half_' . md5($uuid . time() . uniqid()) . '.wav';
-                                $fs->bgapi("uuid_record " . $uuid . " start " . $halffile . " 18");
-                                Redis::set($uuid,json_encode(array_merge($data,[
-                                    'record_file' => $halffile,
-                                    'start_at' => date('Y-m-d H:i:s'),
-                                    'end_at' => null,
-                                ])));
-                                unset($data);
-                                unset($halffile);
+                        if (Redis::hexists($this->hash_table,$uuid)){
+                            $data = json_decode(Redis::hget($this->hash_table,$uuid),true);
+                            $data['is_prologue'] += 1;
+                            if (isset($data['record_file'])&&file_exists($data['record_file'])){
+                                $table = 'asr';
+                                DB::table($table)->insert([
+                                    'uuid' => $data['pid'],
+                                    'leg_uuid' => $data['unique_id'],
+                                    'start_at' => $data['start_time'],
+                                    'end_at' => date('Y-m-d H:i:s'),
+                                    'billsec' => strtotime(date('Y-m-d H:i:s'))-strtotime($data['start_time']),
+                                    'record_file' => str_replace($this->fs_dir, $this->url, $data['record_file']),
+                                    'created_at' => date('Y-m-d H:i:s'),
+                                ]);
+                                unset($table);
                             }
-                            unset($channel);
+
+                            //结束说话 后接着开启分段录音
+                            $halffile = $filepath . 'half_' . md5($uuid . time() . uniqid()) . '.wav';
+                            $fs->bgapi("uuid_record " . $uuid . " start " . $halffile . " 18");
+                            $data = array_merge($data,[
+                                'record_file' => $halffile,
+                                'start_time' => date('Y-m-d H:i:s'),
+                                'end_time' => null,
+                            ]);
+                            Redis::hset($this->hash_table,$uuid,json_encode($data));
+                            unset($halffile);
+                            unset($data);
                         }
                         break;
                     //挂断
                     case 'CHANNEL_HANGUP_COMPLETE':
-                        $channel = Redis::get($uuid);
-                        if ($channel){
-                            $channelData = json_decode($channel,true);
-                            $record_file = Arr::get($channelData,'full_record_file',null);
-                            $record_file = $record_file ? str_replace($this->fs_dir,$this->url,$record_file) : null;
-                            Redis::del($uuid);
-                        }else{
-                            $record_file = null;
-                            continue 2; //继续外层的while循环
+                        if (Redis::hexists($this->hash_table,$uuid)){
+                            $data = json_decode(Redis::hget($this->hash_table,$uuid),true);
+                            Redis::hdel($this->hash_table, $uuid);
+                            $table = 'cdr';
+                            $cdr = DB::table($table)->where('uuid',$data['pid'])->whereNull('aleg_end_at')->first();
+                            if ($cdr != null){
+                                $callsec = $cdr->bcalltime != null ? time()-strtotime($cdr->bleg_answer_at) : 0;
+                                //更新通话时长
+                                DB::table($table)->where('uuid',$data['pid'])->update([
+                                    'aleg_end_at' => date('Y-m-d H:i:s'),
+                                    'billsec' => $callsec,
+                                ]);
+                                unset($callsec);
+                            }
+                            unset($data);
+                            unset($table);
+                            unset($cdr);
                         }
-                        $otherType = Arr::get($info,'Other-Type');
-                        $otherUuid = Arr::get($info,'Other-Leg-Unique-ID');
-                        $start = Arr::get($info,'variable_start_stamp');
-                        $answer = Arr::get($info,'variable_answer_stamp');
-                        $end = Arr::get($info,'variable_end_stamp');
-                        $extend_content = Arr::get($info,'variable_user_data',null);
-                        $extend_content = $extend_content ? decrypt($extend_content) : $extend_content;
-                        $duration = (int)Arr::get($info,'variable_duration',0);
-                        $billsec = (int)Arr::get($info,'variable_billsec',0);
-                        $customer_caller = Arr::get($info,'variable_customer_caller',null);
-
-                        if (empty($otherType) || $otherType == 'originatee') {
-                            Redis::del($CallerCallerIDNumber.'_uuid');
-                            $data = [
-                                'table_name' => $this->cdr_table,
-                                'leg_type' => 'A',
-                                'uuid' => $channelData['uuid'],
-                                'update_data' => [
-                                    'aleg_uuid' => $uuid,
-                                    'src' => $CallerCallerIDNumber,
-                                    'dst' => $customer_caller?$customer_caller:$CallerCalleeIDNumber,
-                                    'aleg_start_at' => $start ? urldecode($start) : null,
-                                    'aleg_answer_at' => $answer ? urldecode($answer) : null,
-                                    'aleg_end_at' => $end ? urldecode($end) : null,
-                                    'duration' => $duration,
-                                    'record_file' => $record_file,
-                                    'user_data' => $extend_content,
-                                ],
-                                'type' => 1,
-                            ];
-                        }else{
-                            $data = [
-                                'table_name' => $this->cdr_table,
-                                'leg_type' => 'B',
-                                'uuid' => $channelData['uuid'],
-                                'update_data' => [
-                                    'bleg_uuid' => $uuid,
-                                    'bleg_start_at' => $start ? urldecode($start) : null,
-                                    'bleg_answer_at' => $answer ? urldecode($answer) : null,
-                                    'bleg_end_at' => $end ? urldecode($end) : null,
-                                    'billsec' => $billsec,
-                                ],
-                                'type' => 1,
-                            ];
-                        }
-                        Redis::rPush('esl_cdr_key',json_encode($data));
-                        Redis::get($uuid);
-                        unset($data);
                         break;
                     default:
                         break;

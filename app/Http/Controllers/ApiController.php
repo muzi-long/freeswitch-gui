@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Audio;
+use App\Models\Cdr;
 use App\Models\Gateway;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
@@ -99,10 +101,7 @@ class ApiController extends Controller
         $dialStr  = "originate {origination_uuid=".$aleg_uuid."}";
         $dialStr .= "{origination_caller_id_number=".$sip->username."}";
         $dialStr .= "{origination_caller_id_name=".$sip->username."}";
-        //设置变量
-        if ($data['user_data']){
-            $dialStr .= "{user_data=".encrypt($data['user_data'])."}";
-        }
+
 
         //验证内部呼叫还是外部呼叫
         $res = Sip::where('username',$data['phone'])->first();
@@ -142,17 +141,22 @@ class ApiController extends Controller
         $dialStr .=" XML default";
 
         try{
-            /*$fs = new \Freeswitchesl();
+            $fs = new \Freeswitchesl();
             $service = config('freeswitch.esl');
             $fs->connect($service['host'],$service['port'],$service['password']);
             $fs->bgapi($dialStr);
-            $fs->disconnect();*/
-
-            Redis::rPush(config('freeswitch.fs_dial_key'),json_encode([
+            $fs->disconnect();
+            //写入初始记录
+            $user = User::where('sip_id',$sip->id)->first();
+            Cdr::create([
+                'user_id' => $user->id??0,
+                'uuid' => $aleg_uuid,
                 'aleg_uuid' => $aleg_uuid,
                 'bleg_uuid' => $bleg_uuid,
-                'dial_str' => base64_encode($dialStr),
-            ]));
+                'src' => $data['exten'],
+                'dst' => $data['phone'],
+                'user_data' => $data['user_data'],
+            ]);
             //20分钟过期
             Redis::setex($data['exten'].'_uuid',1200, $aleg_uuid);
             return Response::json(['code'=>0,'msg'=>'呼叫成功','data'=>['uuid'=>$aleg_uuid,'time'=>date('Y-m-d H:i:s')]]);
