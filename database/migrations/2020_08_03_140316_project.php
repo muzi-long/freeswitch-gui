@@ -31,6 +31,7 @@ class Project extends Migration
             $table->softDeletes();
             $table->timestamps();
         });
+        \DB::statement("ALTER TABLE `project` comment '项目表'");
     }
 
     /**
