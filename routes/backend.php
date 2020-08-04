@@ -364,6 +364,12 @@ Route::group(['namespace'=>'Backend','prefix'=>'crm','middleware'=>['auth:backen
         Route::delete('assignment/destroy','AssignmentController@destroy')->name('backend.crm.assignment.destroy')->middleware('permission:backend.crm.assignment.destroy');
     });
 
+    //客户管理
+    Route::group([],function (){
+        Route::get('project','ProjectController@index')->name('backend.crm.project')->middleware('permission:backend.crm.project');
+        //删除
+        Route::delete('project/destroy','ProjectController@destroy')->name('backend.crm.project.destroy')->middleware('permission:backend.crm.project.destroy');
+    });
 
     //公海库
     Route::group([],function (){

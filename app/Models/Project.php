@@ -23,6 +23,7 @@ class Project extends Model
         'updated_user_id',
         'deleted_user_id',
         'owner_user_id',
+        'remark',
     ];
 
     /**

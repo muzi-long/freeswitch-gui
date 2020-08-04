@@ -21,6 +21,7 @@ class Project extends Migration
             $table->unsignedBigInteger('node_id')->default(0)->comment('当前节点ID，0表示未选择节点');
             $table->timestamp('follow_at')->nullable()->comment('最近跟进时间');
             $table->unsignedBigInteger('follow_user_id')->default(0)->comment('最近跟进人ID，0表示系统跟进');
+            $table->text('remark')->nullable()->comment('最近跟进备注');
             $table->timestamp('next_follow_at')->nullable()->comment('下次跟进时间');
             $table->unsignedBigInteger('created_user_id')->default(0)->comment('创建人ID');
             $table->unsignedBigInteger('updated_user_id')->default(0)->comment('更新人ID');
