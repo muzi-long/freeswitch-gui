@@ -19,7 +19,7 @@ class Authenticate extends Middleware
             if (in_array('backend',$guards)){ //跳后台
                 $url = route('backend.system.admin.login');
             }elseif (in_array('frontend',$guards)){ //跳前台
-                $url = route('frontend.staff.login');
+                $url = route('frontend.system.staff.login');
             }else{
                 $url = null;
             }

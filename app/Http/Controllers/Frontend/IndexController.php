@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Backend;
+namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -12,7 +12,7 @@ class IndexController extends Controller
     //后台布局
     public function layout()
     {
-        return View::make('backend.layout');
+        return View::make('frontend.layout');
     }
 
     /**
@@ -20,7 +20,7 @@ class IndexController extends Controller
      */
     public function index()
     {
-        return View::make('backend.index.index');
+        return View::make('frontend.index.index');
     }
 
 

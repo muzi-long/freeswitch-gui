@@ -25,8 +25,6 @@ Route::group(['namespace'=>'Backend','middleware'=>'auth:backend'],function (){
     Route::get('/','IndexController@layout')->name('backend.layout');
     //后台首页
     Route::get('/index','IndexController@index')->name('backend.index');
-    //后台首页图表统计
-    Route::post('/index/chart','IndexController@chart')->name('backend.index.chart');
 });
 
 /*
