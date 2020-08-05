@@ -92,6 +92,102 @@
                             </dd>
                         </dl>
                     </li>
+                    <li data-name="home" class="layui-nav-item">
+                        <a href="javascript:;" lay-tips="呼叫中心" lay-direction="2">
+                            <i class="layui-icon layui-icon-home"></i>
+                            <cite>呼叫中心</cite>
+                        </a>
+                        <dl class="layui-nav-child">
+                            <dd data-name="console">
+                                <i class="layui-icon layui-icon-layouts"></i>
+                                <a lay-href="">分机管理</a>
+                            </dd>
+                            <dd data-name="console">
+                                <i class="layui-icon layui-icon-layouts"></i>
+                                <a lay-href="">我的分机</a>
+                            </dd>
+                            <dd data-name="console">
+                                <i class="layui-icon layui-icon-layouts"></i>
+                                <a lay-href="">通话记录</a>
+                            </dd>
+                        </dl>
+                    </li>
+                    <li data-name="home" class="layui-nav-item">
+                        <a href="javascript:;" lay-tips="CRM管理" lay-direction="2">
+                            <i class="layui-icon layui-icon-home"></i>
+                            <cite>CRM管理</cite>
+                        </a>
+                        <dl class="layui-nav-child">
+                            <dd data-name="console">
+                                <i class="layui-icon layui-icon-layouts"></i>
+                                <a lay-href="">进度管理</a>
+                            </dd>
+                            <dd data-name="console">
+                                <i class="layui-icon layui-icon-layouts"></i>
+                                <a lay-href="">部门管理</a>
+                            </dd>
+                            <dd data-name="console">
+                                <i class="layui-icon layui-icon-layouts"></i>
+                                <a lay-href="">客户属性</a>
+                            </dd>
+                            <dd data-name="console">
+                                <i class="layui-icon layui-icon-layouts"></i>
+                                <a lay-href="">待分配</a>
+                            </dd>
+                            <dd data-name="console">
+                                <i class="layui-icon layui-icon-layouts"></i>
+                                <a lay-href="">我的客户</a>
+                            </dd>
+                            <dd data-name="console">
+                                <i class="layui-icon layui-icon-layouts"></i>
+                                <a lay-href="">公海库</a>
+                            </dd>
+                            <dd data-name="console">
+                                <i class="layui-icon layui-icon-layouts"></i>
+                                <a lay-href="">待跟进</a>
+                            </dd>
+                        </dl>
+                    </li>
+                    <li data-name="home" class="layui-nav-item">
+                        <a href="javascript:;" lay-tips="帐户中心" lay-direction="2">
+                            <i class="layui-icon layui-icon-home"></i>
+                            <cite>帐户中心</cite>
+                        </a>
+                        <dl class="layui-nav-child">
+                            <dd data-name="console">
+                                <i class="layui-icon layui-icon-layouts"></i>
+                                <a lay-href="">帐户信息</a>
+                            </dd>
+                            <dd data-name="console">
+                                <i class="layui-icon layui-icon-layouts"></i>
+                                <a lay-href="">费用记录</a>
+                            </dd>
+                            <dd data-name="console">
+                                <i class="layui-icon layui-icon-layouts"></i>
+                                <a lay-href="">员工管理</a>
+                            </dd>
+                        </dl>
+                    </li>
+                    <li data-name="home" class="layui-nav-item">
+                        <a href="javascript:;" lay-tips="系统设置" lay-direction="2">
+                            <i class="layui-icon layui-icon-home"></i>
+                            <cite>系统设置</cite>
+                        </a>
+                        <dl class="layui-nav-child">
+                            <dd data-name="console">
+                                <i class="layui-icon layui-icon-layouts"></i>
+                                <a lay-href="">个人资料</a>
+                            </dd>
+                            <dd data-name="console">
+                                <i class="layui-icon layui-icon-layouts"></i>
+                                <a lay-href="">修改密码</a>
+                            </dd>
+                            <dd data-name="console">
+                                <i class="layui-icon layui-icon-layouts"></i>
+                                <a lay-href="">登录日志</a>
+                            </dd>
+                        </dl>
+                    </li>
                     @foreach(\Illuminate\Support\Facades\Session::get('frontend_menus',[]) as $menu1)
                         <li data-name="{{$menu1['name']}}" class="layui-nav-item">
                             <a

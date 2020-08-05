@@ -66,6 +66,11 @@ class StaffController extends Controller
         return Auth::guard('frontend');
     }
 
+    /**
+     * 验证通过后执行
+     * @param Request $request
+     * @param $user
+     */
     protected function authenticated(Request $request, $user)
     {
         try {
@@ -74,12 +79,13 @@ class StaffController extends Controller
                 'last_login_at' => date('Y-m-d H:i:s'),
                 'last_login_ip' => $request->ip(),
             ]);
+            $user->load(['merchant','department']);
             //登录日志
             StaffLoginLog::create([
                 'merchant_id' => $user->merchant_id,
-                'merchant_company_name' => $user->merchant()->company_name,
+                'merchant_company_name' => $user->merchant->company_name,
                 'department_id' => $user->department_id,
-                'department_name' => $user->department()->name,
+                'department_name' => $user->department->name,
                 'staff_id' => $user->id,
                 'staff_nickname' => $user->nickname,
                 'staff_username' => $user->username,
