@@ -251,6 +251,9 @@ Route::group(['namespace'=>'Backend','prefix'=>'platform','middleware'=>['auth:b
         Route::put('staff/{id}/update','StaffController@update')->name('backend.platform.staff.update')->middleware('permission:backend.platform.staff.edit');
         //删除
         Route::delete('staff/destroy','StaffController@destroy')->name('backend.platform.staff.destroy')->middleware('permission:backend.platform.staff.destroy');
+        //分配角色
+        Route::get('staff/{id}/role','StaffController@role')->name('backend.platform.staff.role')->middleware('permission:backend.platform.staff.role');
+        Route::put('staff/{id}/assignRole','StaffController@assignRole')->name('backend.platform.staff.assignRole')->middleware('permission:backend.platform.staff.role');
     });
 
     //帐单管理

@@ -47,6 +47,9 @@
                     @can('backend.platform.staff.edit')
                         <a class="layui-btn layui-btn-sm" lay-event="edit">编辑</a>
                     @endcan
+                    @can('backend.platform.staff.role')
+                        <a class="layui-btn layui-btn-sm" lay-event="role">角色</a>
+                    @endcan
                     @can('backend.platform.staff.destroy')
                         <a class="layui-btn layui-btn-danger layui-btn-sm" lay-event="del">删除</a>
                     @endcan
@@ -113,6 +116,8 @@
                                 }
                             });
                         });
+                    } else if (layEvent === 'role') {
+                        location.href = '/backend/platform/staff/' + data.id + '/role';
                     } else if (layEvent === 'edit') {
                         location.href = '/backend/platform/staff/' + data.id + '/edit';
                     }

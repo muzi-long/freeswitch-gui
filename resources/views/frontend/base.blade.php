@@ -36,6 +36,11 @@
                 layer.msg(res.msg,{icon:res.code==0?1:2},function () {
                     if (res.code==0 && res.url){
                         location.href = res.url;
+                        return;
+                    }
+                    if (res.code==0 && res.refresh){
+                        parent.location.reload();
+                        return
                     }
                 })
             });

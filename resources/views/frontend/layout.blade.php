@@ -93,26 +93,6 @@
                         </dl>
                     </li>
                     <li data-name="home" class="layui-nav-item">
-                        <a href="javascript:;" lay-tips="呼叫中心" lay-direction="2">
-                            <i class="layui-icon layui-icon-home"></i>
-                            <cite>呼叫中心</cite>
-                        </a>
-                        <dl class="layui-nav-child">
-                            <dd data-name="console">
-                                <i class="layui-icon layui-icon-layouts"></i>
-                                <a lay-href="">分机管理</a>
-                            </dd>
-                            <dd data-name="console">
-                                <i class="layui-icon layui-icon-layouts"></i>
-                                <a lay-href="">我的分机</a>
-                            </dd>
-                            <dd data-name="console">
-                                <i class="layui-icon layui-icon-layouts"></i>
-                                <a lay-href="">通话记录</a>
-                            </dd>
-                        </dl>
-                    </li>
-                    <li data-name="home" class="layui-nav-item">
                         <a href="javascript:;" lay-tips="CRM管理" lay-direction="2">
                             <i class="layui-icon layui-icon-home"></i>
                             <cite>CRM管理</cite>

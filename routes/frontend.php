@@ -30,33 +30,28 @@ Route::group(['namespace'=>'Frontend','middleware'=>'auth:frontend'],function ()
 
 /*
 |--------------------------------------------------------------------------
-| 系统管理模块
+| 呼叫中心
 |--------------------------------------------------------------------------
 */
-Route::group(['namespace'=>'Backend','prefix'=>'system','middleware'=>['auth:backend']],function (){
+Route::group(['namespace'=>'Frontend','prefix'=>'call','middleware'=>['auth:frontend']],function (){
 
-    //用户管理
+    //分机管理
     Route::group([],function (){
-        Route::get('admin','AdminController@index')->name('backend.system.admin')->middleware('permission:backend.system.admin');
-        //添加
-        Route::get('admin/create','AdminController@create')->name('backend.system.admin.create')->middleware('permission:backend.system.admin.create');
-        Route::post('admin/store','AdminController@store')->name('backend.system.admin.store')->middleware('permission:backend.system.admin.create');
-        //编辑
-        Route::get('admin/{id}/edit','AdminController@edit')->name('backend.system.admin.edit')->middleware('permission:backend.system.admin.edit');
-        Route::put('admin/{id}/update','AdminController@update')->name('backend.system.admin.update')->middleware('permission:backend.system.admin.edit');
-        //重置密码
-        Route::get('admin/{id}/resetPassword','AdminController@resetPasswordForm')->name('backend.system.admin.resetPasswordForm')->middleware('permission:backend.system.admin.resetPassword');
-        Route::put('admin/{id}/resetPassword','AdminController@resetPassword')->name('backend.system.admin.resetPassword')->middleware('permission:backend.system.admin.resetPassword');
-        //删除
-        Route::delete('admin/destroy','AdminController@destroy')->name('backend.system.admin.destroy')->middleware('permission:backend.system.admin.destroy');
-        //分配角色
-        Route::get('admin/{id}/role','AdminController@role')->name('backend.system.admin.role')->middleware('permission:backend.system.admin.role');
-        Route::put('admin/{id}/assignRole','AdminController@assignRole')->name('backend.system.admin.assignRole')->middleware('permission:backend.system.admin.role');
-        //分配权限
-        Route::get('admin/{id}/permission','AdminController@permission')->name('backend.system.admin.permission')->middleware('permission:backend.system.admin.permission');
-        Route::put('admin/{id}/assignPermission','AdminController@assignPermission')->name('backend.system.admin.assignPermission')->middleware('permission:backend.system.admin.permission');
+        Route::get('sip','SipController@index')->name('frontend.call.sip')->middleware('permission:frontend.call.sip');
+        //解绑
+        Route::post('sip/unbind','SipController@unbind')->name('frontend.call.sip.unbind')->middleware('permission:frontend.call.sip.unbind');
+        //绑定
+        Route::get('sip/{id}/bindForm','SipController@bindForm')->name('frontend.call.sip.bindForm')->middleware('permission:frontend.call.sip.bind');
+        Route::post('sip/bind','SipController@bind')->name('frontend.call.sip.bind')->middleware('permission:frontend.call.sip.bind');
     });
-
+    //我的分机
+    Route::group([],function (){
+        Route::match(['get','post'],'sip/mine','SipController@mine')->name('frontend.call.sip.mine')->middleware('permission:frontend.call.sip.mine');
+    });
+    //通话记录
+    Route::group([],function (){
+        Route::get('cdr','CdrController@index')->name('frontend.call.cdr')->middleware('permission:frontend.call.cdr');
+    });
 });
 
 

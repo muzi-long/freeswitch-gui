@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\View;
+use Spatie\Permission\Models\Role;
 
 class StaffController extends Controller
 {
@@ -142,6 +143,42 @@ class StaffController extends Controller
         }catch (\Exception $exception){
             Log::error('删除员工异常：'.$exception->getMessage());
             return Response::json(['code'=>1,'msg'=>'删除失败']);
+        }
+    }
+
+    /**
+     * 分配角色
+     * @param $id
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function role($id)
+    {
+        $user = Staff::findOrFail($id);
+        $roles = Role::where('guard_name','=',config('freeswitch.frontend_guard'))
+            ->whereIn('merchant_id',[$user->merchant_id,0])
+            ->get();
+        foreach ($roles as $role){
+            $role->own = $user->hasRole($role) ? true : false;
+        }
+        return View::make('backend.platform.staff.role',compact('roles','user'));
+    }
+
+    /**
+     * 分配角色
+     * @param Request $request
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function assignRole(Request $request,$id)
+    {
+        $user = Staff::findOrFail($id);
+        $roles = $request->get('roles',[]);
+        try{
+            $user->syncRoles($roles);
+            return Response::json(['code'=>0,'msg'=>'更新成功','url'=>route('backend.platform.staff')]);
+        }catch (\Exception $exception){
+            Log::error('为后台员工分配角色异常：'.$exception->getMessage());
+            return Response::json(['code'=>1,'msg'=>'更新失败']);
         }
     }
 

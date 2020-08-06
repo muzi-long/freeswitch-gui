@@ -2,8 +2,8 @@
 <div class="layui-form-item">
     <label for="" class="layui-form-label">商户</label>
     <div class="layui-input-inline">
-        <select name="merchant_id" lay-verify="required">
-            <option value=""></option>
+        <select name="merchant_id">
+            <option value="0"></option>
             @foreach($merchants as $d)
                 <option value="{{$d->id}}" @if(isset($role)&&$role->merchant_id==$d->id) selected @endif >{{$d->company_name}}</option>
             @endforeach
@@ -25,6 +25,6 @@
 <div class="layui-form-item">
     <div class="layui-input-block">
         <button type="button" class="layui-btn layui-btn-sm" lay-submit lay-filter="go" >确 认</button>
-        <a href="{{route('backend.system.role')}}" class="layui-btn layui-btn-sm" >返 回</a>
+        <a href="{{route('backend.platform.staff_role')}}" class="layui-btn layui-btn-sm" >返 回</a>
     </div>
 </div>

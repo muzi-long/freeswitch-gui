@@ -107,7 +107,7 @@ class SipController extends Controller
 
     public function storeList(ListStoreRequest $request)
     {
-        $data = $request->all(['sip_start','sip_end','password','gateway_id','merchant_id']);
+        $data = $request->all(['sip_start','sip_end','password','gateway_id','merchant_id','rate_id']);
 
         if ($data['sip_start'] <= $data['sip_end']){
             //验证是否超过商户最大分机数量

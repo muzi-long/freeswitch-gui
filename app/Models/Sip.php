@@ -24,6 +24,7 @@ class Sip extends Model
         'rate_id',
         'last_register_time',
         'last_unregister_time',
+        'bind_time',
     ];
     protected $appends = [
         'status_name',
@@ -82,6 +83,17 @@ class Sip extends Model
     {
         return $this->hasOne(Gateway::class,'id','gateway_id')->withDefault([
             'name' => '-',
+        ]);
+    }
+
+    /**
+     * 所属员工
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function staff()
+    {
+        return $this->hasOne(Staff::class,'id','staff_id')->withDefault([
+            'nickname' => '-'
         ]);
     }
 
