@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Backend\Platform\Staff\StoreRequest;
 use App\Http\Requests\Backend\Platform\Staff\UpdateRequest;
+use App\Http\Requests\Frontend\Account\Staff\ResetPasswordRequest;
 use App\Models\Freeswitch;
 use App\Models\Merchant;
 use App\Models\Staff;
@@ -178,6 +179,36 @@ class StaffController extends Controller
             return Response::json(['code'=>0,'msg'=>'更新成功','url'=>route('backend.platform.staff')]);
         }catch (\Exception $exception){
             Log::error('为后台员工分配角色异常：'.$exception->getMessage());
+            return Response::json(['code'=>1,'msg'=>'更新失败']);
+        }
+    }
+
+    /**
+     * 重置用户密码表单
+     * @param $id
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function resetPasswordForm($id)
+    {
+        $user = Staff::findOrFail($id);
+        return View::make('backend.platform.staff.resetPassword',compact('user'));
+    }
+
+    /**
+     * 重置用户密码
+     * @param ResetPasswordRequest $request
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function resetPassword(ResetPasswordRequest $request,$id)
+    {
+        $user = Staff::findOrFail($id);
+        $data = $request->all(['new_password']);
+        try{
+            $user->update(['password'=>bcrypt($data['new_password'])]);
+            return Response::json(['code'=>0,'msg'=>'更新成功']);
+        }catch (\Exception $exception){
+            Log::error('重置前台用户密码异常：'.$exception->getMessage());
             return Response::json(['code'=>1,'msg'=>'更新失败']);
         }
     }

@@ -15,14 +15,14 @@ class FrontendPermission extends Seeder
         //清空表
         \App\Models\Permission::where('guard_name',$guard)->delete();
         \App\Models\Role::where('guard_name',$guard)->delete();
-        //后台角色
+        //前台角色
         $role = \App\Models\Role::create([
             'name' => 'merchant',
             'display_name' => '商户',
             'guard_name' => $guard,
             'merchant_id' => 0,
         ]);
-        //后台权限
+        //前台权限
         $permissions = [
             [
                 'name' => 'frontend.call',
@@ -50,6 +50,66 @@ class FrontendPermission extends Seeder
                         'child' => [
                             ['name' => 'frontend.call.cdr.merchant', 'display_name' => '查看所有记录'],
                             ['name' => 'frontend.call.cdr.department', 'display_name' => '查看本部门记录'],
+                        ]
+                    ],
+                ]
+            ],
+            [
+                'name' => 'frontend.account',
+                'display_name' => '帐号中心',
+                'child' => [
+                    [
+                        'name' => 'frontend.account.merchant',
+                        'display_name' => '商户资料',
+                        'child' => [
+
+                        ]
+                    ],
+                    [
+                        'name' => 'frontend.account.bill',
+                        'display_name' => '费用明细',
+                        'child' => [
+
+                        ]
+                    ],
+                    [
+                        'name' => 'frontend.account.department',
+                        'display_name' => '部门管理',
+                        'child' => [
+                            ['name' => 'frontend.account.department.create', 'display_name' => '添加'],
+                            ['name' => 'frontend.account.department.edit', 'display_name' => '编辑'],
+                            ['name' => 'frontend.account.department.destroy', 'display_name' => '删除'],
+                        ]
+                    ],
+                    [
+                        'name' => 'frontend.account.staff',
+                        'display_name' => '员工管理',
+                        'child' => [
+                            ['name' => 'frontend.account.staff.create', 'display_name' => '添加'],
+                            ['name' => 'frontend.account.staff.edit', 'display_name' => '编辑'],
+                            ['name' => 'frontend.account.staff.destroy', 'display_name' => '删除'],
+                            ['name' => 'frontend.account.staff.role', 'display_name' => '角色'],
+                            ['name' => 'frontend.account.staff.resetPassword', 'display_name' => '重置密码'],
+                        ]
+                    ],
+                ]
+            ],
+            [
+                'name' => 'frontend.system',
+                'display_name' => '系统设置',
+                'child' => [
+                    [
+                        'name' => 'frontend.system.staff.mine',
+                        'display_name' => '个人资料',
+                        'child' => [
+
+                        ]
+                    ],
+                    [
+                        'name' => 'frontend.system.staff.loginLog',
+                        'display_name' => '登录日志',
+                        'child' => [
+
                         ]
                     ],
                 ]

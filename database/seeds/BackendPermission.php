@@ -163,6 +163,7 @@ class BackendPermission extends Seeder
                             ['name' => 'backend.platform.staff.edit', 'display_name' => '编辑'],
                             ['name' => 'backend.platform.staff.destroy', 'display_name' => '删除'],
                             ['name' => 'backend.platform.staff.role', 'display_name' => '角色'],
+                            ['name' => 'backend.platform.staff.resetPassword', 'display_name' => '重置密码'],
                         ]
                     ],
                     [

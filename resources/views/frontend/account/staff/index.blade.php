@@ -1,30 +1,19 @@
-@extends('backend.base')
+@extends('frontend.base')
 
 @section('content')
     <div class="layui-card">
         <div class="layui-card-header layuiadmin-card-header-auto">
-            <form action="{{route('backend.platform.staff')}}" class="layui-form">
+            <form action="{{route('frontend.account.staff')}}" class="layui-form">
                 <div class="layui-btn-group">
-                    @can('backend.platform.staff.destroy')
+                    @can('frontend.account.staff.destroy')
                         <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" id="listDelete">删 除</button>
                     @endcan
-                    @can('backend.platform.staff.create')
-                        <a class="layui-btn layui-btn-sm" href="{{ route('backend.platform.staff.create') }}">添 加</a>
+                    @can('frontend.account.staff.create')
+                        <a class="layui-btn layui-btn-sm" href="{{ route('frontend.account.staff.create') }}">添 加</a>
                     @endcan
                         <button type="button" class="layui-btn layui-btn-sm" lay-submit lay-filter="search" >搜 索</button>
                 </div>
                 <div class="layui-form-item">
-                    <div class="layui-inline">
-                        <label for="" class="layui-form-label">所属商户</label>
-                        <div class="layui-input-block">
-                            <select name="merchant_id" >
-                                <option value="">请选择</option>
-                                @foreach($merchants as $d)
-                                    <option value="{{$d->id}}">{{$d->company_name}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
                     <div class="layui-inline">
                         <label for="" class="layui-form-label">姓名</label>
                         <div class="layui-input-block">
@@ -44,16 +33,16 @@
             <table id="dataTable" lay-filter="dataTable"></table>
             <script type="text/html" id="options">
                 <div class="layui-btn-group">
-                    @can('backend.platform.staff.edit')
+                    @can('frontend.account.staff.edit')
                         <a class="layui-btn layui-btn-sm" lay-event="edit">编辑</a>
                     @endcan
-                    @can('backend.platform.staff.resetPassword')
+                    @can('frontend.account.staff.resetPassword')
                         <a class="layui-btn layui-btn-sm" lay-event="resetPassword">重置密码</a>
                     @endcan
-                    @can('backend.platform.staff.role')
+                    @can('frontend.account.staff.role')
                         <a class="layui-btn layui-btn-sm" lay-event="role">角色</a>
                     @endcan
-                    @can('backend.platform.staff.destroy')
+                    @can('frontend.account.staff.destroy')
                         <a class="layui-btn layui-btn-danger layui-btn-sm" lay-event="del">删除</a>
                     @endcan
                 </div>
@@ -74,16 +63,13 @@
                 var dataTable = table.render({
                     elem: '#dataTable'
                     , height: 500
-                    , url: "{{ route('backend.platform.staff') }}" //数据接口
+                    , url: "{{ route('frontend.account.staff') }}" //数据接口
                     , page: true //开启分页
                     , cols: [[ //表头
                         {checkbox: true, fixed: true}
                         , {field: 'id', title: 'ID', sort: true, width: 80}
                         , {field: 'nickname', title: '姓名'}
                         , {field: 'username', title: '帐号'}
-                        , {field: 'company_name', title: '所属商户',templet: function (d) {
-                                return d.merchant.company_name;
-                            }}
                         , {field: 'department_id', title: '部门',templet: function (d) {
                                 return d.department.name;
                             }}
@@ -105,7 +91,7 @@
                         layer.confirm('确认删除吗？', function (index) {
                             layer.close(index)
                             var load = layer.load();
-                            $.post("{{ route('backend.platform.staff.destroy') }}", {
+                            $.post("{{ route('frontend.account.staff.destroy') }}", {
                                 _method: 'delete',
                                 ids: [data.id]
                             }, function (res) {
@@ -120,11 +106,11 @@
                             });
                         });
                     } else if (layEvent === 'role') {
-                        location.href = '/backend/platform/staff/' + data.id + '/role';
+                        location.href = '/frontend/account/staff/' + data.id + '/role';
                     } else if (layEvent === 'edit') {
-                        location.href = '/backend/platform/staff/' + data.id + '/edit';
+                        location.href = '/frontend/account/staff/' + data.id + '/edit';
                     } else if (layEvent === 'resetPassword') {
-                        location.href = '/backend/platform/staff/' + data.id + '/resetPassword';
+                        location.href = '/frontend/account/staff/' + data.id + '/resetPassword';
                     }
                 });
 
@@ -142,7 +128,7 @@
                         layer.confirm('确认删除吗？', function (index) {
                             layer.close(index);
                             var load = layer.load();
-                            $.post("{{ route('backend.platform.staff.destroy') }}", {
+                            $.post("{{ route('frontend.account.staff.destroy') }}", {
                                 _method: 'delete',
                                 ids: ids
                             }, function (res) {

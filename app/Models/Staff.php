@@ -51,7 +51,7 @@ class Staff extends Authenticatable
      */
     public function sip()
     {
-        return $this->hasOne(Sip::class,'id','sip_id')->withDefault([
+        return $this->hasOne(Sip::class,'staff_id','id')->withDefault([
             'username' => '-',
         ]);
     }

@@ -254,6 +254,9 @@ Route::group(['namespace'=>'Backend','prefix'=>'platform','middleware'=>['auth:b
         //分配角色
         Route::get('staff/{id}/role','StaffController@role')->name('backend.platform.staff.role')->middleware('permission:backend.platform.staff.role');
         Route::put('staff/{id}/assignRole','StaffController@assignRole')->name('backend.platform.staff.assignRole')->middleware('permission:backend.platform.staff.role');
+        //重置密码
+        Route::get('staff/{id}/resetPassword','StaffController@resetPasswordForm')->name('backend.platform.staff.resetPasswordForm')->middleware('permission:backend.platform.staff.resetPassword');
+        Route::put('staff/{id}/resetPassword','StaffController@resetPassword')->name('backend.platform.staff.resetPassword')->middleware('permission:backend.platform.staff.resetPassword');
     });
 
     //帐单管理

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Backend;
+namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Department;
@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\View;
 
 class DepartmentController extends Controller
 {
+
     /**
      * 列表
      * @param Request $request
@@ -20,12 +21,10 @@ class DepartmentController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()){
-            $data = $request->all(['merchant_id']);
-            $res = Department::with(['merchant','childs'])
-                ->when($data['merchant_id'],function ($q) use($data){
-                    return $q->where('merchant_id',$data['merchant_id']);
-                })
-                ->orderBy('merchant_id')
+            $res = Department::with('childs')
+                ->where('merchant_id',$request->user()->merchant_id)
+                ->orderBy('sort','asc')
+                ->orderBy('id','desc')
                 ->get();
             $data = [
                 'code' => 0,
@@ -35,26 +34,30 @@ class DepartmentController extends Controller
             ];
             return Response::json($data);
         }
-        $merchants = Merchant::orderBy('id','desc')->get();
-        return View::make('backend.crm.department.index',compact('merchants'));
+        return View::make('frontend.account.department.index');
     }
 
     /**
      * 添加部门
      * @return \Illuminate\Contracts\View\View
      */
-    public function create()
+    public function create(Request $request)
     {
-        $merchants = Merchant::orderBy('id','desc')->get();
-        return View::make('backend.crm.department.create',compact('merchants'));
+        $departments = Department::with('childs')
+            ->where('parent_id',0)
+            ->where('merchant_id',$request->user()->merchant_id)
+            ->get();
+        return View::make('frontend.account.department.create',compact('departments'));
     }
 
     public function store(Request $request)
     {
-        $data = $request->all(['name','parent_id','sort','merchant_id']);
+        $data = $request->all(['name','parent_id','sort']);
+        $data['merchant_id'] = $request->user()->merchant_id;
+
         try{
             Department::create($data);
-            return Response::json(['code'=>0,'msg'=>'添加成功','url'=>route('backend.crm.department')]);
+            return Response::json(['code'=>0,'msg'=>'添加成功','url'=>route('frontend.account.department')]);
         }catch (\Exception $exception){
             Log::error('添加部门异常：'.$exception->getMessage());
             return Response::json(['code'=>1,'msg'=>'添加失败']);
@@ -73,17 +76,16 @@ class DepartmentController extends Controller
             ->where('parent_id',0)
             ->where('merchant_id',$model->merchant_id)
             ->get();
-        $merchants = Merchant::orderBy('id','desc')->get();
-        return View::make('backend.crm.department.edit',compact('departments','model','merchants'));
+        return View::make('frontend.account.department.edit',compact('departments','model'));
     }
 
     public function update(Request $request,$id)
     {
-        $data = $request->all(['name','parent_id','sort','merchant_id']);
+        $data = $request->all(['name','parent_id','sort']);
         $model = Department::findOrFail($id);
         try{
             $model->update($data);
-            return Response::json(['code'=>0,'msg'=>'更新成功','url'=>route('backend.crm.department')]);
+            return Response::json(['code'=>0,'msg'=>'更新成功','url'=>route('frontend.account.department')]);
         }catch (\Exception $exception){
             Log::error('添加部门异常：'.$exception->getMessage());
             return Response::json(['code'=>1,'msg'=>'更新失败']);
@@ -101,7 +103,7 @@ class DepartmentController extends Controller
         if (empty($ids)){
             return Response::json(['code'=>1,'msg'=>'请选择删除项']);
         }
-        $model = Department::with('childs')->find($ids[0]);
+        $model = Department::with('childs')->where('merchant_id',$request->user()->merchant_id)->find($ids[0]);
         if (!$model) {
             return Response::json(['code' => 1, 'msg' => '部门不存在']);
         }
@@ -116,4 +118,5 @@ class DepartmentController extends Controller
             return Response::json(['code' => 1, 'msg' => '删除失败']);
         }
     }
+
 }
