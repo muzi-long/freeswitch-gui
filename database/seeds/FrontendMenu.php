@@ -128,6 +128,26 @@ class FrontendMenu extends Seeder
                     ],
                 ]
             ],
+            [
+                'name' => '客户管理',
+                'route' => null,
+                'url' => null,
+                'icon' => 'layui-icon-export',
+                'type' => 2,
+                'sort' => 1,
+                'permission_name' => 'frontend.crm',
+                'child' => [
+                    [
+                        'name' => '进度设置',
+                        'route' => 'frontend.crm.node',
+                        'url' => null,
+                        'icon' => 'layui-icon-app',
+                        'type' => 1,
+                        'permission_name' => 'frontend.crm.node',
+                    ],
+
+                ]
+            ],
         ];
         $permissions = \App\Models\Permission::where('guard_name',$guard)->pluck('id','name')->toArray();
         foreach ($datas as $k1 => $d1){

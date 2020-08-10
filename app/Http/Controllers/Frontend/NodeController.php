@@ -1,12 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Backend;
+namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
-use App\Models\Merchant;
 use App\Models\Node;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\View;
@@ -22,12 +20,8 @@ class NodeController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()){
-            $data = $request->all(['merchant_id']);
-            $res = Node::with('merchant')
-                ->when($data['merchant_id'],function ($q) use($data){
-                    return $q->where('merchant_id',$data['merchant_id']);
-                })
-                ->orderBy('merchant_id')
+            $res = Node::query()
+                ->where('merchant_id',$request->user()->merchant_id)
                 ->orderBy('sort')
                 ->orderBy('id')
                 ->paginate($request->get('limit', 30));
@@ -39,8 +33,7 @@ class NodeController extends Controller
             ];
             return Response::json($data);
         }
-        $merchants = Merchant::orderBy('id','desc')->get();
-        return View::make('backend.crm.node.index',compact('merchants'));
+        return View::make('frontend.crm.node.index');
     }
 
     /**
@@ -49,17 +42,17 @@ class NodeController extends Controller
      */
     public function create()
     {
-        $merchants = Merchant::orderBy('id','desc')->get();
-        return View::make('backend.crm.node.create',compact('merchants'));
+        return View::make('frontend.crm.node.create');
     }
 
     public function store(Request $request)
     {
-        $data = $request->all(['merchant_id','name','sort']);
-        $data['created_staff_id'] = 0;
+        $data = $request->all(['name','sort']);
+        $data['created_staff_id'] = $request->user()->id;
+        $data['merchant_id'] = $request->user()->merchant_id;
         try{
             Node::create($data);
-            return Response::json(['code'=>0,'msg'=>'添加成功','url'=>route('backend.crm.node')]);
+            return Response::json(['code'=>0,'msg'=>'添加成功','url'=>route('frontend.crm.node')]);
         }catch (\Exception $exception){
             Log::error('添加节点异常：'.$exception->getMessage());
             return Response::json(['code'=>1,'msg'=>'添加失败']);
@@ -74,8 +67,7 @@ class NodeController extends Controller
     public function edit($id)
     {
         $model = Node::findOrFail($id);
-        $merchants = Merchant::orderBy('id','desc')->get();
-        return View::make('backend.crm.node.edit',compact('model','merchants'));
+        return View::make('frontend.crm.node.edit',compact('model'));
     }
 
     public function update(Request $request,$id)
@@ -84,7 +76,7 @@ class NodeController extends Controller
         $model = Node::findOrFail($id);
         try{
             $model->update($data);
-            return Response::json(['code'=>0,'msg'=>'更新成功','url'=>route('backend.crm.node')]);
+            return Response::json(['code'=>0,'msg'=>'更新成功','url'=>route('frontend.crm.node')]);
         }catch (\Exception $exception){
             Log::error('更新节点异常：'.$exception->getMessage());
             return Response::json(['code'=>1,'msg'=>'更新失败']);
@@ -98,7 +90,10 @@ class NodeController extends Controller
             return Response::json(['code'=>1,'msg'=>'请选择删除项']);
         }
         try {
-            Node::query()->whereIn('id',$ids)->delete();
+            Node::query()
+                ->where('merchant_id',$request->user()->merchant_id)
+                ->whereIn('id',$ids)
+                ->delete();
             return Response::json(['code'=>0,'msg'=>'删除成功']);
         }catch (\Exception $exception){
             Log::error('删除公海库记录异常：'.$exception->getMessage(),$ids);

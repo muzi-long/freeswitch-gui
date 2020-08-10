@@ -71,16 +71,16 @@ class ApiController extends Controller
             $ext = $file->getClientOriginalExtension();
             if (!in_array(strtolower($ext),$allowed_extensions)){
                 $data['msg'] = "请上传".implode(",",$allowed_extensions)."格式的图片";
-                return response()->json($data);
+                return Response::json($data);
             }
             //检测图片大小
             if ($file->getSize() > $maxSize*1024*1024){
                 $data['msg'] = "图片大小限制".$maxSize."M";
-                return response()->json($data);
+                return Response::json($data);
             }
         }else{
             $data['msg'] = $file->getErrorMessage();
-            return response()->json($data);
+            return Response::json($data);
         }
         $newFile = date('Y-m-d')."_".time()."_".uniqid().".".$file->getClientOriginalExtension();
         $disk = Storage::disk('uploads');
@@ -95,7 +95,7 @@ class ApiController extends Controller
         }else{
             $data['data'] = $file->getErrorMessage();
         }
-        return response()->json($data);
+        return Response::json($data);
     }
 
 

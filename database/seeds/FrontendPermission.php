@@ -114,6 +114,21 @@ class FrontendPermission extends Seeder
                     ],
                 ]
             ],
+            [
+                'name' => 'frontend.crm',
+                'display_name' => '客户管理',
+                'child' => [
+                    [
+                        'name' => 'frontend.crm.node',
+                        'display_name' => '进度设置',
+                        'child' => [
+                            ['name' => 'frontend.crm.node.create', 'display_name' => '添加'],
+                            ['name' => 'frontend.crm.node.edit', 'display_name' => '编辑'],
+                            ['name' => 'frontend.crm.node.destroy', 'display_name' => '删除'],
+                        ]
+                    ],
+                ]
+            ],
         ];
 
         foreach ($permissions as $pem1) {
