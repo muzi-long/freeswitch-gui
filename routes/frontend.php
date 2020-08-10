@@ -147,6 +147,20 @@ Route::group(['namespace'=>'Frontend','prefix'=>'crm','middleware'=>['auth:front
 
     });
 
+    //客户属性
+    Route::group([],function (){
+        Route::get('project-design','ProjectDesignController@index')->name('frontend.crm.project-design')->middleware('permission:frontend.crm.project-design');
+        //添加
+        Route::get('project-design/create','ProjectDesignController@create')->name('frontend.crm.project-design.create')->middleware('permission:frontend.crm.project-design.create');
+        Route::post('project-design/store','ProjectDesignController@store')->name('frontend.crm.project-design.store')->middleware('permission:frontend.crm.project-design.create');
+        //编辑
+        Route::get('project-design/{id}/edit','ProjectDesignController@edit')->name('frontend.crm.project-design.edit')->middleware('permission:frontend.crm.project-design.edit');
+        Route::put('project-design/{id}/update','ProjectDesignController@update')->name('frontend.crm.project-design.update')->middleware('permission:frontend.crm.project-design.edit');
+        //删除
+        Route::delete('project-design/destroy','ProjectDesignController@destroy')->name('frontend.crm.project-design.destroy')->middleware('permission:frontend.crm.project-design.destroy');
+
+    });
+
 
 });
 
