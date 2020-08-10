@@ -136,6 +136,15 @@ class FrontendPermission extends Seeder
                             ['name' => 'frontend.crm.project-design.destroy', 'display_name' => '删除'],
                         ]
                     ],
+                    [
+                        'name' => 'frontend.crm.assignment',
+                        'display_name' => '待分配',
+                        'child' => [
+                            ['name' => 'frontend.crm.assignment.import', 'display_name' => '导入'],
+                            ['name' => 'frontend.crm.assignment.to', 'display_name' => '分配'],
+                            ['name' => 'frontend.crm.assignment.destroy', 'display_name' => '删除'],
+                        ]
+                    ],
                 ]
             ],
         ];
