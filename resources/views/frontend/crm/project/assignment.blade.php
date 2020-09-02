@@ -11,10 +11,7 @@
                     @can('frontend.crm.assignment.import')
                         <button type="button" id="import_project" class="layui-btn layui-btn-sm">导入</button>
                     @endcan
-                    @can('frontend.crm.assignment.downloadTemplate')
-                        <a href="{{route('frontend.crm.assignment.downloadTemplate')}}" class="layui-btn layui-btn-sm layui-btn-warm">模板下载</a>
-                    @endcan
-
+                        <a href="/template/project_import.xlsx" class="layui-btn layui-btn-sm layui-btn-warm">模板下载</a>
                 </div>
                 <div class="layui-form-item">
                     <div class="layui-inline">
@@ -196,8 +193,8 @@
                         layer.close(index);
                         var load = layer.load();
                         $.post("{{ route('frontend.crm.assignment.to') }}", {
-                            ids: ids,
-                            user_id:$("#user_id").val()
+                            project_ids: ids,
+                            staff_id:$("#user_id").val()
                         }, function (res) {
                             layer.close(load);
                             if (res.code == 0) {

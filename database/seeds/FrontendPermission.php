@@ -145,6 +145,20 @@ class FrontendPermission extends Seeder
                             ['name' => 'frontend.crm.assignment.destroy', 'display_name' => '删除'],
                         ]
                     ],
+                    [
+                        'name' => 'frontend.crm.project',
+                        'display_name' => '我的客户',
+                        'child' => [
+                            ['name' => 'frontend.crm.project.create', 'display_name' => '添加'],
+                            ['name' => 'frontend.crm.project.edit', 'display_name' => '编辑'],
+                            ['name' => 'frontend.crm.project.show', 'display_name' => '详情'],
+                            ['name' => 'frontend.crm.project.destroy', 'display_name' => '删除'],
+                            ['name' => 'frontend.crm.project.follow', 'display_name' => '跟进客户'],
+                            ['name' => 'frontend.crm.project.followList', 'display_name' => '跟进列表'],
+                            ['name' => 'frontend.crm.project.list_all', 'display_name' => '查看所有客户'],
+                            ['name' => 'frontend.crm.project.list_department', 'display_name' => '查看本部门客户'],
+                        ]
+                    ],
                 ]
             ],
         ];

@@ -173,6 +173,25 @@ Route::group(['namespace'=>'Frontend','prefix'=>'crm','middleware'=>['auth:front
 
     });
 
+    //我的客户管理
+    Route::group([],function (){
+        Route::get('project','ProjectController@index')->name('frontend.crm.project')->middleware('permission:frontend.crm.project');
+        //添加
+        Route::get('project/create','ProjectController@create')->name('frontend.crm.project.create')->middleware('permission:frontend.crm.project.create');
+        Route::post('project/store','ProjectController@store')->name('frontend.crm.project.store')->middleware('permission:frontend.crm.project.create');
+        //编辑
+        Route::get('project/{id}/edit','ProjectController@edit')->name('frontend.crm.project.edit')->middleware('permission:frontend.crm.project.edit');
+        Route::put('project/{id}/update','ProjectController@update')->name('frontend.crm.project.update')->middleware('permission:frontend.crm.project.edit');
+        //详情
+        Route::get('project/{id}/show','ProjectController@show')->name('frontend.crm.project.show')->middleware('permission:frontend.crm.project.show');
+        //删除
+        Route::delete('project/destroy','ProjectController@destroy')->name('frontend.crm.project.destroy')->middleware('permission:frontend.crm.project.destroy');
+        //跟进
+        Route::match(['get','post'],'project/{id}/follow','ProjectController@follow')->name('frontend.crm.project.follow');
+        //跟进记录
+        Route::get('project/{id}/followList','ProjectController@followList')->name('frontend.crm.project.followList');
+    });
+
 
 });
 

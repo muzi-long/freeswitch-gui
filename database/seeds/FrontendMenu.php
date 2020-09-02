@@ -161,6 +161,14 @@ class FrontendMenu extends Seeder
                         'type' => 1,
                         'permission_name' => 'frontend.crm.assignment',
                     ],
+                    [
+                        'name' => '我的客户',
+                        'route' => 'frontend.crm.project',
+                        'url' => null,
+                        'icon' => 'layui-icon-reply-fill',
+                        'type' => 1,
+                        'permission_name' => 'frontend.crm.project',
+                    ],
                 ]
             ],
         ];

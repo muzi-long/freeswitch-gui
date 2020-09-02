@@ -17,4 +17,6 @@ use Illuminate\Http\Request;
 Route::post('getGatewayByMerchantId','ApiController@getGatewayByMerchantId')->name('getGatewayByMerchantId');
 //通过商户ID获取部门信息
 Route::post('getDepartmentByMerchantId','ApiController@getDepartmentByMerchantId')->name('getDepartmentByMerchantId');
+//文件上传
+Route::post('upload','ApiController@upload')->name('api.upload');
 

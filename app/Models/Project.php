@@ -56,4 +56,13 @@ class Project extends Model
         return $this->hasOne(Staff::class,'id','follow_user_id')->withDefault(['nickname'=>'-']);
     }
 
+    /**
+     * 所属商户
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function merchant()
+    {
+        return $this->hasOne(Merchant::class,'id','merchant_id')->withDefault(['company_name' => '-']);
+    }
+
 }

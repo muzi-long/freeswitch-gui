@@ -136,7 +136,7 @@ class ProjectDesignController extends Controller
             return Response::json(['code' => 1, 'msg' => '字段Key已存在']);
         }
         if ($data['visiable'] == null) {
-            $data['visiable'] = 1;
+            $data['visiable'] = 2;
         }
         if ($data['required'] == null) {
             $data['required'] = 2;

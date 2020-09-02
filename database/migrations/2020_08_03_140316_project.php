@@ -26,7 +26,7 @@ class Project extends Migration
             $table->unsignedBigInteger('created_user_id')->default(0)->comment('创建人ID');
             $table->unsignedBigInteger('updated_user_id')->default(0)->comment('更新人ID');
             $table->unsignedBigInteger('deleted_user_id')->default(0)->comment('删除人ID');
-            $table->unsignedBigInteger('owner_user_id')->default(0)->comment('拥有人ID，-1公海库，0待分配，大于0为用户ID');
+            $table->bigInteger('owner_user_id')->default(0)->comment('拥有人ID，-1公海库，0待分配，大于0为用户ID');
             $table->unsignedBigInteger('department_id')->default(0)->comment('部门ID');
             $table->unsignedBigInteger('merchant_id')->default(0)->comment('商户ID');
             $table->softDeletes();

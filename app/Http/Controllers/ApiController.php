@@ -82,15 +82,20 @@ class ApiController extends Controller
             $data['msg'] = $file->getErrorMessage();
             return Response::json($data);
         }
-        $newFile = date('Y-m-d')."_".time()."_".uniqid().".".$file->getClientOriginalExtension();
-        $disk = Storage::disk('uploads');
-        $res = $disk->put($newFile,file_get_contents($file->getRealPath()));
+        $newFile = md5(time().uniqid(mt_rand())).".".$file->getClientOriginalExtension();
+        try{
+            $res = Storage::disk('uploads')->put($newFile,file_get_contents($file->getRealPath()));
+        }catch (\Exception $exception){
+            Log::info('上传文件失败：'.$exception->getMessage());
+            return Response::json(['code'=>1,'msg'=>'文件上传失败']);
+        }
+        $url = public_path('uploads').date('/Y/m/d/').$newFile;
         if($res){
             $data = [
                 'code'  => 0,
                 'msg'   => '上传成功',
                 'data'  => $newFile,
-                'url'   => '/uploads/'.$newFile,
+                'url'   => $url,
             ];
         }else{
             $data['data'] = $file->getErrorMessage();
