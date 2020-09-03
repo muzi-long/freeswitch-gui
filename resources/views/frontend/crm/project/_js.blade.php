@@ -100,6 +100,23 @@
             return false;
         })
 
+        $("#retrieve").click(function () {
+            layer.confirm('确认拾回吗？', function(index){
+                layer.close(index);
+                var load = layer.load();
+                $.post("{{ route('frontend.crm.project.waste.retrieve') }}",{id:{{$model->id}}},function (res) {
+                    layer.close(load);
+                    if (res.code == 0) {
+                        layer.msg(res.msg, {icon: 1}, function () {
+                            parent.location.reload();
+                        })
+                    } else {
+                        layer.msg(res.msg, {icon: 2})
+                    }
+                });
+            });
+        })
+
         @endif
     });
 </script>

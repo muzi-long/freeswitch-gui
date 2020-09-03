@@ -169,6 +169,14 @@ class FrontendMenu extends Seeder
                         'type' => 1,
                         'permission_name' => 'frontend.crm.project',
                     ],
+                    [
+                        'name' => '公海库',
+                        'route' => 'frontend.crm.project.waste',
+                        'url' => null,
+                        'icon' => 'layui-icon-404',
+                        'type' => 1,
+                        'permission_name' => 'frontend.crm.project.waste',
+                    ],
                 ]
             ],
         ];

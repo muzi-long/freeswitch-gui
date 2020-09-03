@@ -159,6 +159,15 @@ class FrontendPermission extends Seeder
                             ['name' => 'frontend.crm.project.list_department', 'display_name' => '查看本部门客户'],
                         ]
                     ],
+                    [
+                        'name' => 'frontend.crm.project.waste',
+                        'display_name' => '公海库',
+                        'child' => [
+                            ['name' => 'frontend.crm.project.waste.retrieve', 'display_name' => '拾回'],
+                            ['name' => 'frontend.crm.project.waste.show', 'display_name' => '跟进记录'],
+                            ['name' => 'frontend.crm.project.waste.destroy', 'display_name' => '删除'],
+                        ]
+                    ],
                 ]
             ],
         ];

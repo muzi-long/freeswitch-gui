@@ -187,9 +187,18 @@ Route::group(['namespace'=>'Frontend','prefix'=>'crm','middleware'=>['auth:front
         //删除
         Route::delete('project/destroy','ProjectController@destroy')->name('frontend.crm.project.destroy')->middleware('permission:frontend.crm.project.destroy');
         //跟进
-        Route::match(['get','post'],'project/{id}/follow','ProjectController@follow')->name('frontend.crm.project.follow');
+        Route::match(['get','post'],'project/{id}/follow','ProjectController@follow')->name('frontend.crm.project.follow')->middleware('permission:frontend.crm.project.follow');
         //跟进记录
-        Route::get('project/{id}/followList','ProjectController@followList')->name('frontend.crm.project.followList');
+        Route::get('project/{id}/followList','ProjectController@followList')->name('frontend.crm.project.followList')->middleware('permission:frontend.crm.project.followList');
+        //公海库
+        Route::get('project/waste','ProjectController@waste')->name('frontend.crm.project.waste')->middleware('permission:frontend.crm.project.waste');
+        //拾回
+        Route::post('project/waste/retrieve','ProjectController@retrieve')->name('frontend.crm.project.waste.retrieve')->middleware('permission:frontend.crm.project.waste.retrieve');
+        //详情
+        Route::get('project/{id}/waste/show','ProjectController@wasteShow')->name('frontend.crm.project.waste.show')->middleware('permission:frontend.crm.project.waste.show');
+        //详情
+        Route::delete('project/{id}/waste/destroy','ProjectController@wasteDestroy')->name('frontend.crm.project.waste.destroy')->middleware('permission:frontend.crm.project.waste.destroy');
+
     });
 
 

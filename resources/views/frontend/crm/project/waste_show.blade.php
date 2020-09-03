@@ -5,15 +5,8 @@
         <div class="layui-card-header layuiadmin-card-header-auto">
             <h2>客户详情</h2>
             <div class="layui-btn-group">
-                <a href="{{route('frontend.crm.project')}}" class="layui-btn layui-btn-sm layui-btn-primary">返回列表</a>
-                @can('frontend.crm.project.show')
-                    <a href="{{route('frontend.crm.project.show',['id'=>$model->id])}}" class="layui-btn layui-btn-sm">项目详情</a>
-                @endcan
-                @can('frontend.crm.project.follow')
-                    <a id="follow" class="layui-btn layui-btn-sm">跟进</a>
-                @endcan
-                @can('frontend.crm.project.destroy')
-                    <a id="destroyBtn" class="layui-btn layui-btn-sm layui-btn-danger">删除</a>
+                @can('frontend.crm.project.waste.retrieve')
+                    <a class="layui-btn layui-btn-sm layui-btn-warm" id="retrieve">拾回</a>
                 @endcan
             </div>
         </div>
