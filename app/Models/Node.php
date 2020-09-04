@@ -28,4 +28,13 @@ class Node extends Model
         ]);
     }
 
+    /**
+     * 节点所有的项目
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function projects()
+    {
+        return $this->hasMany(Project::class,'node_id','id');
+    }
+
 }

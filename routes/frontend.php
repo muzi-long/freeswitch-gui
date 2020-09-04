@@ -23,6 +23,10 @@ Route::group(['namespace'=>'Frontend','middleware'=>'auth:frontend'],function ()
     Route::get('/','IndexController@layout')->name('frontend.layout');
     //前台首页
     Route::get('/index','IndexController@index')->name('frontend.index');
+    //前台-通话记录
+    Route::post('/index/cdr','IndexController@cdr')->name('frontend.index.cdr');
+    //前台-节点
+    Route::post('/index/node','IndexController@node')->name('frontend.index.node');
 
 });
 
