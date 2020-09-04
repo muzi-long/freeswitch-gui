@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cdr;
 use App\Models\Department;
+use App\Models\Freeswitch;
 use App\Models\Gateway;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -112,10 +114,21 @@ class ApiController extends Controller
      */
     public function dial(Request $request)
     {
-        $data = $request->all(['exten','phone','user_data']);
-        if ($data['exten'] == null || $data['phone'] == null) {
-            return Response::json(['code'=>1,'msg'=>'号码不能为空']);
+        $data = $request->all(['exten','phone','user_data','user_id','callback_url']);
+        if ($data['user_id']!=null){
+            $sip = Sip::with(['freeswitch','staff'])->where('staff_id',$data['user_id'])->first();
+        }else{
+            //验证分机信息
+            $sip = Sip::with(['freeswitch','staff'])->where('username',$data['exten'])->first();
         }
+        if ($sip == null) {
+            return Response::json(['code'=>1,'msg'=>' 外呼号未配置']);
+        }
+        //验证分机是否登录
+        if ($sip->status == 0){
+            return Response::json(['code'=>1,'msg'=>'当前外呼号未登录']);
+        }
+        $data['exten'] = $sip->username;
         //验证手机号码
         if (!preg_match('/\d{4,12}/', $data['phone'])) {
             return Response::json(['code'=>1,'msg'=>'客户电话号码格式不正确']);
@@ -126,57 +139,29 @@ class ApiController extends Controller
         }else{
             Redis::setex($data['exten'].'_check',10,'exist');
         }
-
-        //验证分机信息
-        $sip = Sip::where('username',$data['exten'])->first();
-        if ($sip == null) {
-            return Response::json(['code'=>1,'msg'=>' 外呼号不存在']);
-        }
-
-        //验证分机是否登录
-        if ($sip->status == 0){
-            return Response::json(['code'=>1,'msg'=>'当前外呼号未登录']);
-        }
-
         //呼叫字符串
         $aleg_uuid = md5(\Snowflake::nextId(1).$data['exten'].$data['phone'].Redis::incr('fs_id'));
         $bleg_uuid = md5(\Snowflake::nextId(2).$data['phone'].$data['exten'].Redis::incr('fs_id'));
         $dialStr  = "originate {origination_uuid=".$aleg_uuid."}";
         $dialStr .= "{origination_caller_id_number=".$sip->username."}";
         $dialStr .= "{origination_caller_id_name=".$sip->username."}";
-        //设置变量
-        if ($data['user_data']){
-            $dialStr .= "{user_data=".encrypt($data['user_data'])."}";
-        }
 
         //验证内部呼叫还是外部呼叫
         $res = Sip::where('username',$data['phone'])->first();
 
         if ($res == null) { //外部呼叫
             //查询分机的网关信息
-            $gateway = Gateway::with('outbound')->where('id',$sip->gateway_id)->first();
+            $gateway = Gateway::where('id',$sip->gateway_id)->first();
             if ($gateway == null) {
                 return Response::json(['code'=>1,'msg'=>'外呼号无可用的网关']);
             }
             //获取网关出局号码
-            $outbound = null;
             if ($gateway->outbound_caller_id) {
-                $outbound = $gateway->outbound_caller_id;
-            }else{
-                $gw_key = 'gw'.$gateway->id.'_outbound';
-                if (Redis::lLen($gw_key) == 0) {
-                    foreach ($gateway->outbound as $d) {
-                        Redis::rPush($gw_key,$d->number);
-                    }
-                }
-                $outbound = Redis::lPop($gw_key);
+                $dialStr .= "{effective_caller_id_number=".$gateway->outbound_caller_id."}";
+                $dialStr .= "{effective_caller_id_name=".$gateway->outbound_caller_id."}";
             }
-            if ($outbound) {
-                $dialStr .= "{effective_caller_id_number=".$outbound."}";
-                $dialStr .= "{effective_caller_id_name=".$outbound."}";
-            }
-            $dialStr .= "{customer_caller=".$data['phone']."}user/".$sip->username." gw".$gateway->id."_";
-            //网关后缀SS
+            $dialStr .= "user/".$sip->username." gw".$gateway->id."_";
+            //网关后缀
             if ($gateway->prefix){
                 $dialStr .=$gateway->prefix;
             }
@@ -185,20 +170,24 @@ class ApiController extends Controller
             $dialStr .="user/".$sip->username." ".$data["phone"]."_".$bleg_uuid;
         }
         $dialStr .=" XML default";
-
         try{
-            /*$fs = new \Freeswitchesl();
-            $service = config('freeswitch.esl');
-            $fs->connect($service['host'],$service['port'],$service['password']);
-            $fs->bgapi($dialStr);
-            $fs->disconnect();*/
-
-            Redis::rPush(config('freeswitch.fs_dial_key'),json_encode([
+            Cdr::create([
+                'uuid' => $aleg_uuid,
                 'aleg_uuid' => $aleg_uuid,
                 'bleg_uuid' => $bleg_uuid,
-                'dial_str' => base64_encode($dialStr),
-            ]));
-            //20分钟过期
+                'merchant_id' => $sip->merchant_id,
+                'department_id' => $sip->staff->department_id,
+                'staff_id' => $sip->staff_id,
+                'caller' => $sip->username,
+                'callee' => $data['phone'],
+                'call_time' => date('Y-m-d H:i:s'),
+                'user_data' => $data['user_data'],
+                'callback_url' => $data['callback_url'],
+            ]);
+            $fs = new \Freeswitchesl();
+            $fs->connect($sip->freeswitch->internal_ip,$sip->freeswitch->esl_port,$sip->freeswitch->esl_password);
+            $fs->bgapi($dialStr);
+            $fs->disconnect();
             Redis::setex($data['exten'].'_uuid',1200, $aleg_uuid);
             return Response::json(['code'=>0,'msg'=>'呼叫成功','data'=>['uuid'=>$aleg_uuid,'time'=>date('Y-m-d H:i:s')]]);
         }catch (\Exception $exception){
@@ -220,26 +209,22 @@ class ApiController extends Controller
         if($uuid == null){
             return Response::json(['code'=>0,'msg'=>'已挂断']);
         }
-        $sip = Sip::where('username',$exten)->first();
+        $sip = Sip::with('freeswitch')->where('username',$exten)->first();
         if ($sip == null) {
             return Response::json(['code'=>1,'msg'=>' 外呼号不存在']);
         }
-
-        $fs = new \Freeswitchesl();
-        $service = config('freeswitch.esl');
         try{
-            if ($fs->connect($service['host'],$service['port'],$service['password'])) {
-                $fs->bgapi("uuid_kill",$uuid);
-                $fs->disconnect();
-                Redis::del($exten.'_uuid');
-                return Response::json(['code'=>0,'msg'=>'已挂断']);
-            }
+            $fs = new \Freeswitchesl();
+            $fs->connect($sip->freeswitch->internal_ip,$sip->freeswitch->esl_port,$sip->freeswitch->esl_password);
+            $fs->bgapi("uuid_kill",$uuid);
+            $fs->disconnect();
+            Redis::del($exten.'_uuid');
+            return Response::json(['code'=>0,'msg'=>'已挂断']);
 
         }catch (\Exception $exception){
             Log::info('ESL连接异常：'.$exception->getMessage());
             return Response::json(['code'=>1,'msg'=>'连接异常']);
         }
-        return Response::json(['code'=>0,'msg'=>'已挂断']);
     }
 
     /**
@@ -339,5 +324,6 @@ class ApiController extends Controller
         }
 
     }
+
 
 }

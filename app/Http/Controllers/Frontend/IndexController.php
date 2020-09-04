@@ -96,7 +96,11 @@ class IndexController extends Controller
             'msg' => '请求成功',
             'data' => $data,
         ]);
+    }
 
+    public function online()
+    {
+        return View::make('frontend.index.online');
     }
 
 

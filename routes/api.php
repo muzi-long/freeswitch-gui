@@ -19,4 +19,6 @@ Route::post('getGatewayByMerchantId','ApiController@getGatewayByMerchantId')->na
 Route::post('getDepartmentByMerchantId','ApiController@getDepartmentByMerchantId')->name('getDepartmentByMerchantId');
 //文件上传
 Route::post('upload','ApiController@upload')->name('api.upload');
+//呼叫
+Route::post('dial','ApiController@dial')->name('api.dial');
 

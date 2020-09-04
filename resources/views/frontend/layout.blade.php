@@ -91,6 +91,12 @@
                                 <a lay-href="{{route('frontend.index')}}">控制台</a>
                             </dd>
                         </dl>
+                        <dl class="layui-nav-child">
+                            <dd data-name="console">
+                                <i class="layui-icon layui-icon-layouts"></i>
+                                <a lay-href="{{route('frontend.index.online')}}">在线拨号</a>
+                            </dd>
+                        </dl>
                     </li>
                     @foreach(\Illuminate\Support\Facades\Session::get('frontend_menus',[]) as $menu1)
                         <li data-name="{{$menu1['name']}}" class="layui-nav-item">

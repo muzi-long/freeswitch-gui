@@ -113,7 +113,7 @@
     </div>
     <script type="text/html" id="call_phone">
         <span style="display: inline-block;width: 80px">@{{d.contact_phone}}</span>
-        <i class="layui-icon layui-icon-cellphone-fine" onclick="call('@{{d.phone}}')" title="点击呼叫" style="cursor: pointer"></i>
+        <i class="layui-icon layui-icon-cellphone-fine" onclick="call('@{{d.contact_phone}}')" title="点击呼叫" style="cursor: pointer"></i>
     </script>
 @endsection
 

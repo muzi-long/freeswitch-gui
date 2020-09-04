@@ -55,6 +55,18 @@
             }
         }
 
+        //呼叫
+        window.call = function (phone,exten="",user_id="{{auth()->id()}}") {
+            layer.confirm('请确认已分配了分机并登录成功？',function(index) {
+                layer.close(index);
+                var load = layer.load();
+                $.post("{{route('api.dial')}}",{exten:exten,phone:phone,user_id:user_id},function(res) {
+                    layer.close(load);
+                    layer.msg(res.msg,{time:2000})
+                });
+            });
+        }
+
     });
 </script>
 @yield('script')

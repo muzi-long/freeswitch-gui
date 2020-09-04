@@ -27,6 +27,8 @@ Route::group(['namespace'=>'Frontend','middleware'=>'auth:frontend'],function ()
     Route::post('/index/cdr','IndexController@cdr')->name('frontend.index.cdr');
     //前台-节点
     Route::post('/index/node','IndexController@node')->name('frontend.index.node');
+    //在线拨号
+    Route::get('/index/online','IndexController@online')->name('frontend.index.online');
 
 });
 
