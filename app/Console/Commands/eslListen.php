@@ -102,7 +102,7 @@ class eslListen extends Command
                 $uuid                   = Arr::get($info,"Unique-ID"); //UUID
                 $CallerCallerIDNumber   = Arr::get($info,"Caller-Caller-ID-Number"); //主叫
                 $CallerCalleeIDNumber   = Arr::get($info,"Caller-Destination-Number"); //被叫
-                $this->setTable();
+
                 switch ($eventname){
                     //呼叫状态
                     case 'CHANNEL_CALLSTATE':
