@@ -32,8 +32,8 @@ class eslListen extends Command
     protected $recording_dir = 'recordings';
     public $url = null;
     public $hash_table = 'esl_listen';
-    public $cdr_table = null;
-    public $asr_table = null;
+    public $cdr_table = 'cdr';
+    public $asr_table = 'asr';
 
     /**
      * Create a new command instance.
@@ -102,7 +102,7 @@ class eslListen extends Command
                 $uuid                   = Arr::get($info,"Unique-ID"); //UUID
                 $CallerCallerIDNumber   = Arr::get($info,"Caller-Caller-ID-Number"); //主叫
                 $CallerCalleeIDNumber   = Arr::get($info,"Caller-Destination-Number"); //被叫
-
+                $this->setTable();
                 switch ($eventname){
                     //呼叫状态
                     case 'CHANNEL_CALLSTATE':
@@ -183,8 +183,7 @@ class eslListen extends Command
                             $data = json_decode(Redis::hget($this->hash_table,$uuid),true);
                             $data['is_prologue'] += 1;
                             if (isset($data['record_file'])&&file_exists($data['record_file'])){
-                                $table = 'asr';
-                                DB::table($table)->insert([
+                                DB::table($this->asr_table)->insert([
                                     'uuid' => $data['pid'],
                                     'leg_uuid' => $data['unique_id'],
                                     'start_at' => $data['start_time'],
@@ -193,7 +192,6 @@ class eslListen extends Command
                                     'record_file' => str_replace($this->fs_dir, $this->url, $data['record_file']),
                                     'created_at' => date('Y-m-d H:i:s'),
                                 ]);
-                                unset($table);
                             }
 
                             //结束说话 后接着开启分段录音
@@ -213,19 +211,31 @@ class eslListen extends Command
                     case 'CHANNEL_HANGUP_COMPLETE':
                         if (Redis::hexists($this->hash_table,$uuid)){
                             $data = json_decode(Redis::hget($this->hash_table,$uuid),true);
-                            Redis::hdel($this->hash_table, $uuid);
-                            $cdr = DB::table($this->cdr_table)->where('uuid',$data['pid'])->whereNull('end_time')->first();
+                            Redis::hdel($this->hash_table, $data['pid']);
+                            Redis::hdel($this->hash_table, $data['unique_id']);
+                            $cdr = DB::table($this->cdr_table)
+                                >where(function ($q) use($uuid){
+                                    return $q->where('aleg_uuid',$uuid)->orWhere('bleg_uuid',$uuid);
+                                })
+                                    ->whereNull('aleg_end_at')
+                                    ->first();
                             if ($cdr != null){
-                                $callsec = $cdr->answer_time != null ? time()-strtotime($cdr->answer_time) : 0;
+                                if ($uuid == $data['pid']){ // A的挂断事件
+                                    $callsec = $cdr->bleg_answer_at != null ? time()-strtotime($cdr->bleg_answer_at) : 0;
+                                }else{ // B的挂断事件
+                                    $callsec = Arr::get($info,'variable_billsec',0);
+                                }
+                                $hanguptime = Arr::get($info,'variable_end_stamp',null);
+                                $hanguptime = $hanguptime != null ? urldecode($hanguptime) : null;
+
                                 //更新通话时长
                                 DB::table($this->cdr_table)->where('uuid',$data['pid'])->update([
-                                    'end_time' => date('Y-m-d H:i:s'),
+                                    'aleg_end_at' => $hanguptime,
                                     'billsec' => $callsec,
                                 ]);
                                 unset($callsec);
+                                unset($hanguptime);
                             }
-                            unset($data);
-                            unset($cdr);
                         }
                         break;
                     default:
@@ -237,8 +247,8 @@ class eslListen extends Command
     }
 
     public function setTable(){
-        $this->cdr_table = 'cdr';
-        $this->asr_table = 'asr';
+        //$this->cdr_table = 'cdr'.date('Ym');
+        //$this->asr_table = 'asr'.date('Ym');
     }
 
 }
