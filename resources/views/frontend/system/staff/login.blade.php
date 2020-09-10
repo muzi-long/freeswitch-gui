@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>前台登录</title>
     <link href="/layuiadmin/layui/css/layui.css" rel="stylesheet">
-    <link href="/layuiadmin/backend/login/css/login.css" rel="stylesheet">
+    <link href="/layuiadmin/frontend/login/css/login.css" rel="stylesheet">
 </head>
 <body>
 
