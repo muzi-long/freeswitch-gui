@@ -198,7 +198,6 @@ class eslListen extends Command
                                     'record_file' => str_replace($this->fs_dir, $this->url, $data['record_file']),
                                     'created_at' => date('Y-m-d H:i:s'),
                                 ]);
-                                unset($table);
                             }
 
                             //结束说话 后接着开启分段录音
@@ -244,7 +243,6 @@ class eslListen extends Command
                                 unset($hanguptime);
                             }
                             unset($data);
-                            unset($table);
                             unset($cdr);
                         }
                         break;
