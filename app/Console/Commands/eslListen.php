@@ -133,26 +133,32 @@ class eslListen extends Command
                             //记录A分段录音数据
                             $halffile_a = $filepath . 'half_' . md5($otherUuid . time() . uniqid()) . '.wav';
                             $fs->bgapi("uuid_record " . $otherUuid . " start " . $halffile_a . " 18");
-                            $a_data = json_decode(Redis::hget($this->hash_table,$otherUuid),true);
-                            $a_data = array_merge($a_data,[
-                                'record_file' => $halffile_a,
-                                'full_record_file' => str_replace($this->fs_dir,$this->url,$fullfile),
-                            ]);
-                            Redis::hset($this->hash_table,$otherUuid,json_encode($a_data));
-                            unset($a_data);
+                            $a_data = Redis::hget($this->hash_table,$otherUuid);
+                            if ($a_data){
+                                $a_data = json_decode(Redis::hget($this->hash_table,$otherUuid),true);
+                                $a_data = array_merge($a_data,[
+                                    'record_file' => $halffile_a,
+                                    'full_record_file' => str_replace($this->fs_dir,$this->url,$fullfile),
+                                ]);
+                                Redis::hset($this->hash_table,$otherUuid,json_encode($a_data));
+                                unset($a_data);
+                            }
                             unset($halffile_a);
 
                             //记录B分段录音数据
                             $halffile_b = $filepath . 'half_' . md5($uuid . time() . uniqid()) . '.wav';
                             $fs->bgapi("uuid_record " . $uuid . " start " . $halffile_b . " 18");
-                            $b_data = json_decode(Redis::hget($this->hash_table,$uuid),true);
-                            $b_data = array_merge($b_data,[
-                                'pid' => $otherUuid,
-                                'record_file' => $halffile_b,
-                                'full_record_file' => str_replace($this->fs_dir,$this->url,$fullfile),
-                            ]);
-                            Redis::hset($this->hash_table,$uuid,json_encode($b_data));
-                            unset($b_data);
+                            $b_data = Redis::hget($this->hash_table,$uuid);
+                            if ($b_data){
+                                $b_data = json_decode(Redis::hget($this->hash_table,$uuid),true);
+                                $b_data = array_merge($b_data,[
+                                    'pid' => $otherUuid,
+                                    'record_file' => $halffile_b,
+                                    'full_record_file' => str_replace($this->fs_dir,$this->url,$fullfile),
+                                ]);
+                                Redis::hset($this->hash_table,$uuid,json_encode($b_data));
+                                unset($b_data);
+                            }
                             unset($halffile_b);
 
                             //更新B接听时间
@@ -218,22 +224,18 @@ class eslListen extends Command
                         if (Redis::hexists($this->hash_table,$uuid)){
                             $data = json_decode(Redis::hget($this->hash_table,$uuid),true);
                             Redis::hdel($this->hash_table, $data['pid']);
-                            Redis::hdel($this->hash_table, $data['unique_id']);
                             $cdr = DB::table($this->cdr_table)
-                                >where(function ($q) use($uuid){
-                                    return $q->where('aleg_uuid',$uuid)->orWhere('bleg_uuid',$uuid);
-                                })
+                                >where('uuid',$data['pid'])
                                 ->whereNull('aleg_end_at')
                                 ->first();
                             if ($cdr != null){
+                                $hanguptime = Arr::get($info,'variable_end_stamp',null);
+                                $hanguptime = $hanguptime != null ? urldecode($hanguptime) : null;
                                 if ($uuid == $data['pid']){ // A的挂断事件
-                                    $callsec = $cdr->bleg_answer_at != null ? time()-strtotime($cdr->bleg_answer_at) : 0;
+                                    $callsec = $cdr->bleg_answer_at != null ? strtotime($hanguptime)-strtotime($cdr->bleg_answer_at) : 0;
                                 }else{ // B的挂断事件
                                     $callsec = Arr::get($info,'variable_billsec',0);
                                 }
-                                $hanguptime = Arr::get($info,'variable_end_stamp',null);
-                                $hanguptime = $hanguptime != null ? urldecode($hanguptime) : null;
-
                                 //更新通话时长
                                 DB::table($this->cdr_table)->where('uuid',$data['pid'])->update([
                                     'aleg_end_at' => $hanguptime,
@@ -255,8 +257,13 @@ class eslListen extends Command
     }
 
     public function setTable(){
-        //$this->cdr_table = 'cdr'.date('Ym');
-        //$this->asr_table = 'asr'.date('Ym');
+        if ($this->cdr_table == null){
+            $this->cdr_table = 'cdr_'.date('Ym');
+        }
+        if ($this->asr_table == null){
+            $this->asr_table = 'asr_'.date('Ym');
+        }
+
     }
 
 }
