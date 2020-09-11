@@ -141,8 +141,8 @@ class eslListen extends Command
                                     'full_record_file' => str_replace($this->fs_dir,$this->url,$fullfile),
                                 ]);
                                 Redis::hset($this->hash_table,$otherUuid,json_encode($a_data));
-                                unset($a_data);
                             }
+                            unset($a_data);
                             unset($halffile_a);
 
                             //记录B分段录音数据
@@ -157,8 +157,8 @@ class eslListen extends Command
                                     'full_record_file' => str_replace($this->fs_dir,$this->url,$fullfile),
                                 ]);
                                 Redis::hset($this->hash_table,$uuid,json_encode($b_data));
-                                unset($b_data);
                             }
+                            unset($a_data);
                             unset($halffile_b);
 
                             //更新B接听时间
