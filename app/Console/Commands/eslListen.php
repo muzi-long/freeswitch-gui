@@ -180,19 +180,21 @@ class eslListen extends Command
                         break;
                     //开始说话
                     case 'RECORD_START':
-                        if (Redis::hexists($this->hash_table,$uuid)){
-                            $data = json_decode(Redis::hget($this->hash_table,$uuid),true);
+                        $data = Redis::hget($this->hash_table,$uuid);
+                        if ($data){
+                            $data = json_decode($data,true);
                             $data = array_merge($data,[
                                 'start_time' => date('Y-m-d H:i:s'),
                             ]);
                             Redis::hset($this->hash_table,$uuid,json_encode($data));
-                            unset($data);
                         }
+                        unset($data);
                         break;
                     //结束说话
                     case 'RECORD_STOP':
-                        if (Redis::hexists($this->hash_table,$uuid)){
-                            $data = json_decode(Redis::hget($this->hash_table,$uuid),true);
+                        $data = Redis::hget($this->hash_table,$uuid);
+                        if ($data){
+                            $data = json_decode($data,true);
                             $data['is_prologue'] += 1;
                             if (isset($data['record_file'])&&file_exists($data['record_file'])){
                                 DB::table($this->asr_table)->insert([
@@ -216,13 +218,14 @@ class eslListen extends Command
                             ]);
                             Redis::hset($this->hash_table,$uuid,json_encode($data));
                             unset($halffile);
-                            unset($data);
                         }
+                        unset($data);
                         break;
                     //挂断
                     case 'CHANNEL_HANGUP_COMPLETE':
-                        if (Redis::hexists($this->hash_table,$uuid)){
-                            $data = json_decode(Redis::hget($this->hash_table,$uuid),true);
+                        $data = Redis::hget($this->hash_table,$uuid);
+                        if ($data){
+                            $data = json_decode($data,true);
                             Redis::hdel($this->hash_table, $data['pid']);
                             $cdr = DB::table($this->cdr_table)
                                 >where('uuid',$data['pid'])
@@ -244,9 +247,9 @@ class eslListen extends Command
                                 unset($callsec);
                                 unset($hanguptime);
                             }
-                            unset($data);
                             unset($cdr);
                         }
+                        unset($data);
                         break;
                     default:
                         break;
