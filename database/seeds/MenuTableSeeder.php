@@ -168,7 +168,7 @@ class MenuTableSeeder extends Seeder
                         'permission_name' => 'crm.project-design',
                     ],
                     [
-                        'name' => '待分配',
+                        'name' => '分配库',
                         'route' => 'admin.assignment',
                         'url' => null,
                         'icon' => 'layui-icon-transfer',
@@ -184,7 +184,15 @@ class MenuTableSeeder extends Seeder
                         'permission_name' => 'crm.project',
                     ],
                     [
-                        'name' => '公海库',
+                        'name' => '成单库',
+                        'route' => 'admin.order',
+                        'url' => null,
+                        'icon' => 'layui-icon-transfer',
+                        'type' => 1,
+                        'permission_name' => 'crm.order',
+                    ],
+                    [
+                        'name' => '剔除库',
                         'route' => 'admin.waste',
                         'url' => null,
                         'icon' => 'layui-icon-404',

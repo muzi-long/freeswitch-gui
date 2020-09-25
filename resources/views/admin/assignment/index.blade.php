@@ -8,10 +8,11 @@
                     @can('crm.assignment.destroy')
                         <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" id="listDelete">删除</button>
                     @endcan
+                    @can('crm.assignment.create')
+                        <a href="{{route('admin.assignment.create')}}" class="layui-btn layui-btn-sm" id="listDelete">录入</a>
+                    @endcan
                     @can('crm.assignment.import')
                         <button type="button" id="import_project" class="layui-btn layui-btn-sm">导入</button>
-                    @endcan
-                    @can('crm.project.downloadTemplate')
                         <a href="{{route('admin.project.downloadTemplate')}}" class="layui-btn layui-btn-sm layui-btn-warm">模板下载</a>
                     @endcan
 
@@ -57,6 +58,13 @@
         </div>
         <div class="layui-card-body">
             <table id="dataTable" lay-filter="dataTable"></table>
+            <script type="text/html" id="options">
+                <div class="layui-btn-group">
+                    @can('crm.assignment.edit')
+                        <a class="layui-btn layui-btn-sm" lay-event="edit">编辑</a>
+                    @endcan
+                </div>
+            </script>
         </div>
     </div>
     <script type="text/html" id="import-html">
@@ -101,7 +109,24 @@
                     ,{field: 'name', title: '姓名'}
                     ,{field: 'phone', title: '联系电话'}
                     ,{field: 'created_at', title: '创建时间'}
+                    ,{field: 'owner_user_id', title: '状态', templet:function (d) {
+                            if(d.owner_user_id==0){
+                                return '<span class="layui-badge">待分配</span>'
+                            }else{
+                                return '<span class="layui-badge layui-bg-green">已分配</span>'
+                            }
+                        }}
+                    ,{fixed: 'right', width: 250, align:'center', toolbar: '#options', title:'操作'}
                 ]]
+            });
+
+            //监听工具条
+            table.on('tool(dataTable)', function(obj){ //注：tool是工具条事件名，dataTable是table原始容器的属性 lay-filter="对应的值"
+                var data = obj.data //获得当前行数据
+                    ,layEvent = obj.event; //获得 lay-event 对应的值
+                if(layEvent === 'edit'){
+                    location.href = '/admin/assignment/'+data.id+'/edit';
+                }
             });
 
             //搜索

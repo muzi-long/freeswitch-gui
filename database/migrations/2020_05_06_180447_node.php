@@ -17,6 +17,7 @@ class Node extends Migration
             $table->bigIncrements('id');
             $table->string('name')->comment('节点名称');
             $table->tinyInteger('sort')->default(10)->comment('排序');
+            $table->tinyInteger('type')->default(1)->comment('1前台节点，2后台节点');
             $table->timestamps();
         });
         \DB::statement("ALTER TABLE `node` comment '节点'");

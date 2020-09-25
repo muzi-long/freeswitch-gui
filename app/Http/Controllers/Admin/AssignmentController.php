@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\Project\ProjectRequest;
 use App\Imports\ProjectImport;
 use App\Models\Project;
+use App\Models\ProjectDesign;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -38,7 +40,6 @@ class AssignmentController extends Controller
             'company_name',
         ]);
         $res = Project::query()
-            ->where('owner_user_id', 0)
             //姓名
             ->when($data['name'], function ($query) use ($data) {
                 return $query->where('name', $data['name']);
@@ -51,6 +52,9 @@ class AssignmentController extends Controller
             ->when($data['company_name'], function ($query) use ($data) {
                 return $query->where('company_name', '%' . $data['company_name'] . '%');
             })
+            ->where('owner_user_id','>=',0)
+            ->orderBy('owner_user_id','asc')
+            ->orderBy('id','desc')
             ->paginate($request->get('limit', 30));
         $data = [
             'code' => 0,
@@ -147,4 +151,131 @@ class AssignmentController extends Controller
             return Response::json(['code'=>1,'msg'=>'删除失败']);
         }
     }
+
+    /**
+     * 添加项目
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function create()
+    {
+        $designs = ProjectDesign::where('visiable',1)
+            ->orderBy('sort','asc')
+            ->get();
+        return View::make('admin.assignment.create',compact('designs'));
+    }
+
+    /**
+     * 添加项目
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function store(ProjectRequest $request)
+    {
+        $user = Auth::user();
+        $data = $request->all(['company_name','name','phone']);
+        $dataInfo = [];
+        $fields = ProjectDesign::where('visiable',1)->get();
+
+        foreach ($fields as $d){
+            $items = [
+                'project_design_id' => $d->id,
+                'data' => $request->get($d->field_key),
+            ];
+            if ($d->field_type=='checkbox'){
+                if (!empty($items['data'])){
+                    $items['data'] = implode(',',$items['data']);
+                }else{
+                    $items['data'] = null;
+                }
+            }
+            array_push($dataInfo,$items);
+        }
+        DB::beginTransaction();
+        try{
+            $project_id = DB::table('project')->insertGetId([
+                'company_name' => $data['company_name'],
+                'name' => $data['name'],
+                'phone' => $data['phone'],
+                'created_user_id' => $user->id,
+                'owner_user_id' => 0,
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ]);
+            foreach ($dataInfo as $d){
+                DB::table('project_design_value')->insert([
+                    'project_id' => $project_id,
+                    'project_design_id' => $d['project_design_id'],
+                    'data' => $d['data'],
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now(),
+                ]);
+            }
+            DB::commit();
+            return Response::json(['code'=>0,'msg'=>'添加成功']);
+        }catch (\Exception $exception){
+            DB::rollBack();
+            Log::info('添加项目异常：'.$exception->getMessage());
+            return Response::json(['code'=>1,'msg'=>'添加失败']);
+        }
+
+    }
+
+    /**
+     * 更新项目
+     * @param $id
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function edit($id)
+    {
+        $model = Project::with('designs')->findOrFail($id);
+        return View::make('admin.assignment.edit',compact('model'));
+    }
+
+    /**
+     * 更新项目
+     * @param ProjectRequest $request
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function update(ProjectRequest $request,$id)
+    {
+        $data = $request->all(['company_name','name','phone']);
+        $dataInfo = [];
+        $model = Project::with('designs')->findOrFail($id);
+        foreach ($model->designs as $d){
+            $items = [
+                'id' => $d->pivot->id,
+                'data' => $request->get($d->field_key),
+            ];
+            if ($d->field_type=='checkbox'){
+                if (!empty($items['data'])){
+                    $items['data'] = implode(',',$items['data']);
+                }else{
+                    $items['data'] = null;
+                }
+            }
+            array_push($dataInfo,$items);
+        }
+
+        DB::beginTransaction();
+        try{
+            DB::table('project')->where('id',$id)->update([
+                'company_name' => $data['company_name'],
+                'name' => $data['name'],
+                'phone' => $data['phone'],
+                'updated_user_id' => $request->user()->id,
+                'updated_at' => Carbon::now(),
+            ]);
+            foreach ($dataInfo as $d){
+                DB::table('project_design_value')->where('id',$d['id'])->update(['data'=>$d['data']]);
+            }
+            DB::commit();
+            return Response::json(['code'=>0,'msg'=>'更新成功']);
+        }catch (\Exception $exception){
+            DB::rollBack();
+            Log::error('更新项目异常：'.$exception->getMessage());
+            return Response::json(['code'=>1,'msg'=>'更新失败']);
+        }
+    }
+
 }

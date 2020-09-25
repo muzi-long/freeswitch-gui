@@ -204,8 +204,10 @@ class UserTableSeeder extends Seeder
                     ],
                     [
                         'name' => 'crm.assignment',
-                        'display_name' => '待分配',
+                        'display_name' => '分配库',
                         'child' => [
+                            ['name' => 'crm.assignment.create', 'display_name' => '添加'],
+                            ['name' => 'crm.assignment.edit', 'display_name' => '编辑'],
                             ['name' => 'crm.assignment.import', 'display_name' => '导入'],
                             ['name' => 'crm.assignment.to', 'display_name' => '分配'],
                             ['name' => 'crm.assignment.destroy', 'display_name' => '删除'],
@@ -223,14 +225,26 @@ class UserTableSeeder extends Seeder
                             ['name' => 'crm.project.node', 'display_name' => '节点变更'],
                             ['name' => 'crm.project.remark', 'display_name' => '添加备注'],
                             ['name' => 'crm.project.import', 'display_name' => '导入'],
-                            ['name' => 'crm.project.downloadTemplate', 'display_name' => '下载模板'],
                             ['name' => 'crm.project.list_all', 'display_name' => '查看所有客户'],
                             ['name' => 'crm.project.list_department', 'display_name' => '查看本部门客户'],
                         ]
                     ],
                     [
+                        'name' => 'crm.order',
+                        'display_name' => '成单库',
+                        'route' => 'admin.order',
+                        'child' => [
+                            ['name' => 'crm.order.destroy', 'display_name' => '删除'],
+                            ['name' => 'crm.order.show', 'display_name' => '详情'],
+                            ['name' => 'crm.order.node', 'display_name' => '节点变更'],
+                            ['name' => 'crm.order.remark', 'display_name' => '添加备注'],
+                            ['name' => 'crm.order.list_all', 'display_name' => '查看所有客户'],
+                            ['name' => 'crm.order.list_department', 'display_name' => '查看本部门客户'],
+                        ]
+                    ],
+                    [
                         'name' => 'crm.waste',
-                        'display_name' => '公海库',
+                        'display_name' => '剔除库',
                         'child' => [
                             ['name' => 'crm.waste.retrieve', 'display_name' => '拾回'],
                             ['name' => 'crm.waste.show', 'display_name' => '跟进记录'],

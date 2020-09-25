@@ -322,7 +322,12 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth','perm
         Route::post('assignment/to','AssignmentController@to')->name('admin.assignment.to')->middleware('permission:crm.assignment.to');
         //导入
         Route::post('assignment/import','AssignmentController@import')->name('admin.assignment.import')->middleware('permission:crm.assignment.import');
-
+        //添加
+        Route::get('assignment/create','AssignmentController@create')->name('admin.assignment.create')->middleware('permission:crm.assignment.create');
+        Route::post('assignment/store','AssignmentController@store')->name('admin.assignment.store')->middleware('permission:crm.assignment.create');
+        //编辑
+        Route::get('assignment/{id}/edit','AssignmentController@edit')->name('admin.assignment.edit')->middleware('permission:crm.assignment.edit');
+        Route::put('assignment/{id}/update','AssignmentController@update')->name('admin.assignment.update')->middleware('permission:crm.assignment.edit');
     });
 
     //客户管理
@@ -348,11 +353,30 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth','perm
         Route::get('project/{id}/remark','ProjectController@remark')->name('admin.project.remark')->middleware('permission:crm.project.remark');
         Route::post('project/{id}/remarkStore','ProjectController@remarkStore')->name('admin.project.remarkStore');
         //备注记录
-        Route::get('project/{id}/remarkList','ProjectController@remarkList')->name('admin.project.remarkList')->middleware('permission:crm.project.import');
+        Route::get('project/{id}/remarkList','ProjectController@remarkList')->name('admin.project.remarkList');
         //下载导入模板
-        Route::get('project/downloadTemplate','ProjectController@downloadTemplate')->name('admin.project.downloadTemplate')->middleware('permission:crm.project.downloadTemplate');
+        Route::get('project/downloadTemplate','ProjectController@downloadTemplate')->name('admin.project.downloadTemplate')->middleware('permission:crm.project.import');
         //导入
         Route::post('project/import','ProjectController@import')->name('admin.project.import')->middleware('permission:crm.project.import');
+        //确认成单
+        Route::match(['get','post'],'project/{id}/order','ProjectController@order')->name('admin.project.order');
+
+    });
+
+    //成单库
+    Route::group([],function (){
+        Route::get('order','OrderController@index')->name('admin.order')->middleware('permission:crm.order');
+        Route::get('order/data','OrderController@data')->name('admin.order.data')->middleware('permission:crm.order');
+        //详情
+        Route::get('order/{id}/show','OrderController@show')->name('admin.order.show')->middleware('permission:crm.order.show');
+        //删除
+        Route::delete('order/destroy','OrderController@destroy')->name('admin.order.destroy')->middleware('permission:crm.order.destroy');
+        //更新节点
+        Route::get('order/{id}/node','OrderController@node')->name('admin.order.node')->middleware('permission:crm.order.node');
+        Route::post('order/{id}/nodeStore','OrderController@nodeStore')->name('admin.order.nodeStore')->middleware('permission:crm.order.node');
+        //更新备注
+        Route::get('order/{id}/remark','OrderController@remark')->name('admin.order.remark')->middleware('permission:crm.order.remark');
+        Route::post('order/{id}/remarkStore','OrderController@remarkStore')->name('admin.order.remarkStore');
 
     });
 

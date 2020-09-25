@@ -32,7 +32,7 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        $nodes = Node::orderBy('sort','asc')->get();
+        $nodes = Node::where('type',1)->orderBy('sort','asc')->get();
         $merchants = User::where('id','!=',config('freeswitch.user_root_id'))->get();
         return View::make('admin.project.index',compact('nodes','merchants'));
     }
@@ -106,6 +106,8 @@ class ProjectController extends Controller
             ->when($data['created_at_start']&&$data['created_at_end'],function ($query) use($data){
                 return $query->whereBetween('created_at',[$data['created_at_start'],$data['created_at_end']]);
             })
+            ->orderBy('is_end','asc')
+            ->orderBy('follow_at','desc')
             ->paginate($request->get('limit', 30));
 
         $data = [
@@ -470,6 +472,32 @@ class ProjectController extends Controller
             Log::info('导入失败：'.$exception->getMessage());
             return Response::json(['code'=>1,'msg'=>'导入失败']);
         }
+    }
+
+    /**
+     * 确认成单
+     * @param Request $request
+     * @param $id
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Http\JsonResponse
+     */
+    public function order(Request $request,$id)
+    {
+        $model = Project::where('id',$id)->first();
+        if ($request->ajax()){
+            $data = [
+                'backend_owner_user_id' => $request->input('backend_owner_user_id'),
+                'is_end' => 1,
+            ];
+
+            try {
+                $model->update($data);
+                return Response::json(['code'=>0,'msg'=>'更新成功']);
+            }catch (\Exception $exception){
+                return Response::json(['code'=>1,'msg'=>'更新失败']);
+            }
+        }
+        $users = User::where('id','!=',config('freeswitch.user_root_id'))->get();
+        return View::make('admin.project.order',compact('model','users'));
     }
 
 

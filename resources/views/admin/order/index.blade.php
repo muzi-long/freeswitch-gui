@@ -5,9 +5,6 @@
         <div class="layui-card-header layuiadmin-card-header-auto">
             <form class="layui-form">
                 <div class="layui-btn-group">
-                    @can('crm.project.create')
-                    <a class="layui-btn layui-btn-sm" href="{{ route('admin.project.create') }}">添 加</a>
-                    @endcan
                     <button lay-submit lay-filter="search" class="layui-btn layui-btn-sm" >搜索</button>
                 </div>
                 <div class="layui-form-item">
@@ -95,26 +92,18 @@
             <table id="dataTable" lay-filter="dataTable"></table>
             <script type="text/html" id="options">
                 <div class="layui-btn-group">
-                    @can('crm.project.show')
+                    @can('crm.order.show')
                     <a class="layui-btn layui-btn-sm" lay-event="show">详情</a>
                     @endcan
-                    @can('crm.project.edit')
-                    <a class="layui-btn layui-btn-sm" lay-event="edit">编辑</a>
-                    @endcan
-                    @can('crm.project.node')
+                    @can('crm.order.node')
                     <a class="layui-btn layui-btn-sm" lay-event="node">节点</a>
                     @endcan
-                    @can('crm.project.remark')
+                    @can('crm.order.remark')
                     <a class="layui-btn layui-btn-sm" lay-event="remark">备注</a>
                     @endcan
-                    @can('crm.project.destroy')
+                    @can('crm.order.destroy')
                     <a class="layui-btn layui-btn-danger layui-btn-sm " lay-event="del">删除</a>
                     @endcan
-                    @{{# if(d.is_end==0){ }}
-                        <a class="layui-btn layui-btn-normal layui-btn-sm " lay-event="order">确认成单</a>
-                    @{{# }else{ }}
-                        <a class="layui-btn layui-btn-primary layui-btn-sm " >已成单</a>
-                    @{{# } }}
                 </div>
             </script>
         </div>
@@ -122,25 +111,6 @@
     <script type="text/html" id="call_phone">
         <span style="display: inline-block;width: 80px">@{{d.phone}}</span>
         <i class="layui-icon layui-icon-cellphone-fine" onclick="call('@{{d.phone}}')" title="点击呼叫" style="cursor: pointer"></i>
-    </script>
-    <script type="text/html" id="import-html">
-        <div style="padding:20px">
-            <div class="layui-form">
-                <div class="layui-form-item">
-                    <label for="" class="layui-form-label">文件</label>
-                    <div class="layui-input-block">
-                        <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" id="uploadBtn">
-                            <i class="layui-icon">&#xe67c;</i>点击选择
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <div class="layui-input-block">
-                    <button class="layui-btn layui-btn-sm" id="importBtn">确认导入</button>
-                </div>
-            </div>
-        </div>
     </script>
 @endsection
 
@@ -157,7 +127,7 @@
             var dataTable = table.render({
                 elem: '#dataTable'
                 ,height: 500
-                ,url: "{{ route('admin.project.data') }}" //数据接口
+                ,url: "{{ route('admin.order.data') }}" //数据接口
                 ,page: true //开启分页
                 ,cols: [[ //表头
                     {checkbox: true,fixed: true}
@@ -185,7 +155,7 @@
                     layer.confirm('删除后客户将进入公海库，所有人可拾回。确认删除吗？', function(index){
                         layer.close(index);
                         var load = layer.load();
-                        $.post("{{ route('admin.project.destroy') }}",{_method:'delete',ids:[data.id]},function (res) {
+                        $.post("{{ route('admin.order.destroy') }}",{_method:'delete',ids:[data.id]},function (res) {
                             layer.close(load);
                             if (res.code == 0) {
                                 layer.msg(res.msg, {icon: 1}, function () {
@@ -197,20 +167,20 @@
                         });
                     });
                 } else if(layEvent === 'edit'){
-                    location.href = '/admin/project/'+data.id+'/edit';
+                    location.href = '/admin/order/'+data.id+'/edit';
                 } else if(layEvent === 'show'){
-                    location.href = '/admin/project/'+data.id+'/show';
+                    location.href = '/admin/order/'+data.id+'/show';
                 } else if(layEvent === 'node'){
-                    location.href = '/admin/project/'+data.id+'/node';
+                    location.href = '/admin/order/'+data.id+'/node';
                 } else if(layEvent === 'remark'){
-                    location.href = '/admin/project/'+data.id+'/remark';
+                    location.href = '/admin/order/'+data.id+'/remark';
                 } else if(layEvent === 'order'){
                     layer.open({
                         type: 2,
                         title:"后台接单",
                         shadeClose: true,
                         area: ["460px","400px"],
-                        content: '/admin/project/'+data.id+'/order'
+                        content: '/admin/order/'+data.id+'/order'
                     })
                 }
             });
@@ -231,35 +201,6 @@
             laydate.render({elem: '#created_at_start',type: 'date'})
             laydate.render({elem: '#created_at_end',type: 'date'})
 
-            //导入
-            $("#import_project").click(function() {
-                layer.open({
-                    type : 1,
-                    title : '导入项目，仅允许xls、xlsx格式',
-                    shadeClose : true,
-                    area : ['500px','auto'],
-                    content : $("#import-html").html()
-                })
-                upload.render({
-                    elem: '#uploadBtn'
-                    ,url: '{{route('admin.project.import')}}'
-                    ,auto: false
-                    ,multiple: false
-                    ,accept: 'file'
-                    ,exts: 'xlsx|xls'
-                    ,bindAction: '#importBtn'
-                    ,done: function(res){
-                        layer.msg(res.msg,{},function() {
-                            if (res.code==0){
-                                layer.closeAll();
-                                dataTable.reload({
-                                    page:{curr:1}
-                                })
-                            }
-                        })
-                    }
-                });
-            })
 
         })
     </script>

@@ -21,6 +21,8 @@ class Project extends Model
         'updated_user_id',
         'deleted_user_id',
         'owner_user_id',
+        'backend_owner_user_id',
+        'is_end',
     ];
 
     /**

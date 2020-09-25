@@ -15,7 +15,10 @@ class NodeController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()){
-            $res = Node::orderBy('sort')->orderBy('id')->paginate($request->get('limit', 30));
+            $res = Node::orderBy('sort')
+                ->orderBy('type','asc')
+                ->orderBy('id')
+                ->paginate($request->get('limit', 30));
             $data = [
                 'code' => 0,
                 'msg' => '正在请求中...',
@@ -35,7 +38,7 @@ class NodeController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->all(['name','sort']);
+        $data = $request->all(['name','sort','type']);
         try{
             Node::create($data);
             return Response::json(['code'=>0,'msg'=>'添加成功']);
@@ -53,7 +56,7 @@ class NodeController extends Controller
 
     public function update(Request $request,$id)
     {
-        $data = $request->all(['name','sort']);
+        $data = $request->all(['name','sort','type']);
         $model = Node::findOrFail($id);
         try{
             $model->update($data);
