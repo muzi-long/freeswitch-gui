@@ -32,7 +32,7 @@
                         </div>
                     </div>
                     <div class="layui-inline">
-                        <label for="" class="layui-form-label">创建人：</label>
+                        <label for="" class="layui-form-label">成单人：</label>
                         <div class="layui-input-block" style="width: 275px">
                             <select name="created_user_id" lay-search>
                                 <option value=""></option>
@@ -92,14 +92,14 @@
             <table id="dataTable" lay-filter="dataTable"></table>
             <script type="text/html" id="options">
                 <div class="layui-btn-group">
+                    @can('crm.order.send')
+                        <a class="layui-btn layui-btn-sm" lay-event="send">分单</a>
+                    @endcan
                     @can('crm.order.show')
                     <a class="layui-btn layui-btn-sm" lay-event="show">详情</a>
                     @endcan
-                    @can('crm.order.node')
-                    <a class="layui-btn layui-btn-sm" lay-event="node">节点</a>
-                    @endcan
-                    @can('crm.order.remark')
-                    <a class="layui-btn layui-btn-sm" lay-event="remark">备注</a>
+                    @can('crm.order.follow')
+                    <a class="layui-btn layui-btn-sm" lay-event="follow">跟进</a>
                     @endcan
                     @can('crm.order.destroy')
                     <a class="layui-btn layui-btn-danger layui-btn-sm " lay-event="del">删除</a>
@@ -134,16 +134,21 @@
                     ,{field: 'company_name', title: '公司名称'}
                     ,{field: 'name', title: '姓名'}
                     ,{field: 'phone', title: '联系电话',width:140,toolbar:'#call_phone'}
+                    ,{field: 'create_user_id', title: '成单人',templet:function (d) {
+                            return d.create_user.nickname;
+                        }}
+                    ,{field: 'accept_user_id', title: '接单人',templet:function (d) {
+                            return d.accept_user.nickname;
+                        }}
                     ,{field: 'node_id', title: '当前节点',templet:function (d) {
                             return d.node.name;
                         }}
-                    ,{field: 'follow_merchant_id', title: '跟进人',templet:function (d) {
+                    ,{field: 'follow_user_id', title: '跟进人',templet:function (d) {
                             return d.follow_user.nickname;
                         }}
                     ,{field: 'follow_at', title: '跟进时间'}
                     ,{field: 'next_follow_at', title: '下次跟进时间'}
-                    ,{field: 'created_at', title: '创建时间'}
-                    ,{fixed: 'right', width: 350, align:'center', toolbar: '#options', title:'操作'}
+                    ,{fixed: 'right', width: 240, align:'center', toolbar: '#options', title:'操作'}
                 ]]
             });
 
@@ -166,23 +171,26 @@
                             }
                         });
                     });
-                } else if(layEvent === 'edit'){
-                    location.href = '/admin/order/'+data.id+'/edit';
                 } else if(layEvent === 'show'){
                     location.href = '/admin/order/'+data.id+'/show';
-                } else if(layEvent === 'node'){
-                    location.href = '/admin/order/'+data.id+'/node';
-                } else if(layEvent === 'remark'){
-                    location.href = '/admin/order/'+data.id+'/remark';
-                } else if(layEvent === 'order'){
+                } else if(layEvent === 'follow'){
+                    layer.open({
+                        type: 2,
+                        title:"后台接单",
+                        shadeClose: true,
+                        area: ["500px","600px"],
+                        content: '/admin/order/'+data.id+'/followForm'
+                    })
+                } else if(layEvent === 'send'){
                     layer.open({
                         type: 2,
                         title:"后台接单",
                         shadeClose: true,
                         area: ["460px","400px"],
-                        content: '/admin/order/'+data.id+'/order'
+                        content: '/admin/order/'+data.id+'/send'
                     })
                 }
+
             });
 
             //搜索

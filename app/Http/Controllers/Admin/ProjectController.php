@@ -483,21 +483,33 @@ class ProjectController extends Controller
     public function order(Request $request,$id)
     {
         $model = Project::where('id',$id)->first();
-        if ($request->ajax()){
-            $data = [
-                'backend_owner_user_id' => $request->input('backend_owner_user_id'),
+        $data = [
+            'backend_owner_user_id' => $request->input('backend_owner_user_id'),
+            'is_end' => 1,
+        ];
+        DB::beginTransaction();
+        try {
+            DB::table('project')->where('id',$id)->update([
                 'is_end' => 1,
-            ];
-
-            try {
-                $model->update($data);
-                return Response::json(['code'=>0,'msg'=>'更新成功']);
-            }catch (\Exception $exception){
-                return Response::json(['code'=>1,'msg'=>'更新失败']);
-            }
+                'end_time' => date('Y-m-d H:i:s'),
+            ]);
+            DB::table('order')->insert([
+                'project_id' => $id,
+                'company_name' => $model->company_name,
+                'name' => $model->name,
+                'phone' => $model->phone,
+                'created_user_id' => $model->owner_user_id,
+                'created_at' => date('Y-m-d H:i:s'),
+            ]);
+            DB::commit();
+            return Response::json(['code'=>0,'msg'=>'更新成功']);
+        }catch (\Exception $exception){
+            Log::error('确认成单异常：'.$exception->getMessage());
+            DB::rollBack();
+            return Response::json(['code'=>1,'msg'=>'更新失败']);
         }
-        $users = User::where('id','!=',config('freeswitch.user_root_id'))->get();
-        return View::make('admin.project.order',compact('model','users'));
+
+
     }
 
 

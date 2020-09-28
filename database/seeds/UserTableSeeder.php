@@ -224,9 +224,9 @@ class UserTableSeeder extends Seeder
                             ['name' => 'crm.project.show', 'display_name' => '详情'],
                             ['name' => 'crm.project.node', 'display_name' => '节点变更'],
                             ['name' => 'crm.project.remark', 'display_name' => '添加备注'],
-                            ['name' => 'crm.project.import', 'display_name' => '导入'],
                             ['name' => 'crm.project.list_all', 'display_name' => '查看所有客户'],
                             ['name' => 'crm.project.list_department', 'display_name' => '查看本部门客户'],
+                            ['name' => 'crm.project.order', 'display_name' => '确认成单'],
                         ]
                     ],
                     [
@@ -236,10 +236,10 @@ class UserTableSeeder extends Seeder
                         'child' => [
                             ['name' => 'crm.order.destroy', 'display_name' => '删除'],
                             ['name' => 'crm.order.show', 'display_name' => '详情'],
-                            ['name' => 'crm.order.node', 'display_name' => '节点变更'],
-                            ['name' => 'crm.order.remark', 'display_name' => '添加备注'],
-                            ['name' => 'crm.order.list_all', 'display_name' => '查看所有客户'],
-                            ['name' => 'crm.order.list_department', 'display_name' => '查看本部门客户'],
+                            ['name' => 'crm.order.follow', 'display_name' => '跟进'],
+                            ['name' => 'crm.order.list_all', 'display_name' => '查看所有'],
+                            ['name' => 'crm.order.list_department', 'display_name' => '查看本部门'],
+                            ['name' => 'crm.order.send', 'display_name' => '分单'],
                         ]
                     ],
                     [

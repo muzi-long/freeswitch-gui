@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Project\ProjectRequest;
 use App\Models\Node;
+use App\Models\Order;
+use App\Models\OrderFollow;
 use App\Models\Project;
 use App\Models\User;
 use Carbon\Carbon;
@@ -44,16 +46,16 @@ class OrderController extends Controller
             'created_at_start',
             'created_at_end',
         ]);
-        $res = Project::with(['node','followUser'])
-            ->where('is_end',1)
+        $res = Order::with(['node','followUser','createUser','acceptUser'])
+
             ->where(function ($query) use($user){
                 if ($user->hasPermissionTo('crm.order.list_all')) {
-                    return $query->where('backend_owner_user_id','>',0);
+                    //return $query->where('backend_owner_user_id','>',0);
                 }elseif ($user->hasPermissionTo('crm.order.list_department')) {
                     $user_ids = User::where('department_id',$user->department_id)->pluck('id')->toArray();
-                    return $query->whereIn('backend_owner_user_id',$user_ids);
+                    return $query->whereIn('accept_user_id',$user_ids);
                 }else{
-                    return $query->where('backend_owner_user_id',$user->id);
+                    return $query->where('accept_user_id',$user->id);
                 }
             })
             //姓名
@@ -98,7 +100,15 @@ class OrderController extends Controller
             ->when($data['created_at_start']&&$data['created_at_end'],function ($query) use($data){
                 return $query->whereBetween('created_at',[$data['created_at_start'],$data['created_at_end']]);
             })
-            ->orderBy('is_end','asc')
+            //成单人
+            ->when($data['created_user_id'],function ($query) use($data){
+                return $query->where('created_user_id',$data['created_user_id']);
+            })
+            //跟进人
+            ->when($data['follow_user_id'],function ($query) use($data){
+                return $query->where('follow_user_id',$data['follow_user_id']);
+            })
+            ->orderBy('accept_user_id','asc')
             ->orderBy('follow_at','desc')
             ->paginate($request->get('limit', 30));
 
@@ -112,7 +122,7 @@ class OrderController extends Controller
     }
 
     /**
-     * 删除项目
+     * 删除
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
@@ -122,8 +132,7 @@ class OrderController extends Controller
         $id = $ids[0];
         DB::beginTransaction();
         try{
-            DB::table('project')->where('id',$id)->update([
-                'deleted_user_id' => Auth::guard()->user()->id,
+            DB::table('order')->where('id',$id)->update([
                 'deleted_at' => Carbon::now(),
             ]);
             DB::commit();
@@ -142,106 +151,108 @@ class OrderController extends Controller
      */
     public function show($id)
     {
-        $model = Project::with('designs')->findOrFail($id);
-        return View::make('admin.order.show',compact('model'));
+        $order = Order::where('id',$id)->first();
+        $model = Project::with('designs')->findOrFail($order->project_id);
+        return View::make('admin.order.show',compact('model','order'));
     }
 
     /**
-     * 更新节点
+     * 分单
+     * @param Request $request
      * @param $id
-     * @return \Illuminate\Contracts\View\View
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Http\JsonResponse
      */
-    public function node($id)
+    public function send(Request $request,$id)
     {
-        $model = Project::findOrFail($id);
-        $nodes = Node::where('type',2)->orderBy('sort','asc')->get();
-        return View::make('admin.order.node',compact('model','nodes'));
+        $model = Order::where('id',$id)->first();
+        $users = User::where('id','!=',config('freeswitch.user_root_id'))->get();
+        if ($request->ajax()){
+            $accept_user_id = $request->input('accept_user_id');
+            try {
+                Order::where('id',$id)->update([
+                    'accept_user_id' => $accept_user_id,
+                    'accept_time' => date('Y-m-d H:i:s'),
+                    'accept_result' => 1,
+                    'handle_user_id' => Auth::id(),
+                    'handle_time' => date('Y-m-d H:i:s'),
+                ]);
+                return Response::json(['code'=>0,'msg'=>'分单成功']);
+            }catch (\Exception $exception){
+                return Response::json(['code'=>1,'msg'=>'分单失败']);
+            }
+        }
+        return View::make('admin.order.send',compact('users','model'));
     }
 
     /**
-     * 更新节点
-     * @param ProjectRequest $request
+     * 跟进
+     * @param Request $request
+     * @param $id
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Http\JsonResponse
+     */
+    public function follow(Request $request, $id)
+    {
+        $order = Order::with('node')->where('id',$id)->first();
+
+        $nodes = Node::where('type',2)->orderBy('sort','asc')->orderBy('id','asc')->pluck('name','id')->toArray();
+        if ($request->ajax()){
+            if (!$order->accept_user_id){
+                return Response::json(['code'=>1,'msg'=>'未接单禁止跟进']);
+        }
+            $data = $request->all(['node_id','next_follow_at','remark']);
+            DB::beginTransaction();
+            try {
+                DB::table('order_follow')->insert([
+                    'order_id' => $id,
+                    'old_node_id' => $order->node->id??0,
+                    'old_node_name' => $order->node->name??0,
+                    'new_node_id' => $data['node_id'],
+                    'new_node_name' => $nodes[$data['node_id']],
+                    'user_id' => Auth::id(),
+                    'user_name' => Auth::user()->nickname,
+                    'next_follow_time' => $data['next_follow_at'],
+                    'remark' => $data['remark'],
+                    'created_at' => date('Y-m-d H:i:s'),
+                ]);
+
+                DB::table('order')->where('id',$id)->update([
+                    'node_id' => $data['node_id'],
+                    'follow_at' => date('Y-m-d H:i:s'),
+                    'follow_user_id' => Auth::id(),
+                    'next_follow_at' => $data['next_follow_at'],
+                    'remark' => $data['remark'],
+                ]);
+                DB::commit();
+                return Response::json(['code'=>0,'msg'=>'跟进成功']);
+            }catch (\Exception $exception){
+                DB::rollBack();
+                return Response::json(['code'=>1,'msg'=>'跟进失败']);
+            }
+
+        }
+        return View::make('admin.order.follow',compact('order','nodes'));
+    }
+
+    /**
+     * 跟进列表
+     * @param Request $request
      * @param $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function nodeStore(ProjectRequest $request,$id)
+    public function followList(Request $request, $id)
     {
-        $model = Project::findOrFail($id);
-        $data = $request->all(['node_id','content']);
-        $old = $model->node_id;
-        $user = Auth::user();
-        DB::beginTransaction();
-        try{
-            DB::table('project_node')->insert([
-                'project_id' => $id,
-                'old' => $old,
-                'new' => $data['node_id'],
-                'content' => $data['content'],
-                'user_id' => $user->id,
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ]);
-            DB::table('project')->where('id',$id)->update([
-                'node_id' => $data['node_id'],
-                'updated_user_id' => $user->id,
-                'updated_at' => Carbon::now()
-            ]);
-            DB::commit();
-            return Response::json(['code'=>0,'msg'=>'更新成功']);
-        }catch (\Exception $exception){
-            DB::rollBack();
-            Log::info('更新节点异常：'.$exception->getMessage());
-            return Response::json(['code'=>1,'msg'=>'更新失败']);
-        }
+        $res = OrderFollow::query()
+            ->orderBy('created_at','desc')
+            ->paginate($request->get('limit', 30));
+
+        $data = [
+            'code' => 0,
+            'msg' => '正在请求中...',
+            'count' => $res->total(),
+            'data' => $res->items()
+        ];
+        return Response::json($data);
     }
 
-    /**
-     * 更新备注
-     * @param $id
-     * @return \Illuminate\Contracts\View\View
-     */
-    public function remark($id)
-    {
-        $model = Project::findOrFail($id);
-        return View::make('admin.order.remark',compact('model'));
-    }
-
-    /**
-     * 更新备注
-     * @param ProjectRequest $request
-     * @param $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function remarkStore(ProjectRequest $request,$id)
-    {
-        $model = Project::findOrFail($id);
-        $data = $request->all(['next_follow_at','content']);
-        $user = Auth::user();
-        DB::beginTransaction();
-        try{
-            DB::table('project_remark')->insert([
-                'project_id' => $id,
-                'content' => $data['content'],
-                'next_follow_at' => $data['next_follow_at'],
-                'user_id' => $user->id,
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ]);
-            DB::table('project')->where('id',$id)->update([
-                'next_follow_at' => $data['next_follow_at'],
-                'follow_at' => Carbon::now(),
-                'follow_user_id' => $user->id,
-                'updated_user_id' => $user->id,
-                'updated_at' => Carbon::now()
-            ]);
-            DB::commit();
-            return Response::json(['code'=>0,'msg'=>'更新成功']);
-        }catch (\Exception $exception){
-            DB::rollBack();
-            Log::error('更新备注异常：'.$exception->getMessage());
-            return Response::json(['code'=>1,'msg'=>'更新失败']);
-        }
-
-    }
 
 }

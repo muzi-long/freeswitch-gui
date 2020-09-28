@@ -110,7 +110,7 @@
                 </div>
             </div>
             <div class="layui-row layui-col-space30">
-                <div class="layui-col-xs6">
+                <div class="layui-col-xs12">
                     <div class="layui-card">
                         <div class="layui-card-header"><b>节点进度</b></div>
                         <div class="layui-card-body">
@@ -118,14 +118,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="layui-col-xs6">
-                    <div class="layui-card">
-                        <div class="layui-card-header"><b>备注进度</b></div>
-                        <div class="layui-card-body">
-                            <table id="dataTableRemark" lay-filter="dataTableRemark"></table>
-                        </div>
-                    </div>
-                </div>
+
             </div>
         </div>
     </div>

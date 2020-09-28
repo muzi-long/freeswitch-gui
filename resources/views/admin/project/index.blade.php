@@ -205,13 +205,20 @@
                 } else if(layEvent === 'remark'){
                     location.href = '/admin/project/'+data.id+'/remark';
                 } else if(layEvent === 'order'){
-                    layer.open({
-                        type: 2,
-                        title:"后台接单",
-                        shadeClose: true,
-                        area: ["460px","400px"],
-                        content: '/admin/project/'+data.id+'/order'
-                    })
+                    layer.confirm('确认成单后将进入成单库？', function(index){
+                        layer.close(index);
+                        var load = layer.load();
+                        $.post('/admin/project/'+data.id+'/order',function (res) {
+                            layer.close(load);
+                            if (res.code == 0) {
+                                layer.msg(res.msg, {icon: 1}, function () {
+                                    obj.del();
+                                })
+                            } else {
+                                layer.msg(res.msg, {icon: 2})
+                            }
+                        });
+                    });
                 }
             });
 

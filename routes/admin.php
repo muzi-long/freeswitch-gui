@@ -359,7 +359,7 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth','perm
         //导入
         Route::post('project/import','ProjectController@import')->name('admin.project.import')->middleware('permission:crm.project.import');
         //确认成单
-        Route::match(['get','post'],'project/{id}/order','ProjectController@order')->name('admin.project.order');
+        Route::post('project/{id}/order','ProjectController@order')->name('admin.project.order')->middleware('permission:crm.project.order');
 
     });
 
@@ -371,12 +371,12 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth','perm
         Route::get('order/{id}/show','OrderController@show')->name('admin.order.show')->middleware('permission:crm.order.show');
         //删除
         Route::delete('order/destroy','OrderController@destroy')->name('admin.order.destroy')->middleware('permission:crm.order.destroy');
-        //更新节点
-        Route::get('order/{id}/node','OrderController@node')->name('admin.order.node')->middleware('permission:crm.order.node');
-        Route::post('order/{id}/nodeStore','OrderController@nodeStore')->name('admin.order.nodeStore')->middleware('permission:crm.order.node');
-        //更新备注
-        Route::get('order/{id}/remark','OrderController@remark')->name('admin.order.remark')->middleware('permission:crm.order.remark');
-        Route::post('order/{id}/remarkStore','OrderController@remarkStore')->name('admin.order.remarkStore');
+        //跟进
+        Route::get('order/{id}/followForm','OrderController@follow')->name('admin.order.followForm')->middleware('permission:crm.order.follow');
+        Route::post('order/{id}/follow','OrderController@follow')->name('admin.order.follow')->middleware('permission:crm.order.follow');
+        Route::get('order/{id}/followList','OrderController@followList')->name('admin.order.followList');
+        //分单
+        Route::match(['get','post'],'order/{id}/send','OrderController@send')->name('admin.order.send')->middleware('permission:crm.order.send');
 
     });
 

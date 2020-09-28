@@ -8,7 +8,7 @@
                 <div class="layui-form-item">
                     <label for="" class="layui-form-label">接单人</label>
                     <div class="layui-input-inline">
-                        <select name="backend_owner_user_id" lay-verify="required" >
+                        <select name="accept_user_id" lay-verify="required" >
                             <option value=""></option>
                             @foreach($users as $d)
                                 <option value="{{$d->id}}"  >{{$d->nickname}}</option>
