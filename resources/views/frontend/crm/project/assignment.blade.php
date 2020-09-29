@@ -8,6 +8,9 @@
                     @can('frontend.crm.assignment.destroy')
                         <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" id="listDelete">删除</button>
                     @endcan
+                    @can('frontend.crm.assignment.create')
+                        <a href="{{route('frontend.crm.assignment.create')}}" class="layui-btn layui-btn-sm" >录入</a>
+                    @endcan
                     @can('frontend.crm.assignment.import')
                         <button type="button" id="import_project" class="layui-btn layui-btn-sm">导入</button>
                     @endcan
@@ -98,6 +101,13 @@
                     ,{field: 'contact_name', title: '联系人'}
                     ,{field: 'contact_phone', title: '联系电话'}
                     ,{field: 'created_at', title: '创建时间'}
+                    ,{field: 'owner_user_id', title: '接单人',templet:function (d) {
+                            return d.accept_user.nickname
+                        }}
+                    ,{field: 'assignment_at', title: '接单时间'}
+                    ,{field: 'owner_user_id', title: '状态',templet:function (d) {
+                            return d.owner_user_id>0?'<span class="layui-badge layui-bg-green">已分配</span>':'<span class="layui-badge">待分配</span>'
+                        }}
                 ]]
             });
 

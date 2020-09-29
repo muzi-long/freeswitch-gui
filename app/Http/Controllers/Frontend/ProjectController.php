@@ -34,7 +34,7 @@ class ProjectController extends Controller
                 'contact_phone',
                 'company_name',
             ]);
-            $res = Project::with(['node','followUser'])
+            $res = Project::with(['node','followUser','acceptUser'])
                 //姓名
                 ->when($data['contact_name'],function ($query) use($data){
                     return $query->where('contact_name',$data['contact_name']);
@@ -47,8 +47,9 @@ class ProjectController extends Controller
                 ->when($data['company_name'], function ($query) use ($data) {
                     return $query->where('company_name', '%' . $data['company_name'] . '%');
                 })
-                ->where('owner_user_id','=',0)
+                ->where('owner_user_id','>=',0)
                 ->where('merchant_id','=',$request->user()->merchant_id)
+                ->orderBy('owner_user_id','asc')
                 ->paginate($request->get('limit', 30));
             $data = [
                 'code' => 0,
@@ -60,6 +61,67 @@ class ProjectController extends Controller
         }
         $staffs = Staff::where('merchant_id',$request->user()->merchant_id)->where('is_merchant',0)->get();
         return View::make('frontend.crm.project.assignment',compact('staffs'));
+    }
+
+    public function assignmentCreate(Request $request)
+    {
+        $designs = ProjectDesign::where('visiable',1)
+            ->where('merchant_id',$request->user()->merchant_id)
+            ->orderBy('sort','asc')
+            ->get();
+        return View::make('frontend.crm.project.assignment_create',compact('designs'));
+    }
+
+    public function assignmentStore(Request $request)
+    {
+        $user = $request->user();
+        $data = $request->all(['company_name','contact_name','contact_phone']);
+        $dataInfo = [];
+        $fields = ProjectDesign::where('visiable',1)->where('merchant_id',$request->user()->merchant_id)->get();
+
+        foreach ($fields as $d){
+            $items = [
+                'project_design_id' => $d->id,
+                'data' => $request->get($d->field_key),
+            ];
+            if ($d->field_type=='checkbox'){
+                if (!empty($items['data'])){
+                    $items['data'] = implode(',',$items['data']);
+                }else{
+                    $items['data'] = null;
+                }
+            }
+            array_push($dataInfo,$items);
+        }
+        DB::beginTransaction();
+        try{
+            $project_id = DB::table('project')->insertGetId([
+                'company_name' => $data['company_name'],
+                'contact_name' => $data['contact_name'],
+                'contact_phone' => $data['contact_phone'],
+                'created_user_id' => $user->id,
+                'owner_user_id' => 0,
+                'department_id' => $user->department_id,
+                'merchant_id' => $user->merchant_id,
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ]);
+            foreach ($dataInfo as $d){
+                DB::table('project_design_value')->insert([
+                    'project_id' => $project_id,
+                    'project_design_id' => $d['project_design_id'],
+                    'data' => $d['data'],
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'updated_at' => date('Y-m-d H:i:s'),
+                ]);
+            }
+            DB::commit();
+            return Response::json(['code'=>0,'msg'=>'添加成功','url'=>route('frontend.crm.assignment')]);
+        }catch (\Exception $exception){
+            DB::rollBack();
+            Log::error('添加待分配项目异常：'.$exception->getMessage());
+            return Response::json(['code'=>1,'msg'=>'添加失败']);
+        }
     }
 
     /**
@@ -85,10 +147,13 @@ class ProjectController extends Controller
             return Response::json(['code'=>1,'msg'=>'请选择本商户的员工']);
         }
         try {
-            Project::whereIn('id',$data['project_ids'])->where('merchant_id',$request->user()->merchant_id)->update([
-                'owner_user_id' => $staff->id,
-                'department_id' => $staff->department_id,
-            ]);
+            Project::whereIn('id',$data['project_ids'])
+                ->where('merchant_id',$request->user()->merchant_id)
+                ->update([
+                    'owner_user_id' => $staff->id,
+                    'department_id' => $staff->department_id,
+                    'assignment_at' => date('Y-m-d H:i:s'),
+                ]);
             return Response::json(['code'=>0,'msg'=>'分配成功']);
         }catch (\Exception $exception){
             Log::error('分配客户异常：'.$exception->getMessage());
@@ -248,7 +313,7 @@ class ProjectController extends Controller
             ];
             return Response::json($data);
         }
-        $nodes = Node::where('merchant_id',$request->user()->merchant_id)->get();
+        $nodes = Node::where('merchant_id',$request->user()->merchant_id)->where('type',1)->orderBy('sort','asc')->get();
         if ($user->hasPermissionTo('frontend.crm.project.list_all')) {
             $users = Staff::where('merchant_id',$user->merchant_id)
                 ->where('is_merchant',0)
@@ -270,11 +335,13 @@ class ProjectController extends Controller
 
     /**
      * 添加客户
+     * @param Request $request
      * @return \Illuminate\Contracts\View\View
      */
-    public function create()
+    public function create(Request $request)
     {
         $designs = ProjectDesign::where('visiable',1)
+            ->where('merchant_id',$request->user()->merchant_id)
             ->orderBy('sort','asc')
             ->get();
         return View::make('frontend.crm.project.create',compact('designs'));
@@ -290,7 +357,7 @@ class ProjectController extends Controller
         $user = $request->user();
         $data = $request->all(['company_name','contact_name','contact_phone']);
         $dataInfo = [];
-        $fields = ProjectDesign::where('visiable',1)->get();
+        $fields = ProjectDesign::where('visiable',1)->where('merchant_id',$request->user()->merchant_id)->get();
 
         foreach ($fields as $d){
             $items = [
@@ -468,7 +535,7 @@ class ProjectController extends Controller
                 return Response::json(['code'=>1,'msg'=>'更新失败']);
             }
         }
-        $nodes = Node::where('merchant_id',$user->merchant_id)->orderBy('sort','asc')->get();
+        $nodes = Node::where('merchant_id',$user->merchant_id)->where('type',1)->orderBy('sort','asc')->get();
         return View::make('frontend.crm.project.follow',compact('model','nodes'));
     }
 

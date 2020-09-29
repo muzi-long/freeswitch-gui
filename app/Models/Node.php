@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Arr;
 
 class Node extends Model
 {
@@ -14,8 +15,16 @@ class Node extends Model
         'merchant_id',
         'name',
         'sort',
+        'type',
         'created_staff_id',
     ];
+
+    protected $appends = ['type_name'];
+
+    public function getTypeNameAttribute()
+    {
+        return $this->attributes['type_name'] = Arr::get(config('freeswitch.node_type'),$this->type,'-');
+    }
 
     /**
      * 所属商户

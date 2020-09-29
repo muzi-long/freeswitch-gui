@@ -55,7 +55,7 @@ class NodeController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->all(['merchant_id','name','sort']);
+        $data = $request->all(['merchant_id','name','sort','type']);
         $data['created_staff_id'] = 0;
         try{
             Node::create($data);
@@ -80,7 +80,7 @@ class NodeController extends Controller
 
     public function update(Request $request,$id)
     {
-        $data = $request->all(['name','sort']);
+        $data = $request->all(['name','sort','type']);
         $model = Node::findOrFail($id);
         try{
             $model->update($data);

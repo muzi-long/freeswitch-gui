@@ -48,6 +48,7 @@
                     ,{field: 'id', title: 'ID', sort: true,width:80}
                     ,{field: 'name', title: '名称'}
                     ,{field: 'sort', title: '排序'}
+                    ,{field: 'type_name', title: '类型'}
                     ,{ width: 150, align:'center', toolbar: '#options', title:'操作'}
                 ]]
             });

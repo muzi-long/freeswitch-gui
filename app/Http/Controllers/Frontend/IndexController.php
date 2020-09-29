@@ -86,6 +86,7 @@ class IndexController extends Controller
         $data = [];
         $nodes = Node::with('projects')
             ->where('merchant_id',$request->user()->merchant_id)
+            ->where('type',1)
             ->orderBy('sort','asc')
             ->get();
         foreach ($nodes as $node){

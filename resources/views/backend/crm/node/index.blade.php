@@ -61,6 +61,7 @@
                     {checkbox: true}
                     ,{field: 'id', title: 'ID', sort: true,width:80}
                     ,{field: 'name', title: '名称'}
+                    ,{field: 'type_name', title: '类型'}
                     , {field: 'merchant_id', title: '所属商户',templet: function (d) {
                             return d.merchant.company_name;
                         }}

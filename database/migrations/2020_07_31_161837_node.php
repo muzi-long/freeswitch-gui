@@ -19,6 +19,7 @@ class Node extends Migration
             $table->string('name')->comment('进度节点名称');
             $table->integer('sort')->default(10)->comment('排序');
             $table->unsignedBigInteger('created_staff_id')->default(0)->comment('创建人ID，0表示后台用户创建的');
+            $table->tinyInteger('type')->default(1)->comment('节点类型，1crm,2订单');
             $table->softDeletes();
             $table->timestamps();
         });

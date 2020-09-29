@@ -90,4 +90,10 @@ return [
         'contact_phone'
     ],
 
+    //node type
+    'node_type' => [
+        1 => 'CRM',
+        2 => '订单',
+    ]
+
 ];

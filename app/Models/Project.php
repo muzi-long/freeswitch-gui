@@ -27,6 +27,7 @@ class Project extends Model
         'deleted_user_id',
         'owner_user_id',
         'remark',
+        'assignment_at',
     ];
 
     /**
@@ -57,6 +58,15 @@ class Project extends Model
     public function followUser()
     {
         return $this->hasOne(Staff::class,'id','follow_user_id')->withDefault(['nickname'=>'-']);
+    }
+
+    /**
+     * 跟进人
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function acceptUser()
+    {
+        return $this->hasOne(Staff::class,'id','owner_user_id')->withDefault(['nickname'=>'-']);
     }
 
     /**

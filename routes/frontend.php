@@ -170,6 +170,9 @@ Route::group(['namespace'=>'Frontend','prefix'=>'crm','middleware'=>['auth:front
     //待分配
     Route::group([],function (){
         Route::get('assignment','ProjectController@assignment')->name('frontend.crm.assignment')->middleware('permission:frontend.crm.assignment');
+        //添加
+        Route::get('assignment/create','ProjectController@assignmentCreate')->name('frontend.crm.assignment.create')->middleware('permission:frontend.crm.assignment.create');
+        Route::post('assignment/store','ProjectController@assignmentStore')->name('frontend.crm.assignment.store')->middleware('permission:frontend.crm.assignment.create');
         //删除
         Route::delete('assignment/destroy','ProjectController@assignmentDestroy')->name('frontend.crm.assignment.destroy')->middleware('permission:frontend.crm.assignment.destroy');
         //导入
