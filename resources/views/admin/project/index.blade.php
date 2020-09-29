@@ -111,7 +111,9 @@
                     <a class="layui-btn layui-btn-danger layui-btn-sm " lay-event="del">删除</a>
                     @endcan
                     @{{# if(d.is_end==0){ }}
+                        @can('crm.project.order')
                         <a class="layui-btn layui-btn-normal layui-btn-sm " lay-event="order">确认成单</a>
+                        @endcan
                     @{{# }else{ }}
                         <a class="layui-btn layui-btn-primary layui-btn-sm " >已成单</a>
                     @{{# } }}
