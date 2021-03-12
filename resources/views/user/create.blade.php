@@ -26,7 +26,7 @@
                 <div class="layui-form-item">
                     <label for="" class="layui-form-label">密码</label>
                     <div class="layui-input-block">
-                        <input type="password" name="password" placeholder="请输入密码" lay-verify="required" class="layui-input">
+                        <input type="password" maxlength="16" name="password" placeholder="请输入密码" lay-verify="required" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">

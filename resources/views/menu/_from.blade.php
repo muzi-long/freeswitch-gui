@@ -45,19 +45,19 @@
 <div class="layui-form-item">
     <label for="" class="layui-form-label">名称</label>
     <div class="layui-input-inline">
-        <input type="text" name="name" value="{{$menu->name??old('name')}}" lay-verify="required" class="layui-input" placeholder="如：系统管理">
+        <input type="text" maxlength="16" name="name" value="{{$menu->name??old('name')}}" lay-verify="required" class="layui-input" placeholder="如：系统管理">
     </div>
 </div>
 <div class="layui-form-item">
     <label for="" class="layui-form-label">链接</label>
     <div class="layui-input-inline">
-        <input type="text" name="url" value="{{$menu->url??old('url')}}"  class="layui-input" placeholder="如：/admin/user">
+        <input type="text" maxlength="200" name="url" value="{{$menu->url??old('url')}}"  class="layui-input" placeholder="如：/admin/user">
     </div>
 </div>
 <div class="layui-form-item">
     <label for="" class="layui-form-label">路由</label>
     <div class="layui-input-inline">
-        <input type="text" name="route" value="{{$menu->route??old('route')}}" class="layui-input" placeholder="如：admin.user">
+        <input type="text" maxlength="200" name="route" value="{{$menu->route??old('route')}}" class="layui-input" placeholder="如：admin.user">
     </div>
 </div>
 <div class="layui-form-item">
