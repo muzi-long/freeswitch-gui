@@ -16,3 +16,6 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::post('/api/get_permission_by_role_id','ApiController@getPermissionByRoleId')->name('api.getPermissionByRoleId');
+Route::post('/api/get_role_by_user_id','ApiController@getRoleByUserId')->name('api.getRoleByUserId');
