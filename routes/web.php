@@ -89,3 +89,92 @@ Route::group(['prefix' => 'system','middleware'=>['auth','permission:system']],f
     });
 
 });
+
+/*
+|--------------------------------------------------------------------------
+| 呼叫配置
+|--------------------------------------------------------------------------
+*/
+Route::group(['prefix'=>'call','middleware'=>['auth','permission:call']],function (){
+    //网关管理
+    Route::group([],function (){
+        Route::get('gateway','GatewayController@index')->name('call.gateway')->middleware('permission:call.gateway');
+        //添加
+        Route::get('gateway/create','GatewayController@create')->name('call.gateway.create')->middleware('permission:call.gateway.create');
+        Route::post('gateway/store','GatewayController@store')->name('call.gateway.store')->middleware('permission:call.gateway.create');
+        //编辑
+        Route::get('gateway/{id}/edit','GatewayController@edit')->name('call.gateway.edit')->middleware('permission:call.gateway.edit');
+        Route::put('gateway/{id}/update','GatewayController@update')->name('call.gateway.update')->middleware('permission:call.gateway.edit');
+        //删除
+        Route::delete('gateway/destroy','GatewayController@destroy')->name('call.gateway.destroy')->middleware('permission:call.gateway.destroy');
+        //更新配置
+        Route::post('gateway/updateXml','GatewayController@updateXml')->name('call.gateway.updateXml')->middleware('permission:call.gateway.updateXml');
+    });
+    //分机管理
+    Route::group([],function (){
+        Route::get('sip','SipController@index')->name('call.sip')->middleware('permission:call.sip');
+        //添加
+        Route::get('sip/create','SipController@create')->name('call.sip.create')->middleware('permission:call.sip.create');
+        Route::post('sip/store','SipController@store')->name('call.sip.store')->middleware('permission:call.sip.create');
+        //批量添加
+        Route::get('sip/create_list','SipController@createList')->name('call.sip.create_list')->middleware('permission:call.sip.create_list');
+        Route::post('sip/store_list','SipController@storeList')->name('call.sip.store_list')->middleware('permission:call.sip.create_list');
+        //编辑
+        Route::get('sip/{id}/edit','SipController@edit')->name('call.sip.edit')->middleware('permission:call.sip.edit');
+        Route::put('sip/{id}/update','SipController@update')->name('call.sip.update')->middleware('permission:call.sip.edit');
+        //删除
+        Route::delete('sip/destroy','SipController@destroy')->name('call.sip.destroy')->middleware('permission:call.sip.destroy');
+        //更新配置
+        Route::post('sip/updateXml','SipController@updateXml')->name('call.sip.updateXml')->middleware('permission:call.sip.updateXml');
+        //切换网关
+        Route::get('sip/updateGatewayForm','SipController@updateGatewayForm')->name('call.sip.updateGatewayForm')->middleware('permission:call.sip.updateGateway');
+        Route::post('sip/updateGateway','SipController@updateGateway')->name('call.sip.updateGateway')->middleware('permission:call.sip.updateGateway');
+    });
+
+
+    //拨号计划
+    Route::group([],function (){
+        Route::get('extension','ExtensionController@index')->name('call.extension')->middleware('permission:call.extension');
+        //详情
+        Route::get('extension/{id}/show','ExtensionController@show')->name('call.extension.show')->middleware('permission:call.extension.show');
+        //添加
+        Route::get('extension/create','ExtensionController@create')->name('call.extension.create')->middleware('permission:call.extension.create');
+        Route::post('extension/store','ExtensionController@store')->name('call.extension.store')->middleware('permission:call.extension.create');
+        //编辑
+        Route::get('extension/{id}/edit','ExtensionController@edit')->name('call.extension.edit')->middleware('permission:call.extension.edit');
+        Route::put('extension/{id}/update','ExtensionController@update')->name('call.extension.update')->middleware('permission:call.extension.edit');
+        //删除
+        Route::delete('extension/destroy','ExtensionController@destroy')->name('call.extension.destroy')->middleware('permission:call.extension.destroy');
+        //更新配置
+        Route::post('extension/updateXml','ExtensionController@updateXml')->name('call.extension.updateXml')->middleware('permission:call.extension.updateXml');
+    });
+    //拨号规则，同属拨号计划权限
+    Route::group([],function (){
+        Route::get('extension/{extension_id}/condition','ConditionController@index')->name('call.condition');
+        //添加
+        Route::get('extension/{extension_id}/condition/create','ConditionController@create')->name('call.condition.create');
+        Route::post('extension/{extension_id}/condition/store','ConditionController@store')->name('call.condition.store');
+        //编辑
+        Route::get('extension/{extension_id}/condition/{id}/edit','ConditionController@edit')->name('call.condition.edit');
+        Route::put('extension/{extension_id}/condition/{id}/update','ConditionController@update')->name('call.condition.update');
+        //删除
+        Route::delete('condition/destroy','ConditionController@destroy')->name('call.condition.destroy');
+    });
+    //拨号应用，同属拨号计划权限
+    Route::group([],function (){
+        Route::get('condition/{condition_id}/action','ActionController@index')->name('call.action');
+        Route::get('condition/{condition_id}/action/data','ActionController@data')->name('call.action.data');
+        //添加
+        Route::get('condition/{condition_id}/action/create','ActionController@create')->name('call.action.create');
+        Route::post('condition/{condition_id}/action/store','ActionController@store')->name('call.action.store');
+        //编辑
+        Route::get('condition/{condition_id}/action/{id}/edit','ActionController@edit')->name('call.action.edit');
+        Route::put('condition/{condition_id}/action/{id}/update','ActionController@update')->name('call.action.update');
+        //删除
+        Route::delete('action/destroy','ActionController@destroy')->name('call.action.destroy');
+    });
+    //通话记录
+    Route::group([],function (){
+        Route::get('cdr','CdrController@index')->name('call.cdr')->middleware('permission:call.cdr');
+    });
+});

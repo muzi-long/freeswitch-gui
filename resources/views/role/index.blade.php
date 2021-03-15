@@ -5,10 +5,10 @@
         <div class="layui-card-header layuiadmin-card-header-auto">
             <div class="layui-btn-group">
                 @can('system.role.destroy')
-                    <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" id="listDelete">删 除</button>
+                    <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" id="listDelete">删除</button>
                 @endcan
                 @can('system.role.create')
-                    <a class="layui-btn layui-btn-sm" id="addBtn">添 加</a>
+                    <a class="layui-btn layui-btn-sm" id="addBtn">添加</a>
                 @endcan
             </div>
         </div>
@@ -38,7 +38,7 @@
             //用户表格初始化
             var dataTable = table.render({
                 elem: '#dataTable'
-                , height: 500
+                , height: 'full-200'
                 , url: "{{ route('system.role') }}" //数据接口
                 , page: true //开启分页
                 , cols: [[ //表头

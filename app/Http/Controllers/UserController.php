@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Sip;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -33,7 +34,8 @@ class UserController extends Controller
      */
     public function create()
     {
-        return View::make('user.create');
+        $sips = Sip::query()->get();
+        return View::make('user.create',compact('sips'));
     }
 
     /**
@@ -43,7 +45,7 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $request->all(['phone','name','password','nickname','role_ids']);
+        $data = $request->all(['phone','name','password','nickname','role_ids','sip_id']);
         $data['role_ids'] = $data['role_ids'] == null ? [] : explode(',',$data['role_ids']);
         $count = User::query()->where('name','=',$data['name'])->count();
         if ($count){
@@ -67,7 +69,8 @@ class UserController extends Controller
     public function edit($id)
     {
         $user = User::findOrFail($id);
-        return View::make('user.edit',compact('user'));
+        $sips = Sip::query()->get();
+        return View::make('user.edit',compact('user','sips'));
     }
 
     /**
@@ -79,7 +82,7 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         $user = User::findOrFail($id);
-        $data = $request->all(['name','phone','nickname','password','role_ids']);
+        $data = $request->all(['name','phone','nickname','password','role_ids','sip_id']);
         $data['role_ids'] = $data['role_ids'] == null ? [] : explode(',',$data['role_ids']);
         if ($data['password']){
             $data['password'] = bcrypt($data['password']);

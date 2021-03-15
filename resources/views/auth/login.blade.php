@@ -70,8 +70,10 @@
         var layer = layui.layer;
         var form = layui.form;
         form.on('submit(go)', function (data) {
+            var load = layer.load();
             var url = $(data.elem).data('url')
             $.post(data.form.action, data.field, function (res) {
+                layer.close(load);
                 var code = res.code
                 layer.msg(res.msg, {time: 2000, icon: code == 0 ? 1 : 2}, function () {
                     if (code === 0) {

@@ -1,7 +1,7 @@
 {{csrf_field()}}
 <div class="layui-form-item">
     <label for="" class="layui-form-label">父级</label>
-    <div class="layui-input-inline">
+    <div class="layui-input-block">
         <select name="parent_id">
             <option value="0">顶级权限</option>
             @forelse($permissions as $p1)
@@ -23,13 +23,13 @@
 </div>
 <div class="layui-form-item">
     <label for="" class="layui-form-label">显示名称</label>
-    <div class="layui-input-inline">
+    <div class="layui-input-block">
         <input type="text" maxlength="16" name="display_name" value="{{$permission->display_name??old('display_name')}}" lay-verify="required" class="layui-input" placeholder="如：系统管理">
     </div>
 </div>
 <div class="layui-form-item">
     <label for="" class="layui-form-label">名称</label>
-    <div class="layui-input-inline">
+    <div class="layui-input-block">
         <input type="text" maxlength="30" name="name" value="{{$permission->name??old('name')}}" lay-verify="required" class="layui-input" placeholder="如：system.index">
     </div>
 </div>

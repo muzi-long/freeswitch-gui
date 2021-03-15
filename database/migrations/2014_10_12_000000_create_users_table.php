@@ -24,6 +24,8 @@ class CreateUsersTable extends Migration
             $table->string('last_login_time')->nullable()->comment('最后登录时间');
             $table->string('email')->nullable();
             $table->timestamp('email_verified_at')->nullable();
+            $table->unsignedBigInteger('sip_id')->default(0)->nullable()->comment('分机ID');
+            $table->unsignedBigInteger('department_id')->default(0)->nullable()->comment('部门ID');
             $table->rememberToken();
             $table->timestamps();
         });

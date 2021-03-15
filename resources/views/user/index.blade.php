@@ -6,10 +6,10 @@
         <div class="layui-card-header layuiadmin-card-header-auto">
             <div class="layui-btn-group">
                 @can('system.user.destroy')
-                    <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" id="listDelete">删 除</button>
+                    <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" id="listDelete">删除</button>
                 @endcan
                 @can('system.user.create')
-                    <a class="layui-btn layui-btn-sm" id="addBtn">添 加</a>
+                    <a class="layui-btn layui-btn-sm" id="addBtn">添加</a>
                 @endcan
             </div>
         </div>

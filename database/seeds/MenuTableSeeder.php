@@ -56,6 +56,49 @@ class MenuTableSeeder extends Seeder
                     ],
                 ]
             ],
+            [
+                'name' => '呼叫配置',
+                'route' => null,
+                'url' => null,
+                'icon' => 'layui-icon-windows',
+                'type' => 2,
+                'sort' => 2,
+                'permission_name' => 'call',
+                'child' => [
+                    [
+                        'name' => '分机管理',
+                        'route' => 'call.sip',
+                        'url' => null,
+                        'icon' => 'layui-icon-cellphone',
+                        'type' => 1,
+                        'permission_name' => 'call.sip',
+                    ],
+                    [
+                        'name' => '网关管理',
+                        'route' => 'call.gateway',
+                        'url' => null,
+                        'icon' => 'layui-icon-service',
+                        'type' => 1,
+                        'permission_name' => 'call.gateway',
+                    ],
+                    [
+                        'name' => '拨号计划',
+                        'route' => 'call.extension',
+                        'url' => null,
+                        'icon' => 'layui-icon-chart',
+                        'type' => 1,
+                        'permission_name' => 'call.extension',
+                    ],
+                    [
+                        'name' => '通话记录',
+                        'route' => 'call.cdr',
+                        'url' => null,
+                        'icon' => 'layui-icon-headset',
+                        'type' => 1,
+                        'permission_name' => 'call.cdr',
+                    ],
+                ]
+            ],
         ];
         $permissions = \App\Models\Permission::pluck('id','name')->toArray();
         foreach ($datas as $k1 => $d1){

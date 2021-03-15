@@ -44,4 +44,14 @@ class User extends Authenticatable
         }
         return $menus;
     }
+
+    /**
+     * 分机
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function sip()
+    {
+        return $this->hasOne('App\Models\Sip','id','sip_id')->withDefault(['username'=>'-']);
+    }
+
 }

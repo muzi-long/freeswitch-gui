@@ -78,6 +78,51 @@ class UserTableSeeder extends Seeder
                     ],
                 ],
             ],
+            [
+                'name' => 'call',
+                'display_name' => '呼叫配置',
+                'child' => [
+                    [
+                        'name' => 'call.gateway',
+                        'display_name' => '网关管理',
+                        'child' => [
+                            ['name' => 'call.gateway.create', 'display_name' => '添加'],
+                            ['name' => 'call.gateway.edit', 'display_name' => '编辑'],
+                            ['name' => 'call.gateway.destroy', 'display_name' => '删除'],
+                            ['name' => 'call.gateway.updateXml', 'display_name' => '更新配置'],
+                        ]
+                    ],
+                    [
+                        'name' => 'call.sip',
+                        'display_name' => '分机管理',
+                        'child' => [
+                            ['name' => 'call.sip.create', 'display_name' => '添加'],
+                            ['name' => 'call.sip.create_list', 'display_name' => '批量添加'],
+                            ['name' => 'call.sip.edit', 'display_name' => '编辑'],
+                            ['name' => 'call.sip.destroy', 'display_name' => '删除'],
+                            ['name' => 'call.sip.updateXml', 'display_name' => '更新配置'],
+                        ]
+                    ],
+                    [
+                        'name' => 'call.extension',
+                        'display_name' => '拨号计划',
+                        'child' => [
+                            ['name' => 'call.extension.show', 'display_name' => '详情'],
+                            ['name' => 'call.extension.create', 'display_name' => '添加'],
+                            ['name' => 'call.extension.edit', 'display_name' => '编辑'],
+                            ['name' => 'call.extension.destroy', 'display_name' => '删除'],
+                            ['name' => 'call.extension.updateXml', 'display_name' => '更新配置'],
+                        ]
+                    ],
+                    [
+                        'name' => 'call.cdr',
+                        'display_name' => '通话记录',
+                        'child' => [
+
+                        ]
+                    ],
+                ],
+            ],
         ];
         foreach ($permissions as $pem1) {
             //生成一级权限

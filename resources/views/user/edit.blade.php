@@ -30,6 +30,17 @@
                     </div>
                 </div>
                 <div class="layui-form-item">
+                    <label for="" class="layui-form-label">分机</label>
+                    <div class="layui-input-block">
+                        <select name="sip_id" >
+                            <option value="0"></option>
+                            @foreach($sips as $sip)
+                                <option value="{{$sip->id}}" @if(isset($user)&&$user->sip_id==$sip->id) selected @endif >{{$sip->username}}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-form-item">
                     <label for="" class="layui-form-label">角色</label>
                     <div class="layui-input-block">
                         @include('common.get_role_by_user_id',['user_id'=>$user->id])
