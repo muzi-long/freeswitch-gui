@@ -46,10 +46,10 @@ class SwooleHttp extends Command
             'port' => config('freeswitch.esl.port'),
             'password' => config('freeswitch.esl.password'),
             'fs_cli_bin' => '/usr/local/freeswitch/bin/fs_cli',
-            'gateway' => '/usr/local/freeswitch/etc/freeswitch/sip_profiles/external/',
-            'directory' => '/usr/local/freeswitch/etc/freeswitch/directory/default/',
+            'gateway' => '/usr/local/freeswitch/conf/sip_profiles/external/',
+            'directory' => '/usr/local/freeswitch/conf/directory/default/',
             //拨号计划下面默认分为default(呼出)和public(呼入)
-            'dialplan' => '/usr/local/freeswitch/etc/freeswitch/dialplan/',
+            'dialplan' => '/usr/local/freeswitch/conf/dialplan/',
         ];
         $http->on('request', function ($request, $response) use ($conf) {
             if($request->server['request_method'] == 'POST'){
@@ -147,6 +147,7 @@ class SwooleHttp extends Command
                     }
                     $response->end(json_encode($return));
                 }catch(\Exception $e){
+                    print_r($e->getMessage());
                     $response->end(json_encode(['code'=>1,'msg'=>'error','data'=>$e->getMessage()]));
                 }
             }else{
