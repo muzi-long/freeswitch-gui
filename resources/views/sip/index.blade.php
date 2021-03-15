@@ -121,7 +121,7 @@
                     var load = layer.load();
                     $.post("{{ route('call.sip.updateXml') }}", {}, function (res) {
                         layer.close(load);
-                        layer.msg(result.msg, {icon: res.code == 0 ? 1 : 2})
+                        layer.msg(res.msg, {icon: res.code == 0 ? 1 : 2})
                     });
                 })
             })
