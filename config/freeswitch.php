@@ -39,6 +39,10 @@ return [
         'port' => 8022,
     ],
 
+    'redis_key' => [
+        'dial' => 'dial_uuid_queue',
+    ],
+
     //队列响铃模式
     'strategy' => [
         'top-down'                      => '顺序振铃',
