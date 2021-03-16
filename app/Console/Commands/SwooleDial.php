@@ -43,7 +43,7 @@ class SwooleDial extends Command
     {
         \Swoole\Coroutine\run(function (){
             $key = config('freeswitch.redis_key.dial');
-            while ($uuid = Redis::bPop($key)) {
+            while ($uuid = Redis::blpop($key)) {
                 $cdr = Cdr::query()->where('uuid','=',$uuid)->first();
                 if ($cdr == null){
                     Log::info(sprintf("通话记录[%s]不存在",$uuid));
