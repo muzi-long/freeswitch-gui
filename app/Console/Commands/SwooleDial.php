@@ -6,7 +6,7 @@ use App\Models\Cdr;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
-use function \Swoole\Coroutine\run;
+use App\Service\EslListen;
 
 class SwooleDial extends Command
 {
@@ -44,14 +44,9 @@ class SwooleDial extends Command
         \Swoole\Coroutine\run(function (){
             $key = config('freeswitch.redis_key.dial');
             while ($uuid = Redis::blpop($key)) {
-                $cdr = Cdr::query()->where('uuid','=',$uuid)->first();
-                if ($cdr == null){
-                    Log::info(sprintf("通话记录[%s]不存在",$uuid));
-                    continue;
-                }
                 //开户协程发起通话并监听
                 \Swoole\Coroutine::create(function () use ($uuid){
-
+                    (new EslListen($uuid))->run();
                 });
             }
         });
