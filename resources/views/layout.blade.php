@@ -35,10 +35,8 @@
             <video id="remoteVideo" ></video>
             <video id="localVideo" muted="muted"></video>
             <ul class="layui-nav layui-layout-right" lay-filter="layadmin-layout-right">
-                <li class="layui-nav-item" lay-unselect>
-                    <a href="javascript:;">
-                        <cite>呼叫状态：<span id="call-status">未呼叫</span></cite>
-                    </a>
+                <li class="layui-nav-item" lay-unselect >
+                    <a href="javascript:;" id="call-status" style="width: 50px" ></a>
                 </li>
                 <li class="layui-nav-item" lay-unselect>
                     <a href="javascript:;">
@@ -218,81 +216,93 @@
                 content: '/change_my_password_form'
             })
         })
+
+
         var userAgentSession;
-        var userAgent = new SIP.UA({
-            uri: '1001@192.168.254.216',
-            wsServers: ['wss://testcall.shupian.cn:7443'],
-            authorizationUser: '1001',
-            password: '1234',
-            displayName: '1001',
-            hackIpInContact: true,
-            rtcpMuxPolicy: 'negotiate',
-            hackWssInTransport: true,
-            rel100: SIP.C.supported.SUPPORTED,
-            log: {
-                level: 0, //日志等级
-            },
-            /**
-             * sip.js生成的随机contact字符串 设置后会以此为后缀 可以搭配 cusContactName使用,根据自身业务进行使用
-             *  设置前: sofia/internal/sip:admin10@df7jal23ls0d.invalid;
-             *  设置后: sofia/internal/sip:admin10@192.168.0.253;
-             *
-             *
-             hackIpInContact: "106.13.223.129",
-             userAgentString: "myAwesomeApp",
-             registerOptions: {
+        var userAgent;
+        function initUserAgent(){
+            userAgent = new SIP.UA({
+                uri: '1001@192.168.254.216',
+                wsServers: ['wss://testcall.shupian.cn:7443'],
+                authorizationUser: '1001',
+                password: '1234',
+                displayName: '1001',
+                hackIpInContact: true,
+                rtcpMuxPolicy: 'negotiate',
+                hackWssInTransport: true,
+                rel100: SIP.C.supported.SUPPORTED,
+                log: {
+                    level: 0, //日志等级
+                },
+                /**
+                 * sip.js生成的随机contact字符串 设置后会以此为后缀 可以搭配 cusContactName使用,根据自身业务进行使用
+                 *  设置前: sofia/internal/sip:admin10@df7jal23ls0d.invalid;
+                 *  设置后: sofia/internal/sip:admin10@192.168.0.253;
+                 *
+                 *
+                 hackIpInContact: "106.13.223.129",
+                 userAgentString: "myAwesomeApp",
+                 registerOptions: {
                     expires: 300,
                     registrar: 'sip:xdwh.dgg.net',
                 },
-             **
-             * 此处是笔者自定义的参数,因为注册到fs时,sip.js会随机生成contact字符串,如:sofia/internal/sip:admin10@df7jal23ls0d.invalid;
-             *  笔者自己添加了一个参数,对sip.js的源码进行了修改 ,修改后效果  sofia/internal/sip:1012@192.168.0.253 不需要的可以不理会此参数
-             * 此处纠正问题,官方提供了一个参数[contactName],使用此参数即可,sip.js使用官方的即可
-             * contactName:"1012"
-             */
-            contactName:"1001"
-        });
-        //注册成功
-        userAgent.on('registered', function (e) {
-            $('#sip-status').text($("#regBtn").text());
-        });
-        //未注册成功
-        userAgent.on('unregistered', function () {
-            $('#sip-status').text($("#unregBtn").text());
-        });
-        //监听来电
-        userAgent.on('invite', function (session) {
-            userAgentSession = session;
-            userAgentSession.on('bye', function (request) {//挂机
-                $('#call-status').html('已结束');
+                 **
+                 * 此处是笔者自定义的参数,因为注册到fs时,sip.js会随机生成contact字符串,如:sofia/internal/sip:admin10@df7jal23ls0d.invalid;
+                 *  笔者自己添加了一个参数,对sip.js的源码进行了修改 ,修改后效果  sofia/internal/sip:1012@192.168.0.253 不需要的可以不理会此参数
+                 * 此处纠正问题,官方提供了一个参数[contactName],使用此参数即可,sip.js使用官方的即可
+                 * contactName:"1012"
+                 */
+                contactName:"1001"
             });
-            userAgentSession.on('terminated', function (message, cause) {//结束
-                $('#call-status').html('呼叫结束');
+            //注册成功
+            userAgent.on('registered', function (e) {
+                $('#sip-status').text($("#regBtn").text());
             });
-            userAgentSession.accept({
-                media: {
-                    render: {
-                        remote: document.getElementById('remoteVideo'),
-                        local: document.getElementById('localVideo')
-                    },
-                    constraints: {
-                        audio: true,
-                        video: false
+            //未注册成功
+            userAgent.on('unregistered', function () {
+                $('#sip-status').text($("#unregBtn").text());
+                $('#sip-status').click(function () {
+                    return;
+                })
+            });
+            //监听来电
+            userAgent.on('invite', function (session) {
+                userAgentSession = session;
+                userAgentSession.on('terminated', function (message, cause) {//结束
+                    $("#call-status").html("")
+                    layer.msg("通话结束");
+                });
+                userAgentSession.accept({
+                    media: {
+                        render: {
+                            remote: document.getElementById('remoteVideo'),
+                            local: document.getElementById('localVideo')
+                        },
+                        constraints: {
+                            audio: true,
+                            video: false
+                        }
                     }
-                }
+                });
+                $("#call-status").html('<span class="layui-badge">挂断</span>')
+                $("#call-status span").click(function () {
+                    if(userAgent){
+                        userAgentSession.terminate()
+                    }
+                })
             });
-        });
-        //监听是否接了电话
-        userAgent.on('accepted', function (data) {
-            $('#state3').text('accepted:' + data);
-        });
-        userAgent.start()
+            userAgent.start()
+        }
+
 
         $("#regBtn").click(function () {
+            initUserAgent();
             userAgent.register();
         })
         $("#unregBtn").click(function () {
-            userAgent.unregister()
+            if(userAgent){
+                userAgent.unregister()
+            }
         })
 
     });
