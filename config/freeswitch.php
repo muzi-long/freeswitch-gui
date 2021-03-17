@@ -42,6 +42,7 @@ return [
     'redis_key' => [
         'dial' => 'dial_uuid_queue',
     ],
+    'record_url' => env('APP_URL','http://localhost'),
 
     //队列响铃模式
     'strategy' => [
