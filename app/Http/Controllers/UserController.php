@@ -35,7 +35,8 @@ class UserController extends Controller
     public function create()
     {
         $sips = Sip::query()->get();
-        return View::make('user.create',compact('sips'));
+        $exsits = User::query()->where('sip_id','>',0)->pluck('sip_id')->toArray();
+        return View::make('user.create',compact('sips','exsits'));
     }
 
     /**
@@ -70,7 +71,8 @@ class UserController extends Controller
     {
         $user = User::findOrFail($id);
         $sips = Sip::query()->get();
-        return View::make('user.edit',compact('user','sips'));
+        $exsits = User::query()->where('id','!=',$id)->where('sip_id','>',0)->pluck('sip_id')->toArray();
+        return View::make('user.edit',compact('user','sips', 'exsits'));
     }
 
     /**

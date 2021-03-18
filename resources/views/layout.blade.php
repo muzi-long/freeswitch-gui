@@ -31,9 +31,14 @@
                         <i class="layui-icon layui-icon-refresh-3"></i>
                     </a>
                 </li>
+                <li class="layui-nav-item" lay-unselect>
+                    <a href="javascript:;" >
+                        <video id="remoteVideo" style="display: none" ></video>
+                        <video id="localVideo" style="display: none" muted="muted"></video>
+                    </a>
+                </li>
             </ul>
-            <video id="remoteVideo" ></video>
-            <video id="localVideo" muted="muted"></video>
+
             <ul class="layui-nav layui-layout-right" lay-filter="layadmin-layout-right">
                 <li class="layui-nav-item" lay-unselect >
                     <a href="javascript:;" id="call-status" style="width: 50px" ></a>
@@ -41,14 +46,14 @@
                 <li class="layui-nav-item" lay-unselect>
                     <a href="javascript:;">
                         <cite id="sip-status">
-                            @if(auth()->user()->sip)
+                            @if($data['sip_id'])
                                 离线
                             @else
                                 无外呼号
                             @endif
                         </cite>
                     </a>
-                    @if(auth()->user()->sip)
+                    @if($data['sip_id'])
                     <dl class="layui-nav-child">
                         <dd><a href="javascript:;" id="regBtn" >在线</a></dd>
                         <dd><a href="javascript:;" id="unregBtn">离线</a></dd>

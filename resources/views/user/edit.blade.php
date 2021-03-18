@@ -33,9 +33,9 @@
                     <label for="" class="layui-form-label">分机</label>
                     <div class="layui-input-block">
                         <select name="sip_id" >
-                            <option value="0"></option>
+                            <option value="0">无</option>
                             @foreach($sips as $sip)
-                                <option value="{{$sip->id}}" @if(isset($user)&&$user->sip_id==$sip->id) selected @endif >{{$sip->username}}</option>
+                                <option value="{{$sip->id}}" @if(in_array($sip->id,$exsits)) disabled @endif @if(isset($user)&&$user->sip_id==$sip->id) selected @endif >{{$sip->username}}</option>
                             @endforeach
                         </select>
                     </div>

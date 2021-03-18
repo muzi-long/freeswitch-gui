@@ -10,8 +10,10 @@ class IndexController extends Controller
 
     public function index(Request $request)
     {
+
         $user = $request->user();
         $data = [
+            'sip_id' => $user->sip->id ?? 0,
             'username' => $user->sip->username ?? null,
             'password' => $user->sip->password ?? null,
             'host' => config('freeswitch.host'),
