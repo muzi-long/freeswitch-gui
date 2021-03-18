@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cdr;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Redis;
 
 class ApiController extends Controller
 {
@@ -45,6 +48,48 @@ class ApiController extends Controller
             ]);
         }
         return $this->success('ok',$data);
+    }
+
+    /**
+     * 呼叫接口
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function call(Request $request)
+    {
+
+        $user_id = $request->input('user_id');
+        $callee = $request->input('callee');
+        $user_data = $request->input('user_data');
+        $user = User::query()->with('sip')->where('id','=',$user_id)->first();
+        if ($user->sip == null){
+            return $this->error('用户未分配外呼号');
+        }
+        if ($user->sip->status != 1){
+            return $this->error('用户外呼号未在线');
+        }
+        try {
+            $cdr = Cdr::create([
+                'uuid' => uuid_generate(),
+                'aleg_uuid' => uuid_generate(),
+                'bleg_uuid' => uuid_generate(),
+                'caller' => $user->sip->username,
+                'callee' => $callee,
+                'department_id' => $user->department_id,
+                'user_id' => $user->id,
+                'user_nickname' => $user->nickname,
+                'sip_id' => $user->sip->id,
+                'user_data' => $user_data,
+            ]);
+            Redis::rpush(config('freeswitch.redis_key.dial'),$cdr->uuid);
+            return $this->success('呼叫成功',[
+                'uuid' => $cdr->uuid,
+                'call_time' => date('Y-m-d H:i:s'),
+            ]);
+        }catch (\Exception $exception){
+            Log::error('呼叫异常：'.$exception->getMessage());
+            return $this->error('呼叫失败');
+        }
     }
 
 }

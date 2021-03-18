@@ -41,13 +41,20 @@ class SwooleDial extends Command
      */
     public function handle()
     {
-        \Swoole\Coroutine\run(function (){
+        \Swoole\Coroutine\run(function () {
             $key = config('freeswitch.redis_key.dial');
-            while ($uuid = Redis::blpop($key)) {
+            while (true) {
+                $uuid = Redis::lpop($key);
+                if($uuid == null){
+                    sleep(2);
+                    continue;
+                }
                 //开户协程发起通话并监听
-                \Swoole\Coroutine::create(function () use ($uuid){
-                    (new EslListen($uuid))->run();
-                });
+
+                    \Swoole\Coroutine::create(function () use ($uuid){
+                        (new EslListen($uuid))->run();
+                    });
+
             }
         });
     }

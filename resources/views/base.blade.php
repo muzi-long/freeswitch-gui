@@ -95,6 +95,15 @@
                 window.open(url)
             }
         }
+
+        //呼叫
+        window.call = function (phone) {
+            var load = layer.load();
+            $.post("{{route('api.call')}}",{callee:phone,user_id:"{{auth()->id()}}"},function(res) {
+                layer.close(load);
+                layer.msg(res.msg,{time:2000})
+            });
+        }
     });
 </script>
 @yield('script')

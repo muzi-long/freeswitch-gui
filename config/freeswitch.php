@@ -43,6 +43,9 @@ return [
         'dial' => 'dial_uuid_queue',
     ],
     'record_url' => env('APP_URL','http://localhost'),
+    'host' => '192.168.254.216',
+    'wss_url' => 'testcall.shupian.cn',
+
 
     //队列响铃模式
     'strategy' => [

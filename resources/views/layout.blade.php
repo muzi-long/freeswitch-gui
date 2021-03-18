@@ -40,12 +40,20 @@
                 </li>
                 <li class="layui-nav-item" lay-unselect>
                     <a href="javascript:;">
-                        <cite id="sip-status">离线</cite>
+                        <cite id="sip-status">
+                            @if(auth()->user()->sip)
+                                离线
+                            @else
+                                无外呼号
+                            @endif
+                        </cite>
                     </a>
+                    @if(auth()->user()->sip)
                     <dl class="layui-nav-child">
                         <dd><a href="javascript:;" id="regBtn" >在线</a></dd>
                         <dd><a href="javascript:;" id="unregBtn">离线</a></dd>
                     </dl>
+                    @endif
                 </li>
                 <li class="layui-nav-item" lay-unselect>
                     <a layadmin-event="message" lay-text="消息中心">
@@ -105,6 +113,10 @@
                             <dd data-name="console">
                                 <i class="layui-icon layui-icon-layouts"></i>
                                 <a lay-href="{{route("index.console")}}">控制台</a>
+                            </dd>
+                            <dd data-name="console">
+                                <i class="layui-icon layui-icon-layouts"></i>
+                                <a lay-href="{{route("index.onlinecall")}}">在线拨号</a>
                             </dd>
                         </dl>
                     </li>
@@ -222,11 +234,11 @@
         var userAgent;
         function initUserAgent(){
             userAgent = new SIP.UA({
-                uri: '1001@192.168.254.216',
-                wsServers: ['wss://testcall.shupian.cn:7443'],
-                authorizationUser: '1001',
-                password: '1234',
-                displayName: '1001',
+                uri: '{{$data["uri"]}}',
+                wsServers: ['wss://{{$data["wss_url"]}}:7443'],
+                authorizationUser: '{{$data["username"]}}',
+                password: '{{$data["password"]}}',
+                displayName: '{{$data["username"]}}',
                 hackIpInContact: true,
                 rtcpMuxPolicy: 'negotiate',
                 hackWssInTransport: true,

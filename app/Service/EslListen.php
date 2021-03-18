@@ -8,35 +8,34 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
-class EslListen extends SwooleFreeswitch
+class EslListen
 {
     //通话记录对象
     public $cdr;
+    public $fs;
 
     public function __construct($uuid)
     {
-        $cdr = Cdr::query()->where('uuid','=',$uuid)->first();
-        if ($cdr == null) {
+        $this->cdr = Cdr::query()->where('uuid','=',$uuid)->first();
+        if ($this->cdr == null) {
             Log::info(sprintf("通话记录[%s]不存在",$uuid));
             return false;
         }
-        if (!$cdr->alge_uuid || !$cdr->bleg_uuid){
+        if (!$this->cdr->aleg_uuid || !$this->cdr->bleg_uuid){
             Log::info("未指定呼叫aleg_uuid或bleg_uuid");
             return false;
         }
-        $this->cdr = $cdr;
-        parent::__construct();
+        $this->fs = new SwooleFreeswitch();
+        if (!$this->fs->connect()) {
+            return false;
+        }
+
     }
 
     public function run()
     {
-
         $record_url = config('freeswitch.record_url');
         $fs_dir = '/usr/local/freeswitch';
-        if (!$this->connect()){
-            Log::info('esl连接异常');
-            return false;
-        }
 
         //是呼叫分机还是呼叫外线电话
         $sip = Sip::query()->where('username',$this->cdr->callee)->first();
@@ -56,17 +55,17 @@ class EslListen extends SwooleFreeswitch
             );
         }
 
-        $this->events("CHANNEL_ANSWER CHANNEL_HANGUP_COMPLETE");
-        $this->filteruuid($this->cdr->aleg_uuid);
-        $this->filteruuid($this->cdr->bleg_uuid);
-        $this->bgapi($originate);
+        $this->fs->events("CHANNEL_ANSWER CHANNEL_HANGUP_COMPLETE");
+        $this->fs->filteruuid($this->cdr->aleg_uuid);
+        $this->fs->filteruuid($this->cdr->bleg_uuid);
+        $this->fs->bgapi($originate);
 
         while (true) {
             //录音目录
             $filepath = $fs_dir . '/recordings/' . date('Y/m/d/');
-            $received_parameters = $this->recvEvent();
+            $received_parameters = $this->fs->recvEvent();
             if (!empty($received_parameters)) {
-                $json = $this->serialize($received_parameters);
+                $json = $this->fs->serialize($received_parameters);
                 $uuid = Arr::get($json, 'Unique-ID', null);
                 $eventname = Arr::get($json, 'Event-Name', null);
                 $otherUuid = Arr::get($json, 'Other-Leg-Unique-ID', null);
@@ -76,10 +75,14 @@ class EslListen extends SwooleFreeswitch
                         if ($otherUuid) {
                             //开启全程录音
                             $fullfile = $filepath . 'full_' . $this->cdr->uuid . '.wav';
-                            $this->bgapi("uuid_record {$uuid} start {$fullfile} 7200");
+                            $this->fs->bgapi("uuid_record {$uuid} start {$fullfile} 7200");
                             $this->cdr->update([
                                 'answer_time' => date('Y-m-d H:i:s'),
-                                'record' => str_replace($fs_dir, $record_url, $fullfile),
+                                'record_file' => str_replace($fs_dir, $record_url, $fullfile),
+                            ]);
+                        }else{
+                            $this->cdr->update([
+                                'start_time' => date('Y-m-d H:i:s'),
                             ]);
                         }
                         break;
@@ -103,7 +106,7 @@ class EslListen extends SwooleFreeswitch
                 }
             }
         }
-        $this->disconnect();
+        $this->fs->disconnect();
 
     }
 

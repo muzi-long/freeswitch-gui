@@ -21,6 +21,7 @@ Route::group(['middleware'=>'auth'],function (){
     Route::get('/','IndexController@index')->name('index.index');
     //后台控制台
     Route::get('/console','IndexController@console')->name('index.console');
+    Route::get('/onlinecall','IndexController@onlinecall')->name('index.onlinecall');
     //修改密码
     Route::get('/change_my_password_form','UserController@changeMyPassword')->name('index.changeMyPasswordForm')->middleware('auth');
     Route::post('/change_my_password','UserController@changeMyPassword')->name('index.changeMyPassword')->middleware('auth');

@@ -2,7 +2,6 @@
 
 namespace App\Service;
 
-use \Swoole\Coroutine\Socket;
 
 /**
  * Class SwooleFreeswitch
@@ -14,7 +13,7 @@ class SwooleFreeswitch
     /**
      * @var Socket | null
      */
-    protected $socket = null;
+    public $socket = null;
 
     /**
      * @var int
@@ -23,8 +22,7 @@ class SwooleFreeswitch
 
     public function __construct()
     {
-        $this->socket = new Socket(AF_INET, SOCK_STREAM, SOL_TCP);
-
+        $this->socket = new \Swoole\Coroutine\Socket(AF_INET, SOCK_STREAM, SOL_TCP);
         $this->socket->setProtocol(['open_eof_check' => true, 'package_eof' => "\n"]);
     }
 

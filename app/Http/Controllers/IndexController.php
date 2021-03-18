@@ -8,14 +8,27 @@ use Illuminate\Support\Facades\View;
 class IndexController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
-        return View::make("layout");
+        $user = $request->user();
+        $data = [
+            'username' => $user->sip->username ?? null,
+            'password' => $user->sip->password ?? null,
+            'host' => config('freeswitch.host'),
+            'uri' => $user->sip->username . '@' . config('freeswitch.host'),
+            'wss_url' => config('freeswitch.wss_url'),
+        ];
+        return View::make("layout", compact('data'));
     }
 
     public function console()
     {
         return View::make("index.console");
+    }
+
+    public function onlinecall()
+    {
+        return View::make('index.onlinecall');
     }
 
 }
