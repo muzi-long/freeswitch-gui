@@ -32,7 +32,7 @@ Route::group(['middleware'=>'auth'],function (){
 | 系统管理模块
 |--------------------------------------------------------------------------
 */
-Route::group(['prefix' => 'system','middleware'=>['auth','permission:system']],function (){
+Route::group(['prefix' => 'system','namespace'=> 'System','middleware'=>['auth','permission:system']],function (){
 
     //权限管理
     Route::group([],function (){
@@ -96,7 +96,7 @@ Route::group(['prefix' => 'system','middleware'=>['auth','permission:system']],f
 | 呼叫配置
 |--------------------------------------------------------------------------
 */
-Route::group(['prefix'=>'call','middleware'=>['auth','permission:call']],function (){
+Route::group(['prefix'=>'call','namespace'=> 'Call','middleware'=>['auth','permission:call']],function (){
     //网关管理
     Route::group([],function (){
         Route::get('gateway','GatewayController@index')->name('call.gateway')->middleware('permission:call.gateway');
