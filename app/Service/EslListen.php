@@ -47,7 +47,7 @@ class EslListen
             }
             $outbound = $gateway->outbound_caller_id ? sprintf("{origination_caller_id_number=%s}{origination_caller_id_name=%s}",$gateway->outbound_caller_id,$gateway->outbound_caller_id) : null;
             $originate = sprintf("originate {origination_uuid=%s}user/%s &bridge(%s{origination_uuid=%s}sofia/gateway/gw%d/%s%s)",
-                $this->cdr->aleg_uuid,$this->cdr->caller,$outbound,$this->cdr->bleg_uuid,$gateway->id,$gateway->prefix,$this->cdr->caller
+                $this->cdr->aleg_uuid,$this->cdr->caller,$outbound,$this->cdr->bleg_uuid,$gateway->id,$gateway->prefix,$this->cdr->callee
             );
         }else{
             $originate = sprintf("originate {origination_uuid=%s}user/%s &bridge({origination_uuid=%s}user/%s)",

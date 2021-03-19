@@ -80,6 +80,7 @@ class ApiController extends Controller
                 'user_nickname' => $user->nickname,
                 'sip_id' => $user->sip->id,
                 'user_data' => $user_data,
+                'gateway_id' => $user->sip->gateway_id ?? 0,
             ]);
             Redis::rpush(config('freeswitch.redis_key.dial'),$cdr->uuid);
             return $this->success('呼叫成功',[
