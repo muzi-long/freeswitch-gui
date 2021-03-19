@@ -91,12 +91,14 @@ Route::group(['prefix' => 'system','namespace'=> 'System','middleware'=>['auth',
 
 });
 
+
 /*
 |--------------------------------------------------------------------------
 | 呼叫配置
 |--------------------------------------------------------------------------
 */
 Route::group(['prefix'=>'call','namespace'=> 'Call','middleware'=>['auth','permission:call']],function (){
+
     //网关管理
     Route::group([],function (){
         Route::get('gateway','GatewayController@index')->name('call.gateway')->middleware('permission:call.gateway');
@@ -111,6 +113,7 @@ Route::group(['prefix'=>'call','namespace'=> 'Call','middleware'=>['auth','permi
         //更新配置
         Route::post('gateway/updateXml','GatewayController@updateXml')->name('call.gateway.updateXml')->middleware('permission:call.gateway.updateXml');
     });
+
     //分机管理
     Route::group([],function (){
         Route::get('sip','SipController@index')->name('call.sip')->middleware('permission:call.sip');
@@ -132,7 +135,6 @@ Route::group(['prefix'=>'call','namespace'=> 'Call','middleware'=>['auth','permi
         Route::post('sip/updateGateway','SipController@updateGateway')->name('call.sip.updateGateway')->middleware('permission:call.sip.updateGateway');
     });
 
-
     //拨号计划
     Route::group([],function (){
         Route::get('extension','ExtensionController@index')->name('call.extension')->middleware('permission:call.extension');
@@ -149,6 +151,7 @@ Route::group(['prefix'=>'call','namespace'=> 'Call','middleware'=>['auth','permi
         //更新配置
         Route::post('extension/updateXml','ExtensionController@updateXml')->name('call.extension.updateXml')->middleware('permission:call.extension.updateXml');
     });
+
     //拨号规则，同属拨号计划权限
     Route::group([],function (){
         Route::get('extension/{extension_id}/condition','ConditionController@index')->name('call.condition');
@@ -161,6 +164,7 @@ Route::group(['prefix'=>'call','namespace'=> 'Call','middleware'=>['auth','permi
         //删除
         Route::delete('condition/destroy','ConditionController@destroy')->name('call.condition.destroy');
     });
+
     //拨号应用，同属拨号计划权限
     Route::group([],function (){
         Route::get('condition/{condition_id}/action','ActionController@index')->name('call.action');
@@ -174,8 +178,33 @@ Route::group(['prefix'=>'call','namespace'=> 'Call','middleware'=>['auth','permi
         //删除
         Route::delete('action/destroy','ActionController@destroy')->name('call.action.destroy');
     });
+
     //通话记录
     Route::group([],function (){
         Route::get('cdr','CdrController@index')->name('call.cdr')->middleware('permission:call.cdr');
     });
+
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| CRM模块
+|--------------------------------------------------------------------------
+*/
+Route::group(['prefix'=>'crm','namespace'=>'Crm','middleware'=>['auth','permission:crm']],function (){
+
+    //部门管理
+    Route::group([],function (){
+        Route::get('department','DepartmentController@index')->name('crm.department')->middleware('permission:crm.department');
+        //添加
+        Route::get('department/create','DepartmentController@create')->name('crm.department.create')->middleware('permission:crm.department.create');
+        Route::post('department/store','DepartmentController@store')->name('crm.department.store')->middleware('permission:crm.department.create');
+        //编辑
+        Route::get('department/{id}/edit','DepartmentController@edit')->name('crm.department.edit')->middleware('permission:crm.department.edit');
+        Route::put('department/{id}/update','DepartmentController@update')->name('crm.department.update')->middleware('permission:crm.department.edit');
+        //删除
+        Route::delete('department/destroy','DepartmentController@destroy')->name('crm.department.destroy')->middleware('permission:crm.department.destroy');
+    });
+
 });

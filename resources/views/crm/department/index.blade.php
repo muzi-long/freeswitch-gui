@@ -1,4 +1,4 @@
-@extends('admin.base')
+@extends('base')
 
 @section('content')
     <div class="layui-card">
@@ -6,7 +6,7 @@
             <form class="layui-form">
                 <div class="layui-btn-group">
                     @can('crm.department.create')
-                    <a class="layui-btn layui-btn-sm" href="{{ route('admin.department.create') }}">添 加</a>
+                    <a class="layui-btn layui-btn-sm" id="addBtn" >添加</a>
                     @endcan
                 </div>
             </form>
@@ -15,6 +15,9 @@
             <table id="dataTable" lay-filter="dataTable"></table>
             <script type="text/html" id="options">
                 <div class="layui-btn-group">
+                    @can('crm.department.create')
+                        <a class="layui-btn layui-btn-sm" lay-event="create">添加子部门</a>
+                    @endcan
                     @can('crm.department.edit')
                     <a class="layui-btn layui-btn-sm" lay-event="edit">编辑</a>
                     @endcan
@@ -49,7 +52,7 @@
                     treeDefaultClose: false,   // treetable新增参数
                     treeLinkage: false,        // treetable新增参数
                     elem: '#dataTable',
-                    url: "{{ route('admin.department') }}",
+                    url: "{{ route('crm.department') }}",
                     cols: [[ //表头
                         {field: 'id', title: 'ID', sort: true, width: 80}
                         , {field: 'name', title: '名称'}
@@ -67,19 +70,55 @@
                     ,layEvent = obj.event; //获得 lay-event 对应的值
                 if(layEvent === 'del'){
                     layer.confirm('确认删除吗？', function(index){
-                        $.post("{{ route('admin.department.destroy') }}",{_method:'delete',ids:[data.id]},function (result) {
-                            if (result.code==0){
-                                obj.del(); //删除对应行（tr）的DOM结构
-                            }
-                            layer.close(index);
-                            var icon = result.code==0?1:2;
-                            layer.msg(result.msg,{icon:icon})
+                        layer.close(index);
+                        var load = layer.load();
+                        $.post("{{ route('crm.department.destroy') }}",{_method:'delete',ids:[data.id]},function (res) {
+                            layer.close(load);
+                            layer.msg(res.msg,{time:1500,icon:res.code==0?1:2},function () {
+                                if (res.code==0){
+                                    obj.del();
+                                }
+                            })
                         });
                     });
                 } else if(layEvent === 'edit'){
-                    location.href = '/admin/department/'+data.id+'/edit';
+                    layer.open({
+                        type: 2,
+                        title: "编辑",
+                        shadeClose: true,
+                        area: ["600px","400px"],
+                        content: '/crm/department/'+data.id+'/edit',
+                        end: function () {
+                            dataTable();
+                        }
+                    })
+                } else if(layEvent === 'create'){
+                    layer.open({
+                        type: 2,
+                        title: "添加子部门",
+                        shadeClose: true,
+                        area: ["600px","400px"],
+                        content: '/crm/department/create?parent_id=' + data.id,
+                        end: function () {
+                            dataTable();
+                        }
+                    })
                 }
             });
+
+            $("#addBtn").click(function () {
+                layer.open({
+                    type: 2,
+                    title: "添加",
+                    shadeClose: true,
+                    area: ["600px","400px"],
+                    content: "{{route("crm.department.create")}}",
+                    end: function () {
+                        dataTable();
+                    }
+                })
+            })
+
         })
     </script>
 @endsection

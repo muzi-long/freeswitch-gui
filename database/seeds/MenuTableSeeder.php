@@ -57,7 +57,7 @@ class MenuTableSeeder extends Seeder
                 ]
             ],
             [
-                'name' => '呼叫配置',
+                'name' => '呼叫中心',
                 'route' => null,
                 'url' => null,
                 'icon' => 'layui-icon-windows',
@@ -96,6 +96,25 @@ class MenuTableSeeder extends Seeder
                         'icon' => 'layui-icon-headset',
                         'type' => 1,
                         'permission_name' => 'call.cdr',
+                    ],
+                ]
+            ],
+            [
+                'name' => 'CRM管理',
+                'route' => null,
+                'url' => null,
+                'icon' => 'layui-icon-heart-fill',
+                'type' => 2,
+                'sort' => 2,
+                'permission_name' => 'crm',
+                'child' => [
+                    [
+                        'name' => '部门管理',
+                        'route' => 'crm.department',
+                        'url' => null,
+                        'icon' => 'layui-icon-android',
+                        'type' => 1,
+                        'permission_name' => 'crm.department',
                     ],
                 ]
             ],

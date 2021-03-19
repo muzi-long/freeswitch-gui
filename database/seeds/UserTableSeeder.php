@@ -80,7 +80,7 @@ class UserTableSeeder extends Seeder
             ],
             [
                 'name' => 'call',
-                'display_name' => '呼叫配置',
+                'display_name' => '呼叫中心',
                 'child' => [
                     [
                         'name' => 'call.gateway',
@@ -119,6 +119,21 @@ class UserTableSeeder extends Seeder
                         'display_name' => '通话记录',
                         'child' => [
 
+                        ]
+                    ],
+                ],
+            ],
+            [
+                'name' => 'crm',
+                'display_name' => 'CRM管理',
+                'child' => [
+                    [
+                        'name' => 'crm.department',
+                        'display_name' => '部门管理',
+                        'child' => [
+                            ['name' => 'crm.department.create', 'display_name' => '添加'],
+                            ['name' => 'crm.department.edit', 'display_name' => '编辑'],
+                            ['name' => 'crm.department.destroy', 'display_name' => '删除'],
                         ]
                     ],
                 ],

@@ -16,6 +16,7 @@ class Department extends Migration
         Schema::create('department', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name')->comment('部门名称');
+            $table->tinyInteger('level')->default(1)->comment('部门级别,最高级从1开始');
             $table->unsignedBigInteger('parent_id')->default(0)->comment('上级部门ID');
             $table->timestamps();
         });
