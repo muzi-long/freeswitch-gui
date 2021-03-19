@@ -25,6 +25,7 @@
     }).use(['element', 'form', 'layer', 'table', 'upload', 'laydate', 'jquery'], function () {
         var $ = layui.jquery;
         var form = layui.form;
+        var table = layui.table;
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -104,6 +105,55 @@
                 layer.msg(res.msg,{time:2000})
             });
         }
+        //数据表格单行删除
+        window.deleteData = function (obj,url) {
+            layer.confirm('确认删除吗？', function(index){
+                layer.close(index)
+                var load = layer.load()
+                $.post(url,{_method:'delete',ids:[obj.data.id]},function (res) {
+                    layer.close(load);
+                    layer.msg(res.msg,{time:1500,icon:res.code==0?1:2},function () {
+                        if (res.code==0){
+                            obj.del();
+                        }
+                    })
+                });
+            });
+        }
+        //批量删除
+        $("#listDelete").click(function () {
+            var ids = [];
+            var hasCheck = table.checkStatus('dataTable');
+            var hasCheckData = hasCheck.data;
+            var url = $(this).data('url');
+            if (hasCheckData.length > 0) {
+                $.each(hasCheckData, function (index, element) {
+                    ids.push(element.id)
+                })
+            }
+            if (ids.length > 0) {
+                layer.confirm('确认删除吗？', function (index) {
+                    layer.close(index);
+                    var load = layer.load();
+                    $.post(url, {
+                        _method: 'delete',
+                        ids: ids
+                    }, function (res) {
+                        layer.close(load);
+                        if (res.code == 0) {
+                            layer.msg(res.msg, {icon: 1}, function () {
+                                table.reload('dataTable');
+                            })
+                        } else {
+                            layer.msg(res.msg, {icon: 2})
+                        }
+                    });
+                })
+            } else {
+                layer.msg('请选择删除项', {icon: 2})
+            }
+        })
+
     });
 </script>
 @yield('script')

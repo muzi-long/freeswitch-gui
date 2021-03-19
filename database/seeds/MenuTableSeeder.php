@@ -116,6 +116,14 @@ class MenuTableSeeder extends Seeder
                         'type' => 1,
                         'permission_name' => 'crm.department',
                     ],
+                    [
+                        'name' => '节点管理',
+                        'route' => 'crm.node',
+                        'url' => null,
+                        'icon' => 'layui-icon-cellphone-fine',
+                        'type' => 1,
+                        'permission_name' => 'crm.node',
+                    ],
                 ]
             ],
         ];

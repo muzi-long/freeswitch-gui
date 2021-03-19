@@ -207,4 +207,17 @@ Route::group(['prefix'=>'crm','namespace'=>'Crm','middleware'=>['auth','permissi
         Route::delete('department/destroy','DepartmentController@destroy')->name('crm.department.destroy')->middleware('permission:crm.department.destroy');
     });
 
+    //节点管理
+    Route::group([],function (){
+        Route::get('node','NodeController@index')->name('crm.node')->middleware('permission:crm.node');
+        //添加
+        Route::get('node/create','NodeController@create')->name('crm.node.create')->middleware('permission:crm.node.create');
+        Route::post('node/store','NodeController@store')->name('crm.node.store')->middleware('permission:crm.node.create');
+        //编辑
+        Route::get('node/{id}/edit','NodeController@edit')->name('crm.node.edit')->middleware('permission:crm.node.edit');
+        Route::put('node/{id}/update','NodeController@update')->name('crm.node.update')->middleware('permission:crm.node.edit');
+        //删除
+        Route::delete('node/destroy','NodeController@destroy')->name('crm.node.destroy')->middleware('permission:crm.node.destroy');
+    });
+
 });
