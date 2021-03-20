@@ -5,7 +5,7 @@
         <div class="layui-card-header layuiadmin-card-header-auto">
             <div class="layui-btn-group">
                 @can('system.role.destroy')
-                    <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" id="listDelete">删除</button>
+                    <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" id="listDelete" data-url="{{ route('system.role.destroy') }}">删除</button>
                 @endcan
                 @can('system.role.create')
                     <a class="layui-btn layui-btn-sm" id="addBtn">添加</a>
@@ -57,23 +57,7 @@
                 var data = obj.data //获得当前行数据
                     , layEvent = obj.event; //获得 lay-event 对应的值
                 if (layEvent === 'del') {
-                    layer.confirm('确认删除吗？', function (index) {
-                        layer.close(index)
-                        var load = layer.load();
-                        $.post("{{ route('system.role.destroy') }}", {
-                            _method: 'delete',
-                            ids: [data.id]
-                        }, function (res) {
-                            layer.close(load);
-                            if (res.code == 0) {
-                                layer.msg(res.msg, {icon: 1}, function () {
-                                    obj.del();
-                                })
-                            } else {
-                                layer.msg(res.msg, {icon: 2})
-                            }
-                        });
-                    });
+                    deleteData(obj,"{{ route('system.role.destroy') }}");
                 } else if (layEvent === 'edit') {
                     layer.open({
                         type: 2,
@@ -85,38 +69,6 @@
                 }
             });
 
-            //按钮批量删除
-            $("#listDelete").click(function () {
-                var ids = [];
-                var hasCheck = table.checkStatus('dataTable');
-                var hasCheckData = hasCheck.data;
-                if (hasCheckData.length > 0) {
-                    $.each(hasCheckData, function (index, element) {
-                        ids.push(element.id)
-                    })
-                }
-                if (ids.length > 0) {
-                    layer.confirm('确认删除吗？', function (index) {
-                        layer.close(index);
-                        var load = layer.load();
-                        $.post("{{ route('system.role.destroy') }}", {
-                            _method: 'delete',
-                            ids: ids
-                        }, function (res) {
-                            layer.close(load);
-                            if (res.code == 0) {
-                                layer.msg(res.msg, {icon: 1}, function () {
-                                    dataTable.reload({page: {curr: 1}});
-                                })
-                            } else {
-                                layer.msg(res.msg, {icon: 2})
-                            }
-                        });
-                    })
-                } else {
-                    layer.msg('请选择删除项', {icon: 2});
-                }
-            })
 
             $("#addBtn").click(function () {
                 layer.open({

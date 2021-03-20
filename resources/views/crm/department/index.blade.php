@@ -69,18 +69,7 @@
                 var data = obj.data //获得当前行数据
                     ,layEvent = obj.event; //获得 lay-event 对应的值
                 if(layEvent === 'del'){
-                    layer.confirm('确认删除吗？', function(index){
-                        layer.close(index);
-                        var load = layer.load();
-                        $.post("{{ route('crm.department.destroy') }}",{_method:'delete',ids:[data.id]},function (res) {
-                            layer.close(load);
-                            layer.msg(res.msg,{time:1500,icon:res.code==0?1:2},function () {
-                                if (res.code==0){
-                                    obj.del();
-                                }
-                            })
-                        });
-                    });
+                    deleteData(obj,"{{ route('crm.department.destroy') }}");
                 } else if(layEvent === 'edit'){
                     layer.open({
                         type: 2,

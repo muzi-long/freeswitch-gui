@@ -68,23 +68,7 @@
                 var data = obj.data //获得当前行数据
                     , layEvent = obj.event; //获得 lay-event 对应的值
                 if (layEvent === 'del') {
-                    layer.confirm('确认删除吗？', function (index) {
-                        layer.close(index)
-                        var load = layer.load();
-                        $.post("{{ route('system.permission.destroy') }}", {
-                            _method: 'delete',
-                            ids: [data.id]
-                        }, function (res) {
-                            layer.close(load);
-                            if (res.code == 0) {
-                                layer.msg(res.msg, {icon: 1}, function () {
-                                    obj.del();
-                                })
-                            } else {
-                                layer.msg(res.msg, {icon: 2})
-                            }
-                        });
-                    });
+                    deleteData(obj,"{{ route('system.permission.destroy') }}");
                 } else if (layEvent === 'edit') {
                     layer.open({
                         type: 2,

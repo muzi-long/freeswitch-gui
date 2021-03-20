@@ -17,7 +17,7 @@ class Node extends Migration
             $table->bigIncrements('id');
             $table->string('name')->comment('节点名称');
             $table->tinyInteger('sort')->default(10)->comment('排序');
-            $table->tinyInteger('type')->default(1)->comment('1客户跟进，2订单生产，3财务付款');
+            $table->tinyInteger('type')->default(0)->comment('默认0，0表示公共，1客户跟进，2订单生产，3财务付款');
             $table->timestamps();
         });
     }

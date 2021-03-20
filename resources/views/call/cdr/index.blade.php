@@ -4,7 +4,7 @@
     <div class="layui-card">
         <div class="layui-card-header layuiadmin-card-header-auto">
             <form  class="layui-form">
-                <button class="layui-btn layui-btn-sm" lay-submit lay-filter="*" >搜索</button>
+                <button type="button" class="layui-btn layui-btn-sm" lay-submit lay-filter="*" >搜索</button>
                 <div class="layui-form-item">
                     <div class="layui-inline">
                         <label for="" class="layui-form-label">主叫号码</label>

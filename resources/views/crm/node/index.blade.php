@@ -5,8 +5,11 @@
         <div class="layui-card-header layuiadmin-card-header-auto">
             <form class="layui-form">
                 <div class="layui-btn-group">
+                    @can('crm.node.destroy')
+                        <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" id="listDelete" data-url="{{ route('crm.node.destroy') }}">删除</button>
+                    @endcan
                     @can('crm.node.create')
-                    <a class="layui-btn layui-btn-sm" >添加</a>
+                    <a class="layui-btn layui-btn-sm" id="addBtn" >添加</a>
                     @endcan
                 </div>
             </form>
@@ -37,15 +40,15 @@
             //用户表格初始化
             var dataTable = table.render({
                 elem: '#dataTable'
-                ,height: 500
+                ,height: 'full-200'
                 ,url: "{{ route('crm.node') }}" //数据接口
                 ,page: true //开启分页
                 ,cols: [[ //表头
                     {checkbox: true}
                     ,{field: 'id', title: 'ID', sort: true,width:80}
+                    ,{field: 'type_name', title: '类型'}
                     ,{field: 'name', title: '名称'}
                     ,{field: 'sort', title: '排序'}
-                    ,{field: 'type_name', title: '类型'}
                     ,{ width: 150, align:'center', toolbar: '#options', title:'操作'}
                 ]]
             });
@@ -57,11 +60,25 @@
                 if(layEvent === 'del'){
                     deleteData(obj,"{{ route('crm.node.destroy') }}");
                 } else if(layEvent === 'edit'){
-                    location.href = '/crm/node/'+data.id+'/edit';
+                    layer.open({
+                        type: 2,
+                        title: "编辑",
+                        shadeClose: true,
+                        area: ["600px","400px"],
+                        content: '/crm/node/'+data.id+'/edit',
+                    })
                 }
             });
 
-
+            $("#addBtn").click(function () {
+                layer.open({
+                    type: 2,
+                    title: "添加",
+                    shadeClose: true,
+                    area: ["600px","400px"],
+                    content: "{{route("crm.node.create")}}",
+                })
+            })
 
         })
     </script>

@@ -4,7 +4,7 @@
     <div class="layui-card">
         <div class="layui-card-header layuiadmin-card-header-auto">
             <div class="layui-btn-group">
-                <button class="layui-btn layui-btn-sm layui-btn-danger" id="listDelete">删除</button>
+                <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" id="listDelete" data-url="{{ route('call.condition.destroy') }}">删除</button>
                 <a class="layui-btn layui-btn-sm" id="addBtn" >添加</a>
             </div>
         </div>
@@ -52,18 +52,7 @@
                 var data = obj.data //获得当前行数据
                     ,layEvent = obj.event; //获得 lay-event 对应的值
                 if(layEvent === 'del'){
-                    layer.confirm('确认删除吗？', function(index){
-                        layer.close(index);
-                        var load = layer.load()
-                        $.post("{{ route('call.condition.destroy') }}",{_method:'delete',ids:[data.id]},function (res) {
-                            layer.close(load);
-                            layer.msg(res.msg,{time:2000,icon:res.code==0?1:2},function () {
-                                if (res.code==0){
-                                    obj.del(); //删除对应行（tr）的DOM结构
-                                }
-                            })
-                        });
-                    });
+                    deleteData(obj,"{{ route('call.condition.destroy') }}");
                 } else if(layEvent === 'edit'){
                     layer.open({
                         type: 2,
@@ -80,33 +69,6 @@
                 }
             });
 
-            //按钮批量删除
-            $("#listDelete").click(function () {
-                var ids = []
-                var hasCheck = table.checkStatus('dataTable')
-                var hasCheckData = hasCheck.data
-                if (hasCheckData.length>0){
-                    $.each(hasCheckData,function (index,element) {
-                        ids.push(element.id)
-                    })
-                }
-                if (ids.length>0){
-                    layer.confirm('确认删除吗？', function(index){
-                        layer.close(index);
-                        var load = layer.load()
-                        $.post("{{ route('call.condition.destroy') }}",{_method:'delete',ids:ids},function (res) {
-                            layer.close(load);
-                            layer.msg(res.msg,{time:2000,icon:res.code==0?1:2},function () {
-                                if (res.code==0){
-                                    dataTable.reload()
-                                }
-                            })
-                        });
-                    })
-                }else {
-                    layer.msg('请选择删除项',{icon:2})
-                }
-            })
             $("#addBtn").click(function () {
                 layer.open({
                     type: 2,
