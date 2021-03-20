@@ -30,6 +30,18 @@
                     </div>
                 </div>
                 <div class="layui-form-item">
+                    <label for="" class="layui-form-label">角色</label>
+                    <div class="layui-input-block">
+                        @include('common.get_role_by_user_id',['user_id'=>$user->id])
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="" class="layui-form-label">部门</label>
+                    <div class="layui-input-block">
+                        @include('common.get_department_by_user_id',['user_id' => $user->id])
+                    </div>
+                </div>
+                <div class="layui-form-item">
                     <label for="" class="layui-form-label">分机</label>
                     <div class="layui-input-block">
                         <select name="sip_id" >
@@ -40,12 +52,7 @@
                         </select>
                     </div>
                 </div>
-                <div class="layui-form-item">
-                    <label for="" class="layui-form-label">角色</label>
-                    <div class="layui-input-block">
-                        @include('common.get_role_by_user_id',['user_id'=>$user->id])
-                    </div>
-                </div>
+
                 <div class="layui-form-item">
                     <div class="layui-input-block">
                         <button type="button" class="layui-btn layui-btn-sm" lay-submit="" lay-filter="go-close-refresh">确 认</button>

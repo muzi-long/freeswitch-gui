@@ -21,6 +21,7 @@ class UserController extends Controller
     {
         if ($request->ajax()){
             $res = User::query()
+                ->with(['department','sip'])
                 ->orderByDesc('id')
                 ->orderByDesc('id')
                 ->paginate($request->get('limit', 30));
@@ -47,7 +48,7 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $request->all(['phone','name','password','nickname','role_ids','sip_id']);
+        $data = $request->all(['phone','name','password','nickname','role_ids','sip_id','department_id']);
         $data['role_ids'] = $data['role_ids'] == null ? [] : explode(',',$data['role_ids']);
         $count = User::query()->where('name','=',$data['name'])->count();
         if ($count){
@@ -85,7 +86,7 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         $user = User::findOrFail($id);
-        $data = $request->all(['name','phone','nickname','password','role_ids','sip_id']);
+        $data = $request->all(['name','phone','nickname','password','role_ids','sip_id','department_id']);
         $data['role_ids'] = $data['role_ids'] == null ? [] : explode(',',$data['role_ids']);
         if ($data['password']){
             $data['password'] = bcrypt($data['password']);

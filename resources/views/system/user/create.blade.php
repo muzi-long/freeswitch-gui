@@ -30,6 +30,18 @@
                     </div>
                 </div>
                 <div class="layui-form-item">
+                    <label for="" class="layui-form-label">角色</label>
+                    <div class="layui-input-block">
+                        @include('common.get_role_by_user_id')
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="" class="layui-form-label">部门</label>
+                    <div class="layui-input-block">
+                        @include('common.get_department_by_user_id')
+                    </div>
+                </div>
+                <div class="layui-form-item">
                     <label for="" class="layui-form-label">分机</label>
                     <div class="layui-input-block">
                         <select name="sip_id" >
@@ -38,12 +50,6 @@
                                 <option value="{{$sip->id}}" @if(in_array($sip->id,$exsits)) disabled @endif @if(isset($user)&&$user->sip_id==$sip->id) selected @endif >{{$sip->username}}</option>
                             @endforeach
                         </select>
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label for="" class="layui-form-label">角色</label>
-                    <div class="layui-input-block">
-                        @include('common.get_role_by_user_id')
                     </div>
                 </div>
                 <div class="layui-form-item">

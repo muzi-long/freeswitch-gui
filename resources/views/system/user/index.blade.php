@@ -55,6 +55,12 @@
                         , {field: 'name', title: '帐号'}
                         , {field: 'nickname', title: '昵称'}
                         , {field: 'phone', title: '手机号码'}
+                        , {field: 'department_id', title: '部门',templet: function (res) {
+                                return res.department.name;
+                            }}
+                        , {field: 'sip_id', title: '外呼号',templet: function (res) {
+                                return res.sip.username;
+                            }}
                         , {field: 'last_login_at', title: '最近登录时间'}
                         , {field: 'last_login_ip', title: '最近登录IP'}
                         , {field: 'status', title: '状态', templet: function (res) {
@@ -64,9 +70,8 @@
                                     return '<input type="checkbox" name="switch" lay-skin="switch" lay-text="启用|禁用" data-userid="'+res.id+'" lay-filter="status-switch" />';
                                 }
                             }}
-                        , {field: 'created_at', title: '创建时间'}
-                        , {field: 'updated_at', title: '更新时间'}
-                        , {fixed: 'right', width: 320, align: 'center', toolbar: '#options'}
+                        , {field: 'created_at', title: '创建时间',width: 160}
+                        , {fixed: 'right', align: 'center', toolbar: '#options'}
                     ]]
                 });
 
@@ -81,18 +86,18 @@
                             type: 2,
                             title: "编辑",
                             shadeClose: true,
-                            area: ["600px","400px"],
+                            area: ["800px","600px"],
                             content: "/system/user/" + data.id + "/edit",
                         })
                     }
                 });
-                
+
                 $("#addBtn").click(function () {
                     layer.open({
                         type: 2,
                         title: "添加",
                         shadeClose: true,
-                        area: ["600px","400px"],
+                        area: ["800px","600px"],
                         content: "{{route("system.user.create")}}",
                     })
                 })

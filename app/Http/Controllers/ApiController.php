@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cdr;
+use App\Models\Department;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
@@ -47,6 +48,23 @@ class ApiController extends Controller
                 'selected' => $user != null && $user->hasRole($role),
             ]);
         }
+        return $this->success('ok',$data);
+    }
+
+    public function getDepartmentByUserId(Request $request)
+    {
+        $data = [];
+        $user_id = $request->input('user_id');
+        $user = null;
+        if ($user_id){
+            $user = User::query()->where('id',$user_id)->first();
+        }
+        $departments = Department::query()->orderByDesc('id')->get();
+        foreach ($departments as $d){
+            $d->value = $d->id;
+            $d->selected = $user != null && $user->department_id == $d->id;
+        }
+        $data = recursive($departments);
         return $this->success('ok',$data);
     }
 

@@ -54,4 +54,9 @@ class User extends Authenticatable
         return $this->hasOne('App\Models\Sip','id','sip_id')->withDefault(['username'=>'-']);
     }
 
+    public function department()
+    {
+        return $this->hasOne('App\Models\Department','id','department_id')->withDefault(['name'=>'-']);
+    }
+
 }
