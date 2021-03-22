@@ -1,7 +1,7 @@
 {{csrf_field()}}
 <div class="layui-form-item">
     <label for="" class="layui-form-label">权限</label>
-    <div class="layui-input-inline">
+    <div class="layui-input-block">
         <select name="permission_id">
             <option value="0">顶级权限</option>
             @foreach($permissions as $p1)
@@ -22,7 +22,7 @@
 </div>
 <div class="layui-form-item">
     <label for="" class="layui-form-label">父级</label>
-    <div class="layui-input-inline">
+    <div class="layui-input-block">
         <select name="parent_id">
             <option value="0">顶级菜单</option>
             @foreach($menus as $p1)
@@ -44,31 +44,31 @@
 
 <div class="layui-form-item">
     <label for="" class="layui-form-label">名称</label>
-    <div class="layui-input-inline">
+    <div class="layui-input-block">
         <input type="text" maxlength="16" name="name" value="{{$menu->name??old('name')}}" lay-verify="required" class="layui-input" placeholder="如：系统管理">
     </div>
 </div>
 <div class="layui-form-item">
     <label for="" class="layui-form-label">链接</label>
-    <div class="layui-input-inline">
+    <div class="layui-input-block">
         <input type="text" maxlength="200" name="url" value="{{$menu->url??old('url')}}"  class="layui-input" placeholder="如：/admin/user">
     </div>
 </div>
 <div class="layui-form-item">
     <label for="" class="layui-form-label">路由</label>
-    <div class="layui-input-inline">
+    <div class="layui-input-block">
         <input type="text" maxlength="200" name="route" value="{{$menu->route??old('route')}}" class="layui-input" placeholder="如：admin.user">
     </div>
 </div>
 <div class="layui-form-item">
     <label for="" class="layui-form-label">排序</label>
-    <div class="layui-input-inline">
+    <div class="layui-input-block">
         <input class="layui-input" type="number" name="sort" value="{{$menu->sort??10}}" placeholder="" >
     </div>
 </div>
 <div class="layui-form-item">
     <label for="" class="layui-form-label">类型</label>
-    <div class="layui-input-inline">
+    <div class="layui-input-block">
         <input type="radio" name="type" value="1" title="菜单" @if(!isset($menu)||(isset($menu)&&$menu->type==1)) checked @endif>
         <input type="radio" name="type" value="2" title="按钮" @if(isset($menu)&&$menu->type==2) checked @endif >
     </div>
