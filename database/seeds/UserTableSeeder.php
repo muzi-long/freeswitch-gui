@@ -145,6 +145,15 @@ class UserTableSeeder extends Seeder
                             ['name' => 'crm.node.destroy', 'display_name' => '删除'],
                         ]
                     ],
+                    [
+                        'name' => 'crm.customer_field',
+                        'display_name' => '客户配置',
+                        'child' => [
+                            ['name' => 'crm.customer_field.create', 'display_name' => '添加'],
+                            ['name' => 'crm.customer_field.edit', 'display_name' => '编辑'],
+                            ['name' => 'crm.customer_field.destroy', 'display_name' => '删除'],
+                        ]
+                    ],
                 ],
             ],
         ];

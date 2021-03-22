@@ -124,6 +124,14 @@ class MenuTableSeeder extends Seeder
                         'type' => 1,
                         'permission_name' => 'crm.node',
                     ],
+                    [
+                        'name' => '客户配置',
+                        'route' => 'crm.customer_field',
+                        'url' => null,
+                        'icon' => 'layui-icon-set-fill',
+                        'type' => 1,
+                        'permission_name' => 'crm.customer_field',
+                    ],
                 ]
             ],
         ];

@@ -220,4 +220,18 @@ Route::group(['prefix'=>'crm','namespace'=>'Crm','middleware'=>['auth','permissi
         Route::delete('node/destroy','NodeController@destroy')->name('crm.node.destroy')->middleware('permission:crm.node.destroy');
     });
 
+    //客户字段
+    Route::group([],function (){
+        Route::get('customer_field','CustomerFieldController@index')->name('crm.customer_field')->middleware('permission:crm.customer_field');
+        //添加
+        Route::get('customer_field/create','CustomerFieldController@create')->name('crm.customer_field.create')->middleware('permission:crm.customer_field');
+        Route::post('customer_field/store','CustomerFieldController@store')->name('crm.customer_field.store')->middleware('permission:crm.customer_field');
+        //编辑
+        Route::get('customer_field/{id}/edit','CustomerFieldController@edit')->name('crm.customer_field.edit')->middleware('permission:crm.customer_field');
+        Route::put('customer_field/{id}/update','CustomerFieldController@update')->name('crm.customer_field.update')->middleware('permission:crm.customer_field');
+        //删除
+        Route::delete('customer_field/destroy','CustomerFieldController@destroy')->name('crm.customer_field.destroy')->middleware('permission:crm.customer_field');
+
+    });
+
 });
