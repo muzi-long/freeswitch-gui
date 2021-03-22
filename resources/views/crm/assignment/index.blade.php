@@ -3,19 +3,19 @@
 @section('content')
     <div class="layui-card">
         <div class="layui-card-header layuiadmin-card-header-auto">
-            <form class="layui-form">
+            <form class="layui-form" action="{{route("crm.assignment")}}">
                 <div class="layui-btn-group">
                     @can('crm.assignment.destroy')
                         <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" id="listDelete">删除</button>
                     @endcan
                     @can('crm.assignment.create')
-                        <a href="{{route('admin.assignment.create')}}" class="layui-btn layui-btn-sm" id="listDelete">录入</a>
+                        <a class="layui-btn layui-btn-sm" id="addBtn">录入</a>
                     @endcan
                     @can('crm.assignment.import')
                         <button type="button" id="import_project" class="layui-btn layui-btn-sm">导入</button>
-                        <a href="{{route('admin.project.downloadTemplate')}}" class="layui-btn layui-btn-sm layui-btn-warm">模板下载</a>
+                        <a href="" class="layui-btn layui-btn-sm layui-btn-warm">模板下载</a>
                     @endcan
-
+                        <button type="button" lay-submit lay-filter="search" class="layui-btn layui-btn-sm" >搜索</button>
                 </div>
                 <div class="layui-form-item">
                     <div class="layui-inline">
@@ -36,25 +36,27 @@
                             <input type="text" name="company_name" placeholder="请输入公司名称" class="layui-input" >
                         </div>
                     </div>
-                    <button type="button" lay-submit lay-filter="search" class="layui-btn layui-btn-sm" >搜索</button>
+
                 </div>
-                @can('crm.assignment.to')
+            </form>
+            @can('crm.assignment.to')
+            <form class="layui-form" action="{{route("crm.assignment.to")}}">
                 <div class="layui-form-item">
                     <div class="layui-inline">
                         <label for="" class="layui-form-label">用户：</label>
                         <div class="layui-input-block" style="width: 275px">
-                            <select id="user_id">
+                            <select name="user_id" lay-verify="required">
                                 <option value=""></option>
-                                @foreach($users as $user)
-                                    <option value="{{$user->id}}">{{$user->nickname}}</option>
+                                @foreach($users as $d)
+                                    <option value="{{$d->id}}">{{$d->nickname}}</option>
                                 @endforeach
                             </select>
                         </div>
                     </div>
-                    <button type="button" class="layui-btn layui-btn-sm" id="assignmentBtn" >分配</button>
+                    <button type="button" class="layui-btn layui-btn-sm" lay-submit lay-filter="assignment_to" >分配</button>
                 </div>
-                @endcan
             </form>
+            @endcan
         </div>
         <div class="layui-card-body">
             <table id="dataTable" lay-filter="dataTable"></table>
@@ -100,22 +102,15 @@
             //用户表格初始化
             var dataTable = table.render({
                 elem: '#dataTable'
-                ,height: 500
-                ,url: "{{ route('admin.assignment.data') }}" //数据接口
+                ,height: 'full-200'
+                ,url: "{{ route('crm.assignment') }}" //数据接口
                 ,page: true //开启分页
                 ,cols: [[ //表头
-                    {checkbox: true,fixed: true}
-                    ,{field: 'company_name', title: '公司名称'}
-                    ,{field: 'name', title: '姓名'}
-                    ,{field: 'phone', title: '联系电话'}
-                    ,{field: 'created_at', title: '创建时间'}
-                    ,{field: 'owner_user_id', title: '状态', templet:function (d) {
-                            if(d.owner_user_id==0){
-                                return '<span class="layui-badge">待分配</span>'
-                            }else{
-                                return '<span class="layui-badge layui-bg-green">已分配</span>'
-                            }
-                        }}
+                    {field: 'uuid', title: '客户编号'}
+                    ,{field: 'name', title: '客户名称'}
+                    ,{field: 'contact_name', title: '联系人'}
+                    ,{field: 'contact_phone', title: '联系电话'}
+                    ,{field: 'created_at', title: '录入时间'}
                     ,{fixed: 'right', width: 250, align:'center', toolbar: '#options', title:'操作'}
                 ]]
             });
@@ -125,18 +120,24 @@
                 var data = obj.data //获得当前行数据
                     ,layEvent = obj.event; //获得 lay-event 对应的值
                 if(layEvent === 'edit'){
-                    location.href = '/admin/assignment/'+data.id+'/edit';
+                    layer.open({
+                        type: 2,
+                        title: "编辑",
+                        shadeClose: true,
+                        area: ["90%","90%"],
+                        content: '/crm/assignment/'+data.id+'/edit',
+                    })
                 }
             });
-
-            //搜索
-            form.on('submit(search)',function(data) {
-                dataTable.reload({
-                    where: data.field,
-                    page: {curr:1}
-                });
-                return false;
-            });
+            $("#addBtn").click(function () {
+                layer.open({
+                    type: 2,
+                    title: "添加",
+                    shadeClose: true,
+                    area: ["90%","90%"],
+                    content: "{{route("crm.assignment.create")}}",
+                })
+            })
 
             //导入
             $("#import_project").click(function() {
@@ -149,7 +150,7 @@
                 })
                 upload.render({
                     elem: '#uploadBtn'
-                    ,url: '{{route('admin.assignment.import')}}'
+                    ,url: '{{route('crm.assignment.import')}}'
                     ,auto: false
                     ,multiple: false
                     ,accept: 'file'
@@ -168,8 +169,8 @@
                 });
             })
 
-            //批量删除
-            $("#listDelete").click(function () {
+            //分配
+            form.on('submit(assignment_to)', function (data) {
                 var ids = [];
                 var hasCheck = table.checkStatus('dataTable');
                 var hasCheckData = hasCheck.data;
@@ -178,66 +179,27 @@
                         ids.push(element.id)
                     })
                 }
-                if (ids.length > 0) {
-                    layer.confirm('确认删除吗？', function (index) {
-                        layer.close(index);
-                        var load = layer.load();
-                        $.post("{{ route('admin.assignment.destroy') }}", {
-                            _method: 'delete',
-                            ids: ids
-                        }, function (res) {
-                            layer.close(load);
-                            if (res.code == 0) {
-                                layer.msg(res.msg, {icon: 1}, function () {
-                                    dataTable.reload({page: {curr: 1}});
-                                })
-                            } else {
-                                layer.msg(res.msg, {icon: 2})
+                if (ids.length === 0){
+                    layer.msg('请选择分配项', {icon: 2});
+                    return false
+                }
+                layer.confirm('确认分配吗？', function (index) {
+                    layer.close(index);
+                    let load = layer.load();
+                    $.post(data.form.action, {ids:ids,user_id:data.field.user_id}, function (res) {
+                        layer.close(load);
+                        let code = res.code
+                        layer.msg(res.msg, {time: 2000, icon: code == 0 ? 1 : 2}, function () {
+                            if (code === 0) {
+                                dataTable.reload()
                             }
                         });
-                    })
-                } else {
-                    layer.msg('请选择删除项', {icon: 2});
-                }
+                    });
+                })
+
+                return false;
             })
 
-            //分配
-            $("#assignmentBtn").click(function () {
-                var ids = [];
-                var hasCheck = table.checkStatus('dataTable');
-                var hasCheckData = hasCheck.data;
-                if (hasCheckData.length > 0) {
-                    $.each(hasCheckData, function (index, element) {
-                        ids.push(element.id)
-                    })
-                }
-                var user_id = $("#user_id").val();
-                if(user_id == ''){
-                    layer.msg('请选择用户',{icon:2});
-                    return false;
-                }
-                if (ids.length > 0) {
-                    layer.confirm('确认分配吗？', function (index) {
-                        layer.close(index);
-                        var load = layer.load();
-                        $.post("{{ route('admin.assignment.to') }}", {
-                            ids: ids,
-                            user_id:$("#user_id").val()
-                        }, function (res) {
-                            layer.close(load);
-                            if (res.code == 0) {
-                                layer.msg(res.msg, {icon: 1}, function () {
-                                    dataTable.reload({page: {curr: 1}});
-                                })
-                            } else {
-                                layer.msg(res.msg, {icon: 2})
-                            }
-                        });
-                    })
-                } else {
-                    layer.msg('请选择分配项', {icon: 2});
-                }
-            })
 
         })
     </script>

@@ -18,6 +18,7 @@ class CustomerFieldController extends Controller
         if ($request->ajax()){
             $res = CustomerField::query()
                 ->orderBy('sort','asc')
+                ->orderBy('id','desc')
                 ->paginate($request->get('limit', 30));
             return $this->success('ok',$res->items(),$res->total());
         }
@@ -49,7 +50,7 @@ class CustomerFieldController extends Controller
     public function edit($id)
     {
         $model = CustomerField::findOrFail($id);
-        return View::make('crm.customer_field.create',compact('model'));
+        return View::make('crm.customer_field.edit',compact('model'));
     }
 
     public function update(Request $request,$id)

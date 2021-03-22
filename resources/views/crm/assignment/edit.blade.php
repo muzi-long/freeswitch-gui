@@ -1,4 +1,4 @@
-@extends('admin.base')
+@extends('base')
 
 @section('content')
     <div class="layui-card">
@@ -6,7 +6,7 @@
             <h2>更新</h2>
         </div>
         <div class="layui-card-body">
-            <form action="{{route('admin.assignment.update',['id'=>$model->id])}}" method="post" class="layui-form">
+            <form action="{{route('crm.assignment.update',['id'=>$model->id])}}" method="post" class="layui-form">
                 {{method_field('put')}}
                 {{csrf_field()}}
                 <div class="layui-form-item">

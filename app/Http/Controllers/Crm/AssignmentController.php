@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Crm;
 use App\Http\Controllers\Controller;
 use App\Models\CustomerField;
 use App\Models\Customer;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -18,16 +19,17 @@ class AssignmentController extends Controller
      * @param Request $request
      * @return \Illuminate\Contracts\View\View|\Illuminate\Http\JsonResponse
      */
-    public function assignment(Request $request)
+    public function index(Request $request)
     {
+        $users = User::query()->get();
         if ($request->ajax()){
             $res = Customer::query()
                 ->where('status','=',1)
-                ->orderByDesc()
+                ->orderByDesc('id')
                 ->paginate($request->get('limit', 30));
             return $this->success('ok',$res->items(),$res->total());
         }
-        return View::make('crm.assignment.index');
+        return View::make('crm.assignment.index',compact('users'));
     }
 
 

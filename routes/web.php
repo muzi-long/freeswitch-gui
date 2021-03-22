@@ -23,8 +23,8 @@ Route::group(['middleware'=>'auth'],function (){
     Route::get('/console','IndexController@console')->name('index.console');
     Route::get('/onlinecall','IndexController@onlinecall')->name('index.onlinecall');
     //修改密码
-    Route::get('/change_my_password_form','UserController@changeMyPassword')->name('index.changeMyPasswordForm')->middleware('auth');
-    Route::post('/change_my_password','UserController@changeMyPassword')->name('index.changeMyPassword')->middleware('auth');
+    Route::get('/change_my_password_form','System\UserController@changeMyPassword')->name('index.changeMyPasswordForm')->middleware('auth');
+    Route::post('/change_my_password','System\UserController@changeMyPassword')->name('index.changeMyPassword')->middleware('auth');
 });
 
 /*
@@ -224,14 +224,31 @@ Route::group(['prefix'=>'crm','namespace'=>'Crm','middleware'=>['auth','permissi
     Route::group([],function (){
         Route::get('customer_field','CustomerFieldController@index')->name('crm.customer_field')->middleware('permission:crm.customer_field');
         //添加
-        Route::get('customer_field/create','CustomerFieldController@create')->name('crm.customer_field.create')->middleware('permission:crm.customer_field');
-        Route::post('customer_field/store','CustomerFieldController@store')->name('crm.customer_field.store')->middleware('permission:crm.customer_field');
+        Route::get('customer_field/create','CustomerFieldController@create')->name('crm.customer_field.create')->middleware('permission:crm.customer_field.create');
+        Route::post('customer_field/store','CustomerFieldController@store')->name('crm.customer_field.store')->middleware('permission:crm.customer_field.create');
         //编辑
-        Route::get('customer_field/{id}/edit','CustomerFieldController@edit')->name('crm.customer_field.edit')->middleware('permission:crm.customer_field');
-        Route::put('customer_field/{id}/update','CustomerFieldController@update')->name('crm.customer_field.update')->middleware('permission:crm.customer_field');
+        Route::get('customer_field/{id}/edit','CustomerFieldController@edit')->name('crm.customer_field.edit')->middleware('permission:crm.customer_field.edit');
+        Route::put('customer_field/{id}/update','CustomerFieldController@update')->name('crm.customer_field.update')->middleware('permission:crm.customer_field.edit');
         //删除
-        Route::delete('customer_field/destroy','CustomerFieldController@destroy')->name('crm.customer_field.destroy')->middleware('permission:crm.customer_field');
+        Route::delete('customer_field/destroy','CustomerFieldController@destroy')->name('crm.customer_field.destroy')->middleware('permission:crm.customer_field.destroy');
 
+    });
+
+    //待分配库
+    Route::group([],function (){
+        Route::get('assignment','AssignmentController@index')->name('crm.assignment')->middleware('permission:crm.assignment');
+        //删除
+        Route::delete('assignment/destroy','AssignmentController@destroy')->name('crm.assignment.destroy')->middleware('permission:crm.assignment.destroy');
+        //分配
+        Route::post('assignment/to','AssignmentController@to')->name('crm.assignment.to')->middleware('permission:crm.assignment.to');
+        //导入
+        Route::post('assignment/import','AssignmentController@import')->name('crm.assignment.import')->middleware('permission:crm.assignment.import');
+        //添加
+        Route::get('assignment/create','AssignmentController@create')->name('crm.assignment.create')->middleware('permission:crm.assignment.create');
+        Route::post('assignment/store','AssignmentController@store')->name('crm.assignment.store')->middleware('permission:crm.assignment.create');
+        //编辑
+        Route::get('assignment/{id}/edit','AssignmentController@edit')->name('crm.assignment.edit')->middleware('permission:crm.assignment.edit');
+        Route::put('assignment/{id}/update','AssignmentController@update')->name('crm.assignment.update')->middleware('permission:crm.assignment.edit');
     });
 
 });

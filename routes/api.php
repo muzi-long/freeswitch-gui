@@ -21,3 +21,4 @@ Route::post('/api/get_permission_by_role_id','ApiController@getPermissionByRoleI
 Route::post('/api/get_role_by_user_id','ApiController@getRoleByUserId')->name('api.getRoleByUserId');
 Route::post('/api/get_department_by_user_id','ApiController@getDepartmentByUserId')->name('api.getDepartmentByUserId');
 Route::post('/api/call','ApiController@call')->name('api.call');
+Route::post('/api/upload','ApiController@upload')->name('api.upload');

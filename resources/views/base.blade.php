@@ -89,6 +89,15 @@
             return false;
         })
 
+        //搜索
+        form.on('submit(search)',function(data) {
+            layui.table.reload('dataTable',{
+                where: data.field,
+                page: {curr:1}
+            });
+            return false;
+        });
+
         window.newTab = function (url, tit) {
             if (top.layui.index) {
                 top.layui.index.openTabsPage(url, tit)

@@ -8,18 +8,6 @@
         var upload = layui.upload;
         var laydate = layui.laydate;
 
-        form.on('submit(go)',function (data) {
-            var load = layer.load();
-            $.post(data.form.action,data.field,function (res) {
-                layer.close(load);
-                layer.msg(res.msg,{icon:res.code==0?1:2},function () {
-                    if (res.code==0){
-                        location.reload();
-                    }
-                })
-            });
-            return false;
-        })
 
         //图片
         $(".uploadPic").each(function (index,elem) {

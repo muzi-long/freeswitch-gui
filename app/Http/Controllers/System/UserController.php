@@ -160,7 +160,7 @@ class UserController extends Controller
                 return $this->error();
             }
         }
-        return View::make('user.changeMyPassword');
+        return View::make('system.user.changeMyPassword');
     }
 
 }

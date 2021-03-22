@@ -41,13 +41,11 @@
             //用户表格初始化
             var dataTable = table.render({
                 elem: '#dataTable'
-                ,height: 500
+                ,height: 'full-200'
                 ,url: "{{ route('crm.customer_field') }}" //数据接口
                 ,page: true //开启分页
                 ,cols: [[ //表头
-                    {checkbox: true,fixed: true}
-                    //,{field: 'id', title: 'ID', sort: true,width:80}
-                    ,{field: 'field_label', title: '字段名称'}
+                    {field: 'field_label', title: '字段名称'}
                     ,{field: 'field_key', title: '字段Key'}
                     ,{field: 'field_type_name', title: '字段类型'}
                     ,{field: 'field_option', title: '字段配置项'}
@@ -60,7 +58,7 @@
                             return d.required==1?'是':'否';
                         }}
                     ,{field: 'created_at', title: '创建时间'}
-                    ,{fixed: 'right', width: 150, align:'center', toolbar: '#options', title:'操作'}
+                    ,{align:'center', toolbar: '#options', title:'操作'}
                 ]]
             });
 
@@ -73,7 +71,7 @@
                 } else if(layEvent === 'edit'){
                     layer.open({
                         type: 2,
-                        title: "添加",
+                        title: "编辑",
                         shadeClose: true,
                         area: ["800px","600px"],
                         content: '/crm/customer_field/'+data.id+'/edit',

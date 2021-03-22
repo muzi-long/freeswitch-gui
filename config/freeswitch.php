@@ -71,7 +71,8 @@ return [
         'radio' => '单选',
         'checkbox' => '多选',
         'select' => '下拉选择',
-        'image' => '图片上传',
+        'image' => '单图片上传',
+        'images' => '多图片上传',
         'textarea' => '文本框',
     ],
 
