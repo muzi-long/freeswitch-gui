@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\CustomerField;
 use App\Models\Customer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\View;
 
 class AssignmentController extends Controller
@@ -27,6 +30,7 @@ class AssignmentController extends Controller
         return View::make('crm.assignment.index');
     }
 
+
     public function create()
     {
         $fields = CustomerField::query()
@@ -36,16 +40,16 @@ class AssignmentController extends Controller
         return View::make('crm.assignment.create',compact('fields'));
     }
 
-    public function store(ProjectRequest $request)
+
+    public function store(Request $request)
     {
         $user = Auth::user();
-        $data = $request->all(['company_name','name','phone']);
+        $data = $request->all(['name','contact_name','contact_phone']);
         $dataInfo = [];
-        $fields = ProjectDesign::where('visiable',1)->get();
-
+        $fields = CustomerField::query()->where('visiable','=',1)->get();
         foreach ($fields as $d){
             $items = [
-                'project_design_id' => $d->id,
+                'customer_field_id' => $d->id,
                 'data' => $request->get($d->field_key),
             ];
             if ($d->field_type=='checkbox'){
@@ -59,32 +63,95 @@ class AssignmentController extends Controller
         }
         DB::beginTransaction();
         try{
-            $project_id = DB::table('project')->insertGetId([
-                'company_name' => $data['company_name'],
+            $customer_id = DB::table('customer')->insertGetId([
                 'name' => $data['name'],
-                'phone' => $data['phone'],
+                'contact_name' => $data['contact_name'],
+                'contact_phone' => $data['contact_phone'],
                 'created_user_id' => $user->id,
-                'owner_user_id' => 0,
+                'created_user_name' => $user->nickname,
+                'owner_user_id' => $user->id,
+                'created_user_name' => $user->nickname,
+                'status' => 1,
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
             ]);
             foreach ($dataInfo as $d){
-                DB::table('project_design_value')->insert([
-                    'project_id' => $project_id,
-                    'project_design_id' => $d['project_design_id'],
+                DB::table('customer_field_value')->insert([
+                    'customer_id' => $customer_id,
+                    'customer_field_id' => $d['customer_field_id'],
                     'data' => $d['data'],
-                    'created_at' => Carbon::now(),
-                    'updated_at' => Carbon::now(),
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'updated_at' => date('Y-m-d H:i:s'),
                 ]);
             }
             DB::commit();
-            return Response::json(['code'=>0,'msg'=>'添加成功']);
+            return $this->success();
         }catch (\Exception $exception){
             DB::rollBack();
-            Log::info('添加项目异常：'.$exception->getMessage());
-            return Response::json(['code'=>1,'msg'=>'添加失败']);
+            Log::error('客户录入待分配库异常：'.$exception->getMessage());
+            return $this->error();
+        }
+    }
+
+
+    public function edit($id)
+    {
+        $model = Customer::with('fields')->findOrFail($id);
+        return View::make('crm.assignment.edit',compact('model'));
+    }
+
+
+    public function update(Request $request,$id)
+    {
+        $data = $request->all(['name','contact_name','contact_phone']);
+        $dataInfo = [];
+        $fields = CustomerField::query()->where('visiable','=',1)->get();
+        foreach ($fields as $d){
+            $items = [
+                'customer_field_id' => $d->id,
+                'data' => $request->get($d->field_key),
+            ];
+            if ($d->field_type=='checkbox'){
+                if (!empty($items['data'])){
+                    $items['data'] = implode(',',$items['data']);
+                }else{
+                    $items['data'] = null;
+                }
+            }
+            array_push($dataInfo,$items);
         }
 
+        DB::beginTransaction();
+        try{
+            DB::table('customer')->where('id',$id)->update([
+                'name' => $data['name'],
+                'contact_name' => $data['contact_name'],
+                'contact_phone' => $data['contact_phone'],
+                'updated_at' => date('Y-m-d H:i:s'),
+            ]);
+            foreach ($dataInfo as $d){
+                DB::table('customer_field_value')->where('id',$d['id'])->update(['data'=>$d['data']]);
+            }
+            DB::commit();
+            return $this->success();
+        }catch (\Exception $exception){
+            DB::rollBack();
+            Log::error('更新待分配客户异常：'.$exception->getMessage());
+            return $this->error();
+        }
+    }
+
+
+    public function destroy(Request $request)
+    {
+        $ids = $request->input('ids');
+        try {
+            Customer::query()->whereIn('id',$ids)->where('status','=',1)->delete();
+            return $this->success();
+        }catch (\Exception $exception){
+            Log::error('删除待分配库客户异常：'.$exception->getMessage());
+            return $this->error();
+        }
     }
 
 }
