@@ -17,6 +17,7 @@
     @yield('content')
 </div>
 
+<script src="/layuiadmin/xm-select.js"></script>
 <script>
     layui.config({
         base: '/layuiadmin/' //静态资源所在路径

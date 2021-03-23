@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Crm;
 use App\Http\Controllers\Controller;
 use App\Models\CustomerField;
 use App\Models\Customer;
+use App\Models\CustomerFieldValue;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -23,7 +24,20 @@ class AssignmentController extends Controller
     {
         $users = User::query()->get();
         if ($request->ajax()){
+            $data = $request->all(['name','contact_name','contact_phone']);
             $res = Customer::query()
+                //客户名称
+                ->when($data['name'], function ($query) use ($data) {
+                    return $query->where('name', $data['name']);
+                })
+                //联系电话
+                ->when($data['contact_phone'], function ($query) use ($data) {
+                    return $query->where('contact_phone', $data['contact_phone']);
+                })
+                //联系人
+                ->when($data['contact_name'], function ($query) use ($data) {
+                    return $query->where('contact_name', $data['contact_name'] );
+                })
                 ->where('status','=',1)
                 ->orderByDesc('id')
                 ->paginate($request->get('limit', 30));
@@ -66,13 +80,14 @@ class AssignmentController extends Controller
         DB::beginTransaction();
         try{
             $customer_id = DB::table('customer')->insertGetId([
+                'uuid' => uuid_generate(),
                 'name' => $data['name'],
                 'contact_name' => $data['contact_name'],
                 'contact_phone' => $data['contact_phone'],
                 'created_user_id' => $user->id,
-                'created_user_name' => $user->nickname,
+                'created_user_nickname' => $user->nickname,
                 'owner_user_id' => $user->id,
-                'created_user_name' => $user->nickname,
+                'owner_user_nickname' => $user->nickname,
                 'status' => 1,
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
@@ -98,8 +113,13 @@ class AssignmentController extends Controller
 
     public function edit($id)
     {
-        $model = Customer::with('fields')->findOrFail($id);
-        return View::make('crm.assignment.edit',compact('model'));
+        $model = Customer::query()->findOrFail($id);
+        $fields = CustomerField::query()
+            ->where('visiable',1)
+            ->orderBy('sort','asc')
+            ->get();
+        $data = CustomerFieldValue::query()->where('customer_id','=',$model->id)->pluck('data','customer_field_id')->toArray();
+        return View::make('crm.assignment.edit',compact('model','fields','data'));
     }
 
 
@@ -132,7 +152,10 @@ class AssignmentController extends Controller
                 'updated_at' => date('Y-m-d H:i:s'),
             ]);
             foreach ($dataInfo as $d){
-                DB::table('customer_field_value')->where('id',$d['id'])->update(['data'=>$d['data']]);
+                DB::table('customer_field_value')
+                    ->where('customer_id','=',$id)
+                    ->where('customer_field_id',$d['customer_field_id'])
+                    ->update(['data'=>$d['data']]);
             }
             DB::commit();
             return $this->success();
@@ -153,6 +176,39 @@ class AssignmentController extends Controller
         }catch (\Exception $exception){
             Log::error('删除待分配库客户异常：'.$exception->getMessage());
             return $this->error();
+        }
+    }
+
+
+    public function to(Request $request)
+    {
+        $ids = $request->get('ids',[]);
+        $user = User::where('id',$request->get('user_id'))->first();
+        $department_id = $request->get('department_id');
+        $user_ids = User::where('department_id',$request->department_id)->pluck('id')->toArray();
+        $type = $request->get('type');
+        DB::beginTransaction();
+        try{
+            if ($type=='user'){
+                DB::table('project')->whereIn('id',$ids)->update([
+                    'owner_user_id' => -3,
+                    'assignment_time' => date('Y-m-d H:i:s'),
+                    'department_id' => $user->department_id,
+                ]);
+            }elseif ($type=='department'){
+                DB::table('project')->whereIn('id',$ids)->update([
+                    'owner_user_id' => -2,
+                    'department_id' => $department_id,
+                    'assignment_time' => date('Y-m-d H:i:s'),
+                ]);
+            }
+            DB::commit();
+
+            return Response::json(['code'=>0,'msg'=>'分配成功']);
+        }catch (\Exception $exception){
+            DB::rollBack();
+            Log::error('分配异常：'.$exception->getMessage());
+            return Response::json(['code'=>1,'msg'=>'分配失败']);
         }
     }
 

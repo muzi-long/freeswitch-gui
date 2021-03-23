@@ -150,7 +150,7 @@ class ApiController extends Controller
                 $this->error('上传失败');
             }
         }catch (\Exception $exception){
-            Log::error('文件上传异常：' . $exception->getErrorMessage());
+            Log::error('文件上传异常：' . $exception->getMessage());
             $this->error('系统异常');
         }
 

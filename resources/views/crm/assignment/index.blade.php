@@ -19,24 +19,23 @@
                 </div>
                 <div class="layui-form-item">
                     <div class="layui-inline">
-                        <label for="" class="layui-form-label">姓名：</label>
+                        <label for="" class="layui-form-label">客户名称：</label>
                         <div class="layui-input-block" style="width: 275px">
-                            <input type="text" name="name" placeholder="请输入姓名" class="layui-input" >
+                            <input type="text" name="name" placeholder="请输入名称" class="layui-input" >
                         </div>
                     </div>
                     <div class="layui-inline">
-                        <label for="" class="layui-form-label">电话：</label>
+                        <label for="" class="layui-form-label">联系人：</label>
                         <div class="layui-input-block" style="width: 275px">
-                            <input type="text" name="phone" placeholder="请输入联系电话" class="layui-input" >
+                            <input type="text" name="contact_name" placeholder="请输入联系人" class="layui-input" >
                         </div>
                     </div>
                     <div class="layui-inline">
-                        <label for="" class="layui-form-label">公司名称：</label>
+                        <label for="" class="layui-form-label">联系电话：</label>
                         <div class="layui-input-block" style="width: 275px">
-                            <input type="text" name="company_name" placeholder="请输入公司名称" class="layui-input" >
+                            <input type="text" name="contact_phone" placeholder="请输入联系电话" class="layui-input" >
                         </div>
                     </div>
-
                 </div>
             </form>
             @can('crm.assignment.to')
@@ -51,6 +50,17 @@
                                     <option value="{{$d->id}}">{{$d->nickname}}</option>
                                 @endforeach
                             </select>
+                        </div>
+                    </div>
+                    <button type="button" class="layui-btn layui-btn-sm" lay-submit lay-filter="assignment_to" >分配</button>
+                </div>
+            </form>
+            <form class="layui-form" action="{{route("crm.assignment.to")}}">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label for="" class="layui-form-label">部门：</label>
+                        <div class="layui-input-block" style="width: 275px">
+                            @include('common.get_department_by_user_id')
                         </div>
                     </div>
                     <button type="button" class="layui-btn layui-btn-sm" lay-submit lay-filter="assignment_to" >分配</button>
@@ -106,7 +116,8 @@
                 ,url: "{{ route('crm.assignment') }}" //数据接口
                 ,page: true //开启分页
                 ,cols: [[ //表头
-                    {field: 'uuid', title: '客户编号'}
+                    {checkbox: true}
+                    ,{field: 'uuid', title: '客户编号'}
                     ,{field: 'name', title: '客户名称'}
                     ,{field: 'contact_name', title: '联系人'}
                     ,{field: 'contact_phone', title: '联系电话'}

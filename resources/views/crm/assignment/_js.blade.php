@@ -9,8 +9,14 @@
         var laydate = layui.laydate;
 
 
-        //单图片
+        //单图片上传
+        window.removePic = function(obj,elem_ul,elem_input){
+            $(elem_ul).html("")
+            $("#"+elem_input).val("");
+        }
         $(".uploadPic").each(function (index,elem) {
+            var elem_ul = $(elem).data('ul')
+            var elem_input = $(elem).data('input')
             upload.render({
                 elem: $(elem)
                 ,url: '{{ route("api.upload") }}'
@@ -19,8 +25,8 @@
                 ,done: function(res){
                     if(res.code == 0){
                         layer.msg(res.msg,{icon:1},function () {
-                            $(elem).parent('.layui-upload').find('.layui-upload-box').html('<li><img src="'+res.data.url+'" /><p>上传成功</p></li>');
-                            $(elem).parent('.layui-upload').find('.layui-upload-input').val(res.url);
+                            $(elem).parent('.layui-upload').find('.layui-upload-box').html('<li><img src="'+res.data.url+'" /><p onclick="removePic(this,\''+elem_ul+'\',\''+elem_input+'\')">删除</p></li>');
+                            $(elem).parent('.layui-upload').find('.layui-upload-input').val(res.data.url);
                         })
                     }else {
                         layer.msg(res.msg,{icon:2})
@@ -28,6 +34,8 @@
                 }
             });
         })
+
+        //多图片
         window.removePics = function(obj,elem_ul,elem_input){
             $(obj).parent("li").remove()
             let pic_urls = []
@@ -37,7 +45,6 @@
             console.log(pic_urls)
             $("#"+elem_input).val(pic_urls.join(','));
         }
-        //多图片
         $(".uploadPics").each(function (index,elem) {
             var elem_ul = $(elem).data('ul')
             var elem_input = $(elem).data('input')

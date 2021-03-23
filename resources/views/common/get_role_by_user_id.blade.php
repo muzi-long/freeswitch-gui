@@ -1,7 +1,5 @@
 
 <div id="xm-select-role" class="xm-select-role"></div>
-
-<script src="/layuiadmin/xm-select.js"></script>
 <script>
     layui.use(['jquery','form', 'layer'], function () {
         var $ = layui.jquery;

@@ -1,6 +1,6 @@
 
 <div id="xm-select-department" class="xm-select-department"></div>
-<script src="/layuiadmin/xm-select.js"></script>
+
 <script>
     layui.use(['jquery','form', 'layer'], function () {
         var $ = layui.jquery;
