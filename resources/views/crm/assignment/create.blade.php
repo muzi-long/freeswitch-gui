@@ -86,11 +86,21 @@
                                         @break
                                         @case('image')
                                         <div class="layui-upload">
-                                            <button type="button" class="layui-btn layui-btn-sm uploadPic"><i class="layui-icon">&#xe67c;</i>图片上传</button>
+                                            <button type="button" class="layui-btn layui-btn-sm uploadPic"><i class="layui-icon">&#xe67c;</i>单图上传</button>
                                             <div class="layui-upload-list" >
                                                 <ul class="layui-upload-box layui-clear">
                                                 </ul>
                                                 <input type="hidden" class="layui-upload-input" name="{{$d->field_key}}" value="{{$d->field_value}}">
+                                            </div>
+                                        </div>
+                                        @break
+                                        @case('images')
+                                        <div class="layui-upload">
+                                            <button type="button" class="layui-btn layui-btn-sm uploadPics" data-ul="ul_{{$d->field_key}}" data-input="input_{{$d->field_key}}" ><i class="layui-icon">&#xe67c;</i>多图上传</button>
+                                            <div class="layui-upload-list" >
+                                                <ul class="layui-upload-box layui-clear" id="ul_{{$d->field_key}}">
+                                                </ul>
+                                                <input type="hidden" class="layui-upload-input" id="input_{{$d->field_key}}" name="{{$d->field_key}}" value="{{$d->field_value}}">
                                             </div>
                                         </div>
                                         @break

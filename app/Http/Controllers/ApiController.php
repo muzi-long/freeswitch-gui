@@ -116,13 +116,12 @@ class ApiController extends Controller
     //文件上传
     public function upload(Request $request)
     {
+
         //上传文件最大大小,单位M
         $maxSize = 10;
         //支持的上传图片类型
         $allowed_extensions = ["png", "jpg", "gif", "xlsx", "xls"];
-
         $file = $request->file('file');
-
         //检查文件是否上传完成
         if ($file->isValid()) {
             //检测图片类型
@@ -137,19 +136,24 @@ class ApiController extends Controller
         } else {
             return $this->error('文件不完整');
         }
-        $newFile = date('Y/m/d/') . uuid_generate() . "." . $file->getClientOriginalExtension();
-        $disk = Storage::disk('uploads');
-        $res = $disk->put($newFile, file_get_contents($file->getRealPath()));
-        if ($res) {
-            $data = [
-                'data' => $newFile,
-                'url' => '/uploads/' . $newFile,
-            ];
-            return $this->success('上传成功', $data);
-        } else {
-            Log::error('文件上传异常：' . $file->getErrorMessage());
-            $this->error('上传失败');
+        try {
+            $newFile = date('Y/m/d/') . uuid_generate() . "." . $file->getClientOriginalExtension();
+            $disk = Storage::disk('uploads');
+            $res = $disk->put($newFile, file_get_contents($file->getRealPath()));
+            if ($res) {
+                $data = [
+                    'url' => '/uploads/' . $newFile,
+                ];
+                return $this->success('上传成功', $data);
+            } else {
+                Log::error('文件上传错误：' . $file->getErrorMessage());
+                $this->error('上传失败');
+            }
+        }catch (\Exception $exception){
+            Log::error('文件上传异常：' . $exception->getErrorMessage());
+            $this->error('系统异常');
         }
+
     }
 
 }

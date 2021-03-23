@@ -9,7 +9,7 @@
         var laydate = layui.laydate;
 
 
-        //图片
+        //单图片
         $(".uploadPic").each(function (index,elem) {
             upload.render({
                 elem: $(elem)
@@ -17,11 +17,44 @@
                 ,multiple: false
                 ,data:{"_token":"{{ csrf_token() }}"}
                 ,done: function(res){
-                    //如果上传失败
                     if(res.code == 0){
                         layer.msg(res.msg,{icon:1},function () {
-                            $(elem).parent('.layui-upload').find('.layui-upload-box').html('<li><img src="'+res.url+'" /><p>上传成功</p></li>');
+                            $(elem).parent('.layui-upload').find('.layui-upload-box').html('<li><img src="'+res.data.url+'" /><p>上传成功</p></li>');
                             $(elem).parent('.layui-upload').find('.layui-upload-input').val(res.url);
+                        })
+                    }else {
+                        layer.msg(res.msg,{icon:2})
+                    }
+                }
+            });
+        })
+        window.removePics = function(obj,elem_ul,elem_input){
+            $(obj).parent("li").remove()
+            let pic_urls = []
+            $("#"+elem_ul+" li").each(function (index,elem) {
+                pic_urls.push($(elem).find("img").attr("src"))
+            })
+            console.log(pic_urls)
+            $("#"+elem_input).val(pic_urls.join(','));
+        }
+        //多图片
+        $(".uploadPics").each(function (index,elem) {
+            var elem_ul = $(elem).data('ul')
+            var elem_input = $(elem).data('input')
+            upload.render({
+                elem: $(elem)
+                ,url: '{{ route("api.upload") }}'
+                ,multiple: true
+                ,data:{"_token":"{{ csrf_token() }}"}
+                ,done: function(res){
+                    if(res.code == 0){
+                        layer.msg(res.msg,{icon:1},function () {
+                            $("#"+elem_ul).append('<li><img src="'+res.data.url+'" /><p onclick="removePics(this,\''+elem_ul+'\',\''+elem_input+'\')">删除</p></li>');
+                            let pic_urls = []
+                            $("#"+elem_ul+" li").each(function (index,elem) {
+                                pic_urls.push($(elem).find("img").attr("src"))
+                            })
+                            $("#"+elem_input).val(pic_urls.join(','));
                         })
                     }else {
                         layer.msg(res.msg,{icon:2})
