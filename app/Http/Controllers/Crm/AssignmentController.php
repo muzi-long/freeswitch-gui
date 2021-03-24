@@ -66,7 +66,7 @@ class AssignmentController extends Controller
 
     public function store(Request $request)
     {
-        $user = Auth::user();
+        $user = $request->user();
         $data = $request->all(['name','contact_name','contact_phone']);
         $dataInfo = [];
         $fields = CustomerField::query()->where('visiable','=',1)->get();
@@ -95,7 +95,10 @@ class AssignmentController extends Controller
                 'created_user_nickname' => $user->nickname,
                 'owner_user_id' => $user->id,
                 'owner_user_nickname' => $user->nickname,
+                'assignment_user_id' => $user->id,
+                'assignment_user_nickname' => $user->nickname,
                 'status' => 1,
+                'status_time' => date('Y-m-d H:i:s'),
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
             ]);

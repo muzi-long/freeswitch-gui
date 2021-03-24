@@ -4,13 +4,11 @@ namespace App\Http\Controllers\Crm;
 
 use App\Http\Controllers\Controller;
 use App\Models\Customer;
-use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\View;
 
-class BusinessController extends Controller
+class GrabController extends Controller
 {
 
     public function index(Request $request)
@@ -30,41 +28,36 @@ class BusinessController extends Controller
                 ->when($data['contact_name'], function ($query) use ($data) {
                     return $query->where('contact_name', $data['contact_name'] );
                 })
-                ->where('owner_user_id','=',$request->user()->id)
-                ->where('status','=',2)
-                ->orderByDesc('id')
+                ->where('department_id','=',$request->user()->department_id)
+                ->where('status','=',4)
+                ->orderByDesc('status_time')
                 ->paginate($request->get('limit', 30));
             return $this->success('ok',$res->items(),$res->total());
         }
-        return View::make('crm.business.index');
+        return View::make('crm.grab.index');
     }
 
-
-    public function to(Request $request)
+    public function store(Request $request)
     {
-        $ids = $request->get('ids',[]);
-        $user = User::where('id',$request->get('user_id'))->first();
-        if ($user == null){
-            return $this->error('请选择员工');
+        $customer_id = $request->input('customer_id');
+        $model = Customer::query()
+            ->where('id','=',$customer_id)
+            ->where('status','=',4)
+            ->first();
+        if ($model == null){
+            return $this->error('很遗憾已被其它用户抢得');
         }
-        DB::beginTransaction();
-        try{
-            $data = [
-                'owner_user_id' => $user->id,
-                'owner_user_nickname' => $user->nickname,
-                'owner_department_id' => $user->department_id??0,
-                'assignment_user_id' => $request->user()->id,
-                'assignment_user_nickname' => $request->user()->nickname,
+        try {
+            $model->update([
+                'owner_user_id' => $request->user()->id,
+                'owner_user_nickname' => $request->user()->nickname,
                 'status' => 3,
                 'status_time' => date('Y-m-d H:i:s'),
-            ];
-            Customer::query()->whereIn('id',$ids)->update($data);
-            DB::commit();
-            return $this->success();
+            ]);
+            return $this->success('抢单成功，请在个人库里查看');
         }catch (\Exception $exception){
-            DB::rollBack();
-            Log::error('分配异常：'.$exception->getMessage());
-            return $this->error();
+            Log::error('抢单异常：'.$exception->getMessage());
+            return $this->error('抢单失败');
         }
     }
 

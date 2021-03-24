@@ -258,4 +258,34 @@ Route::group(['prefix'=>'crm','namespace'=>'Crm','middleware'=>['auth','permissi
         Route::post('business/to','BusinessController@to')->name('crm.business.to')->middleware('permission:crm.business.to');
     });
 
+    //部门抢单库
+    Route::group([],function (){
+        Route::get('grab','GrabController@index')->name('crm.grab')->middleware('permission:crm.grab');
+        //抢单
+        Route::post('grab/store','GrabController@store')->name('crm.grab.store')->middleware('permission:crm.grab.store');
+    });
+
+    //客户管理
+    Route::group([],function (){
+        Route::get('customer','CustomerController@index')->name('crm.customer')->middleware('permission:crm.customer');
+        //添加
+        Route::get('customer/create','CustomerController@create')->name('crm.customer.create')->middleware('permission:crm.customer.create');
+        Route::post('customer/store','CustomerController@store')->name('crm.customer.store')->middleware('permission:crm.customer.create');
+        //编辑
+        Route::get('customer/{id}/edit','CustomerController@edit')->name('crm.customer.edit')->middleware('permission:crm.customer.edit');
+        Route::put('customer/{id}/update','CustomerController@update')->name('crm.customer.update')->middleware('permission:crm.customer.edit');
+        //详情
+        Route::get('customer/{id}/show','CustomerController@show')->name('crm.customer.show')->middleware('permission:crm.customer.show');
+        //删除
+        Route::delete('customer/destroy','CustomerController@destroy')->name('crm.customer.destroy')->middleware('permission:crm.customer.destroy');
+        //剔除
+        Route::post('customer/remove','CustomerController@remove')->name('crm.customer.remove')->middleware('permission:crm.customer.remove');
+        //备注跟进
+        Route::match(['get','post'],'customer/{id}/remark','CustomerController@remark')->name('crm.customer.remark')->middleware('permission:crm.customer.remark');
+        //移交
+        Route::post('customer/transfer','CustomerController@transfer')->name('crm.customer.transfer')->middleware('permission:crm.customer.transfer');
+        //下单
+        Route::post('customer/{id}/order','CustomerController@order')->name('crm.customer.order')->middleware('permission:crm.customer.order');
+    });
+
 });

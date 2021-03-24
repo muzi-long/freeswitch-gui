@@ -3,9 +3,15 @@
 @section('content')
     <div class="layui-card">
         <div class="layui-card-header layuiadmin-card-header-auto">
-            <form class="layui-form" action="{{route("crm.business")}}">
+            <form class="layui-form" action="{{route("crm.customer")}}">
                 <div class="layui-btn-group">
-                    <button type="button" lay-submit lay-filter="search" class="layui-btn layui-btn-sm" >搜索</button>
+                    @can('crm.customer.destroy')
+                        <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" id="listDelete">删除</button>
+                    @endcan
+                    @can('crm.customer.create')
+                        <a class="layui-btn layui-btn-sm" id="addBtn">添加</a>
+                    @endcan
+                        <button type="button" lay-submit lay-filter="search" class="layui-btn layui-btn-sm" >搜索</button>
                 </div>
                 <div class="layui-form-item">
                     <div class="layui-inline">
@@ -28,8 +34,8 @@
                     </div>
                 </div>
             </form>
-            @can('crm.business.to')
-            <form class="layui-form" action="{{route("crm.business.to")}}">
+            @can('crm.customer.transfer')
+            <form class="layui-form" action="{{route("crm.customer.transfer")}}">
                 <div class="layui-form-item">
                     <div class="layui-inline">
                         <label for="" class="layui-form-label">员工：</label>
@@ -37,13 +43,20 @@
                             @include('common.get_user')
                         </div>
                     </div>
-                    <button type="button" class="layui-btn layui-btn-sm" lay-submit lay-filter="assignment_to" >分配</button>
+                    <button type="button" class="layui-btn layui-btn-sm" lay-submit lay-filter="assignment_to" >移交</button>
                 </div>
             </form>
             @endcan
         </div>
         <div class="layui-card-body">
             <table id="dataTable" lay-filter="dataTable"></table>
+            <script type="text/html" id="options">
+                <div class="layui-btn-group">
+                    @can('crm.customer.edit')
+                        <a class="layui-btn layui-btn-sm" lay-event="edit">编辑</a>
+                    @endcan
+                </div>
+            </script>
         </div>
     </div>
 @endsection
@@ -61,7 +74,7 @@
             var dataTable = table.render({
                 elem: '#dataTable'
                 ,height: 'full-200'
-                ,url: "{{ route('crm.business') }}" //数据接口
+                ,url: "{{ route('crm.customer') }}" //数据接口
                 ,page: true //开启分页
                 ,cols: [[ //表头
                     {checkbox: true}
@@ -69,14 +82,37 @@
                     ,{field: 'name', title: '客户名称'}
                     ,{field: 'contact_name', title: '联系人'}
                     ,{field: 'contact_phone', title: '联系电话'}
-                    ,{field: 'assignment_user_nickname', title: '分配人'}
-                    ,{field: 'status_time', title: '分配时间'}
                     ,{field: 'created_at', title: '录入时间'}
+                    ,{fixed: 'right', width: 250, align:'center', toolbar: '#options', title:'操作'}
                 ]]
             });
 
+            //监听工具条
+            table.on('tool(dataTable)', function(obj){ //注：tool是工具条事件名，dataTable是table原始容器的属性 lay-filter="对应的值"
+                var data = obj.data //获得当前行数据
+                    ,layEvent = obj.event; //获得 lay-event 对应的值
+                if(layEvent === 'edit'){
+                    layer.open({
+                        type: 2,
+                        title: "编辑",
+                        shadeClose: true,
+                        area: ["90%","90%"],
+                        content: '/crm/customer/'+data.id+'/edit',
+                    })
+                }
+            });
+            $("#addBtn").click(function () {
+                layer.open({
+                    type: 2,
+                    title: "添加",
+                    shadeClose: true,
+                    area: ["90%","90%"],
+                    content: "{{route("crm.customer.create")}}",
+                })
+            })
 
-            //分配
+
+            //移交
             form.on('submit(assignment_to)', function (data) {
                 var ids = [];
                 var hasCheck = table.checkStatus('dataTable');
@@ -87,10 +123,10 @@
                     })
                 }
                 if (ids.length === 0){
-                    layer.msg('请选择分配项', {icon: 2});
+                    layer.msg('请选择移交项', {icon: 2});
                     return false
                 }
-                layer.confirm('确认分配吗？', function (index) {
+                layer.confirm('确认移交吗？', function (index) {
                     layer.close(index);
                     let load = layer.load();
                     $.post(data.form.action, {ids:ids,user_id:data.field.user_id}, function (res) {
@@ -103,8 +139,10 @@
                         });
                     });
                 })
+
                 return false;
             })
+
 
         })
     </script>

@@ -172,6 +172,30 @@ class UserTableSeeder extends Seeder
                             ['name' => 'crm.business.to', 'display_name' => '分配'],
                         ]
                     ],
+                    [
+                        'name' => 'crm.grab',
+                        'display_name' => '部门抢单',
+                        'child' => [
+                            ['name' => 'crm.grab.store', 'display_name' => '抢单'],
+                        ]
+                    ],
+                    [
+                        'name' => 'crm.customer',
+                        'display_name' => '客户管理',
+                        'route' => 'crm.customer',
+                        'child' => [
+                            ['name' => 'crm.customer.create', 'display_name' => '添加'],
+                            ['name' => 'crm.customer.edit', 'display_name' => '编辑'],
+                            ['name' => 'crm.customer.destroy', 'display_name' => '删除'],
+                            ['name' => 'crm.customer.show', 'display_name' => '详情'],
+                            ['name' => 'crm.customer.remark', 'display_name' => '备注跟进'],
+                            ['name' => 'crm.customer.list_all', 'display_name' => '查看所有客户'],
+                            ['name' => 'crm.customer.list_department', 'display_name' => '查看本部门客户'],
+                            ['name' => 'crm.customer.order', 'display_name' => '下单'],
+                            ['name' => 'crm.customer.transfer', 'display_name' => '移交'],
+                            ['name' => 'crm.customer.remove', 'display_name' => '剔除'],
+                        ]
+                    ],
                 ],
             ],
         ];

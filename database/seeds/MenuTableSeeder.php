@@ -148,6 +148,22 @@ class MenuTableSeeder extends Seeder
                         'type' => 1,
                         'permission_name' => 'crm.business',
                     ],
+                    [
+                        'name' => '部门抢单',
+                        'route' => 'crm.grab',
+                        'url' => null,
+                        'icon' => 'layui-icon-carousel',
+                        'type' => 1,
+                        'permission_name' => 'crm.grab',
+                    ],
+                    [
+                        'name' => '客户管理',
+                        'route' => 'crm.customer',
+                        'url' => null,
+                        'icon' => 'layui-icon-reply-fill',
+                        'type' => 1,
+                        'permission_name' => 'crm.customer',
+                    ],
                 ]
             ],
         ];
