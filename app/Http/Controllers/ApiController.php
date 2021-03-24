@@ -43,11 +43,7 @@ class ApiController extends Controller
         }
         $roles = Role::query()->orderByDesc('id')->get();
         foreach ($roles as $role) {
-            array_push($data, [
-                'name' => $role->display_name,
-                'value' => $role->id,
-                'selected' => $user != null && $user->hasRole($role),
-            ]);
+            $role->selected = $user != null && $user->hasRole($role);
         }
         return $this->success('ok', $data);
     }
@@ -62,11 +58,20 @@ class ApiController extends Controller
         }
         $departments = Department::query()->orderByDesc('id')->get();
         foreach ($departments as $d) {
-            $d->value = $d->id;
             $d->selected = $user != null && $user->department_id == $d->id;
         }
         $data = recursive($departments);
         return $this->success('ok', $data);
+    }
+
+    public function getUser(Request $request)
+    {
+        $user_id = $request->input('user_id');
+        $users = User::query()->get();
+        foreach ($users as $user){
+            $user->selected = $user_id == $user->id;
+        }
+        return $this->success('ok',$users);
     }
 
     /**

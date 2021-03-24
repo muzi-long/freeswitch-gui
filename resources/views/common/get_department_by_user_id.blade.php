@@ -18,6 +18,10 @@
                     model: { label: { type: 'text' } },
                     radio: true,
                     clickClose: true,
+                    prop: {
+                        name: 'name',
+                        value: 'id',
+                    },
                     tree: {
                         show: true,
                         showLine: false,

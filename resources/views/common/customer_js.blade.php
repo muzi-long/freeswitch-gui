@@ -42,7 +42,6 @@
             $("#"+elem_ul+" li").each(function (index,elem) {
                 pic_urls.push($(elem).find("img").attr("src"))
             })
-            console.log(pic_urls)
             $("#"+elem_input).val(pic_urls.join(','));
         }
         $(".uploadPics").each(function (index,elem) {

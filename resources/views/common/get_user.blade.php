@@ -1,5 +1,4 @@
-
-<div id="xm-select-role" class="xm-select-role"></div>
+<div id="xm-select-user" class="xm-select-user"></div>
 <script>
     layui.use(['jquery','form', 'layer'], function () {
         var $ = layui.jquery;
@@ -8,14 +7,18 @@
         // 一般来说，权限数据是异步传递过来的
         $.ajax({
             method: 'post',
-            url: '{{route('api.getRoleByUserId',['user_id'=>$user_id??null])}}',
+            url: '{{route('api.getUser',['user_id'=>$user_id??0])}}',
             dataType: 'json',
             success: function (res) {
                 var demo1 = xmSelect.render({
-                    el: '#xm-select-role',
-                    name: 'role_ids',
+                    el: '#xm-select-user',
+                    name: 'user_id',
+                    filterable: true,
+                    radio: true,
+                    clickClose: true,
+                    model: { label: { type: 'text' } },
                     prop: {
-                        name: 'name',
+                        name: 'nickname',
                         value: 'id',
                     },
                     data: res.data,

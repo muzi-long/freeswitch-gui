@@ -17,7 +17,7 @@ class CustomerFieldValue extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('customer_id')->comment('客户ID');
             $table->unsignedBigInteger('customer_field_id')->comment('客户字段ID');
-            $table->string('data')->nullable()->comment('项目对应表单字段的值');
+            $table->text('data')->nullable()->comment('项目对应表单字段的值');
             $table->timestamps();
         });
     }

@@ -3,15 +3,18 @@
 namespace App\Http\Controllers\Crm;
 
 use App\Http\Controllers\Controller;
+use App\Imports\CustomerImport;
 use App\Models\CustomerField;
 use App\Models\Customer;
 use App\Models\CustomerFieldValue;
+use App\Models\Department;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\View;
+use Maatwebsite\Excel\Facades\Excel;
 
 class AssignmentController extends Controller
 {
@@ -22,7 +25,6 @@ class AssignmentController extends Controller
      */
     public function index(Request $request)
     {
-        $users = User::query()->get();
         if ($request->ajax()){
             $data = $request->all(['name','contact_name','contact_phone']);
             $res = Customer::query()
@@ -43,7 +45,12 @@ class AssignmentController extends Controller
                 ->paginate($request->get('limit', 30));
             return $this->success('ok',$res->items(),$res->total());
         }
-        return View::make('crm.assignment.index',compact('users'));
+        $business = collect([]);
+        $user_ids = Department::query()->where('business_user_id','>',0)->pluck('business_user_id')->toArray();
+        if (!empty($user_ids)){
+            $business = User::query()->whereIn('id',$user_ids)->get();
+        }
+        return View::make('crm.assignment.index',compact('business'));
     }
 
 
@@ -183,33 +190,79 @@ class AssignmentController extends Controller
     public function to(Request $request)
     {
         $ids = $request->get('ids',[]);
-        $user = User::where('id',$request->get('user_id'))->first();
-        $department_id = $request->get('department_id');
-        $user_ids = User::where('department_id',$request->department_id)->pluck('id')->toArray();
         $type = $request->get('type');
         DB::beginTransaction();
         try{
             if ($type=='user'){
-                DB::table('project')->whereIn('id',$ids)->update([
-                    'owner_user_id' => -3,
-                    'assignment_time' => date('Y-m-d H:i:s'),
-                    'department_id' => $user->department_id,
-                ]);
+                $user = User::where('id',$request->get('user_id'))->first();
+                if ($user == null){
+                    return $this->error('请选择员工');
+                }
+                $data = [
+                    'owner_user_id' => $user->id,
+                    'owner_user_nickname' => $user->nickname,
+                    'owner_department_id' => $user->department_id??0,
+                    'assignment_user_id' => $request->user()->id,
+                    'assignment_user_nickname' => $request->user()->nickname,
+                    'status' => 3,
+                    'status_time' => date('Y-m-d H:i:s'),
+                ];
             }elseif ($type=='department'){
-                DB::table('project')->whereIn('id',$ids)->update([
-                    'owner_user_id' => -2,
-                    'department_id' => $department_id,
-                    'assignment_time' => date('Y-m-d H:i:s'),
-                ]);
+                $department_id = $request->get('department_id');
+                if (!$department_id){
+                    return $this->error('请选择分配部门');
+                }
+                $data = [
+                    'owner_user_id' => 0,
+                    'owner_user_nickname' => null,
+                    'owner_department_id' => $department_id,
+                    'assignment_user_id' => $request->user()->id,
+                    'assignment_user_nickname' => $request->user()->nickname,
+                    'status' => 4,
+                    'status_time' => date('Y-m-d H:i:s'),
+                ];
+            }elseif ($type=='business'){
+                $user = User::where('id',$request->get('user_id'))->first();
+                if ($user == null){
+                    return $this->error('请选择部门经理');
+                }
+                $data = [
+                    'owner_user_id' => $user->id,
+                    'owner_user_nickname' => $user->nickname,
+                    'owner_department_id' => $user->department_id??0,
+                    'assignment_user_id' => $request->user()->id,
+                    'assignment_user_nickname' => $request->user()->nickname,
+                    'status' => 2,
+                    'status_time' => date('Y-m-d H:i:s'),
+                ];
             }
+            Customer::query()->whereIn('id',$ids)->update($data);
             DB::commit();
-
-            return Response::json(['code'=>0,'msg'=>'分配成功']);
+            return $this->success();
         }catch (\Exception $exception){
             DB::rollBack();
             Log::error('分配异常：'.$exception->getMessage());
-            return Response::json(['code'=>1,'msg'=>'分配失败']);
+            return $this->error();
         }
+    }
+
+    public function import(Request $request)
+    {
+        if ($request->ajax()){
+            $file = $request->input('upload_file');
+            if ($file == null){
+                return $this->error('请先上传文件');
+            }
+            $xlsFile = public_path().'/'.$file;
+            try{
+                Excel::import(new CustomerImport(), $xlsFile);
+                return $this->success('导入成功');
+            }catch (\Exception $exception){
+                Log::error('导入失败：'.$exception->getMessage());
+                return $this->error('导入失败');
+            }
+        }
+        return View::make('crm.assignment.import');
     }
 
 }

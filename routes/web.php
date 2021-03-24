@@ -242,7 +242,7 @@ Route::group(['prefix'=>'crm','namespace'=>'Crm','middleware'=>['auth','permissi
         //分配
         Route::post('assignment/to','AssignmentController@to')->name('crm.assignment.to')->middleware('permission:crm.assignment.to');
         //导入
-        Route::post('assignment/import','AssignmentController@import')->name('crm.assignment.import')->middleware('permission:crm.assignment.import');
+        Route::match(['get','post'],'assignment/import','AssignmentController@import')->name('crm.assignment.import')->middleware('permission:crm.assignment.import');
         //添加
         Route::get('assignment/create','AssignmentController@create')->name('crm.assignment.create')->middleware('permission:crm.assignment.create');
         Route::post('assignment/store','AssignmentController@store')->name('crm.assignment.store')->middleware('permission:crm.assignment.create');

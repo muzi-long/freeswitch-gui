@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Crm;
 
 use App\Models\Department;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\View;
@@ -27,7 +28,7 @@ class DepartmentController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->all(['name','parent_id']);
+        $data = $request->all(['name','parent_id','user_id']);
         if ($data['parent_id']){
             $parent = Department::query()->where('id',$data['parent_id'])->first();
             if ($parent == null){
@@ -36,7 +37,13 @@ class DepartmentController extends Controller
             $data['level'] = $parent->level + 1;
         }
         try{
-            Department::create($data);
+            $user = User::query()->where('id','=',$data['user_id'])->first();
+            Department::create([
+                'name' => $data['name'],
+                'parent_id' => $data['parent_id'],
+                'business_user_id' => $user->id??0,
+                'business_user_nickname' => $user->nickname??null,
+            ]);
             return $this->success();
         }catch (\Exception $exception){
             Log::error('添加部门异常：'.$exception->getMessage());
@@ -52,10 +59,15 @@ class DepartmentController extends Controller
 
     public function update(Request $request,$id)
     {
-        $data = $request->all(['name']);
+        $data = $request->all(['name','user_id']);
         $model = Department::findOrFail($id);
         try{
-            $model->update($data);
+            $user = User::query()->where('id','=',$data['user_id'])->first();
+            $model->update([
+                'name' => $data['name'],
+                'business_user_id' => $user->id??0,
+                'business_user_nickname' => $user->nickname??null,
+            ]);
             return $this->success();
         }catch (\Exception $exception){
             Log::error('更新部门异常：'.$exception->getMessage());

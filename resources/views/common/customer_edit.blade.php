@@ -3,6 +3,9 @@
 <div class="layui-row">
     <div class="layui-col-md6">
         <div class="layui-form-item">
+            <h2>基础信息</h2>
+        </div>
+        <div class="layui-form-item">
             <label for="" class="layui-form-label">客户名称</label>
             <div class="layui-input-inline" style="width: 400px">
                 <input class="layui-input" type="text" name="name" lay-verify="required" value="{{$model->name}}" placeholder="请输入客户名称">
@@ -22,6 +25,9 @@
         </div>
     </div>
     <div class="layui-col-md6">
+        <div class="layui-form-item">
+            <h2>扩展信息</h2>
+        </div>
         @foreach($fields as $d)
             <div class="layui-form-item">
                 <label for="" class="layui-form-label">{{$d->field_label}}</label>
@@ -90,7 +96,7 @@
                             <button type="button" class="layui-btn layui-btn-sm uploadPics" data-ul="ul_{{$d->field_key}}" data-input="input_{{$d->field_key}}" ><i class="layui-icon">&#xe67c;</i>多图上传</button>
                             <div class="layui-upload-list" >
                                 <ul class="layui-upload-box layui-clear" id="ul_{{$d->field_key}}">
-                                    @if(isset($data[$d->id]) && strpos($data[$d->id],','))
+                                    @if(isset($data[$d->id]))
                                         @foreach(explode(',',$data[$d->id]) as $v)
                                             <li><img src="{{ $v }}" /><p onclick="removePics(this,'ul_{{$d->field_key}}','input_{{$d->field_key}}')">删除</p></li>
                                         @endforeach

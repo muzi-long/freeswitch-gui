@@ -18,6 +18,8 @@ class Department extends Migration
             $table->string('name')->comment('部门名称');
             $table->tinyInteger('level')->default(1)->comment('部门级别,最高级从1开始');
             $table->unsignedBigInteger('parent_id')->default(0)->comment('上级部门ID');
+            $table->unsignedBigInteger('business_user_id')->default(0)->comment('部门经理用户ID');
+            $table->string('business_user_nickname')->nullable()->comment('部门经理用户昵称');
             $table->timestamps();
         });
     }

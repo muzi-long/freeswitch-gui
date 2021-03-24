@@ -13,7 +13,7 @@
                     @endcan
                     @can('crm.assignment.import')
                         <button type="button" id="import_project" class="layui-btn layui-btn-sm">导入</button>
-                        <a href="" class="layui-btn layui-btn-sm layui-btn-warm">模板下载</a>
+                        <a href="/template/import.xlsx" class="layui-btn layui-btn-sm layui-btn-warm">模板下载</a>
                     @endcan
                         <button type="button" lay-submit lay-filter="search" class="layui-btn layui-btn-sm" >搜索</button>
                 </div>
@@ -42,16 +42,29 @@
             <form class="layui-form" action="{{route("crm.assignment.to")}}">
                 <div class="layui-form-item">
                     <div class="layui-inline">
-                        <label for="" class="layui-form-label">用户：</label>
+                        <label for="" class="layui-form-label">员工：</label>
                         <div class="layui-input-block" style="width: 275px">
-                            <select name="user_id" lay-verify="required">
+                            @include('common.get_user')
+                        </div>
+                    </div>
+                    <input type="hidden" name="type" value="user">
+                    <button type="button" class="layui-btn layui-btn-sm" lay-submit lay-filter="assignment_to" >分配</button>
+                </div>
+            </form>
+            <form class="layui-form" action="{{route("crm.assignment.to")}}">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label for="" class="layui-form-label">经理：</label>
+                        <div class="layui-input-block" style="width: 275px">
+                            <select name="user_id" >
                                 <option value=""></option>
-                                @foreach($users as $d)
+                                @foreach($business as $d)
                                     <option value="{{$d->id}}">{{$d->nickname}}</option>
                                 @endforeach
                             </select>
                         </div>
                     </div>
+                    <input type="hidden" name="type" value="business">
                     <button type="button" class="layui-btn layui-btn-sm" lay-submit lay-filter="assignment_to" >分配</button>
                 </div>
             </form>
@@ -63,6 +76,7 @@
                             @include('common.get_department_by_user_id')
                         </div>
                     </div>
+                    <input type="hidden" name="type" value="department">
                     <button type="button" class="layui-btn layui-btn-sm" lay-submit lay-filter="assignment_to" >分配</button>
                 </div>
             </form>
@@ -79,25 +93,6 @@
             </script>
         </div>
     </div>
-    <script type="text/html" id="import-html">
-        <div style="padding:20px">
-            <div class="layui-form">
-                <div class="layui-form-item">
-                    <label for="" class="layui-form-label">文件</label>
-                    <div class="layui-input-block">
-                        <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" id="uploadBtn">
-                            <i class="layui-icon">&#xe67c;</i>点击选择
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <div class="layui-input-block">
-                    <button class="layui-btn layui-btn-sm" id="importBtn">确认导入</button>
-                </div>
-            </div>
-        </div>
-    </script>
 @endsection
 
 @section('script')
@@ -153,31 +148,12 @@
             //导入
             $("#import_project").click(function() {
                 layer.open({
-                    type : 1,
-                    title : '导入项目，仅允许xls、xlsx格式',
+                    type : 2,
+                    title : '导入客户，仅允许xls、xlsx格式',
                     shadeClose : true,
-                    area : ['500px','auto'],
-                    content : $("#import-html").html()
+                    area : ['600px','400px'],
+                    content : "{{route('crm.assignment.import')}}"
                 })
-                upload.render({
-                    elem: '#uploadBtn'
-                    ,url: '{{route('crm.assignment.import')}}'
-                    ,auto: false
-                    ,multiple: false
-                    ,accept: 'file'
-                    ,exts: 'xlsx|xls'
-                    ,bindAction: '#importBtn'
-                    ,done: function(res){
-                        layer.msg(res.msg,{},function() {
-                            if (res.code==0){
-                                layer.closeAll();
-                                dataTable.reload({
-                                    page:{curr:1}
-                                })
-                            }
-                        })
-                    }
-                });
             })
 
             //分配
@@ -197,7 +173,7 @@
                 layer.confirm('确认分配吗？', function (index) {
                     layer.close(index);
                     let load = layer.load();
-                    $.post(data.form.action, {ids:ids,user_id:data.field.user_id}, function (res) {
+                    $.post(data.form.action, {ids:ids,user_id:data.field.user_id,type:data.field.type,department_id:data.field.department_id}, function (res) {
                         layer.close(load);
                         let code = res.code
                         layer.msg(res.msg, {time: 2000, icon: code == 0 ? 1 : 2}, function () {

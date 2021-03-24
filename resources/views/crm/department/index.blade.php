@@ -56,6 +56,7 @@
                     cols: [[ //表头
                         {field: 'id', title: 'ID', sort: true, width: 80}
                         , {field: 'name', title: '名称'}
+                        , {field: 'business_user_nickname', title: '部门经理'}
                         , {field: 'created_at', title: '创建时间'}
                         , {field: 'updated_at', title: '更新时间'}
                         , {fixed: 'right',title:'操作', width: 260, align: 'center', toolbar: '#options'}
