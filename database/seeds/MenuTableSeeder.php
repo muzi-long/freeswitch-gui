@@ -133,12 +133,20 @@ class MenuTableSeeder extends Seeder
                         'permission_name' => 'crm.customer_field',
                     ],
                     [
-                        'name' => '分配库',
+                        'name' => '待分配库',
                         'route' => 'crm.assignment',
                         'url' => null,
                         'icon' => 'layui-icon-transfer',
                         'type' => 1,
                         'permission_name' => 'crm.assignment',
+                    ],
+                    [
+                        'name' => '经理库',
+                        'route' => 'crm.business',
+                        'url' => null,
+                        'icon' => 'layui-icon-dialogue',
+                        'type' => 1,
+                        'permission_name' => 'crm.business',
                     ],
                 ]
             ],

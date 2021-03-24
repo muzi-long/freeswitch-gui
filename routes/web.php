@@ -251,4 +251,11 @@ Route::group(['prefix'=>'crm','namespace'=>'Crm','middleware'=>['auth','permissi
         Route::put('assignment/{id}/update','AssignmentController@update')->name('crm.assignment.update')->middleware('permission:crm.assignment.edit');
     });
 
+    //经理库
+    Route::group([],function (){
+        Route::get('business','BusinessController@index')->name('crm.business')->middleware('permission:crm.business');
+        //分配
+        Route::post('business/to','BusinessController@to')->name('crm.business.to')->middleware('permission:crm.business.to');
+    });
+
 });

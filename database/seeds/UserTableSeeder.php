@@ -156,13 +156,20 @@ class UserTableSeeder extends Seeder
                     ],
                     [
                         'name' => 'crm.assignment',
-                        'display_name' => '分配库',
+                        'display_name' => '待分配库',
                         'child' => [
                             ['name' => 'crm.assignment.create', 'display_name' => '添加'],
                             ['name' => 'crm.assignment.edit', 'display_name' => '编辑'],
                             ['name' => 'crm.assignment.import', 'display_name' => '导入'],
                             ['name' => 'crm.assignment.to', 'display_name' => '分配'],
                             ['name' => 'crm.assignment.destroy', 'display_name' => '删除'],
+                        ]
+                    ],
+                    [
+                        'name' => 'crm.business',
+                        'display_name' => '经理库',
+                        'child' => [
+                            ['name' => 'crm.business.to', 'display_name' => '分配'],
                         ]
                     ],
                 ],
