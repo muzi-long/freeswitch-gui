@@ -298,3 +298,27 @@ Route::group(['prefix'=>'crm','namespace'=>'Crm','middleware'=>['auth','permissi
     });
 
 });
+
+
+/*
+|--------------------------------------------------------------------------
+| 实时聊天模块
+|--------------------------------------------------------------------------
+*/
+Route::group(['prefix'=>'chat','namespace'=>'Chat','middleware'=>['auth','permission:chat']],function (){
+
+    //消息中心
+    Route::group([],function (){
+        Route::get('message','MessageController@index')->name('chat.message')->middleware('permission:chat.message');
+        //添加
+        Route::get('message/create','MessageController@create')->name('chat.message.create')->middleware('permission:chat.message.create');
+        Route::post('message/store','MessageController@store')->name('chat.message.store')->middleware('permission:chat.message.create');
+        //详情
+        Route::get('message/{id}/show','MessageController@show')->name('chat.message.edit')->middleware('permission:chat.message.edit');
+        //已读
+        Route::post('message/read','MessageController@read')->name('chat.message.read')->middleware('permission:chat.message.read');
+        //删除
+        Route::delete('message/destroy','MessageController@destroy')->name('chat.message.destroy')->middleware('permission:chat.message.destroy');
+    });
+
+});

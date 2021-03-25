@@ -63,8 +63,9 @@ class SwooleWebsocket extends Command
 
     public function request($request, $response)
     {
-        $data = Arr::get($request->post, 'data');
-        $user_ids = Arr::get($request->post, 'user_ids',[]);
+        $parms = $request->getContent();
+        $data = Arr::get($parms, 'data');
+        $user_ids = Arr::get($parms, 'user_ids',[]);
         if ($data != null && !empty($user_ids)) {
             foreach ($this->fd as $k => $v) {
                 // 需要先判断是否是正确的websocket连接，否则有可能会push失败

@@ -208,6 +208,23 @@ class UserTableSeeder extends Seeder
                     ],
                 ],
             ],
+            [
+                'name' => 'chat',
+                'display_name' => '实时聊天',
+                'child' => [
+                    [
+                        'name' => 'chat.message',
+                        'display_name' => '消息中心',
+                        'child' => [
+                            ['name' => 'chat.message.create', 'display_name' => '发送消息'],
+                            ['name' => 'chat.message.edit', 'display_name' => '详情'],
+                            ['name' => 'chat.message.read', 'display_name' => '已读'],
+                            ['name' => 'chat.message.destroy', 'display_name' => '删除'],
+                        ]
+                    ],
+
+                ],
+            ],
         ];
         foreach ($permissions as $pem1) {
             //生成一级权限

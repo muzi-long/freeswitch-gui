@@ -174,6 +174,26 @@ class MenuTableSeeder extends Seeder
                     ],
                 ]
             ],
+            [
+                'name' => '实时聊天',
+                'route' => null,
+                'url' => null,
+                'icon' => 'layui-icon-cellphone-fine',
+                'type' => 2,
+                'sort' => 2,
+                'permission_name' => 'chat',
+                'child' => [
+                    [
+                        'name' => '消息中心',
+                        'route' => 'chat.message',
+                        'url' => null,
+                        'icon' => 'layui-icon-note',
+                        'type' => 1,
+                        'permission_name' => 'chat.message',
+                    ],
+
+                ]
+            ],
         ];
         $permissions = \App\Models\Permission::pluck('id','name')->toArray();
         foreach ($datas as $k1 => $d1){

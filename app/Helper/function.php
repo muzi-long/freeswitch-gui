@@ -1,6 +1,8 @@
 <?php
 
 
+use GuzzleHttp\Exception\GuzzleException;
+
 if (!function_exists('uuid_generate')) {
     /**
      * 生成唯一不重复的uuid
@@ -38,24 +40,38 @@ if (!function_exists('push_message')) {
     /**
      * 推送websocket消息
      * @param $data
-     * @param array $user_ids
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @param array $accept_user_ids
+     * @param int $send_user_id
+     * @return bool
+     * @throws GuzzleException
      */
-    function push_message($data, $accept_user_ids = [],$send_user_id = 0)
+    function push_message($data, $accept_user_ids = [], $send_user_id = 0)
     {
         try {
+            $users = \App\Models\User::query()->pluck('nickname', 'id')->toArray();
+            foreach ($accept_user_ids as $accept_user_id) {
+                \App\Models\Message::create([
+                    'send_user_id' => $send_user_id,
+                    'send_user_nickname' => \Illuminate\Support\Arr::get($users, $send_user_id, null),
+                    'accept_user_id' => $accept_user_id,
+                    'accept_user_nickname' => \Illuminate\Support\Arr::get($users, $accept_user_id, null),
+                    'title' => $data['title'] ?? null,
+                    'content' => $data['content'] ?? null,
+                ]);
+            }
             $client = new \GuzzleHttp\Client();
-            $client->post('http://127.0.0.1:9502',[
-                'form_params' => [
+            $client->post('http://127.0.0.1:9502', [
+                'json' => [
                     'data' => $data,
-                    'user_ids' => $user_ids,
+                    'user_ids' => $accept_user_ids,
                 ],
                 'timeout' => 5,
             ]);
-        }catch (Exception $exception){
-            \Illuminate\Support\Facades\Log::error('推送消息异常：'.$exception->getMessage());
+            return true;
+        } catch (Exception $exception) {
+            \Illuminate\Support\Facades\Log::error('推送消息异常：' . $exception->getMessage());
         }
-        return;
+        return false;
     }
 }
 
