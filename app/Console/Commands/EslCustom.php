@@ -40,7 +40,7 @@ class EslCustom extends Command
      */
     public function handle()
     {
-        \Swoole\Coroutine\run(function (){
+        \Swoole\Coroutine\run(function () {
             $fs = new SwooleFreeswitch();
             $con = $fs->connect();
             if (!$con) {
@@ -57,11 +57,11 @@ class EslCustom extends Command
                     switch ($eventname) {
                         //注册
                         case 'sofia::register':
-                            Sip::query()->where('username', $username)->update(['status' => 1]);
+                            Sip::query()->where('username', $username)->update(['status' => 1, 'state' => 'DOWN']);
                             break;
                         //注销
                         case 'sofia::unregister':
-                            Sip::query()->where('username', $username)->update(['status' => 0]);
+                            Sip::query()->where('username', $username)->update(['status' => 0, 'state' => 'DOWN']);
                             break;
                         default:
                             break;

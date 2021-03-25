@@ -34,5 +34,30 @@ if (!function_exists('recursive')) {
     }
 }
 
+if (!function_exists('push_message')) {
+    /**
+     * 推送websocket消息
+     * @param $data
+     * @param array $user_ids
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    function push_message($data, $user_ids = [])
+    {
+        try {
+            $client = new \GuzzleHttp\Client();
+            $client->post('http://127.0.0.1:9502',[
+                'form_params' => [
+                    'data' => $data,
+                    'user_ids' => $user_ids,
+                ],
+                'timeout' => 5,
+            ]);
+        }catch (Exception $exception){
+            \Illuminate\Support\Facades\Log::error('推送消息异常：'.$exception->getMessage());
+        }
+        return;
+    }
+}
+
 
 
