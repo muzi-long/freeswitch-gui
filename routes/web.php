@@ -263,6 +263,7 @@ Route::group(['prefix'=>'crm','namespace'=>'Crm','middleware'=>['auth','permissi
         Route::get('grab','GrabController@index')->name('crm.grab')->middleware('permission:crm.grab');
         //抢单
         Route::post('grab/store','GrabController@store')->name('crm.grab.store')->middleware('permission:crm.grab.store');
+        Route::delete('grab/destroy','WasteController@destroy')->name('crm.grab.destroy')->middleware('permission:crm.grab.destroy');
     });
 
     //客户管理
@@ -286,6 +287,14 @@ Route::group(['prefix'=>'crm','namespace'=>'Crm','middleware'=>['auth','permissi
         Route::post('customer/transfer','CustomerController@transfer')->name('crm.customer.transfer')->middleware('permission:crm.customer.transfer');
         //下单
         Route::post('customer/{id}/order','CustomerController@order')->name('crm.customer.order')->middleware('permission:crm.customer.order');
+    });
+
+    //公海库
+    Route::group([],function (){
+        Route::get('waste','WasteController@index')->name('crm.waste')->middleware('permission:crm.waste');
+        Route::post('waste/retrieve','WasteController@retrieve')->name('crm.waste.retrieve')->middleware('permission:crm.waste.retrieve');
+        Route::get('waste/{id}/show','WasteController@show')->name('crm.waste.show')->middleware('permission:crm.waste.show');
+        Route::delete('waste/destroy','WasteController@destroy')->name('crm.waste.destroy')->middleware('permission:crm.waste.destroy');
     });
 
 });

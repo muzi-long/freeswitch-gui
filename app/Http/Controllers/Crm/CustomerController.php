@@ -204,7 +204,7 @@ class CustomerController extends Controller
     {
         $ids = $request->input('ids');
         try {
-            Customer::query()->whereIn('id',$ids)->where('status','=',1)->delete();
+            Customer::query()->whereIn('id',$ids)->delete();
             return $this->success();
         }catch (\Exception $exception){
             Log::error('删除个人库客户异常：'.$exception->getMessage());

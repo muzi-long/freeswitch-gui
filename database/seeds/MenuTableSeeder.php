@@ -157,6 +157,14 @@ class MenuTableSeeder extends Seeder
                         'permission_name' => 'crm.grab',
                     ],
                     [
+                        'name' => '公海库',
+                        'route' => 'crm.waste',
+                        'url' => null,
+                        'icon' => 'layui-icon-404',
+                        'type' => 1,
+                        'permission_name' => 'crm.waste',
+                    ],
+                    [
                         'name' => '客户管理',
                         'route' => 'crm.customer',
                         'url' => null,

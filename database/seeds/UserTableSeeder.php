@@ -177,6 +177,16 @@ class UserTableSeeder extends Seeder
                         'display_name' => '部门抢单',
                         'child' => [
                             ['name' => 'crm.grab.store', 'display_name' => '抢单'],
+                            ['name' => 'crm.grab.destroy', 'display_name' => '删除'],
+                        ]
+                    ],
+                    [
+                        'name' => 'crm.waste',
+                        'display_name' => '公海库',
+                        'child' => [
+                            ['name' => 'crm.waste.retrieve', 'display_name' => '拾回'],
+                            ['name' => 'crm.waste.show', 'display_name' => '详情'],
+                            ['name' => 'crm.waste.destroy', 'display_name' => '删除'],
                         ]
                     ],
                     [

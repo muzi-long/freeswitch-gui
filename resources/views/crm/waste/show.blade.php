@@ -18,7 +18,7 @@
                                 </tr>
                                 <tr>
                                     <td width="80" align="right">联系电话：</td>
-                                    <td>{{$model->contact_phone}}</td>
+                                    <td>{{substr_replace($model->contact_phone,'****',3,4)}}</td>
                                     <td width="80" align="right">跟进人：</td>
                                     <td>{{$model->follow_user_nickname}}</td>
                                 </tr>
@@ -117,43 +117,7 @@
                     <div class="layui-card">
                         <div class="layui-card-header"><b>跟进记录</b></div>
                         <div class="layui-card-body">
-                            <ul class="layui-timeline" id="remark_list_box">
-
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="layui-col-xs6">
-                    <div class="layui-card">
-                        <div class="layui-card-header"><b>备注跟进</b></div>
-                        <div class="layui-card-body">
-                            <form class="layui-form" action="{{route('crm.customer.remark',['id'=>$model->id])}}" method="post">
-                                {{csrf_field()}}
-                                <div class="layui-form-item">
-                                    <label for="" class="layui-form-label">节点</label>
-                                    <div class="layui-input-block">
-                                        @include('common.get_node',['node_id'=>$model->node_id,'type'=>2])
-                                    </div>
-                                </div>
-                                <div class="layui-form-item">
-                                    <label for="" class="layui-form-label">备注内容</label>
-                                    <div class="layui-input-block">
-                                        <textarea name="content" class="layui-textarea" lay-verify="required"></textarea>
-                                    </div>
-                                    <div class="layui-word-aux layui-form-mid"></div>
-                                </div>
-                                <div class="layui-form-item">
-                                    <label for="" class="layui-form-label">下次跟进</label>
-                                    <div class="layui-input-block">
-                                        <input type="text" id="next_follow_time" name="next_follow_time" placeholder="请选择时间" lay-verify="required" readonly class="layui-input">
-                                    </div>
-                                </div>
-                                <div class="layui-form-item">
-                                    <div class="layui-input-block">
-                                        <button type="button" lay-submit lay-filter="go-close-refresh" class="layui-btn layui-btn-sm">确认</button>
-                                    </div>
-                                </div>
-                            </form>
+                            <ul class="layui-timeline" id="remark_list_box"></ul>
                         </div>
                     </div>
                 </div>
@@ -192,7 +156,6 @@
                         })
                         next(_html, page < res.data.lastPage); //假设总页数为 10
                     });
-
                 }
             });
         });

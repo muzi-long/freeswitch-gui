@@ -5,10 +5,11 @@ namespace App\Http\Controllers\Crm;
 use App\Http\Controllers\Controller;
 use App\Models\Customer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\View;
 
-class GrabController extends Controller
+class WasteController extends Controller
 {
 
     public function index(Request $request)
@@ -28,37 +29,49 @@ class GrabController extends Controller
                 ->when($data['contact_name'], function ($query) use ($data) {
                     return $query->where('contact_name', $data['contact_name'] );
                 })
-                ->where('owner_department_id','=',$request->user()->department_id)
-                ->where('status','=',4)
+                ->where('status','=',5)
                 ->orderByDesc('status_time')
                 ->paginate($request->get('limit', 30));
             return $this->success('ok',$res->items(),$res->total());
         }
-        return View::make('crm.grab.index');
+        return View::make('crm.waste.index');
     }
 
-    public function store(Request $request)
+
+    public function retrieve(Request $request)
     {
-        $customer_id = $request->input('customer_id');
+        $id = $request->get('id');
         $model = Customer::query()
-            ->where('id','=',$customer_id)
-            ->where('status','=',4)
+            ->where('status','=',5)
+            ->where('owner_user_id','=',0)
+            ->where('id','=',$id)
             ->first();
-        if ($model == null){
-            return $this->error('很遗憾已被其它用户抢得');
+        if (!$model){
+            return $this->error('拾回失败，已被其它人拾取');
         }
-        try {
+        DB::beginTransaction();
+        try{
             $model->update([
-                'owner_user_id' => $request->user()->id,
-                'owner_user_nickname' => $request->user()->nickname,
-                'status' => 3,
-                'status_time' => date('Y-m-d H:i:s'),
-            ]);
-            return $this->success('抢单成功，请在个人库里查看');
+                    'owner_user_id' => $request->user()->id,
+                    'owner_user_nickname' => $request->user()->nickname,
+                    'owner_department_id' => $request->user()->department_id,
+                    'status' => 3,
+                    'status_time' => date('Y-m-d H:i:s'),
+                ]);
+            DB::commit();
+            return $this->success('拾回成功');
         }catch (\Exception $exception){
-            Log::error('抢单异常：'.$exception->getMessage());
-            return $this->error('抢单失败');
+            DB::rollBack();
+            Log::info('拾回异常：'.$exception->getMessage());
+            return $this->error('系统异常');
         }
+    }
+
+
+    public function show(Request $request,$id)
+    {
+        $model = Customer::with('fields')->where('id','=',$id)->first();
+        return View::make('crm.waste.show',compact('model'));
     }
 
 
@@ -68,11 +81,11 @@ class GrabController extends Controller
         try {
             Customer::query()
                 ->whereIn('id',$ids)
-                ->where('status','=',4)
+                ->where('status','=',5)
                 ->delete();
             return $this->success();
         }catch (\Exception $exception){
-            Log::error('删除抢单库客户异常：'.$exception->getMessage());
+            Log::error('删除公海库客户异常：'.$exception->getMessage());
             return $this->error();
         }
     }

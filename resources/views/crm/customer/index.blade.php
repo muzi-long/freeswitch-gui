@@ -6,7 +6,7 @@
             <form class="layui-form" action="{{route("crm.customer")}}">
                 <div class="layui-btn-group">
                     @can('crm.customer.destroy')
-                        <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" id="listDelete">删除</button>
+                        <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" data-url="{{route('crm.customer.destroy')}}" id="listDelete">删除</button>
                     @endcan
                     @can('crm.customer.create')
                         <a class="layui-btn layui-btn-sm" id="addBtn">添加</a>
