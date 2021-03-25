@@ -41,7 +41,7 @@ if (!function_exists('push_message')) {
      * @param array $user_ids
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    function push_message($data, $user_ids = [])
+    function push_message($data, $accept_user_ids = [],$send_user_id = 0)
     {
         try {
             $client = new \GuzzleHttp\Client();
