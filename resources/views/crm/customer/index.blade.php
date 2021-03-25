@@ -33,6 +33,24 @@
                         </div>
                     </div>
                 </div>
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label for="" class="layui-form-label">节点进度：</label>
+                        <div class="layui-input-block" style="width: 275px">
+                            @include('common.get_node',['type'=>2,'node_id'=>0])
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label for="" class="layui-form-label">跟进时间：</label>
+                        <div class="layui-input-inline" style="width: 140px">
+                            <input type="text" id="follow_time_start" name="follow_time_start" placeholder="请选择开始时间" class="layui-input" readonly >
+                        </div>
+                        <div class="layui-form-mid layui-word-aux">-</div>
+                        <div class="layui-input-inline" style="width: 140px">
+                            <input type="text" id="follow_time_end" name="follow_time_end" placeholder="请选择结束时间" class="layui-input" readonly >
+                        </div>
+                    </div>
+                </div>
             </form>
             @can('crm.customer.transfer')
             <form class="layui-form" action="{{route("crm.customer.transfer")}}">
@@ -52,8 +70,17 @@
             <table id="dataTable" lay-filter="dataTable"></table>
             <script type="text/html" id="options">
                 <div class="layui-btn-group">
+                    @can('crm.customer.show')
+                        <a class="layui-btn layui-btn-sm" lay-event="show">详情</a>
+                    @endcan
                     @can('crm.customer.edit')
                         <a class="layui-btn layui-btn-sm" lay-event="edit">编辑</a>
+                    @endcan
+                    @can('crm.customer.remark')
+                        <a class="layui-btn layui-btn-sm" lay-event="remark">跟进</a>
+                    @endcan
+                    @can('crm.customer.remove')
+                        <a class="layui-btn layui-btn-sm" lay-event="remove">剔除</a>
                     @endcan
                 </div>
             </script>
@@ -82,7 +109,10 @@
                     ,{field: 'name', title: '客户名称'}
                     ,{field: 'contact_name', title: '联系人'}
                     ,{field: 'contact_phone', title: '联系电话'}
-                    ,{field: 'created_at', title: '录入时间'}
+                    ,{field: 'node_name', title: '当前进度'}
+                    ,{field: 'follow_time', title: '跟进时间'}
+                    ,{field: 'follow_user_nickname', title: '跟进人'}
+                    ,{field: 'remark', title: '跟进备注'}
                     ,{fixed: 'right', width: 250, align:'center', toolbar: '#options', title:'操作'}
                 ]]
             });
@@ -99,6 +129,37 @@
                         area: ["90%","90%"],
                         content: '/crm/customer/'+data.id+'/edit',
                     })
+                } else if (layEvent === 'show'){
+                    layer.open({
+                        type: 2,
+                        title: "详情",
+                        shadeClose: true,
+                        area: ["90%","90%"],
+                        content: '/crm/customer/'+data.id+'/show',
+                    })
+                } else if (layEvent === 'remark'){
+                    layer.open({
+                        type: 2,
+                        title: "备注",
+                        shadeClose: true,
+                        area: ["600px","600px"],
+                        content: '/crm/customer/'+data.id+'/remark',
+                    })
+                } else if (layEvent === 'remove'){
+                    layer.confirm('剔除后客户将进入公海库，所有人可拾回。确认剔除吗？', function(index){
+                        layer.close(index);
+                        var load = layer.load();
+                        $.post("{{ route('crm.customer.remove') }}",{customer_ids:[data.id]},function (res) {
+                            layer.close(load);
+                            if (res.code == 0) {
+                                layer.msg(res.msg, {icon: 1}, function () {
+                                    obj.del();
+                                })
+                            } else {
+                                layer.msg(res.msg, {icon: 2})
+                            }
+                        });
+                    });
                 }
             });
             $("#addBtn").click(function () {
@@ -144,6 +205,8 @@
             })
 
 
+            laydate.render({elem: '#follow_time_start', type: 'datetime'})
+            laydate.render({elem: '#follow_time_end', type: 'datetime'})
         })
     </script>
 @endsection

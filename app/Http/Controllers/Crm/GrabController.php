@@ -28,7 +28,7 @@ class GrabController extends Controller
                 ->when($data['contact_name'], function ($query) use ($data) {
                     return $query->where('contact_name', $data['contact_name'] );
                 })
-                ->where('department_id','=',$request->user()->department_id)
+                ->where('owner_department_id','=',$request->user()->department_id)
                 ->where('status','=',4)
                 ->orderByDesc('status_time')
                 ->paginate($request->get('limit', 30));

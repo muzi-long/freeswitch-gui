@@ -21,15 +21,71 @@ class CustomerController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()){
-
+            $data = $request->all([
+                'name',
+                'contact_name',
+                'contact_phone',
+                'node_id',
+                'follow_time_start',
+                'follow_time_end',
+                'follow_user_id',
+            ]);
+            $user = $request->user();
+            $res = Customer::query()
+                ->where(function ($query) use($user){
+                    if ($user->hasPermissionTo('crm.customer.list_all')) {
+                        return $query->where('owner_user_id','>',0);
+                    }elseif ($user->hasPermissionTo('crm.customer.list_department')) {
+                        return $query->where('owner_department_id','=',$user->department_id);
+                    }else{
+                        return $query->where('owner_user_id',$user->id);
+                    }
+                })
+                ->where('status','=',3)
+                //客户名称
+                ->when($data['name'], function ($query) use ($data) {
+                    return $query->where('name', $data['name']);
+                })
+                //联系电话
+                ->when($data['contact_phone'], function ($query) use ($data) {
+                    return $query->where('contact_phone', $data['contact_phone']);
+                })
+                //联系人
+                ->when($data['contact_name'], function ($query) use ($data) {
+                    return $query->where('contact_name', $data['contact_name'] );
+                })
+                //节点
+                ->when($data['node_id'],function ($query) use($data){
+                    return $query->where('node_id',$data['node_id']);
+                })
+                //跟进时间
+                ->when($data['follow_time_start']&&!$data['follow_time_end'],function ($query) use($data){
+                    return $query->where('follow_time','>=',$data['follow_time_start']);
+                })
+                ->when(!$data['follow_time_start']&&$data['follow_time_end'],function ($query) use($data){
+                    return $query->where('follow_time','<=',$data['follow_time_end']);
+                })
+                ->when($data['follow_time_start']&&$data['follow_time_end'],function ($query) use($data){
+                    return $query->whereBetween('follow_time',[$data['follow_time_start'],$data['follow_time_end']]);
+                })
+                //跟进人
+                ->when($data['follow_user_id'],function ($query) use($data){
+                    return $query->where('follow_user_id',$data['follow_user_id']);
+                })
+                ->orderBy('is_end','asc')
+                ->orderBy('status_time','desc')
+                ->paginate($request->get('limit', 30));
+            return $this->success('ok',$res->items(),$res->total());
         }
         return View::make('crm.customer.index');
     }
+
 
     public function create()
     {
         return View::make('crm.customer.create');
     }
+
 
     public function store(Request $request)
     {
@@ -87,6 +143,7 @@ class CustomerController extends Controller
             return $this->error();
         }
     }
+
 
     public function edit($id)
     {
@@ -210,7 +267,7 @@ class CustomerController extends Controller
             $data = $request->all(['node_id','content','next_follow_time']);
             $old_node_id = $customer->node_id;
             $old_node_name = null;
-            $new_node_id = $data['node_id'];
+            $new_node_id = $data['node_id']??0;
             $new_node_name = null;
             foreach ($nodes as $node){
                 if ($node->id == $old_node_id){
@@ -223,11 +280,13 @@ class CustomerController extends Controller
             DB::beginTransaction();
             try {
                 $customer->update([
+                    'follow_time' => date('Y-m-d H:i:s'),
                     'node_id' => $new_node_id,
                     'node_name' => $new_node_name,
                     'follow_user_id' => $request->user()->id,
                     'follow_user_nickname' => $request->user()->nickname,
                     'next_follow_time' => $data['next_follow_time'],
+                    'remark' => $data['content'],
                 ]);
                 CustomerRemark::create([
                     'customer_id' => $customer->id,
@@ -251,5 +310,14 @@ class CustomerController extends Controller
         }
         return View::make('crm.customer.remark',compact('customer','nodes'));
     }
+
+
+    public function show(Request $request,$id)
+    {
+        $model = Customer::with('fields')->where('id','=',$id)->first();
+        return View::make('crm.customer.show',compact('model'));
+    }
+
+
 
 }

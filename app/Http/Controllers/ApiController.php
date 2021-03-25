@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cdr;
+use App\Models\CustomerRemark;
 use App\Models\Department;
+use App\Models\Node;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
@@ -74,6 +76,30 @@ class ApiController extends Controller
         return $this->success('ok',$users);
     }
 
+    public function getNode(Request $request)
+    {
+        $node_id = $request->input('node_id');
+        $type = $request->input('type');
+        $nodes = Node::query()
+            ->whereIn('type',[1,$type])
+            ->orderBy('sort','asc')
+            ->orderBy('id','asc')
+            ->get();
+        foreach ($nodes as $node){
+            $node->selected = $node_id == $node->id;
+        }
+        return $this->success('ok',$nodes);
+    }
+
+
+    public function remarkList(Request $request)
+    {
+        $id = $request->input('customer_id');
+        $res = CustomerRemark::query()->where('customer_id','=',$id)->orderByDesc('id')->paginate($request->get('limit', 2));;
+        return $this->success('ok',['list'=>$res->items(),'lastPage'=>$res->lastPage()]);
+    }
+
+
     /**
      * 呼叫接口
      * @param Request $request
@@ -81,7 +107,6 @@ class ApiController extends Controller
      */
     public function call(Request $request)
     {
-
         $user_id = $request->input('user_id');
         $callee = $request->input('callee');
         $user_data = $request->input('user_data');
