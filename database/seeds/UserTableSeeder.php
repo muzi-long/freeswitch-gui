@@ -217,7 +217,7 @@ class UserTableSeeder extends Seeder
                         'display_name' => '消息中心',
                         'child' => [
                             ['name' => 'chat.message.create', 'display_name' => '发送消息'],
-                            ['name' => 'chat.message.edit', 'display_name' => '详情'],
+                            ['name' => 'chat.message.show', 'display_name' => '详情'],
                             ['name' => 'chat.message.read', 'display_name' => '已读'],
                             ['name' => 'chat.message.destroy', 'display_name' => '删除'],
                         ]

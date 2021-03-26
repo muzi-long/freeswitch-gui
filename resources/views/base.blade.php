@@ -55,7 +55,7 @@
             $.post(data.form.action, data.field, function (res) {
                 layer.close(load);
                 var code = res.code
-                layer.msg(res.msg, {time: 2000, icon: code == 0 ? 1 : 2}, function () {
+                layer.msg(res.msg, {time: 2000, icon: code === 0 ? 1 : 2}, function () {
                     if (code === 0) {
                         layui.table.reload('dataTable');
                     }
@@ -69,7 +69,7 @@
             $.post(data.form.action, data.field, function (res) {
                 layer.close(load);
                 var code = res.code
-                layer.msg(res.msg, {time: 2000, icon: code == 0 ? 1 : 2}, function () {
+                layer.msg(res.msg, {time: 2000, icon: code === 0 ? 1 : 2}, function () {
                     if (code === 0) {
                         parent.layer.close(parent.layer.getFrameIndex(window.name));
                     }
@@ -82,7 +82,7 @@
             $.post(data.form.action, data.field, function (res) {
                 layer.close(load);
                 var code = res.code
-                layer.msg(res.msg, {time: 2000, icon: code == 0 ? 1 : 2}, function () {
+                layer.msg(res.msg, {time: 2000, icon: code === 0 ? 1 : 2}, function () {
                     if (code === 0) {
                         parent.layui.table.reload('dataTable');
                         parent.layer.close(parent.layer.getFrameIndex(window.name));
@@ -124,8 +124,8 @@
                 var load = layer.load()
                 $.post(url,{_method:'delete',ids:[obj.data.id]},function (res) {
                     layer.close(load);
-                    layer.msg(res.msg,{time:1500,icon:res.code==0?1:2},function () {
-                        if (res.code==0){
+                    layer.msg(res.msg,{time:1500,icon:res.code===0?1:2},function () {
+                        if (res.code===0){
                             obj.del();
                         }
                     })
@@ -152,7 +152,7 @@
                         ids: ids
                     }, function (res) {
                         layer.close(load);
-                        if (res.code == 0) {
+                        if (res.code === 0) {
                             layer.msg(res.msg, {icon: 1}, function () {
                                 table.reload('dataTable');
                             })

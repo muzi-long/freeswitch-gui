@@ -5,30 +5,17 @@
         <div class="layui-card-body">
             <div class="layui-fluid" id="LAY-app-message-detail">
                 <div class="layui-card layuiAdmin-msg-detail">
-                    <script type="text/html" template lay-url="{{ layui.setter.base }}json/message/detail.js?id={{ layui.router().search.id }}">
-                        <div class="layui-card-header">
-                            <h1>{{ d.data.title }}</h1>
-                            <p>
-                                <span>{{ layui.util.timeAgo(d.data.time) }}</span>
-                            </p>
+                    <div class="layui-card-header">
+                        <h1>{{$model->title}}</h1>
+                        <p>
+                            {{ $model->created_at }}
+                        </p>
+                    </div>
+                    <div class="layui-card-body layui-text">
+                        <div class="layadmin-text">
+                            {{ $model->content }}
                         </div>
-                        <div class="layui-card-body layui-text">
-                            <div class="layadmin-text">
-                                {{ d.data.content }}
-                                <blockquote class="layui-elem-quote">
-                                    注：这里读取的是静态的模拟接口，实际应用时，您可以在该页面源代码中，修改成以下任意一种方式
-                                    <ul>
-                                        <li>将 <em>lay-url=""</em> 改成你的真实接口，系统会自动识别该动态模板，直接前端渲染。</li>
-                                        <li>剔除 script 动态模板标签，改成服务端渲染。</li>
-                                    </ul>
-                                </blockquote>
-                            </div>
-
-                            <div style="padding-top: 30px;">
-                                <a href="javascript:;" layadmin-event="back" class="layui-btn layui-btn-primary layui-btn-sm">返回上级</a>
-                            </div>
-                        </div>
-                    </script>
+                    </div>
                 </div>
             </div>
         </div>

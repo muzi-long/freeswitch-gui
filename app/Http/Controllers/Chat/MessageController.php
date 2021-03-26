@@ -62,11 +62,16 @@ class MessageController extends Controller
     public function read(Request $request)
     {
         $ids = $request->input('ids');
-        if (empty($ids)){
+        $type = $request->input('type');
+        if ($type !== 'all' && empty($ids)){
             return $this->error('请选择操作项');
         }
         try {
-            Message::query()->whereIn('id',$ids)->update(['read'=>1]);
+            if ($type == 'all'){
+                Message::query()->where('accept_user_id',$request->user()->id)->update(['read'=>1]);
+            }else{
+                Message::query()->whereIn('id',$ids)->where('accept_user_id',$request->user()->id)->update(['read'=>1]);
+            }
             return $this->success();
         }catch (\Exception $exception){
             Log::error('标记为已读操作异常：'.$exception->getMessage());
@@ -78,6 +83,7 @@ class MessageController extends Controller
     public function show(Request $request,$id)
     {
         $model = Message::query()->where('id',$id)->first();
+        $model->update(['read'=>1]);
         return View::make('chat.message.show',compact('model'));
     }
 

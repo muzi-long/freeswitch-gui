@@ -314,7 +314,7 @@ Route::group(['prefix'=>'chat','namespace'=>'Chat','middleware'=>['auth','permis
         Route::get('message/create','MessageController@create')->name('chat.message.create')->middleware('permission:chat.message.create');
         Route::post('message/store','MessageController@store')->name('chat.message.store')->middleware('permission:chat.message.create');
         //详情
-        Route::get('message/{id}/show','MessageController@show')->name('chat.message.edit')->middleware('permission:chat.message.edit');
+        Route::get('message/{id}/show','MessageController@show')->name('chat.message.show')->middleware('permission:chat.message.show');
         //已读
         Route::post('message/read','MessageController@read')->name('chat.message.read')->middleware('permission:chat.message.read');
         //删除
