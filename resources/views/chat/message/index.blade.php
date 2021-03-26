@@ -2,39 +2,27 @@
 
 @section('content')
     <div class="layui-card">
-        <div class="layui-card-body">
-            <div class="layui-tab layui-tab-brief">
-                <ul class="layui-tab-title">
-                    <li class="layui-this">全部消息</li>
-                    <li>通知<span class="layui-badge">6</span></li>
-                    <li>私信</li>
-                </ul>
-                <div class="layui-tab-content">
-                    <div class="layui-tab-item layui-show">
-                        <div class="LAY-app-message-btns" style="margin-bottom: 10px;">
-                            <button class="layui-btn layui-btn-primary layui-btn-sm" data-type="all" data-events="del">删除</button>
-                            <button class="layui-btn layui-btn-primary layui-btn-sm" data-type="all" data-events="ready">标记已读</button>
-                            <button class="layui-btn layui-btn-primary layui-btn-sm" data-type="all" data-events="readyAll">全部已读</button>
-                        </div>
-                        <table id="LAY-app-message-all" lay-filter="LAY-app-message-all"></table>
-                    </div>
-                    <div class="layui-tab-item">
-                        <div class="LAY-app-message-btns" style="margin-bottom: 10px;">
-                            <button class="layui-btn layui-btn-primary layui-btn-sm" data-type="notice" data-events="del">删除</button>
-                            <button class="layui-btn layui-btn-primary layui-btn-sm" data-type="notice" data-events="ready">标记已读</button>
-                            <button class="layui-btn layui-btn-primary layui-btn-sm" data-type="notice" data-events="readyAll">全部已读</button>
-                        </div>
-                        <table id="LAY-app-message-notice" lay-filter="LAY-app-message-notice"></table>
-                    </div>
-                    <div class="layui-tab-item">
-                        <div class="LAY-app-message-btns" style="margin-bottom: 10px;">
-                            <button class="layui-btn layui-btn-primary layui-btn-sm" data-type="direct" data-events="del">删除</button>
-                            <button class="layui-btn layui-btn-primary layui-btn-sm" data-type="direct" data-events="ready">标记已读</button>
-                            <button class="layui-btn layui-btn-primary layui-btn-sm" data-type="direct" data-events="readyAll">全部已读</button>
-                        </div>
-                        <table id="LAY-app-message-direct" lay-filter="LAY-app-message-direct"></table>
-                    </div>
+        <div class="layui-card-header layuiadmin-card-header-auto">
+            <form class="layui-form">
+                <div class="layui-btn-group">
+                    @can('chat.message.destroy')
+                        <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" id="listDelete" data-url="{{ route('chat.message.destroy') }}">删除</button>
+                    @endcan
+                    @can('chat.message.create')
+                        <a class="layui-btn layui-btn-sm" id="addBtn" >发送消息</a>
+                    @endcan
+                    @can('chat.message.read')
+                        <a class="layui-btn layui-btn-sm" id="addBtn" >标记已读</a>
+                    @endcan
+                    @can('chat.message.read')
+                        <a class="layui-btn layui-btn-sm" id="addBtn" >全部已读</a>
+                    @endcan
                 </div>
+            </form>
+        </div>
+        <div class="layui-card">
+            <div class="layui-card-body">
+                <table id="dataTable" lay-filter="dataTable"></table>
             </div>
         </div>
     </div>
@@ -51,71 +39,59 @@
             var layer = layui.layer;
             var form = layui.form;
             var table = layui.table;
-            var treetable = layui.treetable;
-            // 渲染表格
-            var dataTable = function () {
-                treetable.render({
-                    treeColIndex: 1,          // treetable新增参数
-                    treeSpid: 0,             // treetable新增参数
-                    treeIdName: 'id',       // treetable新增参数
-                    treePidName: 'parent_id',     // treetable新增参数
-                    treeDefaultClose: false,   // treetable新增参数
-                    treeLinkage: false,        // treetable新增参数
-                    elem: '#dataTable',
-                    url: "{{ route('crm.department') }}",
-                    cols: [[ //表头
-                        {field: 'id', title: 'ID', sort: true, width: 80}
-                        , {field: 'name', title: '名称'}
-                        , {field: 'business_user_nickname', title: '部门经理'}
-                        , {field: 'created_at', title: '创建时间'}
-                        , {field: 'updated_at', title: '更新时间'}
-                        , {fixed: 'right',title:'操作', width: 260, align: 'center', toolbar: '#options'}
-                    ]]
-                });
-            }
-            dataTable(); //调用此函数可重新渲染表格
+            //用户表格初始化
+            var dataTable = table.render({
+                elem: '#dataTable'
+                ,height: 'full-200'
+                ,url: "{{ route('chat.message') }}" //数据接口
+                ,page: true //开启分页
+                ,cols: [[ //表头
+                    {checkbox: true}
+                    ,{field: 'read', title: '状态',width:80,templet:function (d) {
+                            return d.read==0?'<span class="layui-badge layui-bg-black">未读</span>':'<span class="layui-badge layui-bg-gray">已读</span>'
+                        }}
+                    ,{field: 'title', title: '标题',width:200}
+                    ,{field: 'content', title: '内容',width:700}
+                    ,{field: 'send_user_nickname', title: '发送人',templet:function (d) {
+                            return d.send_user_id == 0 ? '系统' : d.send_user_nickname;
+                        }}
+                    ,{field: 'accept_user_nickname', title: '接收人'}
+                    ,{field: 'created_at', title: '发送时间'}
+                ]]
+                ,done: function (res, curr, count) {
+                    trNum = count;
+                    for(var i = 0;i<res.data.length;i++){
+                        var state = res.data[i].checkStatus;
+                        if(res.data[i].read == 1){
+                            var index = res.data[i]['LAY_TABLE_INDEX'];
+                            $(".layui-table tr[data-index="+index+"] input[type='checkbox']").prop('disabled',true);
+                            $(".layui-table tr[data-index="+index+"] input[type='checkbox']").next().addClass('layui-btn-disabled');
+
+
+                            //$(".layui-table tr[data-index="+index+"] td:first-child").html('');
+                            //$(".layui-table tr[data-index="+index+"] input[type='checkbox']").remove();
+                        }
+                    }
+                }
+            });
 
             //监听工具条
             table.on('tool(dataTable)', function(obj){ //注：tool是工具条事件名，dataTable是table原始容器的属性 lay-filter="对应的值"
                 var data = obj.data //获得当前行数据
                     ,layEvent = obj.event; //获得 lay-event 对应的值
-                if(layEvent === 'del'){
-                    deleteData(obj,"{{ route('crm.department.destroy') }}");
-                } else if(layEvent === 'edit'){
-                    layer.open({
-                        type: 2,
-                        title: "编辑",
-                        shadeClose: true,
-                        area: ["600px","400px"],
-                        content: '/crm/department/'+data.id+'/edit',
-                        end: function () {
-                            dataTable();
-                        }
-                    })
-                } else if(layEvent === 'create'){
-                    layer.open({
-                        type: 2,
-                        title: "添加子部门",
-                        shadeClose: true,
-                        area: ["600px","400px"],
-                        content: '/crm/department/create?parent_id=' + data.id,
-                        end: function () {
-                            dataTable();
-                        }
-                    })
+                if(layEvent === 'show'){
+
                 }
             });
+
 
             $("#addBtn").click(function () {
                 layer.open({
                     type: 2,
-                    title: "添加",
+                    title: "发送消息",
                     shadeClose: true,
                     area: ["600px","400px"],
-                    content: "{{route("crm.department.create")}}",
-                    end: function () {
-                        dataTable();
-                    }
+                    content: "{{route("chat.message.create")}}",
                 })
             })
 

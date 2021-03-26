@@ -50,6 +50,7 @@ class UserController extends Controller
     {
         $data = $request->all(['phone','name','password','nickname','role_ids','sip_id','department_id']);
         $data['role_ids'] = $data['role_ids'] == null ? [] : explode(',',$data['role_ids']);
+        $data['password'] = bcrypt($data['password']);
         $count = User::query()->where('name','=',$data['name'])->count();
         if ($count){
             return $this->error('帐号已存在');

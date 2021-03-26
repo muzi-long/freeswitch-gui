@@ -22,11 +22,13 @@
     layui.config({
         base: '/layuiadmin/' //静态资源所在路径
     }).extend({
-        index: 'lib/index' //主入口模块
+        index: 'lib/index', //主入口模块
     }).use(['element', 'form', 'layer', 'table', 'upload', 'laydate', 'jquery'], function () {
         var $ = layui.jquery;
         var form = layui.form;
         var table = layui.table;
+
+
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -163,6 +165,9 @@
                 layer.msg('请选择删除项', {icon: 2})
             }
         })
+
+
+
 
     });
 </script>

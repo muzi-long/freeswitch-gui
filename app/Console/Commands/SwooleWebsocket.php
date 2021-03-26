@@ -54,29 +54,38 @@ class SwooleWebsocket extends Command
     {
         $user_id = Arr::get($request->get,'user_id');
         $this->fd[$request->fd] = $user_id;
+        $server->push($request->fd,json_encode(['scene'=>'init','data'=>'websocket已连接'],JSON_UNESCAPED_UNICODE));
     }
 
     public function message($server, $request)
     {
-        $server->push($request->fd,$request->data);
+        $server->push($request->fd,json_encode(['scene'=>'heartbeat','data'=>'keep alive '.date('Y-m-d H:i:s')],JSON_UNESCAPED_UNICODE));
     }
 
     public function request($request, $response)
     {
-        $parms = $request->getContent();
-        $data = Arr::get($parms, 'data');
-        $user_ids = Arr::get($parms, 'user_ids',[]);
-        if ($data != null && !empty($user_ids)) {
-            foreach ($this->fd as $k => $v) {
-                // 需要先判断是否是正确的websocket连接，否则有可能会push失败
-                if ($this->ws->isEstablished($k)) {
-                    if (in_array($v,$user_ids)){
-                        $this->ws->push($k, $data);
+        $parms = json_decode($request->getContent(),true);
+        if ($parms){
+            $scene = Arr::get($parms, 'scene');
+            $data = Arr::get($parms, 'data');
+            $user_ids = Arr::get($parms, 'user_ids',[]);
+            $payload = json_encode([
+                'scene' => $scene,
+                'data' => $data,
+            ]);
+            if ($data != null && !empty($user_ids)) {
+                foreach ($this->fd as $k => $v) {
+                    // 需要先判断是否是正确的websocket连接，否则有可能会push失败
+                    if ($this->ws->isEstablished($k)) {
+                        if (in_array($v,$user_ids)){
+                            $this->ws->push($k, $payload);
+                        }
                     }
                 }
             }
+            $response->end("");
         }
-        $response->end("");
+
     }
 
     public function close($server, $fd)

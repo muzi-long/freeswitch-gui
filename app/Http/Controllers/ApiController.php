@@ -37,7 +37,6 @@ class ApiController extends Controller
 
     public function getRoleByUserId(Request $request)
     {
-        $data = [];
         $user_id = $request->input('user_id');
         $user = null;
         if ($user_id) {
@@ -47,12 +46,11 @@ class ApiController extends Controller
         foreach ($roles as $role) {
             $role->selected = $user != null && $user->hasRole($role);
         }
-        return $this->success('ok', $data);
+        return $this->success('ok', $roles);
     }
 
     public function getDepartmentByUserId(Request $request)
     {
-        $data = [];
         $user_id = $request->input('user_id');
         $user = null;
         if ($user_id) {

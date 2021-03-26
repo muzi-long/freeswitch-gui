@@ -8,7 +8,7 @@
         // 一般来说，权限数据是异步传递过来的
         $.ajax({
             method: 'post',
-            url: '{{route('api.getRoleByUserId',['user_id'=>$user_id??null])}}',
+            url: '{{route('api.getRoleByUserId',['user_id'=>$user_id??0])}}',
             dataType: 'json',
             success: function (res) {
                 var demo1 = xmSelect.render({

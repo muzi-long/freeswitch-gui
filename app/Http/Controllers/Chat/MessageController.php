@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Chat;
 
 use App\Http\Controllers\Controller;
 use App\Models\Message;
+use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\View;
@@ -38,12 +39,23 @@ class MessageController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->all(['title','content','accept_user_ids']);
-        $res = push_message(['title'=>$data['title'],'content'=>$data['content']],$data['accept_user_ids'],$request->user()->id);
+        $data = $request->all(['title','content','user_id']);
+        try {
+            $res = push_message('msg',
+                [
+                    'title' => $data['title'],
+                    'content' => $data['content'],
+                ],
+                [$data['user_id']],
+                $request->user()->id
+            );
+        } catch (GuzzleException $e) {
+            $res = false;
+        }
         if ($res){
             return $this->success();
         }
-        return $this->success();
+        return $this->error();
     }
 
 

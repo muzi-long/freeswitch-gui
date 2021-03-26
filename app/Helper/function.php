@@ -38,14 +38,14 @@ if (!function_exists('recursive')) {
 
 if (!function_exists('push_message')) {
     /**
-     * 推送websocket消息
+     * @param $scene
      * @param $data
      * @param array $accept_user_ids
      * @param int $send_user_id
      * @return bool
      * @throws GuzzleException
      */
-    function push_message($data, $accept_user_ids = [], $send_user_id = 0)
+    function push_message($scene,$data, $accept_user_ids = [], $send_user_id = 0)
     {
         try {
             $users = \App\Models\User::query()->pluck('nickname', 'id')->toArray();
@@ -62,7 +62,8 @@ if (!function_exists('push_message')) {
             $client = new \GuzzleHttp\Client();
             $client->post('http://127.0.0.1:9502', [
                 'json' => [
-                    'data' => $data,
+                    'scene' => $scene,
+                    'data' => $data['title']??null,
                     'user_ids' => $accept_user_ids,
                 ],
                 'timeout' => 5,

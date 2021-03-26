@@ -220,10 +220,27 @@
     layui.config({
         base: '/layuiadmin/' //静态资源所在路径
     }).extend({
-        index: 'lib/index' //主入口模块
-    }).use(['index', 'layer', 'jquery'], function () {
+        index: 'lib/index',
+        notice: 'notice/notice',
+    }).use(['index', 'layer', 'jquery','notice'], function () {
         var layer = layui.layer;
         var $ = layui.jquery;
+        var notice = layui.notice;
+        // 初始化配置，同一样式只需要配置一次，非必须初始化，有默认配置
+        notice.options = {
+            closeButton:true,//显示关闭按钮
+            debug:false,//启用debug
+            positionClass:"toast-bottom-right",//弹出的位置,
+            showDuration:"300",//显示的时间
+            hideDuration:"1000",//消失的时间
+            timeOut:"5000",//停留的时间
+            extendedTimeOut:"1000",//控制时间
+            showEasing:"swing",//显示时的动画缓冲方式
+            hideEasing:"linear",//消失时的动画缓冲方式
+            iconClass: 'toast-info', // 自定义图标，有内置，如不需要则传空 支持layui内置图标/自定义iconfont类名
+            onclick: null, // 点击关闭回调
+        };
+
         $(".change-password").on("click", function () {
             layer.open({
                 type: 2,
@@ -321,6 +338,37 @@
                 userAgent.unregister()
             }
         })
+
+
+        const ws = new WebSocket("ws://127.0.0.1:9502?user_id={{auth()->user()->id}}")
+        var ticker
+        ws.onopen = function () {
+            ticker = setInterval(function () {
+                ws.send('{"scene":"heartbeat","data":""}')
+            },30000)
+        }
+        ws.onmessage = function (e) {
+            console.log("收到服务端消息：" + e.data)
+            let data = JSON.parse(e.data);
+            if (data.scene != undefined){
+                switch (data.scene) {
+                    case 'heartbeat':
+                        console.log(data.data)
+                        break;
+                    case 'msg':
+                        notice.info(data.data)
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+        ws.onclose = function (e) {
+            console.log("websocket已断开")
+            if(ticker){
+                clearInterval(ticker)
+            }
+        }
 
     });
 </script>
