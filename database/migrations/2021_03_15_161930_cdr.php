@@ -18,7 +18,7 @@ class Cdr extends Migration
             $table->string('uuid')->comment('通话记录唯一ID');
             $table->string('aleg_uuid')->nullable()->comment('主叫ID');
             $table->string('bleg_uuid')->nullable()->comment('被叫ID');
-            $table->unsignedBigInteger('department_id')->default(0)->comment('部门ID');
+            $table->unsignedBigInteger('department_id')->default(0)->nullable()->comment('部门ID');
             $table->unsignedBigInteger('user_id')->default(0)->comment('用户ID');
             $table->unsignedBigInteger('sip_id')->default(0)->comment('分机ID');
             $table->string('department_name')->nullable()->comment('部门名称-冗余字段');

@@ -1,4 +1,4 @@
-﻿/** layuiAdmin.std-v1.0.0 LPPL License By http://www.layui.com/admin/ */
+/** layuiAdmin.std-v1.0.0 LPPL License By http://www.layui.com/admin/ */
 html #layuicss-layuiAdmin {
     display: none;
     position: absolute;
@@ -1417,3 +1417,4 @@ body,html{
 .layui-card-header{
     font-size: 12px;
 }
+

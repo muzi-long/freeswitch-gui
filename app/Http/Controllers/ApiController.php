@@ -8,6 +8,7 @@ use App\Models\Department;
 use App\Models\Node;
 use App\Models\Permission;
 use App\Models\Role;
+use App\Models\Sip;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -139,8 +140,7 @@ class ApiController extends Controller
             return $this->error('呼叫失败');
         }
     }
-
-
+    
     //文件上传
     public function upload(Request $request)
     {

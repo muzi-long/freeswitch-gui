@@ -166,9 +166,7 @@
             }
         })
 
-
-
-
+        
     });
 </script>
 @yield('script')
