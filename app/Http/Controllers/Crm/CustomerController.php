@@ -83,7 +83,11 @@ class CustomerController extends Controller
 
     public function create()
     {
-        return View::make('crm.customer.create');
+        $fields = CustomerField::query()
+            ->where('visiable',1)
+            ->orderBy('sort','asc')
+            ->get();
+        return View::make('crm.customer.create',compact('fields'));
     }
 
 
@@ -317,7 +321,6 @@ class CustomerController extends Controller
         $model = Customer::with('fields')->where('id','=',$id)->first();
         return View::make('crm.customer.show',compact('model'));
     }
-
 
 
 }

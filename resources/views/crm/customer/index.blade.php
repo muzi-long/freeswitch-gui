@@ -82,6 +82,9 @@
                     @can('crm.customer.remove')
                         <a class="layui-btn layui-btn-sm" lay-event="remove">剔除</a>
                     @endcan
+                    @can('order.order.create')
+                        <a class="layui-btn layui-btn-sm" lay-event="order">下单</a>
+                    @endcan
                 </div>
             </script>
         </div>
@@ -113,6 +116,9 @@
                     ,{field: 'follow_time', title: '跟进时间'}
                     ,{field: 'follow_user_nickname', title: '跟进人'}
                     ,{field: 'remark', title: '跟进备注'}
+                    ,{field: 'is_end', title: '是否成单',templet:function (d) {
+                            return d.is_end!=1?'<span class="layui-badge layui-bg-gray">跟进中</span>':'<span class="layui-badge layui-bg-green">已成单</span>';
+                        }}
                     ,{fixed: 'right', width: 250, align:'center', toolbar: '#options', title:'操作'}
                 ]]
             });
@@ -160,6 +166,14 @@
                             }
                         });
                     });
+                } else if (layEvent === 'order'){
+                    layer.open({
+                        type: 2,
+                        title: "下单",
+                        shadeClose: true,
+                        area: ["800px","600px"],
+                        content: '/order/order/create?customer_id='+data.id,
+                    })
                 }
             });
             $("#addBtn").click(function () {

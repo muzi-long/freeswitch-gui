@@ -14,6 +14,17 @@ if (!function_exists('uuid_generate')) {
     }
 }
 
+if (!function_exists('create_order_num')) {
+    /**
+     * 生成唯一订单号
+     * @return string
+     */
+    function create_order_num()
+    {
+        return 'D'.date('YmdHis').\Illuminate\Support\Facades\Redis::incr('order_num_id');
+    }
+}
+
 if (!function_exists('recursive')) {
     /**
      * 递归树形上下级

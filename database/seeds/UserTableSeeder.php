@@ -201,7 +201,6 @@ class UserTableSeeder extends Seeder
                             ['name' => 'crm.customer.remark', 'display_name' => '备注跟进'],
                             ['name' => 'crm.customer.list_all', 'display_name' => '查看所有客户'],
                             ['name' => 'crm.customer.list_department', 'display_name' => '查看本部门客户'],
-                            ['name' => 'crm.customer.order', 'display_name' => '下单'],
                             ['name' => 'crm.customer.transfer', 'display_name' => '移交'],
                             ['name' => 'crm.customer.remove', 'display_name' => '剔除'],
                         ]
@@ -230,6 +229,22 @@ class UserTableSeeder extends Seeder
                         ]
                     ],
 
+                ],
+            ],
+            [
+                'name' => 'order',
+                'display_name' => '订单模块',
+                'child' => [
+                    [
+                        'name' => 'order.order',
+                        'display_name' => '订单管理',
+                        'child' => [
+                            ['name' => 'order.order.create', 'display_name' => '下单'],
+                            ['name' => 'order.order.pay', 'display_name' => '付款'],
+                            ['name' => 'order.order.remark', 'display_name' => '跟进'],
+                            ['name' => 'order.order.destroy', 'display_name' => '删除'],
+                        ]
+                    ],
                 ],
             ],
         ];

@@ -201,6 +201,25 @@ class MenuTableSeeder extends Seeder
                     ],
                 ]
             ],
+            [
+                'name' => '订单模块',
+                'route' => null,
+                'url' => null,
+                'icon' => 'layui-icon-align-left',
+                'type' => 2,
+                'sort' => 2,
+                'permission_name' => 'order',
+                'child' => [
+                    [
+                        'name' => '订单管理',
+                        'route' => 'order.order',
+                        'url' => null,
+                        'icon' => 'layui-icon-form',
+                        'type' => 1,
+                        'permission_name' => 'order.order',
+                    ],
+                ]
+            ],
         ];
         $permissions = \App\Models\Permission::pluck('id','name')->toArray();
         foreach ($datas as $k1 => $d1){

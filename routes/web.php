@@ -285,8 +285,7 @@ Route::group(['prefix'=>'crm','namespace'=>'Crm','middleware'=>['auth','permissi
         Route::match(['get','post'],'customer/{id}/remark','CustomerController@remark')->name('crm.customer.remark')->middleware('permission:crm.customer.remark');
         //移交
         Route::post('customer/transfer','CustomerController@transfer')->name('crm.customer.transfer')->middleware('permission:crm.customer.transfer');
-        //下单
-        Route::post('customer/{id}/order','CustomerController@order')->name('crm.customer.order')->middleware('permission:crm.customer.order');
+
     });
 
     //公海库
@@ -327,3 +326,42 @@ Route::group(['prefix'=>'chat','namespace'=>'Chat','middleware'=>['auth','permis
     });
 
 });
+
+
+/*
+|--------------------------------------------------------------------------
+| 订单模块
+|--------------------------------------------------------------------------
+*/
+
+Route::group(['prefix'=>'order','namespace'=>'Order','middleware'=>['auth','permission:order']],function () {
+
+    //订单
+    Route::group([],function (){
+        Route::get('order','OrderController@index')->name('order.order')->middleware('permission:order.order');
+        //下单
+        Route::get('order/create','OrderController@create')->name('order.order.create')->middleware('permission:order.order.create');
+        Route::post('order/store','OrderController@store')->name('order.order.store')->middleware('permission:order.order.create');
+        //付款
+        Route::get('order/payForm','OrderController@payForm')->name('order.order.payForm')->middleware('permission:order.order.pay');
+        Route::post('order/pay','OrderController@pay')->name('order.order.pay')->middleware('permission:order.order.pay');
+        //备注跟进
+        Route::match(['get','post'],'order/remark','OrderController@remark')->name('order.order.remark')->middleware('permission:order.order.remark');
+        //删除
+        Route::delete('order/destroy','OrderController@destroy')->name('order.order.destroy')->middleware('permission:order.order.destroy');
+    });
+
+});
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -6,6 +6,7 @@ use App\Models\Cdr;
 use App\Models\CustomerRemark;
 use App\Models\Department;
 use App\Models\Node;
+use App\Models\OrderRemark;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\Sip;
@@ -93,8 +94,13 @@ class ApiController extends Controller
 
     public function remarkList(Request $request)
     {
-        $id = $request->input('customer_id');
-        $res = CustomerRemark::query()->where('customer_id','=',$id)->orderByDesc('id')->paginate($request->get('limit', 2));;
+        $node_type = $request->input('type');
+        $id = $request->input('id');
+        if ($node_type == 2){
+            $res = CustomerRemark::query()->where('customer_id','=',$id)->orderByDesc('id')->paginate($request->get('limit', 2));
+        }elseif ($node_type == 3){
+            $res = OrderRemark::query()->where('order_id','=',$id)->orderByDesc('id')->paginate($request->get('limit', 2));
+        }
         return $this->success('ok',['list'=>$res->items(),'lastPage'=>$res->lastPage()]);
     }
 
@@ -140,7 +146,7 @@ class ApiController extends Controller
             return $this->error('呼叫失败');
         }
     }
-    
+
     //文件上传
     public function upload(Request $request)
     {
