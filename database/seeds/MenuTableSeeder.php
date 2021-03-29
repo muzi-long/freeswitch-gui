@@ -191,7 +191,14 @@ class MenuTableSeeder extends Seeder
                         'type' => 1,
                         'permission_name' => 'chat.message',
                     ],
-
+                    [
+                        'name' => '语音通话',
+                        'route' => 'chat.audio',
+                        'url' => null,
+                        'icon' => 'layui-icon-service',
+                        'type' => 1,
+                        'permission_name' => 'chat.audio',
+                    ],
                 ]
             ],
         ];

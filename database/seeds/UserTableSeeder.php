@@ -222,6 +222,13 @@ class UserTableSeeder extends Seeder
                             ['name' => 'chat.message.destroy', 'display_name' => '删除'],
                         ]
                     ],
+                    [
+                        'name' => 'chat.audio',
+                        'display_name' => '语音通话',
+                        'child' => [
+
+                        ]
+                    ],
 
                 ],
             ],

@@ -321,4 +321,12 @@ Route::group(['prefix'=>'chat','namespace'=>'Chat','middleware'=>['auth','permis
         Route::delete('message/destroy','MessageController@destroy')->name('chat.message.destroy')->middleware('permission:chat.message.destroy');
     });
 
+    //语音通话
+    Route::group([],function (){
+        Route::get('audio','AudioController@index')->name('chat.audio')->middleware('permission:chat.audio');
+        //更新数据
+        Route::post('audio/update','AudioController@update')->name('chat.audio.update')->middleware('permission:chat.audio');
+
+    });
+
 });
