@@ -6,6 +6,8 @@ use App\Models\Cdr;
 use App\Models\CustomerRemark;
 use App\Models\Department;
 use App\Models\Node;
+use App\Models\Order;
+use App\Models\OrderPay;
 use App\Models\OrderRemark;
 use App\Models\Permission;
 use App\Models\Role;
@@ -188,6 +190,14 @@ class ApiController extends Controller
             $this->error('系统异常');
         }
 
+    }
+
+
+    public function payList(Request $request)
+    {
+        $id = $request->input('id');
+        $res = OrderPay::query()->where('order_id','=',$id)->orderByDesc('id')->paginate($request->get('limit', 2));
+        return $this->success('ok',['list'=>$res->items(),'lastPage'=>$res->lastPage()]);
     }
 
 }

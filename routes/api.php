@@ -23,5 +23,6 @@ Route::post('get_department_by_user_id','ApiController@getDepartmentByUserId')->
 Route::post('get_user','ApiController@getUser')->name('api.getUser');
 Route::post('get_node','ApiController@getNode')->name('api.getNode');
 Route::post('remark_list','ApiController@remarkList')->name('api.remarkList');
+Route::post('pay_list','ApiController@payList')->name('api.payList');
 Route::post('call','ApiController@call')->name('api.call');
 Route::post('upload','ApiController@upload')->name('api.upload');

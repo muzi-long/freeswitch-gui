@@ -100,6 +100,33 @@ class MenuTableSeeder extends Seeder
                 ]
             ],
             [
+                'name' => '实时聊天',
+                'route' => null,
+                'url' => null,
+                'icon' => 'layui-icon-cellphone-fine',
+                'type' => 2,
+                'sort' => 2,
+                'permission_name' => 'chat',
+                'child' => [
+                    [
+                        'name' => '消息中心',
+                        'route' => 'chat.message',
+                        'url' => null,
+                        'icon' => 'layui-icon-note',
+                        'type' => 1,
+                        'permission_name' => 'chat.message',
+                    ],
+                    [
+                        'name' => '语音通话',
+                        'route' => 'chat.audio',
+                        'url' => null,
+                        'icon' => 'layui-icon-service',
+                        'type' => 1,
+                        'permission_name' => 'chat.audio',
+                    ],
+                ]
+            ],
+            [
                 'name' => 'CRM管理',
                 'route' => null,
                 'url' => null,
@@ -175,33 +202,6 @@ class MenuTableSeeder extends Seeder
                 ]
             ],
             [
-                'name' => '实时聊天',
-                'route' => null,
-                'url' => null,
-                'icon' => 'layui-icon-cellphone-fine',
-                'type' => 2,
-                'sort' => 2,
-                'permission_name' => 'chat',
-                'child' => [
-                    [
-                        'name' => '消息中心',
-                        'route' => 'chat.message',
-                        'url' => null,
-                        'icon' => 'layui-icon-note',
-                        'type' => 1,
-                        'permission_name' => 'chat.message',
-                    ],
-                    [
-                        'name' => '语音通话',
-                        'route' => 'chat.audio',
-                        'url' => null,
-                        'icon' => 'layui-icon-service',
-                        'type' => 1,
-                        'permission_name' => 'chat.audio',
-                    ],
-                ]
-            ],
-            [
                 'name' => '订单模块',
                 'route' => null,
                 'url' => null,
@@ -217,6 +217,25 @@ class MenuTableSeeder extends Seeder
                         'icon' => 'layui-icon-form',
                         'type' => 1,
                         'permission_name' => 'order.order',
+                    ],
+                ]
+            ],
+            [
+                'name' => '账务模块',
+                'route' => null,
+                'url' => null,
+                'icon' => 'layui-icon-diamond',
+                'type' => 2,
+                'sort' => 2,
+                'permission_name' => 'account',
+                'child' => [
+                    [
+                        'name' => '订单付款',
+                        'route' => 'account.pay',
+                        'url' => null,
+                        'icon' => 'layui-icon-dollar',
+                        'type' => 1,
+                        'permission_name' => 'account.pay',
                     ],
                 ]
             ],

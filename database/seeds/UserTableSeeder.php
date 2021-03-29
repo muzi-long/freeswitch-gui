@@ -247,6 +247,19 @@ class UserTableSeeder extends Seeder
                     ],
                 ],
             ],
+            [
+                'name' => 'account',
+                'display_name' => '财务模块',
+                'child' => [
+                    [
+                        'name' => 'account.pay',
+                        'display_name' => '订单付款',
+                        'child' => [
+                            ['name' => 'account.pay.check', 'display_name' => '审核'],
+                        ]
+                    ],
+                ],
+            ],
         ];
         foreach ($permissions as $pem1) {
             //生成一级权限

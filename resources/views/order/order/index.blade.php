@@ -12,6 +12,12 @@
                 </div>
                 <div class="layui-form-item">
                     <div class="layui-inline">
+                        <label for="" class="layui-form-label">订单号：</label>
+                        <div class="layui-input-block" style="width: 275px">
+                            <input type="text" name="num" placeholder="请输入名称" class="layui-input" >
+                        </div>
+                    </div>
+                    <div class="layui-inline">
                         <label for="" class="layui-form-label">客户名称：</label>
                         <div class="layui-input-block" style="width: 275px">
                             <input type="text" name="name" placeholder="请输入名称" class="layui-input" >
@@ -97,7 +103,7 @@
                         type: 2,
                         title: "付款",
                         shadeClose: true,
-                        area: ["600px","400px"],
+                        area: ["80%","80%"],
                         content: '/order/order/payForm?id=' + data.id,
                     })
                 }

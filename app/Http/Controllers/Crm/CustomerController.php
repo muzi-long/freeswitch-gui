@@ -22,6 +22,7 @@ class CustomerController extends Controller
     {
         if ($request->ajax()){
             $data = $request->all([
+                'uuid',
                 'name',
                 'contact_name',
                 'contact_phone',
@@ -42,6 +43,10 @@ class CustomerController extends Controller
                     }
                 })
                 ->where('status','=',3)
+                //客户编号
+                ->when($data['uuid'], function ($query) use ($data) {
+                    return $query->where('uuid', $data['uuid']);
+                })
                 //客户名称
                 ->when($data['name'], function ($query) use ($data) {
                     return $query->where('name', $data['name']);
@@ -114,7 +119,7 @@ class CustomerController extends Controller
         DB::beginTransaction();
         try{
             $customer_id = DB::table('customer')->insertGetId([
-                'uuid' => uuid_generate(),
+                'uuid' => create_customer_num(),
                 'name' => $data['name'],
                 'contact_name' => $data['contact_name'],
                 'contact_phone' => $data['contact_phone'],

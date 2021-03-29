@@ -21,9 +21,31 @@ class OrderController extends Controller
     {
         if ($request->ajax()){
             $user = $request->user();
+            $data = $request->all([
+                'name',
+                'contact_name',
+                'contact_phone',
+                'num',
+            ]);
             $res = Order::query()
                 ->where(function ($q) use ($user){
                     return $q->where('frontend_user_id',$user->id)->orWhere('backend_user_id',$user->id);
+                })
+                //订单号
+                ->when($data['num'], function ($query) use ($data) {
+                    return $query->where('num', $data['num']);
+                })
+                //客户名称
+                ->when($data['name'], function ($query) use ($data) {
+                    return $query->where('name', $data['name']);
+                })
+                //联系电话
+                ->when($data['contact_phone'], function ($query) use ($data) {
+                    return $query->where('contact_phone', $data['contact_phone']);
+                })
+                //联系人
+                ->when($data['contact_name'], function ($query) use ($data) {
+                    return $query->where('contact_name', $data['contact_name'] );
                 })
                 ->orderBy('status','asc')
                 ->orderByDesc('accept_time')
@@ -57,7 +79,9 @@ class OrderController extends Controller
                 return $this->error('订单金额比例不正确');
             }
             $user = User::query()->where('id',$data['user_id'])->first();
-            $customer->update(['is_end'=>1]);
+            if ($customer->is_end!=1){
+                $customer->update(['is_end'=>1]);
+            }
             Order::create([
                 'num' => create_order_num(),
                 'customer_id' => $customer->id,
@@ -164,6 +188,8 @@ class OrderController extends Controller
                 'pay_type' => $data['pay_type'],
                 'content' => $data['content'],
                 'status' => 0,
+                'created_user_id' => $request->user()->id,
+                'created_user_nickname' => $request->user()->nickname,
             ]);
             DB::commit();
             return $this->success('操作成功，等待财务审核');

@@ -87,7 +87,7 @@ class AssignmentController extends Controller
         DB::beginTransaction();
         try{
             $customer_id = DB::table('customer')->insertGetId([
-                'uuid' => uuid_generate(),
+                'uuid' => create_customer_num(),
                 'name' => $data['name'],
                 'contact_name' => $data['contact_name'],
                 'contact_phone' => $data['contact_phone'],

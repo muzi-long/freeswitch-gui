@@ -15,6 +15,12 @@
                 </div>
                 <div class="layui-form-item">
                     <div class="layui-inline">
+                        <label for="" class="layui-form-label">客户编号：</label>
+                        <div class="layui-input-block" style="width: 275px">
+                            <input type="text" name="uuid" placeholder="请输入客户编号" class="layui-input" >
+                        </div>
+                    </div>
+                    <div class="layui-inline">
                         <label for="" class="layui-form-label">客户名称：</label>
                         <div class="layui-input-block" style="width: 275px">
                             <input type="text" name="name" placeholder="请输入名称" class="layui-input" >

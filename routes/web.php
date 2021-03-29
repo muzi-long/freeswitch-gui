@@ -354,7 +354,23 @@ Route::group(['prefix'=>'order','namespace'=>'Order','middleware'=>['auth','perm
 });
 
 
+/*
+|--------------------------------------------------------------------------
+| 财务模块
+|--------------------------------------------------------------------------
+*/
 
+Route::group(['prefix'=>'account','namespace'=>'Account','middleware'=>['auth','permission:account']],function () {
+
+    //订单付款
+    Route::group([],function (){
+        Route::get('pay','PayController@index')->name('account.pay')->middleware('permission:account.pay');
+        //审核
+        Route::match(['get','post'],'pay/check','PayController@check')->name('account.pay.check')->middleware('permission:account.pay.check');
+
+    });
+
+});
 
 
 

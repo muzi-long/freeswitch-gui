@@ -14,6 +14,17 @@ if (!function_exists('uuid_generate')) {
     }
 }
 
+if (!function_exists('create_customer_num')) {
+    /**
+     * 生成客户编号
+     * @return string
+     */
+    function create_customer_num()
+    {
+        return 'K'.date('YmdHis').\Illuminate\Support\Facades\Redis::incr('customer_num_id');
+    }
+}
+
 if (!function_exists('create_order_num')) {
     /**
      * 生成唯一订单号
