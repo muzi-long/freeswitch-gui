@@ -25,6 +25,9 @@ Route::group(['middleware'=>'auth'],function (){
     //修改密码
     Route::get('/change_my_password_form','System\UserController@changeMyPassword')->name('index.changeMyPasswordForm')->middleware('auth');
     Route::post('/change_my_password','System\UserController@changeMyPassword')->name('index.changeMyPassword')->middleware('auth');
+
+    Route::post('cdr_count','IndexController@cdrCount')->name('index.cdr_count');
+    Route::post('customer_count','IndexController@customerCount')->name('index.customer_count');
 });
 
 /*

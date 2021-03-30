@@ -12,49 +12,49 @@
                                     <div >
                                         <ul class="layui-row layui-col-space10">
                                             <li class="layui-col-xs3">
-                                                <a lay-href="">
+                                                <a lay-href="{{route('call.sip')}}">
                                                     <i class="layui-icon layui-icon-console"></i>
                                                     <cite>分机管理</cite>
                                                 </a>
                                             </li>
                                             <li class="layui-col-xs3">
-                                                <a lay-href="">
+                                                <a lay-href="{{route('call.gateway')}}">
                                                     <i class="layui-icon layui-icon-chart"></i>
                                                     <cite>网关管理</cite>
                                                 </a>
                                             </li>
                                             <li class="layui-col-xs3">
-                                                <a lay-href="">
+                                                <a lay-href="{{route('crm.department')}}">
                                                     <i class="layui-icon layui-icon-template-1"></i>
                                                     <cite>部门管理</cite>
                                                 </a>
                                             </li>
                                             <li class="layui-col-xs3">
-                                                <a lay-href="">
+                                                <a lay-href="{{route('crm.node')}}">
                                                     <i class="layui-icon layui-icon-chat"></i>
                                                     <cite>节点管理</cite>
                                                 </a>
                                             </li>
                                             <li class="layui-col-xs3">
-                                                <a lay-href="">
+                                                <a lay-href="{{route('call.extension')}}">
                                                     <i class="layui-icon layui-icon-find-fill"></i>
                                                     <cite>拨号计划</cite>
                                                 </a>
                                             </li>
                                             <li class="layui-col-xs3">
-                                                <a lay-href="">
+                                                <a lay-href="{{route('system.user')}}">
                                                     <i class="layui-icon layui-icon-survey"></i>
                                                     <cite>用户管理</cite>
                                                 </a>
                                             </li>
                                             <li class="layui-col-xs3">
-                                                <a lay-href="">
+                                                <a lay-href="{{route('system.role')}}">
                                                     <i class="layui-icon layui-icon-user"></i>
                                                     <cite>角色管理</cite>
                                                 </a>
                                             </li>
                                             <li class="layui-col-xs3">
-                                                <a lay-href="">
+                                                <a lay-href="{{route('index.changeMyPasswordForm')}}">
                                                     <i class="layui-icon layui-icon-set"></i>
                                                     <cite>修改密码</cite>
                                                 </a>
@@ -75,25 +75,25 @@
                                             <li class="layui-col-xs6">
                                                 <a  class="layadmin-backlog-body">
                                                     <h3>部门数量</h3>
-                                                    <p><cite></cite></p>
+                                                    <p><cite>{{$departmentCount}}</cite></p>
                                                 </a>
                                             </li>
                                             <li class="layui-col-xs6">
                                                 <a  class="layadmin-backlog-body">
                                                     <h3>用户数量</h3>
-                                                    <p><cite></cite></p>
+                                                    <p><cite>{{$userCount}}</cite></p>
                                                 </a>
                                             </li>
                                             <li class="layui-col-xs6">
                                                 <a  class="layadmin-backlog-body">
                                                     <h3>总客户数</h3>
-                                                    <p><cite></cite></p>
+                                                    <p><cite>{{$customerCount}}</cite></p>
                                                 </a>
                                             </li>
                                             <li class="layui-col-xs6">
                                                 <a  class="layadmin-backlog-body">
                                                     <h3>公海客户数量</h3>
-                                                    <p><cite></cite></p>
+                                                    <p><cite>{{$wasteCount}}</cite></p>
                                                 </a>
                                             </li>
                                         </ul>
@@ -121,14 +121,14 @@
                                     </tr>
                                     <tr>
                                         <td>主要特色</td>
-                                        <td>外呼功能 / 批量呼出 / 通话记录 / 客户CRM</td>
+                                        <td>呼叫中心 / 客户CRM / 订单生产 / 财务付款</td>
                                     </tr>
                                     <tr>
                                         <td>获取渠道</td>
                                         <td style="padding-bottom: 0;">
                                             <div class="layui-btn-container">
                                                 <a href="javascript:;" onclick="layer.tips('请联系作者', this, {tips: 1});" class="layui-btn layui-btn-danger">获取授权</a>
-                                                <a href="/uploads/client.zip" class="layui-btn">客户端下载</a>
+                                                <a href="/template/client.zip" class="layui-btn">客户端下载</a>
                                             </div>
                                         </td>
                                     </tr>
@@ -170,8 +170,8 @@
             var echarts = layui.echarts;
             var echartsTheme = layui.echartsTheme;
             var myechart1 = echarts.init(document.getElementById('calls'), echartsTheme);
-            /*$.post("", {}, function (res) {
-                if (res.code == 0) {
+            $.post("{{route('index.customer_count')}}", {}, function (res) {
+                if (res.code === 0) {
                     var legend = [];
                     var series = [];
                     $.each(res.data, function (index, elem) {
@@ -198,8 +198,8 @@
             window.onresize = myechart1.resize;
 
             var myechart2 = echarts.init(document.getElementById('projects'), echartsTheme);
-            $.post("", {}, function (res) {
-                if (res.code == 0) {
+            $.post("{{route('index.cdr_count')}}", {}, function (res) {
+                if (res.code === 0) {
                     var months = [];
                     var calls = [];
                     var success = [];
@@ -238,7 +238,7 @@
                     });
                 }
             });
-            window.onresize = myechart2.resize;*/
+            window.onresize = myechart2.resize;
         })
     </script>
 @endsection

@@ -15,4 +15,11 @@ class Node extends Model
     {
         return $this->attributes['type_name'] = Arr::get(config('freeswitch.node_type'),$this->type,'-');
     }
+
+
+    public function customer()
+    {
+        return $this->hasMany(Customer::class,'node_id','id');
+    }
+
 }

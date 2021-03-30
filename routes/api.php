@@ -26,3 +26,4 @@ Route::post('remark_list','ApiController@remarkList')->name('api.remarkList');
 Route::post('pay_list','ApiController@payList')->name('api.payList');
 Route::post('call','ApiController@call')->name('api.call');
 Route::post('upload','ApiController@upload')->name('api.upload');
+
