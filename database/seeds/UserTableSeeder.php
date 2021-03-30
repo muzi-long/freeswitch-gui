@@ -243,6 +243,8 @@ class UserTableSeeder extends Seeder
                             ['name' => 'order.order.pay', 'display_name' => '付款'],
                             ['name' => 'order.order.remark', 'display_name' => '跟进'],
                             ['name' => 'order.order.destroy', 'display_name' => '删除'],
+                            ['name' => 'order.order.list_all', 'display_name' => '查看所有订单'],
+                            ['name' => 'order.order.list_department', 'display_name' => '查看本部门订单'],
                         ]
                     ],
                 ],
@@ -256,6 +258,7 @@ class UserTableSeeder extends Seeder
                         'display_name' => '订单付款',
                         'child' => [
                             ['name' => 'account.pay.check', 'display_name' => '审核'],
+                            ['name' => 'account.pay.show', 'display_name' => '详情'],
                         ]
                     ],
                 ],

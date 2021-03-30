@@ -28,6 +28,9 @@
                         <span class="layui-badge layui-bg-gray">@{{ d.status_name }}</span>
                     @{{# } }}
             </script>
+            <script type="text/html" id="num">
+                <a lay-event="show" style="cursor: pointer">@{{ d.order.num }}</a>
+            </script>
         </div>
     </div>
 @endsection
@@ -50,7 +53,7 @@
                 ,cols: [[ //表头
                     {checkbox: true}
                     ,{field: 'num', title: '订单号',templet:function (d) {
-                            return d.order.num
+                            return '<a lay-event="show" style="cursor: pointer">'+ d.order.num+ '</a>'
                         }}
                     ,{field: 'total_money', title: '总金额',templet:function (d) {
                             return d.order.total_money
@@ -78,6 +81,14 @@
                         shadeClose: true,
                         area: ["600px","400px"],
                         content: '/account/pay/check?id='+data.id,
+                    })
+                } else if(layEvent == 'show'){
+                    layer.open({
+                        type: 2,
+                        title: "付款申请记录",
+                        shadeClose: true,
+                        area: ["90%","90%"],
+                        content: '/account/pay/show?order_id='+data.order_id,
                     })
                 }
             });

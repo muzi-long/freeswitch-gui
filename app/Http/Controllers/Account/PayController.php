@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Account;
 
 use App\Http\Controllers\Controller;
+use App\Models\Order;
 use App\Models\OrderPay;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -66,6 +67,20 @@ class PayController extends Controller
             }
         }
         return View::make('account.pay.check',compact('model'));
+    }
+
+
+    public function show(Request $request)
+    {
+        $order = Order::query()->where('id',$request->input('order_id'))->first();
+        if ($request->ajax()){
+            $res = OrderPay::query()
+                ->where('order_id',$order->id)
+                ->orderByDesc('id')
+                ->paginate($request->input('limit'));
+            return $this->success('ok',$res->items(),$res->total());
+        }
+        return View::make('account.pay.show',compact('order'));
     }
 
 }

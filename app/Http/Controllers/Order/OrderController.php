@@ -28,8 +28,14 @@ class OrderController extends Controller
                 'num',
             ]);
             $res = Order::query()
-                ->where(function ($q) use ($user){
-                    return $q->where('frontend_user_id',$user->id)->orWhere('backend_user_id',$user->id);
+                ->where(function ($q) use($user){
+                    if ($user->hasPermissionTo('order.order.list_all')) {
+
+                    }elseif ($user->hasPermissionTo('order.order.list_department')) {
+                        return $q->where('frontend_department_id',$user->department_id)->orWhere('backend_department_id',$user->department_id);
+                    }else{
+                        return $q->where('frontend_user_id',$user->department_id)->orWhere('backend_user_id',$user->department_id);
+                    }
                 })
                 //订单号
                 ->when($data['num'], function ($query) use ($data) {
@@ -79,6 +85,9 @@ class OrderController extends Controller
                 return $this->error('订单金额比例不正确');
             }
             $user = User::query()->where('id',$data['user_id'])->first();
+            if ($user == null){
+                return $this->error('请选择接单人');
+            }
             if ($customer->is_end!=1){
                 $customer->update(['is_end'=>1]);
             }
@@ -120,9 +129,9 @@ class OrderController extends Controller
         if ($request->ajax()){
             $data = $request->all(['node_id','content','next_follow_time']);
             $old_node_id = $model->node_id;
-            $old_node_name = null;
+            $old_node_name = '';
             $new_node_id = $data['node_id']??0;
-            $new_node_name = null;
+            $new_node_name = '';
             foreach ($nodes as $node){
                 if ($node->id == $old_node_id){
                     $old_node_name = $node->name;

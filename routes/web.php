@@ -367,6 +367,8 @@ Route::group(['prefix'=>'account','namespace'=>'Account','middleware'=>['auth','
         Route::get('pay','PayController@index')->name('account.pay')->middleware('permission:account.pay');
         //审核
         Route::match(['get','post'],'pay/check','PayController@check')->name('account.pay.check')->middleware('permission:account.pay.check');
+        //详情
+        Route::get('pay/show','PayController@show')->name('account.pay.show')->middleware('permission:account.pay.show');
 
     });
 
