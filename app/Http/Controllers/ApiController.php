@@ -115,28 +115,45 @@ class ApiController extends Controller
     public function call(Request $request)
     {
         $user_id = $request->input('user_id');
+        $caller = $request->input('caller');
         $callee = $request->input('callee');
         $user_data = $request->input('user_data');
-        $user = User::query()->with('sip')->where('id', '=', $user_id)->first();
-        if ($user->sip == null) {
-            return $this->error('用户未分配外呼号');
+        if ($caller != null){
+            $sip = Sip::query()->where('username',$caller)->first();
+            if ($sip == null){
+                return $this->error('外呼号不存在');
+            }
+            if ($sip->status != 1) {
+                return $this->error('外呼号未在线');
+            }
+            $user = User::query()->where('sip_id', '=', $sip->id)->first();
+        }else{
+            $user = User::query()->with('sip')->where('id', '=', $user_id)->first();
+            if ($user == null){
+                return $this->error('用户ID不存在');
+            }
+            if ($user->sip == null) {
+                return $this->error('用户未分配外呼号');
+            }
+            if ($user->sip->status != 1) {
+                return $this->error('用户外呼号未在线');
+            }
+            $sip = $user->sip;
         }
-        if ($user->sip->status != 1) {
-            return $this->error('用户外呼号未在线');
-        }
+
         try {
             $cdr = Cdr::create([
                 'uuid' => uuid_generate(),
                 'aleg_uuid' => uuid_generate(),
                 'bleg_uuid' => uuid_generate(),
-                'caller' => $user->sip->username,
+                'caller' => $sip->username,
                 'callee' => $callee,
-                'department_id' => $user->department_id,
-                'user_id' => $user->id,
-                'user_nickname' => $user->nickname,
-                'sip_id' => $user->sip->id,
+                'department_id' => $user->department_id??0,
+                'user_id' => $user->id??0,
+                'user_nickname' => $user->nickname??null,
+                'sip_id' => $sip->id,
                 'user_data' => $user_data,
-                'gateway_id' => $user->sip->gateway_id ?? 0,
+                'gateway_id' => $sip->gateway_id ?? 0,
             ]);
             Redis::rpush(config('freeswitch.redis_key.dial'), $cdr->uuid);
             return $this->success('呼叫成功', [
@@ -147,6 +164,60 @@ class ApiController extends Controller
             Log::error('呼叫异常：' . $exception->getMessage());
             return $this->error('呼叫失败');
         }
+    }
+
+    public function hangup(Request $request)
+    {
+        $uuid = $request->input('uuid');
+        if($uuid == null){
+            return $this->error('参数错误');
+        }
+        $cdr = Cdr::query()->where('uuid',$uuid)->first();
+        if ($cdr==null){
+            return $this->error('参数错误');
+        }
+        if (!$cdr->end_time){
+            Redis::rpush(config('freeswitch.redis_key.api'),'uuid_kill '.$cdr->aleg_uuid);
+        }
+        return $this->success('已挂断');
+    }
+
+    public function chanspy(Request $request)
+    {
+        $data = $request->all(['fromExten','toExten','type']);
+
+        $toSip = Sip::where('username',$data['toExten'])->first();
+        if ($toSip->status == 0){
+            return $this->error('监听分机未在线');
+        }
+        //验证监听，是否登录
+        $fromSip = Sip::where('username',$data['fromExten'])->first();
+        if ($fromSip->status == 0){
+            return $this->error('被监听分机未在线');
+        }
+        $cdr = Cdr::query()
+            ->where('caller',$toSip)
+            ->whereNotNull('answer_time')
+            ->whereNull('end_time')
+            ->orderByDesc('id')
+            ->first();
+        if ($cdr == null){
+            return $this->error('被监听分机未在通话中');
+        }
+        $dailStr = "originate {origination_caller_id_number=".$data['fromExten']."}";
+        $dailStr .= "{origination_caller_id_name=".$data['fromExten']."}";
+        $dailStr .= "user/".$data['fromExten'];
+        if ($data['type']==3){
+            $dailStr .= " &three_way(".$cdr->aleg_uuid.")";
+        }elseif ($data['type']==2){
+            $dailStr .= " &{eavesdrop_whisper_aleg=false}{eavesdrop_whisper_bleg=false}eavesdrop(".$cdr->aleg_uuid.")";
+        }elseif ($data['type']==1){
+            $dailStr .= " &{eavesdrop_whisper_aleg=true}{eavesdrop_whisper_bleg=false}eavesdrop(".$cdr->aleg_uuid.")";
+        }else{
+            return $this->error('监听模式错误');
+        }
+        Redis::rpush(config('freeswitch.redis_key.api'),$dailStr);
+        return $this->success('监听成功');
     }
 
     //文件上传

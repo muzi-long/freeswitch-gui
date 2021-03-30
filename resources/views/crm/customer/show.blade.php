@@ -150,7 +150,11 @@
                                 </div>
                                 <div class="layui-form-item">
                                     <div class="layui-input-block">
-                                        <button type="button" lay-submit lay-filter="go-close-refresh" class="layui-btn layui-btn-sm">确认</button>
+                                        @can('crm.customer.remark')
+                                            <button type="button" lay-submit lay-filter="go-close-refresh" class="layui-btn layui-btn-sm">确认</button>
+                                        @else
+                                            <button type="button"  class="layui-btn layui-btn-sm layui-disabled" disabled>无权限操作</button>
+                                        @endcan
                                     </div>
                                 </div>
                             </form>

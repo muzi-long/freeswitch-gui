@@ -251,7 +251,7 @@
             })
         })
 
-
+        @if(isset($data['sip_id'])&&$data['sip_id'])
         var userAgentSession;
         var userAgent;
         function initUserAgent(){
@@ -369,6 +369,8 @@
                 clearInterval(ticker)
             }
         }
+        @endif
+
 
     });
 </script>

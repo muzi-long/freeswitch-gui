@@ -239,6 +239,25 @@ class MenuTableSeeder extends Seeder
                     ],
                 ]
             ],
+            [
+                'name' => '三方接口',
+                'route' => null,
+                'url' => null,
+                'icon' => 'layui-icon-file-b',
+                'type' => 2,
+                'sort' => 2,
+                'permission_name' => 0,
+                'child' => [
+                    [
+                        'name' => '接口文档',
+                        'route' => null,
+                        'url' => '/apidoc',
+                        'icon' => 'layui-icon-form',
+                        'type' => 1,
+                        'permission_name' => 0,
+                    ],
+                ]
+            ],
         ];
         $permissions = \App\Models\Permission::pluck('id','name')->toArray();
         foreach ($datas as $k1 => $d1){

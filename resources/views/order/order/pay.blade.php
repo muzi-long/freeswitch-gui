@@ -69,7 +69,6 @@
                     $.post('{{route('api.payList')}}',{id:'{{$model->id}}',page:page},function (res) {
                         var _html = '';
                         res.data.list.forEach(function (item,index) {
-                            console.log(item)
                             _html += '<li class="layui-timeline-item">';
                             _html += '  <i class="layui-icon layui-timeline-axis">&#xe63f;</i>';
                             _html += '  <div class="layui-timeline-content layui-text">';

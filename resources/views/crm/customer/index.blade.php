@@ -114,7 +114,7 @@
                 ,page: true //开启分页
                 ,cols: [[ //表头
                     {checkbox: true}
-                    ,{field: 'uuid', title: '客户编号'}
+                    ,{field: 'uuid', title: '客户编号',width:160}
                     ,{field: 'name', title: '客户名称'}
                     ,{field: 'contact_name', title: '联系人'}
                     ,{field: 'contact_phone', title: '联系电话'}

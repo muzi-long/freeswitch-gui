@@ -41,6 +41,7 @@ return [
 
     'redis_key' => [
         'dial' => 'dial_uuid_queue',
+        'api' => 'api_exec_queue',
     ],
     'record_url' => env('APP_URL','http://localhost'),
     'host' => '192.168.254.216',
