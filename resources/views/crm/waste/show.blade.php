@@ -140,7 +140,7 @@
             flow.load({
                 elem: '#remark_list_box' //流加载容器
                 ,done: function(page, next){ //执行下一页的回调
-                    $.post('{{route('api.remarkList',['customer_id'=>$model->id])}}',{page:page},function (res) {
+                    $.post('{{route('api.remarkList')}}',{id:'{{$model->id}}',page:page,type:2},function (res) {
                         var _html = '';
                         res.data.list.forEach(function (item,index) {
                             console.log(item)
