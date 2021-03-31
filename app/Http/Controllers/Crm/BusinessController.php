@@ -59,6 +59,12 @@ class BusinessController extends Controller
                 'status_time' => date('Y-m-d H:i:s'),
             ];
             Customer::query()->whereIn('id',$ids)->update($data);
+            push_message(
+                'msg',
+                ['title'=>'分配客户提醒','content'=>'用户 '.$request->user()->nickname.' 给你分配了 '.count($ids).' 个客户至个人库'],
+                [$user->id],
+                $request->user()->id
+            );
             DB::commit();
             return $this->success();
         }catch (\Exception $exception){

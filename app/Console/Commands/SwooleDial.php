@@ -43,6 +43,7 @@ class SwooleDial extends Command
     {
         \Swoole\Coroutine\run(function () {
             $key = config('freeswitch.redis_key.dial');
+            Redis::del($key);
             while (true) {
                 $uuid = Redis::lpop($key);
                 if($uuid == null){

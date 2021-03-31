@@ -9,6 +9,7 @@ use App\Models\Customer;
 use App\Models\CustomerFieldValue;
 use App\Models\Department;
 use App\Models\User;
+use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -210,6 +211,12 @@ class AssignmentController extends Controller
                     'status' => 3,
                     'status_time' => date('Y-m-d H:i:s'),
                 ];
+                push_message(
+                    'msg',
+                    ['title'=>'分配客户提醒','content'=>'用户 '.$request->user()->nickname.' 给你分配了 '.count($ids).' 个客户至个人库'],
+                    [$user->id],
+                    $request->user()->id
+                );
             }elseif ($type=='department'){
                 $department_id = $request->get('department_id');
                 if (!$department_id){
@@ -238,6 +245,12 @@ class AssignmentController extends Controller
                     'status' => 2,
                     'status_time' => date('Y-m-d H:i:s'),
                 ];
+                push_message(
+                    'msg',
+                    ['title'=>'分配客户提醒','content'=>'用户 '.$request->user()->nickname.' 给你分配了 '.count($ids).' 个客户至经理库'],
+                    [$user->id],
+                    $request->user()->id
+                );
             }
             Customer::query()->whereIn('id',$ids)->update($data);
             DB::commit();

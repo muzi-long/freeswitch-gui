@@ -44,6 +44,7 @@ class SwooleApi extends Command
     {
         \Swoole\Coroutine\run(function () {
             $key = config('freeswitch.redis_key.api');
+            Redis::del($key);
             while (true) {
                 $dial_str = Redis::lpop($key);
                 if($dial_str == null){

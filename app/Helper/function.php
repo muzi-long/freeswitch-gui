@@ -91,10 +91,10 @@ if (!function_exists('push_message')) {
                 'timeout' => 5,
             ]);
             return true;
-        } catch (Exception $exception) {
+        } catch (GuzzleException $exception) {
             \Illuminate\Support\Facades\Log::error('推送消息异常：' . $exception->getMessage());
+            return false;
         }
-        return false;
     }
 }
 
