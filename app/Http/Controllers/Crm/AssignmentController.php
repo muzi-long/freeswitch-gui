@@ -215,7 +215,6 @@ class AssignmentController extends Controller
                     'msg',
                     ['title'=>'分配客户提醒','content'=>'用户 '.$request->user()->nickname.' 给你分配了 '.count($ids).' 个客户至个人库'],
                     [$user->id],
-                    $request->user()->id
                 );
             }elseif ($type=='department'){
                 $department_id = $request->get('department_id');
@@ -249,7 +248,6 @@ class AssignmentController extends Controller
                     'msg',
                     ['title'=>'分配客户提醒','content'=>'用户 '.$request->user()->nickname.' 给你分配了 '.count($ids).' 个客户至经理库'],
                     [$user->id],
-                    $request->user()->id
                 );
             }
             Customer::query()->whereIn('id',$ids)->update($data);

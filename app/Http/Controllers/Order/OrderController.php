@@ -91,8 +91,9 @@ class OrderController extends Controller
             if ($customer->is_end!=1){
                 $customer->update(['is_end'=>1]);
             }
+            $order_num = create_order_num();
             Order::create([
-                'num' => create_order_num(),
+                'num' => $order_num,
                 'customer_id' => $customer->id,
                 'name' => $customer->name,
                 'contact_name' => $customer->contact_name,
@@ -111,6 +112,11 @@ class OrderController extends Controller
                 'backend_user_nickname' => $user->nickname,
                 'created_user_id' => $request->user()->id,
             ]);
+            push_message(
+                'msg',
+                ['title'=>'分配订单提醒','content'=>'用户 '.$request->user()->nickname.' 给你分配了一个新的订单，订单号： '.$order_num],
+                [$user->id]
+            );
             DB::commit();
             return $this->success();
         }catch (\Exception $exception){

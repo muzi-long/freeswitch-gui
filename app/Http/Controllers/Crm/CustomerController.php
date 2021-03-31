@@ -236,6 +236,11 @@ class CustomerController extends Controller
                 'owner_department_id' => $user->department_id??0,
             ];
             Customer::query()->whereIn('id',$ids)->update($data);
+            push_message(
+                'msg',
+                ['title'=>'移交客户提醒','content'=>'用户 '.$request->user()->nickname.' 移交给你 '.count($ids).' 个客户至你的个人库'],
+                [$user->id]
+            );
             DB::commit();
             return $this->success();
         }catch (\Exception $exception){

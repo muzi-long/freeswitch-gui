@@ -58,6 +58,12 @@ class PayController extends Controller
                         ]);
                     }
                 }
+                $status_name = $data['status']==1?'通过':'不通过';
+                push_message(
+                    'msg',
+                    ['title'=>'财务审核结果提醒','content'=>'你的付款申请已由用户 '.$request->user()->nickname.' 审核，审核结果： '.$status_name],
+                    [$model->created_user_id]
+                );
                 DB::commit();
                 return $this->success();
             }catch (\Exception $exception){
