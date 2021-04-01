@@ -53,6 +53,7 @@ class EslListen
             $originate = sprintf("originate {origination_uuid=%s}user/%s &bridge({origination_uuid=%s}user/%s)",
                 $this->cdr->aleg_uuid,$this->cdr->caller,$this->cdr->bleg_uuid,$this->cdr->callee
             );
+            $local_call = true;
         }
 
         $this->fs->events("CHANNEL_ANSWER CHANNEL_HANGUP_COMPLETE");
@@ -80,10 +81,14 @@ class EslListen
                                 'answer_time' => date('Y-m-d H:i:s'),
                                 'record_file' => str_replace($fs_dir, $record_url, $fullfile),
                             ]);
+                            if (isset($local_call)&&$local_call===true){
+                                Sip::query()->where('username',$this->cdr->callee)->update(['state'=>'active']);
+                            }
                         }else{
                             $this->cdr->update([
                                 'start_time' => date('Y-m-d H:i:s'),
                             ]);
+                            Sip::query()->where('username',$this->cdr->caller)->update(['state'=>'active']);
                         }
                         break;
                     case 'CHANNEL_HANGUP_COMPLETE':
@@ -99,6 +104,11 @@ class EslListen
                                 'end_time' => $endTime,
                                 'billsec' => $billsec,
                             ]);
+                        }
+                        if (isset($local_call)&&$local_call===true){
+                            Sip::query()->whereIn('username',[$this->cdr->caller,$this->cdr->callee])->update(['state'=>'down']);
+                        }else{
+                            Sip::query()->where('username',$this->cdr->caller)->update(['state'=>'down']);
                         }
                         break 2;
                     default:
