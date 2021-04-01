@@ -24,6 +24,7 @@ class IndexController extends Controller
             'host' => config('freeswitch.host'),
             'uri' => $user->sip->username . '@' . config('freeswitch.host'),
             'wss_url' => config('freeswitch.wss_url'),
+            'websocket_url' => config('freeswitch.websocket_url'),
         ];
         return View::make("layout", compact('data'));
     }

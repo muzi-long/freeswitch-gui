@@ -330,7 +330,6 @@
             userAgent.start()
         }
 
-
         $("#regBtn").click(function () {
             initUserAgent();
             userAgent.register();
@@ -340,9 +339,9 @@
                 userAgent.unregister()
             }
         })
+        @endif
 
-
-        const ws = new WebSocket("ws://127.0.0.1:9502?user_id={{auth()->user()->id}}")
+        const ws = new WebSocket("wss://{{$data['websocket_url']}}/wss?user_id={{auth()->user()->id}}")
         var ticker
         ws.onopen = function () {
             ticker = setInterval(function () {
@@ -371,7 +370,7 @@
                 clearInterval(ticker)
             }
         }
-        @endif
+
 
 
     });

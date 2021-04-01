@@ -44,8 +44,9 @@ return [
         'api' => 'api_exec_queue',
     ],
     'record_url' => env('APP_URL','http://localhost'),
-    'host' => '192.168.254.216',
-    'wss_url' => 'testcall.shupian.cn',
+    'host' => env('FS_HOST','127.0.0.1'),
+    'wss_url' => env('FS_WSS_URL','127.0.0.1'),
+    'websocket_url' => env('WEBSOCKET_URL','127.0.0.1'),
 
     'node_type' => [
         1 => '公共节点',
