@@ -252,6 +252,7 @@
         })
 
         @if(isset($data['sip_id'])&&$data['sip_id'])
+        navigator.mediaDevices.getUserMedia({audio: true, video: true});
         var userAgentSession;
         var userAgent;
         function initUserAgent(){
