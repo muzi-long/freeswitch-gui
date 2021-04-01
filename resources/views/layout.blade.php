@@ -319,6 +319,7 @@
                         }
                     }
                 });
+                layer.msg("新的来电系统已为您自动接听");
                 $("#call-status").html('<span class="layui-badge">挂断</span>')
                 $("#call-status span").click(function () {
                     if(userAgent){
