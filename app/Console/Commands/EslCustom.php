@@ -57,11 +57,11 @@ class EslCustom extends Command
                     switch ($eventname) {
                         //注册
                         case 'sofia::register':
-                            Sip::query()->where('username', $username)->update(['status' => 1, 'state' => 'DOWN']);
+                            Sip::query()->where('username', $username)->update(['status' => 1, 'state' => 'down']);
                             break;
                         //注销
                         case 'sofia::unregister':
-                            Sip::query()->where('username', $username)->update(['status' => 0, 'state' => 'DOWN']);
+                            Sip::query()->where('username', $username)->update(['status' => 0, 'state' => 'down']);
                             break;
                         default:
                             break;
