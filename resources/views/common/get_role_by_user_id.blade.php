@@ -15,7 +15,7 @@
                     el: '#xm-select-role',
                     name: 'role_ids',
                     prop: {
-                        name: 'name',
+                        name: 'display_name',
                         value: 'id',
                     },
                     data: res.data,
