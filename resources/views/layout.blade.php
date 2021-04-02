@@ -47,7 +47,7 @@
                     <a href="javascript:;">
                         <cite id="sip-status">
                             @if($data['sip_id'])
-                                离线
+                                外呼号：{{$data['username']}}
                             @else
                                 无外呼号
                             @endif
