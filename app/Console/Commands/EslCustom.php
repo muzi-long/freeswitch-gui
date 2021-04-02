@@ -53,7 +53,7 @@ class EslCustom extends Command
                     $info = $fs->serialize($received_parameters);
                     $eventname = Arr::get($info, "Event-Subclass"); //子事件名称
                     $eventname = urldecode($eventname);
-                    $username = Arr::get($info, "username"); //分机号
+                    $username = Arr::get($info, "from-user"); //分机号
                     switch ($eventname) {
                         //注册
                         case 'sofia::register':
