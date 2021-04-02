@@ -62,6 +62,7 @@
                     //{checkbox: true,fixed: true}
                     {field: 'id', title: 'ID', sort: true,width:80}
                     ,{field: 'uuid', title: '记录编号'}
+                    ,{field: 'user_nickname', title: '用户'}
                     ,{field: 'caller', title: '主叫号码',style:'color:green'}
                     ,{field: 'callee', title: '被叫号码',style:'color:#2F4056'}
                     ,{field: 'start_time', title: '呼叫时间', sort: true}
