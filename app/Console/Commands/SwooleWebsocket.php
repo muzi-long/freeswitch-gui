@@ -94,11 +94,6 @@ class SwooleWebsocket extends Command
         //清除键值对，防止内存溢出
         foreach ($this->fd as $k => $v) {
             if ($fd == $v) {
-                //更新用户的分机号状态为已注销
-                $user = User::with('sip')->where('id',$this->fd[$v])->first();
-                if ($user !== null && $user->sip !== null){
-                    $user->sip->update(['status'=>0,'state'=>'down']);
-                }
                 unset($this->fd[$v]);
                 break;
             }
