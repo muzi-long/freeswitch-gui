@@ -113,7 +113,7 @@
                                     <tbody>
                                     <tr>
                                         <td>当前版本</td>
-                                        <td>v2.0.0</td>
+                                        <td>v4.0.0</td>
                                     </tr>
                                     <tr>
                                         <td>基于系统</td>
