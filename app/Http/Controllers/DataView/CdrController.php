@@ -17,7 +17,12 @@ class CdrController extends Controller
         $users = User::query()->get();
         if ($request->ajax()){
             $res = $request->all(['user_id','created_at_start','created_at_end']);
-            $data = $users->keyBy('id')->all();
+            if ($res['user_id']){
+                $data = $users->where('id',$res['user_id'])->keyBy('id')->all();
+            }else{
+                $data = $users->keyBy('id')->all();
+            }
+
             foreach ($data as &$d){
                 $d['todayCalls'] = 0;
                 $d['todaySuccessCalls'] = 0;
