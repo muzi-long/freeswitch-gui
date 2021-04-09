@@ -49,7 +49,7 @@
                 elem: '#dataTable'
                 ,height: 500
                 ,toolbar: true
-                ,url: "{{ route('data_view.cdr.index') }}" //数据接口
+                ,url: "{{ route('data_view.cdr') }}" //数据接口
                 ,page: false //开启分页
                 ,cols: [[
                     {align: 'center', title: '用户', rowspan: 2,field:'nickname'},
