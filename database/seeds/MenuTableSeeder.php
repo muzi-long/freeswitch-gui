@@ -258,6 +258,25 @@ class MenuTableSeeder extends Seeder
                     ],
                 ]
             ],
+            [
+                'name' => '数据可视化',
+                'route' => null,
+                'url' => null,
+                'icon' => 'layui-icon-chart-screen',
+                'type' => 2,
+                'sort' => 2,
+                'permission_name' => 0,
+                'child' => [
+                    [
+                        'name' => '通话统计',
+                        'route' => null,
+                        'url' => 'data_view.cdr',
+                        'icon' => 'layui-icon-chart',
+                        'type' => 1,
+                        'permission_name' => 'data_view.cdr',
+                    ],
+                ]
+            ],
         ];
         $permissions = \App\Models\Permission::pluck('id','name')->toArray();
         foreach ($datas as $k1 => $d1){

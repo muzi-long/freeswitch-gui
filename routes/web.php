@@ -378,6 +378,20 @@ Route::group(['prefix'=>'account','namespace'=>'Account','middleware'=>['auth','
 });
 
 
+/*
+|--------------------------------------------------------------------------
+| 数据可视化
+|--------------------------------------------------------------------------
+*/
+
+Route::group(['prefix'=>'data_view','namespace'=>'DataView','middleware'=>['auth','permission:data_view']],function () {
+
+    //通话统计
+    Route::group([],function (){
+        Route::get('cdr','CdrController@index')->name('data_view.cdr')->middleware('permission:data_view.cdr');
+    });
+
+});
 
 
 

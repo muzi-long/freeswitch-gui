@@ -263,6 +263,19 @@ class UserTableSeeder extends Seeder
                     ],
                 ],
             ],
+            [
+                'name' => 'data_view',
+                'display_name' => '数据可视化',
+                'child' => [
+                    [
+                        'name' => 'data_view.cdr',
+                        'display_name' => '通话统计',
+                        'child' => [
+
+                        ]
+                    ],
+                ],
+            ],
         ];
         foreach ($permissions as $pem1) {
             //生成一级权限
