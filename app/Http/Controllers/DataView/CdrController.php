@@ -105,7 +105,7 @@ class CdrController extends Controller
             }
             return $this->success('ok',$data,count($data));
         }
-        return View::make('data_view.cdr.index');
+        return View::make('data_view.cdr.index',compact('users'));
     }
 
 }
