@@ -101,6 +101,15 @@
             return false;
         });
 
+        //
+        form.on('submit(search-nopage)',function(data) {
+            layui.table.reload('dataTable',{
+                where: data.field,
+                page: false
+            });
+            return false;
+        });
+
         window.newTab = function (url, tit) {
             if (top.layui.index) {
                 top.layui.index.openTabsPage(url, tit)
@@ -166,7 +175,7 @@
             }
         })
 
-        
+
     });
 </script>
 @yield('script')

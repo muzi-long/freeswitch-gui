@@ -4,7 +4,7 @@
     <div class="layui-card">
         <div class="layui-card-header layuiadmin-card-header-auto">
             <form  class="layui-form">
-                <button class="layui-btn layui-btn-sm" lay-submit lay-filter="search" >搜索</button>
+                <button class="layui-btn layui-btn-sm" lay-submit lay-filter="search-nopage" >搜索</button>
                 <div class="layui-form-item">
                     <div class="layui-inline">
                         <label for="" class="layui-form-label">用户</label>
@@ -47,7 +47,7 @@
             //用户表格初始化
             var dataTable = table.render({
                 elem: '#dataTable'
-                ,height: 500
+                ,height: 'full-200'
                 ,toolbar: true
                 ,url: "{{ route('data_view.cdr') }}" //数据接口
                 ,page: false //开启分页
