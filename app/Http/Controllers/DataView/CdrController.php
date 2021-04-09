@@ -14,7 +14,7 @@ class CdrController extends Controller
 
     public function index(Request $request)
     {
-        $users = User::query()->get();
+        $users = User::query()->select(['id','nickname'])->get();
         if ($request->ajax()){
             $res = $request->all(['user_id','created_at_start','created_at_end']);
             if ($res['user_id']){
@@ -58,7 +58,7 @@ class CdrController extends Controller
                     foreach ($cdrs as $cdr){
                         foreach ($data as $d){
                             if ($cdr->user_id==$d['id']){
-                                $time = strtotime($cdr->aleg_start_at);
+                                $time = strtotime($cdr->created_at);
                                 //当天
                                 if ($time>=Carbon::today()->timestamp && $time<=Carbon::tomorrow()->timestamp){
                                     $d['todayCalls'] += 1;
