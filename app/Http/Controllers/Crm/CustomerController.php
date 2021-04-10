@@ -196,9 +196,12 @@ class CustomerController extends Controller
             ]);
             foreach ($dataInfo as $d){
                 DB::table('customer_field_value')
-                    ->where('customer_id','=',$id)
-                    ->where('customer_field_id',$d['customer_field_id'])
-                    ->update(['data'=>$d['data']]);
+                    ->updateOrInsert([
+                        'customer_id' => $id,
+                        'customer_field_id' => $d['customer_field_id'],
+                    ],[
+                        'data'=>$d['data'],
+                    ]);
             }
             DB::commit();
             return $this->success();
