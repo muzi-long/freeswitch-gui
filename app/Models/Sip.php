@@ -34,7 +34,7 @@ class Sip extends Model
      */
     public function user()
     {
-        return $this->hasOne('App\Models\User','sip_id','id')->withDefault(['nickname'=>'-']);
+        return $this->hasOne('App\Models\User','sip_id','id')->withDefault(['nickname'=>'未分配']);
     }
 
 }

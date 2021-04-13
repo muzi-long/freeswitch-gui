@@ -19,6 +19,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::post('get_permission_by_role_id','ApiController@getPermissionByRoleId')->name('api.getPermissionByRoleId');
 Route::post('get_role_by_user_id','ApiController@getRoleByUserId')->name('api.getRoleByUserId');
+Route::post('get_sips_by_queue_id','ApiController@getSipsByQueueId')->name('api.getSipsByQueueId');
 Route::post('get_department_by_user_id','ApiController@getDepartmentByUserId')->name('api.getDepartmentByUserId');
 Route::post('get_user','ApiController@getUser')->name('api.getUser');
 Route::post('get_node','ApiController@getNode')->name('api.getNode');

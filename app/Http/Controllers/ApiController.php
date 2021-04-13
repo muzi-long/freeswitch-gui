@@ -14,6 +14,7 @@ use App\Models\Role;
 use App\Models\Sip;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Storage;
@@ -263,12 +264,26 @@ class ApiController extends Controller
 
     }
 
-
     public function payList(Request $request)
     {
         $id = $request->input('id');
         $res = OrderPay::query()->where('order_id','=',$id)->orderByDesc('id')->paginate($request->get('limit', 2));
         return $this->success('ok',['list'=>$res->items(),'lastPage'=>$res->lastPage()]);
     }
+
+    public function getSipsByQueueId(Request $request)
+    {
+        $queueId = $request->input('queue_id');
+        $lists = Sip::with('user')->get();
+        $values = [];
+        if ($queueId){
+            $values = DB::table('queue_sip')->where('queue_id',$queueId)->pluck('sip_id')->toArray();
+        }
+        foreach ($lists as $item){
+            $item->checked = in_array($item->id,$values) ? true : false;
+        }
+        return $this->success('ok',['lists'=>$lists,'values'=>$values]);
+    }
+
 
 }

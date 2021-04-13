@@ -189,6 +189,30 @@ Route::group(['prefix'=>'call','namespace'=> 'Call','middleware'=>['auth','permi
 
 });
 
+/*
+|--------------------------------------------------------------------------
+| 群呼模块
+|--------------------------------------------------------------------------
+*/
+Route::group(['prefix'=>'callcenter','namespace'=>'Callcenter','middleware'=>['auth','permission:callcenter']],function () {
+
+    //队列管理
+    Route::group([],function (){
+        Route::get('queue','QueueController@index')->name('callcenter.queue')->middleware('permission:callcenter.queue');
+        //添加
+        Route::get('queue/create','QueueController@create')->name('callcenter.queue.create')->middleware('permission:callcenter.queue.create');
+        Route::post('queue/store','QueueController@store')->name('callcenter.queue.store')->middleware('permission:callcenter.queue.create');
+        //编辑
+        Route::get('queue/{id}/edit','QueueController@edit')->name('callcenter.queue.edit')->middleware('permission:callcenter.queue.edit');
+        Route::put('queue/{id}/update','QueueController@update')->name('callcenter.queue.update')->middleware('permission:callcenter.queue.edit');
+        //删除
+        Route::delete('queue/destroy','QueueController@destroy')->name('callcenter.queue.destroy')->middleware('permission:callcenter.queue.destroy');
+        //更新配置
+        Route::post('queue/updateXml','QueueController@updateXml')->name('callcenter.queue.updateXml')->middleware('permission:callcenter.queue.updateXml');
+    });
+
+});
+
 
 /*
 |--------------------------------------------------------------------------

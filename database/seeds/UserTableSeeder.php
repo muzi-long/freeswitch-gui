@@ -124,6 +124,22 @@ class UserTableSeeder extends Seeder
                 ],
             ],
             [
+                'name' => 'callcenter',
+                'display_name' => '群呼管理',
+                'child' => [
+                    [
+                        'name' => 'callcenter.queue',
+                        'display_name' => '队列管理',
+                        'child' => [
+                            ['name' => 'callcenter.queue.create', 'display_name' => '添加'],
+                            ['name' => 'callcenter.queue.edit', 'display_name' => '编辑'],
+                            ['name' => 'callcenter.queue.destroy', 'display_name' => '删除'],
+                            ['name' => 'callcenter.queue.updateXml', 'display_name' => '更新配置'],
+                        ]
+                    ],
+                ],
+            ],
+            [
                 'name' => 'crm',
                 'display_name' => 'CRM管理',
                 'child' => [

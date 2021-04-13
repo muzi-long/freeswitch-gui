@@ -100,6 +100,25 @@ class MenuTableSeeder extends Seeder
                 ]
             ],
             [
+                'name' => '群呼管理',
+                'route' => null,
+                'url' => null,
+                'icon' => 'layui-icon-group',
+                'type' => 2,
+                'sort' => 2,
+                'permission_name' => 'callcenter',
+                'child' => [
+                    [
+                        'name' => '队列管理',
+                        'route' => 'callcenter.queue',
+                        'url' => null,
+                        'icon' => 'layui-icon-user',
+                        'type' => 1,
+                        'permission_name' => 'callcenter.queue',
+                    ],
+                ]
+            ],
+            [
                 'name' => '实时聊天',
                 'route' => null,
                 'url' => null,
