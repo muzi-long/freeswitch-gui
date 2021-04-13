@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Callcenter;
 
 use App\Http\Controllers\Controller;
+use App\Models\Sip;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -42,6 +43,7 @@ class QueueController extends Controller
                 'name' => $data['name'],
                 'strategy' => $data['strategy'],
                 'max_wait_time' => $data['max_wait_time'],
+                'created_at' => date('Y-m-d H:i:s'),
             ]);
             foreach ($data['sips'] as $sipId){
                 DB::table('queue_sip')->insert([
@@ -108,11 +110,16 @@ class QueueController extends Controller
     public function updateXml()
     {
         $queues = Queue::with('sips')->get()->toArray();
+        $sipIds = DB::table('queue_sip')->pluck('sip_id')->toArray();
+        $agents = Sip::query()->whereIn('id',$sipIds)->get()->toArray();
         try{
             $client = new Client();
             $client->post(config('freeswitch.swoole_http_url.callcenter'),
                 [
-                    'json' => $queues,
+                    'json' => [
+                        'queues' => $queues,
+                        'agents' => $agents,
+                    ],
                     'timeout' => 30
                 ]
             );

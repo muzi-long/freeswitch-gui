@@ -50,6 +50,7 @@ class SwooleHttp extends Command
             'directory' => '/usr/local/freeswitch/conf/directory/default/',
             //拨号计划下面默认分为default(呼出)和public(呼入)
             'dialplan' => '/usr/local/freeswitch/conf/dialplan/',
+            'callcenter' => '/usr/local/freeswitch/conf/autoload_configs/callcenter.conf.xml'
         ];
         $http->on('request', function ($request, $response) use ($conf) {
             if($request->server['request_method'] == 'POST'){
@@ -137,7 +138,60 @@ class SwooleHttp extends Command
                             exec($command."\""."reloadxml"."\"");
                             $return = ['code'=>0,'msg'=>'拨号计划更新成功'];
                             break;
+                        case '/callcenter':
+                            $xml  = "<configuration name=\"callcenter.conf\" description=\"CallCenter\">\n";
+                            $xml .= "\t<settings>\n";
+                            $xml .= "\t\t<!--<param name=\"odbc-dsn\" value=\"dsn:user:pass\"/>-->\n";
+                            $xml .= "\t\t<!--<param name=\"dbname\" value=\"/dev/shm/callcenter.db\"/>-->\n";
+                            $xml .= "\t\t<!--<param name=\"cc-instance-id\" value=\"single_box\"/>-->\n";
+                            $xml .= "\t\t<param name=\"truncate-tiers-on-load\" value=\"true\"/>\n";
+                            $xml .= "\t\t<param name=\"truncate-agents-on-load\" value=\"true\"/>\n";
+                            $xml .= "\t</settings>\n";
+                            //----------------------------------  写入队列信息 ------------------------------------
+                            $xml .= "\t<queues>\n";
+                            foreach ($data['queues'] as $queue){
+                                $xml .= "\t\t<queue name=\"queue".$queue['id']."\">\n";
+                                $xml .= "\t\t\t<param name=\"strategy\" value=\"".$queue['strategy']."\"/>\n";
+                                $xml .= "\t\t\t<param name=\"moh-sound\" value=\"\$\${hold_music}\"/>\n";
+                                //$xml .= "\t\t\t<param name=\"record-template\" value=\"\$\${recordings_dir}/\${strftime(%Y)}/\${strftime(%m)}/\${strftime(%d)}/.\${destination_number}.\${caller_id_number}.\${uuid}.wav\"/>\n";
+                                $xml .= "\t\t\t<param name=\"time-base-score\" value=\"system\"/>\n";
+                                $xml .= "\t\t\t<param name=\"max-wait-time\" value=\"".$queue['max_wait_time']."\"/>\n";
+                                $xml .= "\t\t\t<param name=\"max-wait-time-with-no-agent\" value=\"0\"/>\n";
+                                $xml .= "\t\t\t<param name=\"max-wait-time-with-no-agent-time-reached\" value=\"5\"/>\n";
+                                $xml .= "\t\t\t<param name=\"tier-rules-apply\" value=\"false\"/>\n";
+                                $xml .= "\t\t\t<param name=\"tier-rule-wait-second\" value=\"300\"/>\n";
+                                $xml .= "\t\t\t<param name=\"tier-rule-wait-multiply-level\" value=\"true\"/>\n";
+                                $xml .= "\t\t\t<param name=\"tier-rule-no-agent-no-wait\" value=\"false\"/>\n";
+                                $xml .= "\t\t\t<param name=\"discard-abandoned-after\" value=\"60\"/>\n";
+                                $xml .= "\t\t\t<param name=\"abandoned-resume-allowed\" value=\"false\"/>\n";
+                                $xml .= "\t\t</queue>\n";
+                            }
+                            $xml .= "\t</queues>\n";
 
+                            //----------------------------------  写入坐席信息 ------------------------------------
+                            $xml .= "\t<agents>\n";
+                            foreach ($data['agents'] as $agent){
+                                $contact = "[leg_timeout=10]user/".$agent['username'];
+                                $xml .= "\t\t<agent name=\"agent".$agent['id']."\" type=\"callback\" contact=\"".$contact."\" status=\"".$agent['status']."\" max-no-answer=\"0\" wrap-up-time=\"10\" reject-delay-time=\"0\" busy-delay-time=\"0\" no-answer-delay-time=\"0\" />\n";
+                            }
+                            $xml .= "\t</agents>\n";
+
+                            //----------------------------------  写入队列-坐席信息 ------------------------------------
+                            $xml .= "\t<tiers>\n";
+                            foreach ($data['queues'] as $queue){
+                                if (isset($queue['agents'])&&!empty($queue['agents'])) {
+                                    foreach ($queue['agents'] as $agent){
+                                        $xml .= "\t\t<tier agent=\"agent".$agent['id']."\" queue=\"queue".$queue['id']."\" level=\"1\" position=\"1\"/>\n";
+                                    }
+                                }
+                            }
+                            $xml .= "\t</tiers>\n";
+                            $xml .= "</configuration>\n";
+                            //生成配置文件
+                            file_put_contents($conf['callcenter'],$xml);
+                            exec($command."\""."reload mod_callcenter"."\"");
+                            $return = ['code'=>0,'msg'=>'分机更新成功'];
+                            break;
                         case '/favicon.ico':
                             $response->status(404);
                             $response->end();

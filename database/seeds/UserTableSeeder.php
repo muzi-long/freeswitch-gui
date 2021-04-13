@@ -137,6 +137,18 @@ class UserTableSeeder extends Seeder
                             ['name' => 'callcenter.queue.updateXml', 'display_name' => '更新配置'],
                         ]
                     ],
+                    [
+                        'name' => 'callcenter.task',
+                        'display_name' => '任务管理',
+                        'child' => [
+                            ['name' => 'callcenter.task.create', 'display_name' => '添加'],
+                            ['name' => 'callcenter.task.show', 'display_name' => '详情'],
+                            ['name' => 'callcenter.task.edit', 'display_name' => '编辑'],
+                            ['name' => 'callcenter.task.destroy', 'display_name' => '删除'],
+                            ['name' => 'callcenter.task.importCall', 'display_name' => '导入号码'],
+                            ['name' => 'callcenter.task.setStatus', 'display_name' => '设置状态'],
+                        ]
+                    ],
                 ],
             ],
             [

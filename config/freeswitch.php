@@ -31,6 +31,8 @@ return [
         'directory' => 'http://127.0.0.1:9501/directory',
         //生成拨号计划
         'dialplan' => 'http://127.0.0.1:9501/dialplan',
+        //生成群呼
+        'callcenter' => 'http://127.0.0.1:9501/callcenter',
     ],
 
     'esl' => [
@@ -42,6 +44,7 @@ return [
     'redis_key' => [
         'dial' => 'dial_uuid_queue',
         'api' => 'api_exec_queue',
+        'callcenter_task' => 'callcenter_task_queue',
     ],
     'record_url' => env('APP_URL','http://localhost'),
     'host' => env('FS_HOST','127.0.0.1'),
@@ -84,5 +87,13 @@ return [
         3 => '支付宝',
         4 => '微信',
         5 => '其它',
+    ],
+
+    //群呼状态
+    'callcenter_call_status' => [
+        1 => '待呼叫',
+        2 => '呼叫失败',
+        3 => '漏接',
+        4 => '成功',
     ],
 ];

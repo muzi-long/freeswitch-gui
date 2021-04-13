@@ -116,6 +116,14 @@ class MenuTableSeeder extends Seeder
                         'type' => 1,
                         'permission_name' => 'callcenter.queue',
                     ],
+                    [
+                        'name' => '任务管理',
+                        'route' => 'callcenter.task',
+                        'url' => null,
+                        'icon' => 'layui-icon-template-1',
+                        'type' => 1,
+                        'permission_name' => 'callcenter.task',
+                    ],
                 ]
             ],
             [

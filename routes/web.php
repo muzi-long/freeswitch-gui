@@ -211,6 +211,27 @@ Route::group(['prefix'=>'callcenter','namespace'=>'Callcenter','middleware'=>['a
         Route::post('queue/updateXml','QueueController@updateXml')->name('callcenter.queue.updateXml')->middleware('permission:callcenter.queue.updateXml');
     });
 
+    //任务管理
+    Route::group([],function (){
+        Route::get('task','TaskController@index')->name('callcenter.task')->middleware('permission:callcenter.task');
+        //添加
+        Route::get('task/create','TaskController@create')->name('callcenter.task.create')->middleware('permission:callcenter.task.create');
+        Route::post('task/store','TaskController@store')->name('callcenter.task.store')->middleware('permission:callcenter.task.create');
+        //编辑
+        Route::get('task/{id}/edit','TaskController@edit')->name('callcenter.task.edit')->middleware('permission:callcenter.task.edit');
+        Route::put('task/{id}/update','TaskController@update')->name('callcenter.task.update')->middleware('permission:callcenter.task.edit');
+        //删除
+        Route::delete('task/destroy','TaskController@destroy')->name('callcenter.task.destroy')->middleware('permission:callcenter.task.destroy');
+        //详情
+        Route::get('task/{id}/show','TaskController@show')->name('callcenter.task.show')->middleware('permission:callcenter.task.show');
+        //设置状态
+        Route::post('task/setStatus','TaskController@setStatus')->name('callcenter.task.setStatus')->middleware('permission:callcenter.task.setStatus');
+        //导入号码
+        Route::match(['get','post'],'task/{id}/importCall','TaskController@importCall')->name('callcenter.task.importCall')->middleware('permission:callcenter.task.importCall');
+        //呼叫记录
+        Route::get('task/calls','TaskController@calls')->name('callcenter.task.calls');
+    });
+
 });
 
 
