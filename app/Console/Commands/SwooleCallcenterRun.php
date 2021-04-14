@@ -142,7 +142,7 @@ class SwooleCallcenterRun extends Command
                             break;
                         }
                         foreach ($calls as $call){
-                            go(function () use ($call,$task){
+                            \Swoole\Coroutine::create(function () use ($call,$task){
                                 (new Callcenter($call,$task))->run();
                             });
                             sleep(2);

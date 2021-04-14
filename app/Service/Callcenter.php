@@ -112,7 +112,7 @@ class Callcenter
                         $this->call->update([
                             'billsec' => $billsec,
                         ]);
-                        break;
+                        break 2;
                     default:
                 }
             }
