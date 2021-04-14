@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Call;
 
 use App\Http\Controllers\Controller;
 use App\Models\Gateway;
+use App\Models\Queue;
 use App\Models\Sip;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
@@ -81,6 +82,7 @@ class SipController extends Controller
         }
         try {
             Sip::destroy($ids);
+            DB::table('queue_sip')->whereIn('sip_id',$ids)->delete();
             return $this->success();
         } catch (\Exception $exception) {
             Log::error('删除分机异常：' . $exception->getMessage());

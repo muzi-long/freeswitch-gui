@@ -95,7 +95,7 @@ class TaskController extends Controller
         DB::beginTransaction();
         try {
             Task::destroy($ids);
-
+            Call::query()->whereIn('task_id',$ids)->delete();
             DB::commit();
             return $this->success();
         }catch (\Exception $exception){
