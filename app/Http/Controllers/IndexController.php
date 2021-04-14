@@ -38,7 +38,7 @@ class IndexController extends Controller
         //总客户数
         $customerCount = Customer::count();
         //我的客户数
-        $myCustomerCount = Customer::where('owner_user_id','=',auth()->user()->id)->count();
+        $myCustomerCount = Customer::where('owner_user_id','=',auth()->user()->id)->where('status',3)->count();
         return View::make("index.console",compact('departmentCount','userCount','customerCount','myCustomerCount'));
     }
 
