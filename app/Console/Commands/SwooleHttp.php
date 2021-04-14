@@ -179,8 +179,8 @@ class SwooleHttp extends Command
                             //----------------------------------  写入队列-坐席信息 ------------------------------------
                             $xml .= "\t<tiers>\n";
                             foreach ($data['queues'] as $queue){
-                                if (isset($queue['agents'])&&!empty($queue['agents'])) {
-                                    foreach ($queue['agents'] as $agent){
+                                if (isset($queue['sips'])&&!empty($queue['sips'])) {
+                                    foreach ($queue['sips'] as $agent){
                                         $xml .= "\t\t<tier agent=\"agent".$agent['id']."\" queue=\"queue".$queue['id']."\" level=\"1\" position=\"1\"/>\n";
                                     }
                                 }
