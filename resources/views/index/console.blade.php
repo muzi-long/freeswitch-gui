@@ -92,8 +92,8 @@
                                             </li>
                                             <li class="layui-col-xs6">
                                                 <a  class="layadmin-backlog-body">
-                                                    <h3>公海客户数量</h3>
-                                                    <p><cite>{{$wasteCount}}</cite></p>
+                                                    <h3>我的客户数量</h3>
+                                                    <p><cite>{{$myCustomerCount}}</cite></p>
                                                 </a>
                                             </li>
                                         </ul>

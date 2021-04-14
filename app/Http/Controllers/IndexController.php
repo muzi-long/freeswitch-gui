@@ -37,9 +37,9 @@ class IndexController extends Controller
         $userCount = User::count();
         //总客户数
         $customerCount = Customer::count();
-        //公海客户数
-        $wasteCount = Customer::where('status','=',5)->count();
-        return View::make("index.console",compact('departmentCount','userCount','customerCount','wasteCount'));
+        //我的客户数
+        $myCustomerCount = Customer::where('owner_user_id','=',auth()->user()->id)->count();
+        return View::make("index.console",compact('departmentCount','userCount','customerCount','myCustomerCount'));
     }
 
     public function cdrCount()
