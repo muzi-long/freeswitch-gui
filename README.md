@@ -1,6 +1,6 @@
 
 ## 安装步骤
-### 请查看6.0分支，使用laravel 6.0 LTS版本
+### 目前仅维护4.0和5.0分支，使用laravel 6.0 LTS版本
 - git clone -b 4.0  https://github.com/github-muzilong/freeswitch-gui.git
 - 复制.env.example为.env
 - 配置.env里的数据库连接信息
