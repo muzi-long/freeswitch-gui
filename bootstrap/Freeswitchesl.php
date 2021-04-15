@@ -125,7 +125,7 @@ class Freeswitchesl {
         $response = '';
         $length = 0;
         $x = 0;
-        while ($socket_info = @socket_read($this->socket, 1024, PHP_NORMAL_READ)){ 
+        /*while ($socket_info = @socket_read($this->socket, 1024, PHP_NORMAL_READ)){ 
             $x++;
             usleep(100);
             if ($length > 0) {
@@ -145,7 +145,58 @@ class Freeswitchesl {
             }
 
             if ($x > 10000) break;
+        }*/
+        //--------------------------------  2020.02.26 lilong update -----------------------
+        if($type=='common'){
+            
+            while ($socket_info = @socket_read($this->socket, 1024, PHP_BINARY_READ)){
+                $x++;
+                usleep(100);
+                $response .= $socket_info;
+                if (strpos($socket_info, 'Content-Length:') !== false) {
+                    $lengtharray = explode("Content-Length:",$socket_info);
+                    if ($type == "event") {
+                        $length = (int)$lengtharray[1]+30;
+                    } else {
+                        $length = (int)$lengtharray[1];
+                    }
+                }
+                if ($length > 0 && strlen(substr($response, strpos($response, "Content-Length: {$length}"))) == $length+strlen("Content-Length: {$length}\r\n")) {
+                    break;
+                }
+
+                if ($x > 10000) break;
+            }
+
+            $replace_arr = ["Content-Type: api/response\n","Content-Length: {$length}"];
+            $response = str_replace($replace_arr, '', $response);
+            
+
+        }else{
+            //与原代码做兼容
+            while ($socket_info = @socket_read($this->socket, 1024, PHP_NORMAL_READ)){ 
+                $x++;
+                usleep(100);
+                if ($length > 0) {
+                    $response .= $socket_info;
+                }
+                if ($length == 0 && strpos($socket_info, 'Content-Length:') !== false) {
+                    $lengtharray = explode("Content-Length:",$socket_info);
+                    if ($type == "event") {
+                        $length = (int)$lengtharray[1]+30;
+                    } else {
+                        $length = (int)$lengtharray[1];
+                    }
+                }
+
+                if ($length > 0 && strlen($response) >= $length) {
+                    break;
+                }
+
+                if ($x > 10000) break;
+            }
         }
+        //--------------------------------  2020.02.26 lilong update -----------------------
 
 
         if ($this->sorts == "json" && $type == "event") {
@@ -218,6 +269,9 @@ class Freeswitchesl {
 
     public function disconnect()
     {
+        //--------------------------------  2020.02.26 lilong add -----------------------
+        socket_write($this->socket, "exit"."\r\n\r\n");
+        //--------------------------------  2020.02.26 lilong add -----------------------
         socket_close($this->socket); 
     }
 }

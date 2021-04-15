@@ -1,12 +1,13 @@
 {{csrf_field()}}
 <div class="layui-form-item">
-    <label for="" class="layui-form-label">商户</label>
+    <label class="layui-form-label">商户网关</label>
+    <div id="merchant_gateway"></div>
+</div>
+<div class="layui-form-item">
+    <label for="" class="layui-form-label">资费套餐</label>
     <div class="layui-input-inline">
-        <select name="merchant_id" lay-verify="required">
+        <select name="expense_id">
             <option value=""></option>
-            @foreach($merchants as $merchant)
-            <option value="{{$merchant->id}}" @if((isset($model)&&$model->merchant_id==$merchant->id)||$merchant->id==old('merchant_id')) selected @endif >{{$merchant->username}}（{{$merchant->company_name}}）</option>
-            @endforeach
         </select>
     </div>
 </div>

@@ -3,7 +3,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>layuiAdmin 控制台主页一</title>
+    <title></title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
@@ -17,7 +17,6 @@
     @yield('content')
 </div>
 
-<script src="/js/jquery.min.js"></script>
 <script src="/static/admin/layuiadmin/layui/layui.js"></script>
 <script>
     function newTab(url,tit){
@@ -27,16 +26,13 @@
             window.open(url)
         }
     }
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
-    });
+
     layui.config({
         base: '/static/admin/layuiadmin/' //静态资源所在路径
     }).extend({
         index: 'lib/index' //主入口模块
-    }).use(['element','form','layer','table','upload','laydate'],function () {
+    }).use(['element','form','layer','table','upload','laydate','jquery'],function () {
+        var $ = layui.jquery;
         var element = layui.element;
         var layer = layui.layer;
         var form = layui.form;
@@ -44,22 +40,28 @@
         var upload = layui.upload;
         var laydate = layui.laydate;
 
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
         //错误提示
         @if(count($errors)>0)
             @foreach($errors->all() as $error)
-                layer.msg("{{$error}}",{icon:5});
+                layer.msg("{{$error}}",{icon:2});
                 @break
             @endforeach
         @endif
 
         //一次性正确信息提示
         @if(session('success'))
-            layer.msg("{{session('success')}}",{icon:6});
+            layer.msg("{{session('success')}}",{icon:1});
         @endif
 
         //一次性错误信息提示
         @if(session('error'))
-        layer.msg("{{session('error')}}",{icon:5});
+        layer.msg("{{session('error')}}",{icon:2});
         @endif
 
     });

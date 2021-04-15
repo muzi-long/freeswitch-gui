@@ -24,7 +24,12 @@ class AgentController extends Controller
 
     public function data(Request $request)
     {
-        $res = Agent::orderByDesc('id')->paginate($request->get('limit', 30));
+        $data = $request->all(['display_name','originate_number']);
+        $res = Agent::when($data['display_name'],function($q) use($data){
+            return $q->where('display_name','like','%'.$data['display_name'].'%');
+        })->when($data['originate_number'],function($q) use($data){
+            return $q->where('originate_number','like','%'.$data['originate_number'].'%');
+        })->orderByDesc('id')->paginate($request->get('limit', 30));
         $data = [
             'code' => 0,
             'msg' => '正在请求中...',
@@ -116,4 +121,33 @@ class AgentController extends Controller
         }
         return response()->json(['code'=>1,'msg'=>'删除失败']);
     }
+
+
+    public function check(Request $request){
+        $data = $request->all(['ids','status']);
+        if (empty($data['ids']) || !is_array($data['ids'])) {
+            return response()->json(['code'=>1,'msg'=>'请选择操作项']);
+        }
+        if (!in_array($data['status'], [0,1])) {
+            return response()->json(['code'=>1,'msg'=>'状态参数错误']);
+        }
+        $status = $data['status']==1?'Available':'Logged Out';
+        $freeswitch = new \Freeswitchesl();
+        $service = config('freeswitch.service')[1];
+        try{
+            if ($freeswitch->connect($service['host'], $service['port'], $service['password'])) {
+                foreach ($data['ids'] as $id) {
+                    $freeswitch->api("callcenter_config agent set status agent".$id." '".$status."'");
+                }
+                $freeswitch->disconnect();
+                return response()->json(['code'=>0,'msg'=>'更新成功']);
+            }else{
+                return response()->json(['code'=>1,'msg'=>'更新成功']);
+            }    
+        }catch(\Exception $e){
+            return response()->json(['code'=>1,'msg'=>'系统错误','data'=>$e->getMessage()]);
+        }
+
+    }
+
 }

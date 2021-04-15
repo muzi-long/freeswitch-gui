@@ -14,7 +14,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
 use DB;
 use Log;
-
+use Illuminate\Support\Facades\Redis;
 
 class TaskController extends Controller
 {
@@ -153,6 +153,8 @@ class TaskController extends Controller
             return response()->json(['code'=>1,'msg'=>'任务未导入号码，禁止操作']);
         }
         if ($status==1&&$task->status!=2){
+            $key = config('freeswitch.redis_key.callcenter_task');
+            Redis::rPush($key,$task->id);
             return response()->json(['code'=>1,'msg'=>'任务未启动，禁止操作']);
         }
 

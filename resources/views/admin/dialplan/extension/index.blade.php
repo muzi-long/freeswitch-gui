@@ -6,6 +6,7 @@
             <div class="layui-btn-group">
                 <button class="layui-btn layui-btn-sm layui-btn-danger" id="listDelete">删 除</button>
                 <a class="layui-btn layui-btn-sm" href="{{ route('admin.extension.create') }}">添 加</a>
+                <button class="layui-btn layui-btn-sm" id="updateXml">更新配置</button>
             </div>
 
         </div>
@@ -25,7 +26,8 @@
 
 @section('script')
     <script>
-        layui.use(['layer','table','form'],function () {
+        layui.use(['layer','table','form','jquery'],function () {
+            var $ = layui.jquery;
             var layer = layui.layer;
             var form = layui.form;
             var table = layui.table;
@@ -96,6 +98,16 @@
                 }else {
                     layer.msg('请选择删除项',{icon:5})
                 }
+            })
+
+            //更新配置
+            $("#updateXml").click(function () {
+                layer.confirm('该操作将重新拨号计划，确认操作吗？', function(index){
+                    $.post("{{ route('admin.extension.updateXml') }}",{_method:'post',_token:'{{csrf_token()}}'},function (result) {
+                        var icon = result.code==0?6:5;
+                        layer.msg(result.msg,{icon:icon})
+                    });
+                })
             })
         })
     </script>

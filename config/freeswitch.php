@@ -1,9 +1,23 @@
 <?php
 return [
 
+    //生成静态文件地址
+    'swoole_http_url' => [
+        //生成网关
+        'gateway' => 'http://127.0.0.1:8001/gateway',
+        //生成分机
+        'directory' => 'http://127.0.0.1:8001/directory',
+        //生成拨号计划
+        'dialplan' => 'http://127.0.0.1:8001/dialplan',
+        //生成callcenter
+        'callcenter' => 'http://127.0.0.1:8001/callcenter',
+
+    ],
+
+
     //socket连接授权
     'event_socket' => [
-        'host'      => '172.16.2.12',
+        'host'      => '127.0.0.1',
         'port'      => 8021,
         'password'  => 'ClueCon',
     ],
@@ -80,6 +94,24 @@ return [
         'menu-exec-app' => '应用',
         'menu-sub' => '子菜单',
         'enu-top' => '父菜单',
+    ],
+
+    //字段类型
+    'field_type' => [
+        'input' => '输入框',
+        'radio' => '单选',
+        'checkbox' => '多选',
+        'select' => '下拉选择',
+        'image' => '图片上传',
+        'textarea' => '文本框',
+    ],
+
+    //redis key
+    'redis_key' => [
+        //服务端获取任务ID的key
+        'callcenter_task' => 'callcenter_task_id',
+        //自增ID的key,用于群呼时生成uuid
+        'callcenter_call' => 'callcenter_call_id',
     ],
 
 ];

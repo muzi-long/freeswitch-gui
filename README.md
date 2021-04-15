@@ -1,4 +1,4 @@
-
+### 基于laravel6.0与freeswitch1.8版本的外呼平台
 ## 安装步骤
 - git clone  xxxxx
 - 复制.env.example为.env

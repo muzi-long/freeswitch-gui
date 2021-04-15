@@ -3,13 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 
 class Queue extends Model
 {
     protected $table = 'queue';
     protected $fillable = [
         'display_name',
-        'name',
         'strategy',
         'max_wait_time',
     ];
@@ -23,7 +23,7 @@ class Queue extends Model
 
     public function getStrategyNameAttribute()
     {
-        return $this->attributes['strategy_name'] = array_get(config('freeswitch.strategy'),$this->strategy);
+        return $this->attributes['strategy_name'] = Arr::get(config('freeswitch.strategy'),$this->strategy);
     }
 
 

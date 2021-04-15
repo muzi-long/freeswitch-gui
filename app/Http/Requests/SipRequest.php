@@ -24,9 +24,9 @@ class SipRequest extends FormRequest
     public function rules()
     {
         return [
-            'username'  => 'required|numeric|min:1000|unique:sip,username,'.$this->id.',id',
+            'username'  => 'required|numeric|min:1000|max:9999|unique:sip,username,'.$this->id.',id',
             'password'  => 'required',
-            'merchant_id' => 'required|exists:merchant,id'
+            'merchant_gateway' => 'required|regex:/\d,\d/'
         ];
     }
 
@@ -34,7 +34,16 @@ class SipRequest extends FormRequest
     {
         return [
             'username' => '分机号',
+            'merchant_gateway' => '网关'
         ];
     }
+
+    public function messages()
+    {
+        return [
+            'merchant_gateway.regex'=>'请选择网关',
+        ];
+    }
+
 
 }

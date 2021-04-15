@@ -11,6 +11,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Validator;
+use GuzzleHttp\Client;
+use App\Models\Gateway;
 
 class SipController extends Controller
 {
@@ -32,6 +34,9 @@ class SipController extends Controller
             $query = $query->where('username',$username);
         }
         $res = $query->orderByDesc('id')->paginate($request->get('limit', 30));
+        foreach ($res->items() as $d){
+            $d->status = Sip::getStatus($d);
+        }
         $data = [
             'code' => 0,
             'msg' => '正在请求中...',
@@ -48,8 +53,7 @@ class SipController extends Controller
      */
     public function create()
     {
-        $merchants = Merchant::orderByDesc('id')->where('status',1)->get();
-        return view('admin.sip.create',compact('merchants'));
+        return view('admin.sip.create');
     }
 
     /**
@@ -61,6 +65,9 @@ class SipController extends Controller
     public function store(SipRequest $request)
     {
         $data = $request->all([
+            'merchant_gateway',
+            'gateway_id',
+            'expense_id',
             'merchant_id',
             'username',
             'password',
@@ -69,6 +76,9 @@ class SipController extends Controller
             'outbound_caller_id_name',
             'outbound_caller_id_number',
         ]);
+        $mg = explode(',',$data['merchant_gateway']);
+        $data['merchant_id'] = $mg[0];
+        $data['gateway_id'] = $mg[1];
         if ($data['effective_caller_id_name']==null){
             $data['effective_caller_id_name'] = $data['username'];
         }
@@ -76,8 +86,8 @@ class SipController extends Controller
             $data['effective_caller_id_number'] = $data['username'];
         }
         //验证商户允许的最大分机数
-        $merchant = Merchant::withCount('sips')->findOrFail($data['merchant_id']);
-        if ($merchant->sips_count >= $merchant->sip_num){
+        $merchant = Merchant::with('info')->withCount('sips')->findOrFail($data['merchant_id']);
+        if ($merchant->sips_count >= $merchant->info->sip_num){
             return back()->withInput()->withErrors(['error'=>'添加失败：超出商户最大允许分机数量']);
         }
         try{
@@ -123,6 +133,10 @@ class SipController extends Controller
     {
         $model = Sip::findOrFail($id);
         $data = $request->all([
+            'merchant_gateway',
+            'gateway_id',
+            'expense_id',
+            'merchant_id',
             'username',
             'password',
             'effective_caller_id_name',
@@ -130,6 +144,9 @@ class SipController extends Controller
             'outbound_caller_id_name',
             'outbound_caller_id_number',
         ]);
+        $mg = explode(',',$data['merchant_gateway']);
+        $data['merchant_id'] = $mg[0];
+        $data['gateway_id'] = $mg[1];
         if ($data['effective_caller_id_name']==null){
             $data['effective_caller_id_name'] = $data['username'];
         }
@@ -171,12 +188,16 @@ class SipController extends Controller
 
     public function storeList(SipListRequest $request)
     {
-        $data = $request->all(['sip_start','sip_end','password','merchant_id']);
+        $data = $request->all(['sip_start','sip_end','password','merchant_gateway']);
+        $mg = explode(',',$data['merchant_gateway']);
+        $data['merchant_id'] = $mg[0];
+        $data['gateway_id'] = $mg[1];
         if ($data['sip_start'] <= $data['sip_end']){
             //验证商户允许的最大分机数
-            $merchant = Merchant::withCount('sips')->findOrFail($data['merchant_id']);
-            if (($merchant->sips_count+($data['sip_end']-$data['sip_start']+1)) >= $merchant->sip_num){
-                return back()->withInput()->withErrors(['error'=>'添加失败：超出商户最大允许分机数量']);
+            $merchant = Merchant::with('info')->withCount('sips')->findOrFail($data['merchant_id']);
+            $hasSipNum = $data['sip_end']-$data['sip_start']+1+$merchant->sips_count;
+            if ($hasSipNum > $merchant->info->sip_num){
+                return back()->withInput()->withErrors(['error'=>'添加失败：超出商户最大允许分机数量'.$merchant->sips_count.'<=>'.$merchant->info->sip_num]);
             }
             //开启事务
             DB::beginTransaction();
@@ -184,6 +205,7 @@ class SipController extends Controller
                 for ($i=$data['sip_start'];$i<=$data['sip_end'];$i++){
                     DB::table('sip')->insert([
                         'merchant_id' => $data['merchant_id'],
+                        'gateway_id' => $data['gateway_id'],
                         'username'  => $i,
                         'password'  => $data['password'],
                         'effective_caller_id_name' => $i,
@@ -200,6 +222,57 @@ class SipController extends Controller
             }
         }
         return back()->withInput()->withErrors(['error'=>'开始分机号必须小于等于结束分机号']);
+    }
+
+    public function updateXml(){
+        set_time_limit(0);
+        $sips = DB::table('sip')->get()->toArray();
+        if (empty($sips)){
+            return response()->json(['code'=>1,'msg'=>'无数据需要更新']);
+        }
+        try{
+            $client = new Client();
+            $res = $client->post(config('swoole_http_url.directory'),['form_params'=>['data'=>$sips],'timeout'=>30]);
+            return $res->getBody();
+        }catch (\Exception $exception){
+            return response()->json(['code'=>1,'msg'=>'更新失败','data'=>$exception->getMessage()]);
+        }   
+    }   
+
+    public function updateGatewayForm(){
+        $gateways = Gateway::get();
+        return view('admin.sip.update_gateway',compact('gateways'));
+    }
+
+    public function updateGateway(Request $request){
+        $data = $request->all(['gateway_id','content']);
+        if (preg_match('/(\d{4,5})-(\d{4,5})/', $data['content'],$arr)) { //区间
+            if ((int)$arr[1] <= (int)$arr[2]) {
+                try{
+                    Sip::where('username','>=',$arr[1])->where('username','<=',$arr[2])->update(['gateway_id'=>$data['gateway_id']]);
+                    return response()->json(['code'=>0,'msg'=>'更新成功']);
+                }catch(\Exception $e){
+                    return response()->json(['code'=>1,'msg'=>'更新失败','data'=>$e->getMessage()]);
+                }
+            }else{
+                return response()->json(['code'=>1,'msg'=>'参数不合法']);
+            }
+        }elseif(strpos($data['content'], ",")!==false){ //多个
+            $arr = explode(",",$data['content']);
+            try{
+                Sip::whereIn('username',$arr)->update(['gateway_id'=>$data['gateway_id']]);
+                return response()->json(['code'=>0,'msg'=>'更新成功']);
+            }catch(\Exception $e){
+                return response()->json(['code'=>1,'msg'=>'更新失败','data'=>$e->getMessage()]);
+            }
+        }else{ //单个
+            try{
+                Sip::where('username',$data['content'])->update(['gateway_id'=>$data['gateway_id']]);
+                return response()->json(['code'=>0,'msg'=>'更新成功']);
+            }catch(\Exception $e){
+                return response()->json(['code'=>1,'msg'=>'更新失败','data'=>$e->getMessage()]);
+            }
+        }
     }
     
 }

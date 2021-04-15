@@ -6,6 +6,7 @@ use App\Http\Requests\GatewayRequest;
 use App\Models\Gateway;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use GuzzleHttp\Client;
 
 class GatewayController extends Controller
 {
@@ -22,6 +23,10 @@ class GatewayController extends Controller
     public function data(Request $request)
     {
         $res = Gateway::orderByDesc('id')->paginate($request->get('limit', 30));
+        foreach ($res->items() as $d){
+            $d->status = Gateway::getStatus($d);
+        }
+
         $data = [
             'code' => 0,
             'msg' => '正在请求中...',
@@ -117,32 +122,14 @@ class GatewayController extends Controller
     public function updateXml()
     {
         set_time_limit(0);
-        $gateway = Gateway::get();
-        if ($gateway->isEmpty()){
+        $gateway = Gateway::get()->toArray();
+        if (empty($gateway)){
             return response()->json(['code'=>1,'msg'=>'无数据需要更新']);
         }
         try{
-            foreach ($gateway as $gw){
-                $xml  = "<include>\n";
-                $xml .= "    <gateway name=\"gw".$gw->id."\">\n";
-                $xml .= "       <param name=\"username\" value=\"".$gw->username."\"/>\n";
-                $xml .= "       <param name=\"realm\" value=\"".$gw->realm."\"/>\n";
-                $xml .= "       <param name=\"password\" value=\"".$gw->password."\"/>\n";
-                $xml .= "    </gateway>\n";
-                $xml .= "</include>";
-                file_put_contents(config('freeswitch.gateway_dir')."gw".$gw->id.".xml",$xml);
-            }
-            //生产环境，并且debug关闭的情况下自动更新网关注册信息
-            if (config('app.env')=='production' && config('app.debug')==false){
-                $freeswitch = new \Freeswitchesl();
-                if (!$freeswitch->connect(config('freeswitch.event_socket.host'), config('freeswitch.event_socket.port'), config('freeswitch.event_socket.password'))){
-                    return response()->json(['code'=>1,'msg'=>'ESL未连接']);
-                }
-                $freeswitch->bgapi("sofia profile external rescan");
-                $freeswitch->disconnect();
-                return response()->json(['code'=>0,'msg'=>'更新成功']);
-            }
-            return response()->json(['code'=>1,'msg'=>'请在生产环境下更新配置']);
+            $client = new Client();
+            $res = $client->post(config('freeswitch.swoole_http_url.gateway'),['form_params'=>['data'=>$gateway]]);
+            return $res->getBody();
         }catch (\Exception $exception){
             return response()->json(['code'=>1,'msg'=>'更新失败','data'=>$exception->getMessage()]);
         }

@@ -28,7 +28,6 @@ class AgentRequest extends FormRequest
             'name'                  => 'required|numeric|min:7000|max:7999|unique:queue,name,'.$this->id.',id',
             'originate_type'        => 'required',
             'originate_number'      => 'required',
-            'status'                => 'required'
         ];
     }
 
@@ -39,7 +38,6 @@ class AgentRequest extends FormRequest
             'name'                  => '坐席号码',
             'originate_type'        => '呼叫类型',
             'originate_number'      => '呼叫号码',
-            'status'                => '状态'
         ];
     }
 

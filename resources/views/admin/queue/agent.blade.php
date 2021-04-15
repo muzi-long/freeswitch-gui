@@ -16,7 +16,7 @@
                     <label for="" class="layui-form-label">选择坐席</label>
                     <div class="layui-input-block">
                         @forelse($agents as $agent)
-                            <input type="checkbox" name="agents[]" value="{{$agent->id}}" title="名称：{{$agent->display_name}}，号码：{{$agent->name}}，呼叫类型：{{$agent->originate_type_name}}， 呼叫号码：{{$agent->originate_number}}" {{ $queue->agents->isNotEmpty()&&$queue->agents->contains($agent) ? 'checked' : ''  }} >
+                            <input type="checkbox" name="agents[]" value="{{$agent->id}}" title="名称：{{$agent->display_name}}，呼叫类型：{{$agent->originate_type_name}}， 呼叫号码：{{$agent->originate_number}}" {{ $queue->agents->isNotEmpty()&&$queue->agents->contains($agent) ? 'checked' : ''  }} >
                         @empty
                             <div class="layui-form-mid layui-word-aux">还没有坐席</div>
                         @endforelse

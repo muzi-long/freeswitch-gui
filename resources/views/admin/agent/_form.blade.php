@@ -6,21 +6,6 @@
     </div>
 </div>
 <div class="layui-form-item">
-    <label for="" class="layui-form-label">坐席号码</label>
-    <div class="layui-input-inline">
-        <input class="layui-input" type="text" maxlength="4" name="name" lay-verify="required|number" value="{{$model->name??old('name')}}" placeholder="坐席号码">
-    </div>
-    <div class="layui-form-mid layui-word-aux">请输入坐席号码，7000-7999</div>
-</div>
-<div class="layui-form-item">
-    <label for="" class="layui-form-label">状态</label>
-    <div class="layui-input-block">
-        @foreach(config('freeswitch.agent_status') as $k => $v)
-        <input type="radio" name="status" value="{{$k}}" title="{{$v}}" @if( (!isset($model->status)&&$k=='Available') || (isset($model->status)&&$model->status==$k) ) checked @endif >
-        @endforeach
-    </div>
-</div>
-<div class="layui-form-item">
     <label for="" class="layui-form-label">呼叫类型</label>
     <div class="layui-input-block">
         <input type="radio" name="originate_type" value="user" title="分机" @if( !isset($model->originate_type) || (isset($model->originate_type)&&$model->originate_type=='user') ) checked @endif >

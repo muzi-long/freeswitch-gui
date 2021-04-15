@@ -5,21 +5,15 @@
         <div class="layui-card-header layuiadmin-card-header-auto">
             <form class="layui-form" >
                 <div class="layui-btn-group">
-                    @can('pbx.merchant.destroy')
+                    @can('portal.merchant.destroy')
                     <button class="layui-btn layui-btn-sm layui-btn-danger" id="listDelete">删 除</button>
                     @endcan
-                    @can('pbx.merchant.create')
+                    @can('portal.merchant.create')
                     <a class="layui-btn layui-btn-sm" href="{{ route('admin.merchant.create') }}">添 加</a>
                     @endcan
-                    <button class="layui-btn layui-btn-sm" lay-submit lay-filter="search" >搜 索</button>
+                    <button type="submit" class="layui-btn layui-btn-sm" lay-submit lay-filter="search" >搜 索</button>
                 </div>
                 <div class="layui-form-item">
-                    <div class="layui-inline">
-                        <label for="" class="layui-form-label">公司名称</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="company_name" placeholder="公司名称" class="layui-input">
-                        </div>
-                    </div>
                     <div class="layui-inline">
                         <label for="" class="layui-form-label">帐号</label>
                         <div class="layui-input-inline">
@@ -37,16 +31,6 @@
                             </select>
                         </div>
                     </div>
-                    <div class="layui-inline">
-                        <label for="" class="layui-form-label">到期时间</label>
-                        <div class="layui-input-inline" style="width: 150px">
-                            <input type="text" name="expires_at_start" id="expires_at_start" placeholder="开始时间" class="layui-input">
-                        </div>
-                        <div class="layui-form-mid layui-word-aux">-</div>
-                        <div class="layui-input-inline" style="width: 150px">
-                            <input type="text" name="expires_at_end" id="expires_at_end" placeholder="结束时间" class="layui-input">
-                        </div>
-                    </div>
                 </div>
             </form>
         </div>
@@ -54,16 +38,11 @@
             <table id="dataTable" lay-filter="dataTable"></table>
             <script type="text/html" id="options">
                 <div class="layui-btn-group">
-                    @can('pbx.bill')
-                    <a class="layui-btn layui-btn-sm" lay-event="bill">帐单</a>
-                    @endcan
-                    @can('pbx.merchant.gateway')
-                        <a class="layui-btn layui-btn-sm" lay-event="gateway">网关</a>
-                    @endcan
-                    @can('pbx.merchant.edit')
+                    <a class="layui-btn layui-btn-sm" lay-event="show">详情</a>
+                    @can('portal.merchant.edit')
                     <a class="layui-btn layui-btn-sm" lay-event="edit">编辑</a>
                     @endcan
-                    @can('pbx.merchant.destroy')
+                    @can('portal.merchant.destroy')
                     <a class="layui-btn layui-btn-danger layui-btn-sm " lay-event="del">删除</a>
                     @endcan
                 </div>
@@ -75,6 +54,7 @@
 @section('script')
     <script>
         layui.use(['layer','table','form','element','laydate'],function () {
+            var $ = layui.jquery;
             var layer = layui.layer;
             var form = layui.form;
             var table = layui.table;
@@ -88,8 +68,9 @@
                 ,cols: [[ //表头
                     {checkbox: true,fixed: true}
                     ,{field: 'id', title: 'ID', sort: true,width:80}
-                    ,{field: 'company_name', title: '公司名称'}
                     ,{field: 'username', title: '帐号'}
+                    ,{field: 'contact_name', title: '联系人'}
+                    ,{field: 'contact_phone', title: '联系电话'}
                     ,{field: 'status_name', title: '状态', templet:function (d) {
                         if (d.status==1){
                             return '<span class="layui-badge layui-bg-green">'+d.status_name+'</span>'
@@ -99,13 +80,26 @@
                             return ''
                         }
                     }}
-                    ,{field: 'expires_at', title: '到期时间'}
-                    ,{field: 'sip_num', title: '最大分机数'}
-                    ,{field: 'sips_count', title: '已建分机数'}
-                    ,{field: 'money', title: '帐户余额'}
-                    ,{field: 'created_user_name', title: '创建人'}
+                    ,{field: 'company_name', title: '公司名称',templet:function (d) {
+                            return d.info.company_name;
+                        }}
+                    ,{field: 'expires_at', title: '到期时间',templet:function (d) {
+                            return d.info.expires_at
+                        }}
+                    ,{field: 'sip_num', title: '分机数量',templet:function (d) {
+                            return d.info.sip_num;
+                        }}
+                    ,{field: 'member_num', title: '子帐号数量',templet:function (d) {
+                            return d.info.member_num;
+                        }}
+                    ,{field: 'queue_num', title: '队列数量',templet:function (d) {
+                            return d.info.queue_num;
+                        }}
+                    ,{field: 'money', title: '帐户余额',templet:function (d) {
+                            return d.info.money;
+                        }}
                     ,{field: 'created_at', title: '创建时间'}
-                    ,{fixed: 'right', width: 220, align:'center', toolbar: '#options', title:'操作'}
+                    ,{fixed: 'right', width: 200, align:'center', toolbar: '#options', title:'操作'}
                 ]]
             });
 
@@ -138,8 +132,8 @@
                         area : ['80%','80%'],
                         content : '/admin/merchant/bill?merchant_id='+data.id
                     })
-                } else if(layEvent === 'gateway'){
-                    location.href = '/admin/merchant/'+data.id+'/gateway';
+                } else if(layEvent === 'show'){
+                    location.href = '/admin/merchant/'+data.id+'/show';
                 }
             });
 

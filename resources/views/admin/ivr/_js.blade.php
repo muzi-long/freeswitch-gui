@@ -1,5 +1,6 @@
 <script>
     layui.use(['layer','table','form'],function () {
+        var $ = layui.jquery;
         var layer = layui.layer;
         var form = layui.form;
         var table = layui.table;

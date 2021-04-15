@@ -44,6 +44,16 @@
     </div>
 </div>
 <div class="layui-form-item">
+    <label for="" class="layui-form-label">对接方式</label>
+    <div class="layui-input-inline">
+        <input type="radio" name="type" value="1" title="SIP" @if(!isset($model->type) || (isset($model->type)&&$model->type==1)) checked @endif>
+        <input type="radio" name="type" value="2" title="IP" @if(isset($model->type)&&$model->type==2) checked @endif>
+    </div>
+    <div class="layui-word-aux layui-form-mid">
+        IP对接时，帐号密码可随意填写
+    </div>
+</div>
+<div class="layui-form-item">
     <div class="layui-input-block">
         <button type="submit" class="layui-btn" lay-submit lay-filter="*" >确 认</button>
         <a href="{{route('admin.gateway')}}" class="layui-btn" >返 回</a>

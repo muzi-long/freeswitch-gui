@@ -4,9 +4,9 @@
     <div class="layui-card">
         <div class="layui-card-header layuiadmin-card-header-auto">
             <div class="layui-btn-group">
-                <button class="layui-btn layui-btn-sm layui-btn-danger" id="listDelete">删 除</button>
-                <button class="layui-btn layui-btn-sm layui-btn-danger" id="setStatus1">停 止</button>
-                <button class="layui-btn layui-btn-sm" id="setStatus2">启 动</button>
+                <button class="layui-btn layui-btn-sm layui-btn-danger" type="button" id="listDelete">删 除</button>
+                <button class="layui-btn layui-btn-sm layui-btn-danger" type="button" id="setStatus1">停 止</button>
+                <button class="layui-btn layui-btn-sm" type="button" id="setStatus2">启 动</button>
                 <a class="layui-btn layui-btn-sm" href="{{ route('admin.task.create') }}">添 加</a>
                 <a class="layui-btn layui-btn-sm" href="/static/outgoing.csv">模板下载</a>
             </div>
@@ -55,7 +55,8 @@
 
 @section('script')
     <script>
-        layui.use(['layer','table','form','upload'],function () {
+        layui.use(['layer','table','form','upload','jquery'],function () {
+            var $ = layui.jquery;
             var layer = layui.layer;
             var form = layui.form;
             var table = layui.table;

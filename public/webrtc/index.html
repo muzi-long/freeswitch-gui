@@ -1,177 +1,209 @@
-<!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-    <script src="./jssip-3.3.6.js"></script>
-    <script src="./jquery.min.js"></script>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <script src="js/jquery.js" type="text/javascript"></script>
+    <script src="js/sip.js" type="text/javascript"></script>
 </head>
 <body>
-<video id="remoteVideo"></video>
-<video id="localVideo" muted="muted"></video>
-<div>状态：<span id="status">注册中...</span></div>
-<div>
-    <input type="text" id="phone">
-    <button type="button" onclick="testCall()">拨打</button>
-    <button type="button" onclick="hangup()">挂断</button>
-    <button type="button" id="accept">接听</button>
-</div>
-<script>
-    JsSIP.debug.disable('JsSIP:*');
-    JsSIP.C.SESSION_EXPIRES=120;
-    JsSIP.C.MIN_SESSION_EXPIRES=120;
+<video id="remoteVideo" name="remoteVideo" style=" background:#0C6"></video>
+<video id="localVideo" name="localVideo" muted="muted" style="background:#f00"></video>
+<br>
+<input type="input" id='number' placeholder="number">
+<input type="checkbox" id="autopickup" name="autopickup" value="1" />自动接听
+<br>
+<input type="button" onClick="callphone()" id='ringout' value="拨号">
+<input type="button" onClick="acceptphone()" id='acceptphone' value="接听">
+<input type="button" onClick="hangup()" id='hangup' value="挂机">
+<input type="button" onClick="hold()" id='hold' value="保持"><br>
+<br>
+<input type="number" id='dtmf' placeholder="dtmf"><br>
+<input type="button" onClick="senddtmf()" value="send dtmf"><br>
+<br>
+<div style="background:#0C6;width:100%; height:20px;">注册状态：<span id='state'>已断开</span></div>
+<div style="background:#0ff;width:100%; height:20px;">呼叫状态：<span id='state0'></span></div>
+<div style="background:#fC6;width:100%; overflow:visible">对端状态：<span id='state2'></span></div>
+<div style="background:#cc0;width:100%; overflow:visible">本端状态：<span id='state3'></span></div>
+<div id="play"></div>
 
-    var remoteVideo = document.getElementById('remoteVideo');
-
-    var localStream = null;
-    var outgoingSession = null;
-    var incomingSession = null;
-    var currentSession = null;
-    var wss_url = 'wss://ssl.nicaicai.top:7443';
-
-    var socket = new JsSIP.WebSocketInterface(wss_url);
-    var configuration = {
-        sockets: [socket],
-        outbound_proxy_set: wss_url,
-        uri: "sip:1001@ssl.nicaicai.top",
-        password: 1234,
-        register: true,
-        session_timers: false,
-        audio: true
-    };
-
-    userAgent = new JsSIP.UA(configuration);
-
+<script type="text/javascript">
+    var userAgentSession;
+    var holdstate = false;
+    var userAgent = new SIP.UA({
+        uri: '8002@xdwh.dgg.net',
+        wsServers: ['wss://xdwh.dgg.net:7443'],
+        authorizationUser: '8002',
+        password: '1234',
+        hackIpInContact: true,
+        rtcpMuxPolicy: 'negotiate',
+        hackWssInTransport: true,
+    });
     //注册成功
-    userAgent.on('registered', function (data) {
-        $("#status").text("注册成功");
-        console.info("registered: ", data.response.status_code, ",", data.response.reason_phrase);
+    userAgent.on('registered', function () {
+        $('#state').text('已连接');
     });
-
-    //注册失败
-    userAgent.on('registrationFailed', function (data) {
-        $("#status").text("注册失败");
-        console.warn("registrationFailed, ", data.response.status_code, ",", data.response.reason_phrase, " cause - ", data.cause);
+    //未注册成功
+    userAgent.on('unregistered', function () {
+        $('#state').text('已断开');
     });
-
-    //注册超时
-    userAgent.on('registrationExpiring', function () {
-        $("#status").text("注册超时");
-        console.warn("registrationExpiring");
-    });
-
-    userAgent.on('newRTCSession', function (data) {
-        console.info('onNewRTCSession: ', data);
-
-        //通话呼入
-        if (data.originator == 'remote') {
-            console.info("incomingSession, answer the call----------------------");
-            var accept = confirm("有来电，是否接听？");
-            incomingSession = data.session;
-            if (accept) {
-                data.session.answer({
-                    'mediaConstraints': {
-                        'audio': true,
-                        'video': false,
-                        mandatory: {maxWidth: 640, maxHeight: 360}
-                    },
-                    'mediaStream': localStream
-                });
-            } else {
-                data.session.terminate();
-            }
-        } else {
-            console.info("outgoingSession");
-            outgoingSession = data.session;
-            outgoingSession.on('connecting', function (data) {
-                console.info('onConnecting - ', data.request);
-                currentSession = outgoingSession;
-                outgoingSession = null;
-            });
+    //监听来电
+    userAgent.on('invite', function (session) {
+        userAgentSession = session;
+        userAgentSession.on('bye', function (request) {//挂机
+            $('#state0').html('bye:');
+        });
+        userAgentSession.on('terminated', function (message, cause) {//结束
+            $('#state0').html('terminated:' + message + '|cause:' + cause);
+        });
+        play('ringin', 'start');
+        alert('来电事件');
+        if ($('#autopickup').is(':checked')) {
+            acceptphone();
         }
-        data.session.on('accepted', function (data) {
-            console.info('onAccepted - ', data);
-            if (data.originator == 'remote' && currentSession == null) {
-                currentSession = incomingSession;
-                incomingSession = null;
-                console.info("setCurrentSession - ", currentSession);
-            }
-        });
-        data.session.on('confirmed', function (data) {
-            console.info('onConfirmed - ', data);
-            if (data.originator == 'remote' && currentSession == null) {
-                currentSession = incomingSession;
-                incomingSession = null;
-                console.info("setCurrentSession - ", currentSession);
-            }
-        });
-        data.session.on('sdp', function (data) {
-            //console.info('onSDP, type - ', data.type, ' sdp - ', data.sdp);
-        });
-
-        data.session.on('progress', function (data) {
-            console.info('onProgress - ', data.originator);
-            if (data.originator == 'remote') {
-                console.info('onProgress, response - ', data.response);
-            }
-        });
-        data.session.on('peerconnection', function (data) {
-            console.info('onPeerconnection - ', data.peerconnection);
-            data.peerconnection.onaddstream = function (ev) {
-                console.info('onaddstream from remote ----------- ', ev);
-                remoteVideo.srcObject = ev.stream;
-                remoteVideo.play();
-            };
-        });
     });
-
-    userAgent.start();
-
-    // Register callbacks to desired call events
-    var eventHandlers = {
-        'progress': function (e) {
-            console.log('call is in progress');
-        },
-        'failed': function (e) {
-            console.log('call failed: ', e);
-        },
-        'ended': function (e) {
-            console.log('call ended : ', e);
-        },
-        'confirmed': function (e) {
-            console.log('call confirmed');
+    //监听是否接了电话
+    userAgent.on('accepted', function (data) {
+        $('#state3').text('accepted:' + data);
+    });
+    //监听拒接
+    userAgent.on('rejected', function (response, cause) {
+        $('#state3').text('rejected:' + response + '|cause:' + cause);
+    });
+    //监听拨号
+    userAgent.on('progress', function (response) {
+        $('#state3').text('progress:' + response);
+    });
+    //错误
+    userAgent.on('failed', function (response, cause) {
+        $('#state3').text('failed:' + response + '|cause:' + cause);
+    });
+    //监听结束
+    userAgent.on('ended', function (response, cause) {
+        $('#state3').text('ended:' + response + '|cause:' + cause);
+    });
+    //播放音乐
+    function play(type, action) {
+        if (action == 'start') {
+            if (type == 'ringin') {
+                audio = 'ringin.wav';
+                loop = ' loop="loop"';
+            } else if (type == 'ringout') {
+                audio = 'ringout.wav';
+                loop = ' loop="loop"';
+            } else if (type == 'hangup') {
+                audio = 'hangup.wav';
+                loop = '';
+            }
+            if (type != '') {
+                $('#play').html('<audio autoplay="autoplay" ' + loop + '><source src="audio/' + audio + '"'
+                    + 'type="audio/wav"/><source src="audio/' + audio + '" type="audio/mpeg"/></audio>');
+            }
+        } else if (action == 'end') {
+            $('#play').html('');
         }
-    };
-
-    function testCall() {
-        var options = {
-            'eventHandlers': eventHandlers,
-            'mediaConstraints': {
-                'audio': true, 'video': false,
-                mandatory: {maxWidth: 640, maxHeight: 360}
-            },
-            'mediaStream': localStream
-        };
-
-        outgoingSession = userAgent.call("sip:"+$("#phone").val()+"@ssl.nicaicai.top", options);
     }
-    function reg() {
-        console.log('register----------->');
-        userAgent.register();
+    //接听来电
+    function acceptphone() {
+        userAgentSession.accept({
+            media: {
+                render: {
+                    remote: document.getElementById('remoteVideo'),
+                    local: document.getElementById('localVideo')
+                },
+                constraints: {
+                    audio: true,
+                    video: false
+                }
+            }
+        });
+        play('ringin', 'end');
+        alert('摘机事件');
     }
-
-    function unReg() {
-        console.log('unregister----------->');
-        userAgent.unregister(true);
+    //发送dtmf
+    function senddtmf() {
+        var dtmf = $('#dtmf').val();
+        if (dtmf){
+            userAgentSession.dtmf(dtmf);
+        }
     }
-
+    //挂机
     function hangup() {
-        console.log('hangup----------->');
-        userAgent.terminateSessions();
+        play('hangup', 'start');
+        userAgentSession.terminate();
+        play('hangup', 'end');
+        alert('挂机事件');
     }
-
-
+    //呼叫保持
+    function hold() {
+        if (holdstate) {
+            holdstate = false;
+            userAgentSession.unhold();
+        } else {
+            userAgentSession = true;
+            sss.hold();
+        }
+    }
+    //拨打电话，呼出
+    function callphone() {
+        var phone = $('#number').val();
+        if (!phone) return false;
+        var options = {
+            media: {
+                constraints: {
+                    audio: true,
+                    video: false
+                },
+                render: {
+                    remote: document.getElementById('remoteVideo'),
+                    local: document.getElementById('localVideo')
+                }
+            }
+        };
+        userAgentSession = userAgent.invite('sip:' + phone + '@xdwh.dgg.net', options);
+        //接听
+        userAgentSession.on('accepted', function (data) {
+            $('#state0').html('接听');
+        });
+        //取消呼叫
+        userAgentSession.on('cancel', function () {
+            $('#state0').html('取消呼叫');
+        });
+        //呼叫失败
+        userAgentSession.on('failed', function (response, cause) {
+            $('#state0').html('呼叫失败');
+        });
+        //无法接通
+        userAgentSession.on('rejected', function (response, cause) {
+            $('#state0').html('无法接通');
+        });
+        //挂机
+        userAgentSession.on('bye', function (request) {
+            $('#state0').html('挂机');
+        });
+        //结束
+        userAgentSession.on('terminated', function (message, cause) {
+            $('#state0').html('结束');
+        });
+        //拨号中
+        userAgentSession.on('progress', function (response) {
+            $('#state0').html('拨号中');
+            if (response.status_code === 183 && response.body && this.hasOffer && !this.dialog) {
+                if (!response.hasHeader('require') || response.getHeader('require').indexOf('100rel') === -1) {
+                    if (this.mediaHandler.hasDescription(response)) {
+                        if (!this.createDialog(response, 'UAC')) return;
+                        this.hasAnswer = true;
+                        this.dialog.pracked.push(response.getHeader('rseq'));
+                        this.status = 11;
+                        this.mute();
+                        this.mediaHandler.setDescription(response).catch((reason) => {
+                            this.logger.warn(reason);
+                            this.failed(response, C.causes.BAD_MEDIA_DESCRIPTION);
+                            this.terminate({status_code: 488, reason_phrase: 'Bad Media Description'});
+                        })
+                    }
+                }
+            }
+        });
+    }
 </script>
-
 </body>
 </html>

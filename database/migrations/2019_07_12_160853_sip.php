@@ -22,9 +22,12 @@ class Sip extends Migration
             $table->string('effective_caller_id_number')->nullable()->comment('外显号码，针对分机与分机');
             $table->string('outbound_caller_id_name')->nullable()->comment('出局名称，针对中继');
             $table->string('outbound_caller_id_number')->nullable()->comment('出局名称，针对中继');
-            $table->unsignedInteger('merchant_id')->comment('商户ID');
+            $table->unsignedInteger('merchant_id')->nullable()->comment('商户ID');
+            $table->unsignedBigInteger('gateway_id')->nullable()->comment('网关ID');
+            $table->unsignedBigInteger('expense_id')->nullable()->comment('资费套餐ID');
             $table->timestamps();
         });
+        \DB::statement("ALTER TABLE `sip` comment '分机表'");
     }
 
     /**
