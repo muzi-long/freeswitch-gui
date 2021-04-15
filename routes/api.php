@@ -17,14 +17,5 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-
-//动态分机注册
-Route::post('directory','ApiController@directory');
-
-//动态拨号计划
-Route::post('dialplan','ApiController@dialplan');
-
-//动态configuration 包含动态网关。（未使用）
-Route::post('configuration','ApiController@configuration');
-
-
+Route::post('/api/get_permission_by_role_id','ApiController@getPermissionByRoleId')->name('api.getPermissionByRoleId');
+Route::post('/api/get_role_by_user_id','ApiController@getRoleByUserId')->name('api.getRoleByUserId');
