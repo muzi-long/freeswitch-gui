@@ -8,59 +8,35 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Merchant extends Model
 {
     use SoftDeletes;
-
     protected $table = 'merchant';
     protected $fillable = [
-        'uuid',
-        'username',
-        'password',
-        'status',
         'company_name',
-        'expires_at',
+        'contact_name',
+        'contact_phone',
+        'staff_num',
         'sip_num',
+        'gateway_num',
+        'agent_num',
+        'queue_num',
+        'task_num',
+        'expire_at',
+        'freeswitch_id',
         'money',
-        'created_user_id',
     ];
-    protected $hidden = ['uuid','password'];
-    protected $dates = ['expires_at'];
-    protected $appends = ['status_name','created_user_name'];
+    protected $appends = ['money_format'];
 
-    public function getStatusNameAttribute()
+    public function getMoneyFormatAttribute()
     {
-        return $this->attributes['status_name'] = array_get(config('freeswitch.merchant_status'),$this->status);
-    }
-
-    public function getCreatedUserNameAttribute()
-    {
-        return $this->attributes['created_user_name'] = $this->user->name??'未知';
+        return $this->attributes['money_format'] = round($this->money/100,2);
     }
 
     /**
-     * 创建用户
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function user()
-    {
-        return $this->belongsTo('App\Models\User', 'created_user_id', 'id');
-    }
-
-    /**
-     * 可使用的网关
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function gateways()
-    {
-        return $this->belongsToMany('App\Models\Gateway', 'merchant_gateway','gateway_id','merchant_id')->withPivot(['rate']);
-    }
-
-    /**
-     * 拥有的分机
+     * 所有的网关
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function sips()
+    public function gateway()
     {
-        return $this->hasMany('App\Models\Sip','merchant_id','id');
+        return $this->hasMany(Gateway::class,'merchant_id','id');
     }
-
 
 }

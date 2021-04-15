@@ -6,19 +6,29 @@ use Illuminate\Database\Eloquent\Model;
 
 class Cdr extends Model
 {
-    protected $table = 'cdr_a_leg';
 
-    public function bleg()
-    {
-        return $this->hasOne('App\Models\Bleg','aleg_uuid','aleg_uuid');
-    }
+    protected $table = 'cdr';
+    protected $fillable = [
+        'uuid',
+        'aleg_uuid',
+        'bleg_uuid',
+        'merchant_id',
+        'department_id',
+        'staff_id',
+        'sip_id',
+        'merchant_name',
+        'department_name',
+        'staff_name',
+        'caller',
+        'callee',
+        'call_time',
+        'answer_time',
+        'end_time',
+        'billsec',
+        'record_file',
+        'user_data',
+        'callback_url',
+        'nibble_total_billed',
+    ];
 
-    public function getBillsecAttribute($value)
-    {
-        if (!empty($this->bleg_uuid)){
-            $value = $this->bleg->billsec;
-        }
-        return $value;
-    }
-    
 }

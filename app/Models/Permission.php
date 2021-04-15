@@ -4,23 +4,16 @@ namespace App\Models;
 class Permission extends \Spatie\Permission\Models\Permission
 {
 
-
-    //菜单图标
-    public function icon()
-    {
-        return $this->belongsTo('App\Models\Icon','icon_id','id');
-    }
-
     //子权限
-    public function childs()
+    public function child()
     {
         return $this->hasMany('App\Models\Permission','parent_id','id');
     }
 
-    //所有子权限
-    public function allChilds()
+    //所有子权限递归
+    public function childs()
     {
-        return $this->childs()->with('allChilds');
+        return $this->child()->with('childs');
     }
 
 }

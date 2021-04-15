@@ -13,18 +13,12 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
-
-//动态分机注册
-Route::post('directory','ApiController@directory');
-
-//动态拨号计划
-Route::post('dialplan','ApiController@dialplan');
-
-//动态configuration 包含动态网关。（未使用）
-Route::post('configuration','ApiController@configuration');
-
+//通过商户ID获取网关信息
+Route::post('getGatewayByMerchantId','ApiController@getGatewayByMerchantId')->name('getGatewayByMerchantId');
+//通过商户ID获取部门信息
+Route::post('getDepartmentByMerchantId','ApiController@getDepartmentByMerchantId')->name('getDepartmentByMerchantId');
+//文件上传
+Route::post('upload','ApiController@upload')->name('api.upload');
+//呼叫
+Route::post('dial','ApiController@dial')->name('api.dial');
 

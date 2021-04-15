@@ -1,39 +1,26 @@
 <?php
+
 return [
-
-    //socket连接授权
-    'event_socket' => [
-        'host'      => '172.16.2.12',
-        'port'      => 8021,
-        'password'  => 'ClueCon',
-    ],
-
-    //网关目录
-    'gateway_dir' => '/usr/local/freeswitch/etc/freeswitch/sip_profiles/external/',
-
-    //IVR 目录
-    'ivr_dir' => '/usr/local/freeswitch/etc/freeswitch/ivr_menus/',
-
-    //callcenter目录
-    'callcenter_dir' => '/usr/local/freeswitch/etc/freeswitch/autoload_configs/callcenter.conf.xml',
-
+    //后台认证
+    'backend_guard' => 'backend',
+    //前台认证
+    'frontend_guard' => 'frontend',
     //application
     'application' => [
-        'set'       => '设置变量',
-        'answer'    => '应答',
-        'sleep'     => '睡眠',
-        'hangup'    => '挂断',
+        'set'               => '设置变量',
+        'answer'            => '应答',
+        'sleep'             => '睡眠',
+        'hangup'            => '挂断',
         'record_session'    => '录音',
-        'export'    => '导入变量',
-        'bridge'    => '桥接呼叫',
-        'echo'      => '回音',
-        'park'      => '停泊',
-        'transfer'  => '呼叫转移',
-        'info'      => '显示信息',
-        'lua'       => 'lua脚本',
-        'detect_speech'=> 'detect_speech',
-        'play_and_detect_speech'=>'play_and_detect_speech',
-        'log' => 'log',
+        'export'            => '导入变量',
+        'bridge'            => '桥接呼叫',
+        'echo'              => '回音',
+        'park'              => '停泊',
+        'transfer'          => '呼叫转移',
+        'info'              => '显示信息',
+        'lua'               => 'lua脚本',
+        'log'               => 'log',
+        'playback'          => '播放',
     ],
 
     //队列响铃模式
@@ -46,6 +33,17 @@ return [
         'agent-with-fewest-calls'       => '接听最少振铃',
         'sequentially-by-agent-order'   => '优先级振铃',
         'random'                        => '随机振铃',
+    ],
+
+    //呼叫状态
+    'channel_callstate' => [
+        'DOWN' => '空闲',
+        'HANGUP' => '空闲',
+        'RINGING' => '响铃',
+        'RING_WAIT' => '响铃',
+        'EARLY' => '响铃',
+        'ACTIVE' => '通话中',
+
     ],
 
     //坐席状态status
@@ -61,25 +59,41 @@ return [
         'Receiving'         => '电话呼入',
         'In a queue call'   => '通话中',
     ],
-
-    //商户状态
-    'merchant_status' => [
-        1 => '正常',
-        2 => '禁用',
+    //群呼状态
+    'callcenter_call_status' => [
+        1 => '待呼叫',
+        2 => '呼叫失败',
+        3 => '漏接',
+        4 => '成功',
+    ],
+    //字段类型
+    'field_type' => [
+        'input' => '输入框',
+        'radio' => '单选',
+        'checkbox' => '多选',
+        'select' => '下拉选择',
+        'image' => '图片上传',
+        'textarea' => '文本框',
+    ],
+    //redis key
+    'redis_key' => [
+        //服务端获取任务ID的key
+        'callcenter_task' => 'callcenter_task_id',
+        //自增ID的key,用于群呼时生成uuid
+        'callcenter_call' => 'callcenter_call_id',
     ],
 
-    //讯飞在线语音合成参数
-    'xfyun' => [
-        'appid' => '5bc842c0',
-        'apikey' => '33e3e90871156122614cbe26d2992ab0',
-        'sounds' => '/usr/local/freeswitch/share/freeswitch/sounds/en/us/callie/custom/8000/'
+    //
+    'project_design_default_field' => [
+        'company_name',
+        'contact_name',
+        'contact_phone'
     ],
 
-    //IVR
-    'ivr_action' => [
-        'menu-exec-app' => '应用',
-        'menu-sub' => '子菜单',
-        'enu-top' => '父菜单',
-    ],
+    //node type
+    'node_type' => [
+        1 => 'CRM',
+        2 => '订单',
+    ]
 
 ];
