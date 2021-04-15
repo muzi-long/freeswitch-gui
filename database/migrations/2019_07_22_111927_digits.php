@@ -21,7 +21,7 @@ class Digits extends Migration
             $table->string('param')->nullable()->comment('应用执行参数，可为空');
             $table->timestamps();
         });
-        \DB::statement("ALTER TABLE `ivr` comment 'ivr语音导航'");
+        \DB::statement("ALTER TABLE `digits` comment '按键表'");
     }
 
     /**

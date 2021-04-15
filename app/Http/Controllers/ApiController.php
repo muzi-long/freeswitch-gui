@@ -2,15 +2,80 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cdr;
 use App\Models\Extension;
 use App\Models\Gateway;
-use App\Models\Group;
-use App\Models\Sip;
+use App\Models\Merchant;
 use Illuminate\Http\Request;
-use Log;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Storage;
+use App\Models\Sip;
+
 
 class ApiController extends Controller
 {
+
+    //文件上传
+    public function upload(Request $request)
+    {
+        //上传文件最大大小,单位M
+        $maxSize = 10;
+        //支持的上传图片类型
+        $allowed_extensions = ["png", "jpg", "gif"];
+        //返回信息json
+        $data = ['code'=>1, 'msg'=>'上传失败', 'data'=>''];
+        $file = $request->file('file');
+
+        //检查文件是否上传完成
+        if ($file->isValid()){
+            //检测图片类型
+            $ext = $file->getClientOriginalExtension();
+            if (!in_array(strtolower($ext),$allowed_extensions)){
+                $data['msg'] = "请上传".implode(",",$allowed_extensions)."格式的图片";
+                return response()->json($data);
+            }
+            //检测图片大小
+            if ($file->getSize() > $maxSize*1024*1024){
+                $data['msg'] = "图片大小限制".$maxSize."M";
+                return response()->json($data);
+            }
+        }else{
+            $data['msg'] = $file->getErrorMessage();
+            return response()->json($data);
+        }
+        $newFile = date('Y-m-d')."_".time()."_".uniqid().".".$file->getClientOriginalExtension();
+        $disk = Storage::disk('uploads');
+        $res = $disk->put($newFile,file_get_contents($file->getRealPath()));
+        if($res){
+            $data = [
+                'code'  => 0,
+                'msg'   => '上传成功',
+                'data'  => $newFile,
+                'url'   => '/uploads/local/'.$newFile,
+            ];
+        }else{
+            $data['data'] = $file->getErrorMessage();
+        }
+        return response()->json($data);
+    }
+
+    /**
+     * 商户网关关系
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function merchantGateway(Request $request)
+    {
+        $res = Merchant::with('gateways')
+            ->where('merchant_id',0)
+            ->select(['id','username as name'])
+            ->get();
+        return response()->json($res);
+
+    }
+
     /**
      * 分机动态注册
      * @param Request $request
@@ -18,8 +83,9 @@ class ApiController extends Controller
      */
     public function directory(Request $request)
     {
-        $sips = Sip::get();
-        $groups = Group::with('sips')->whereHas('sips')->get();
+        $user = $request->get('user');
+        $sips = Sip::where('username',$user)->get();
+        //$groups = Group::with('sips')->whereHas('sips')->get();
 
         $xml  = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n";
         $xml .= "<document type=\"freeswitch/xml\">\n";
@@ -55,7 +121,7 @@ class ApiController extends Controller
         $xml .= "</group>\n";
 
         //自定义用户组
-        foreach ($groups as $group){
+        /*foreach ($groups as $group){
             $xml .= "<group name=\"".$group->name."\">\n";
             $xml .= "    <users>\n";
             foreach ($group->sips as $sip){
@@ -63,7 +129,7 @@ class ApiController extends Controller
             }
             $xml .= "    </users>\n";
             $xml .= "</group>\n";
-        }
+        }*/
 
         $xml .= "</groups>\n";
         $xml .= "</domain>\n";
@@ -377,5 +443,57 @@ class ApiController extends Controller
         return response($xml,200)->header("Content-type","text/xml");
     }
 
-}
+    /**
+     * 拨打接口
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function dial(Request $request)
+    {
+        //验证数据
+        $data = $request->all(['exten','phone']);
+        if (!preg_match('/^\d{6,12}$/',$data['phone'])){
+            return Response::json(['code'=>1,'msg'=>'被叫号码格式不正确']);
+        }
+        $sip = Sip::with(['merchant','gateway'])->where('username',$data['exten'])->first();
+        if ($sip==null){
+            return Response::json(['code'=>1,'msg'=>'分机号不存在']);
+        }
+        if ($sip->merchant==null || $sip->gateway==null){
+            return Response::json(['code'=>1,'msg'=>'分机的商户网关信息异常']);
+        }
+        //验证商户信息
 
+        //呼叫字符串
+        $fs = new \Freeswitchesl();
+        try{
+            $fs->connect(config('freeswitch.event_socket.host'),config('freeswitch.event_socket.port'),config('freeswitch.event_socket.password'));
+        }catch (\Exception $exception){
+            Log::info('呼叫接口ESL连接异常：'.$exception->getMessage());
+            return Response::json(['code'=>1,'msg'=>'无法连接服务器']);
+        }
+        //兼容内部外呼呼叫
+        $dialStr = "originate {origination_caller_id_number=".$sip->username."}{origination_caller_id_name=".$sip->username."}";
+        if (isset($sip->gateway->outbound_caller_id) && !empty($sip->gateway->outbound_caller_id)){
+            $dialStr .= "{effective_caller_id_number=".$sip->gateway->outbound_caller_id."}"."{effective_caller_id_name=".$sip->gateway->outbound_caller_id."}";
+        }
+        $dialStr .= "user/".$sip->username." ";
+        if (strlen($data['phone'])>=6){
+            $dialStr .= "gw".$sip->gateway->id."_".$data['phone']."_";
+            if ($sip->gateway->prefix){
+                $dialStr .=$sip->gateway->prefix;
+            }
+        }else{
+            $dialStr .=$data["phone"];
+        }
+        $dialStr .=" XML default";
+        try{
+            $fs->bgapi($dialStr);
+            return Response::json(['code'=>0,'msg'=>'呼叫成功']);
+        }catch (\Exception $exception){
+            Log::info("呼叫错误：".$exception->getMessage());
+            return Response::json(['code'=>1,'msg'=>'呼叫失败']);
+        }
+
+    }
+}

@@ -2,27 +2,141 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Requests\UserCreateRequest;
 use App\Http\Requests\UserUpdateRequest;
-use App\Models\Permission;
-use App\Models\Sip;
-use App\Models\User;
-use http\Env\Response;
+use App\Models\Configuration;
+use App\Models\LoginLog;
+use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\Role;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\View;
+use App\Models\User;
+use App\Models\Role;
+use App\Models\Permission;
+use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
 {
+
+    use AuthenticatesUsers;
+
     /**
-     * Display a listing of the resource.
+     * 用户登录表单
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function showLoginForm()
+    {
+        return View::make('admin.user.login');
+    }
+
+    /**
+     * 验证登录字段
+     * @param Request $request
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    protected function validateLogin(Request $request)
+    {
+        $this->validate($request, [
+            'captcha' => 'required|captcha',
+            $this->username() => 'required|string',
+            'password' => 'required|string',
+        ]);
+    }
+
+    //登录成功后的跳转地址
+    public function redirectTo()
+    {
+        return URL::route('admin.layout');
+    }
+
+    /**
+     * 退出后的动作
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    protected function loggedOut(Request $request)
+    {
+        return Redirect::to(URL::route('admin.user.login'));
+    }
+
+    /**
+     * Get the guard to be used during authentication.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Auth\StatefulGuard
+     */
+    protected function guard()
+    {
+        return Auth::guard();
+    }
+
+    protected function authenticated(Request $request, $user)
+    {
+        //缓存配置信息
+        $configuration = Configuration::pluck('val','key');
+        $request->session()->put('configuration',$configuration);
+        //记录登录成功日志
+        if ($configuration['login_log']==1){
+            LoginLog::create([
+                'username' => $user->username,
+                'ip' => $request->ip(),
+                'method' => $request->method(),
+                'user_agent' => $request->header('User-Agent'),
+                'remark' => '登录成功',
+            ]);
+        }
+    }
+
+    /**
+     * 用于登录的字段
+     * @return string
+     */
+    public function username()
+    {
+        return 'username';
+    }
+
+    /**
+     * 更改密码
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function changeMyPasswordForm()
+    {
+        return View::make('admin.user.changeMyPassword');
+    }
+
+    /**
+     * 修改密码
+     * @param ChangePasswordRequest $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function changeMyPassword(ChangePasswordRequest $request)
+    {
+        $data = $request->all(['old_password','new_password']);
+        //验证原密码
+        if (!Hash::check($data['old_password'],$request->user()->getAuthPassword())){
+            return Redirect::back()->withErrors('原密码不正确');
+        }
+        try{
+            $request->user()->fill(['password' => $data['new_password']])->save();
+            return Redirect::back()->with(['success'=>'密码修改成功']);
+        }catch (\Exception $exception){
+            return Redirect::back()->withErrors('修改失败');
+        }
+    }
+
+    /**
+     * 用户列表主页
+     * @return \Illuminate\Contracts\View\View
      */
     public function index()
     {
-        return view('admin.user.index');
+        return View::make('admin.user.index');
     }
 
     public function data(Request $request)
@@ -34,34 +148,32 @@ class UserController extends Controller
             'count' => $res->total(),
             'data' => $res->items()
         ];
-        return response()->json($data);
+        return Response::json($data);
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
+     * 添加用户
+     * @return \Illuminate\Contracts\View\View
      */
     public function create()
     {
-        return view('admin.user.create');
+        return View::make('admin.user.create');
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * 添加用户
+     * @param UserCreateRequest $request
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(UserCreateRequest $request)
     {
         $data = $request->all();
-        $data['uuid'] = \Faker\Provider\Uuid::uuid();
-        $data['password'] = bcrypt($data['password']);
-        if (User::create($data)){
-            return redirect()->to(route('admin.user'))->with(['success'=>'添加用户成功']);
+        try{
+            User::create($data);
+            return Redirect::to(URL::route('admin.user'))->with(['success'=>'添加成功']);
+        }catch (\Exception $exception){
+            return Redirect::back()->withErrors('添加失败');
         }
-        return redirect()->to(route('admin.user'))->withErrors('系统错误');
     }
 
     /**
@@ -76,150 +188,130 @@ class UserController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * 更新用户
+     * @param $id
+     * @return \Illuminate\Contracts\View\View
      */
     public function edit($id)
     {
         $user = User::findOrFail($id);
-        return view('admin.user.edit',compact('user'));
+        return View::make('admin.user.edit',compact('user'));
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * 更新用户
+     * @param UserUpdateRequest $request
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(UserUpdateRequest $request, $id)
     {
         $user = User::findOrFail($id);
         $data = $request->except('password');
         if ($request->get('password')){
-            $data['password'] = bcrypt($request->get('password'));
+            $data['password'] = $request->get('password');
         }
-        if ($user->update($data)){
-            return redirect()->to(route('admin.user'))->with(['success'=>'更新用户成功']);
+        try{
+            $user->update($data);
+            return Redirect::to(URL::route('admin.user'))->with(['success'=>'更新成功']);
+        }catch (\Exception $exception){
+            return Redirect::back()->withErrors('更新失败');
         }
-        return redirect()->to(route('admin.user'))->withErrors('系统错误');
     }
 
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * 删除用户
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy(Request $request)
     {
         $ids = $request->get('ids');
-        if (empty($ids)){
-            return response()->json(['code'=>1,'msg'=>'请选择删除项']);
+        if (!is_array($ids) || empty($ids)){
+            return Response::json(['code'=>1,'msg'=>'请选择删除项']);
         }
-        if (User::destroy($ids)){
-            return response()->json(['code'=>0,'msg'=>'删除成功']);
+        try{
+            User::destroy($ids);
+            return Response::json(['code'=>0,'msg'=>'删除成功']);
+        }catch (\Exception $exception){
+            return Response::json(['code'=>1,'msg'=>'删除失败']);
         }
-        return response()->json(['code'=>1,'msg'=>'删除失败']);
     }
 
     /**
      * 分配角色
+     * @param $id
+     * @return \Illuminate\Contracts\View\View
      */
-    public function role(Request $request,$id)
+    public function role($id)
     {
         $user = User::findOrFail($id);
-        $roles = Role::get();
-        $hasRoles = $user->roles();
+        $roles = Role::where('guard_name','web')->get();
         foreach ($roles as $role){
             $role->own = $user->hasRole($role) ? true : false;
         }
-        return view('admin.user.role',compact('roles','user'));
+        return View::make('admin.user.role',compact('roles','user'));
     }
 
     /**
-     * 更新分配角色
+     * 分配角色
+     * @param Request $request
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function assignRole(Request $request,$id)
     {
         $user = User::findOrFail($id);
         $roles = $request->get('roles',[]);
-       if ($user->syncRoles($roles)){
-           return redirect()->to(route('admin.user'))->with(['success'=>'更新用户角色成功']);
-       }
-        return redirect()->to(route('admin.user'))->withErrors('系统错误');
+        try{
+            $user->syncRoles($roles);
+            return Redirect::to(URL::route('admin.user'))->with(['success'=>'更新成功']);
+        }catch (\Exception $exception){
+            return Redirect::back()->withErrors('更新失败');
+        }
     }
 
     /**
-     * 分配权限
+     * 分配直接权限
+     * @param $id
+     * @return \Illuminate\Contracts\View\View
      */
-    public function permission(Request $request,$id)
+    public function permission($id)
     {
         $user = User::findOrFail($id);
         $permissions = Permission::with('allChilds')->where('parent_id',0)->get();
         foreach ($permissions as $p1){
-            $p1->own = $user->hasDirectPermission($p1->id) ? 'checked' : false ;
+            $p1->own = $user->hasDirectPermission($p1->id) ? 'checked' : '' ;
             if ($p1->childs->isNotEmpty()){
                 foreach ($p1->childs as $p2){
-                    $p2->own = $user->hasDirectPermission($p2->id) ? 'checked' : false ;
+                    $p2->own = $user->hasDirectPermission($p2->id) ? 'checked' : '' ;
                     if ($p2->childs->isNotEmpty()){
                         foreach ($p2->childs as $p3){
-                            $p3->own = $user->hasDirectPermission($p3->id) ? 'checked' : false ;
+                            $p3->own = $user->hasDirectPermission($p3->id) ? 'checked' : '' ;
                         }
                     }
                 }
             }
         }
-        return view('admin.user.permission',compact('user','permissions'));
+        return View::make('admin.user.permission',compact('user','permissions'));
     }
 
     /**
-     * 存储权限
+     * 分配直接权限
+     * @param Request $request
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function assignPermission(Request $request,$id)
     {
         $user = User::findOrFail($id);
-        $permissions = $request->get('permissions');
-
-        if (empty($permissions)){
-            $user->permissions()->detach();
-            return redirect()->to(route('admin.user'))->with(['success'=>'已更新用户直接权限']);
+        $permissions = $request->get('permissions',[]);
+        try{
+            $user->syncPermissions($permissions);
+            return Redirect::to(URL::route('admin.user'))->with(['success'=>'更新成功']);
+        }catch (\Exception $exception){
+            return Redirect::back()->withErrors('更新失败');
         }
-        $user->syncPermissions($permissions);
-        return redirect()->to(route('admin.user'))->with(['success'=>'已更新用户直接权限']);
-    }
-
-    /**
-     * 修改密码表单
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     */
-    public function changeMyPasswordForm()
-    {
-        return view('admin.user.changeMyPassword');
-    }
-
-    /**
-     * 修改密码逻辑
-     * @param Request $request
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function changeMyPassword(Request $request)
-    {
-        $this->validate($request,[
-            'old_password' => 'required|string|min:6|max:14',
-            'new_password' => 'required|string|min:6|max:14|confirmed'
-        ]);
-        //验证原密码
-        if (!Hash::check($request->get('old_password'),auth()->user()->getAuthPassword())){
-            return back()->withInput()->withErrors('原密码不正确');
-        }
-        //更新密码
-        if ($request->user()->fill(['password' => Hash::make($request->new_password)])->save()){
-            return back()->with(['success'=>'密码修改成功']);
-        }
-        return back()->withErrors('修改密码失败');
     }
 
 }

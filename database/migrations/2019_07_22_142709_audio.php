@@ -31,6 +31,7 @@ x（优化效果）
 默认为intp65');
             $table->timestamps();
         });
+        \DB::statement("ALTER TABLE `audio` comment 'TTS合成表'");
     }
 
     /**

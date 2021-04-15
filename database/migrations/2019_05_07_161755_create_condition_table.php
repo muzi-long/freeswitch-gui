@@ -24,6 +24,7 @@ class CreateConditionTable extends Migration
             $table->timestamps();
             $table->foreign('extension_id')->references('id')->on('extension')->onDelete('cascade');
         });
+        \DB::statement("ALTER TABLE `condition` comment '拨号规则表'");
     }
 
     /**

@@ -2,11 +2,23 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\Facades\Schema;
+use App\Models\Sip;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Schema;
 
 class AppServiceProvider extends ServiceProvider
 {
+    /**
+     * Register any application services.
+     *
+     * @return void
+     */
+    public function register()
+    {
+        //
+    }
+
     /**
      * Bootstrap any application services.
      *
@@ -17,20 +29,13 @@ class AppServiceProvider extends ServiceProvider
         Schema::defaultStringLength(191);
         //左侧菜单
         view()->composer('admin.layout',function($view){
-            $menus = \App\Models\Permission::with([
-                'childs'=>function($query){$query->with('icon');}
-                ,'icon'])->where('parent_id',0)->orderBy('sort','desc')->get();
+            $menus = \App\Models\Permission::with('allChilds')->where('parent_id',0)->orderBy('sort','desc')->get();
             $view->with('menus',$menus);
         });
-    }
-
-    /**
-     * Register any application services.
-     *
-     * @return void
-     */
-    public function register()
-    {
-        //
+        //前台用户的分机
+        view()->composer('home.base',function ($view){
+            $sip = Sip::where('id',Auth::guard('merchant')->user()->sip_id)->first();
+            $view->with('exten',$sip->username??'');
+        });
     }
 }

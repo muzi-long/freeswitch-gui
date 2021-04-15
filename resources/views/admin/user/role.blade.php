@@ -9,7 +9,7 @@
             <h2>分配角色</h2>
         </div>
         <div class="layui-card-body">
-            <form class="layui-form" action="{{route('admin.user.assignRole',['user'=>$user])}}" method="post">
+            <form class="layui-form" action="{{route('admin.user.assignRole',['id'=>$user->id])}}" method="post">
                 {{csrf_field()}}
                 {{method_field('put')}}
                 <div class="layui-form-item">
@@ -18,7 +18,7 @@
                 </div>
                 <div class="layui-form-item">
                     <label for="" class="layui-form-label">昵称</label>
-                    <div class="layui-word-aux layui-form-mid">{{ $user->name }}</div>
+                    <div class="layui-word-aux layui-form-mid">{{ $user->nickname }}</div>
                 </div>
                 <div class="layui-form-item">
                     <label for="" class="layui-form-label">手机</label>
@@ -47,6 +47,14 @@
             </form>
         </div>
     </div>
+@endsection
+
+@section('script')
+    <script>
+        layui.use(['element','form'],function () {
+
+        })
+    </script>
 @endsection
 
 

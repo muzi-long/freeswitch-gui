@@ -19,6 +19,7 @@ class CreateCdrAsrTable extends Migration
             $table->string('text')->comment('识别结果');
             $table->timestamps();
         });
+        \DB::statement("ALTER TABLE `cdr_asr` comment 'asr语音识别表'");
     }
 
     /**

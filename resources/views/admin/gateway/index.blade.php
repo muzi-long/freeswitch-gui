@@ -25,6 +25,7 @@
 @section('script')
     <script>
         layui.use(['layer','table','form'],function () {
+            var $ = layui.jquery;
             var layer = layui.layer;
             var form = layui.form;
             var table = layui.table;
@@ -44,6 +45,7 @@
                     ,{field: 'rate', title: '费率（元/分钟）'}
                     ,{field: 'prefix', title: '前缀'}
                     ,{field: 'outbound_caller_id', title: '出局号码'}
+                    ,{field: 'status', title: '状态'}
                     ,{field: 'created_at', title: '添加时间'}
                     ,{fixed: 'right', width: 220, align:'center', toolbar: '#options', title:'操作'}
                 ]]

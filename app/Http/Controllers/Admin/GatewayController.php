@@ -22,6 +22,10 @@ class GatewayController extends Controller
     public function data(Request $request)
     {
         $res = Gateway::orderByDesc('id')->paginate($request->get('limit', 30));
+        foreach ($res->items() as $d){
+            $d->status = Gateway::getStatus($d);
+        }
+
         $data = [
             'code' => 0,
             'msg' => '正在请求中...',
@@ -122,6 +126,9 @@ class GatewayController extends Controller
             return response()->json(['code'=>1,'msg'=>'无数据需要更新']);
         }
         try{
+            //清空所有文件
+            array_map('unlink', glob(config('freeswitch.gateway_dir')."*"));
+            //再写入
             foreach ($gateway as $gw){
                 $xml  = "<include>\n";
                 $xml .= "    <gateway name=\"gw".$gw->id."\">\n";
@@ -138,7 +145,7 @@ class GatewayController extends Controller
                 if (!$freeswitch->connect(config('freeswitch.event_socket.host'), config('freeswitch.event_socket.port'), config('freeswitch.event_socket.password'))){
                     return response()->json(['code'=>1,'msg'=>'ESL未连接']);
                 }
-                $freeswitch->bgapi("sofia profile external rescan");
+                $freeswitch->bgapi("sofia profile external rescan all");
                 $freeswitch->disconnect();
                 return response()->json(['code'=>0,'msg'=>'更新成功']);
             }

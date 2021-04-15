@@ -5,14 +5,17 @@ use Illuminate\Database\Seeder;
 class DatabaseSeeder extends Seeder
 {
     /**
-     * Run the database seeds.
+     * Seed the application's database.
      *
      * @return void
      */
     public function run()
     {
-        $this->call(UserTableSeeder::class);
-        $this->call(PbxTableSeeder::class);
-        //$this->call(IconTableSeeder::class);
+        $this->call([
+            UserSeeder::class,
+            HomeSeeder::class,
+            ConfigGroupSeeder::class,
+            PbxSeeder::class,
+        ]);
     }
 }

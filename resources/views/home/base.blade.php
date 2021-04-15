@@ -1,63 +1,81 @@
+
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title></title>
-    <link rel="stylesheet" href="/static/home/layui/css/layui.css">
-    <link rel="stylesheet" href="/static/home/css/main.css">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <script src="/static/home/js/jquery.min.js"  type="text/javascript"></script>
-    <script src="/static/home/layui/layui.all.js"  type="text/javascript"></script>
+    <link rel="stylesheet" href="/static/admin/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/static/admin/layuiadmin/style/admin.css" media="all">
 </head>
 <body>
-<div class="layui-container">
+
+<div class="layui-fluid">
     @yield('content')
 </div>
-<script type="text/javascript">
 
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+<script src="/static/admin/layuiadmin/layui/layui.js"></script>
+<script>
+    function newTab(url,tit){
+        if(top.layui.index){
+            top.layui.index.openTabsPage(url,tit)
+        }else{
+            window.open(url)
         }
-    });
-
-    var element = layui.element;
-    var layer = layui.layer;
-    var form = layui.form;
-    var table = layui.table;
-    var upload = layui.upload;
-
-    form.render();
-    element.render();
-
-    //统一错误提示信息
-    @if(count($errors)>0)
-    var errorStr = '';
-    @foreach($errors->all() as $error)
-        errorStr += "{{$error}}<br />";
-    @endforeach
-        layer.msg(errorStr);
-    @endif
-
-    @if(session('status'))
-        layer.msg("{{session('status')}}");
-    @endif
-
-    //删除确认
-    function delConfirm(url) {
-        layer.confirm('真的删除行么', function(index){
-            layer.close(index);
-            $.post(url,{_method:"delete"},function (data) {
-                layer.msg(data.msg,{time:1000},function () {
-                    if (data.code==0){
-                        location.reload()
-                    }
-                });
-            })
-        });
     }
+
+    layui.config({
+        base: '/static/admin/layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['layer','jquery'],function () {
+        var $ = layui.jquery;
+        var layer = layui.layer;
+
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        //错误提示
+        @if(count($errors)>0)
+            @foreach($errors->all() as $error)
+                layer.msg("{{$error}}",{icon:2});
+                @break
+            @endforeach
+        @endif
+
+        //一次性正确信息提示
+        @if(session('success'))
+            layer.msg("{{session('success')}}",{icon:1});
+        @endif
+
+        //一次性错误信息提示
+        @if(session('error'))
+        layer.msg("{{session('error')}}",{icon:2});
+        @endif
+
+        //呼叫
+        window.call = function (phone,exten="{{$exten}}") {
+            layer.confirm('请确认已分配了分机并登录成功？',function(index) {
+                layer.close(index);
+                var load = layer.load();
+                $.post("{{route('api.dial')}}",{exten:exten,phone:phone},function(res) {
+                    layer.close(load);
+                    layer.msg(res.msg,{time:2000})
+                });
+            });
+        }
+
+    });
 </script>
 @yield('script')
 </body>
 </html>
+
+
+

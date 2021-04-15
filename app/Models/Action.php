@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 
 class Action extends Model
 {
@@ -12,7 +13,7 @@ class Action extends Model
 
     public function getApplicationNameAttribute()
     {
-        return array_get(config('freeswitch.application'),$this->application)."（".$this->application."）";
+        return Arr::get(config('freeswitch.application'),$this->application)."（".$this->application."）";
     }
 
 }

@@ -1,42 +1,53 @@
 <?php
+
 /*
 |--------------------------------------------------------------------------
-| Admin Routes
+| 后台路由
 |--------------------------------------------------------------------------
 |
-| 后台公共路由部分
+| 统一命名空间 Admin
+| 统一前缀 admin
+| 用户认证统一使用 auth 中间件
+| 权限认证统一使用 permission:权限名称
 |
 */
-Route::group(['namespace'=>'Admin','prefix'=>'admin'],function (){
-    //登录、注销
-    Route::get('login','LoginController@showLoginForm')->name('admin.loginForm');
-    Route::post('login','LoginController@login')->name('admin.login');
-    Route::get('logout','LoginController@logout')->name('admin.logout');
-
-});
-
 
 /*
 |--------------------------------------------------------------------------
-| Admin Routes
+| 用户登录、退出、更改密码
 |--------------------------------------------------------------------------
-|
-| 后台需要授权的路由 admins
-|
+*/
+Route::group(['namespace'=>'Admin','prefix'=>'admin/user'],function (){
+    //登录
+    Route::get('login','UserController@showLoginForm')->name('admin.user.loginForm');
+    Route::post('login','UserController@login')->name('admin.user.login');
+    //退出
+    Route::get('logout','UserController@logout')->name('admin.user.logout')->middleware('auth');
+    //更改密码
+    Route::get('change_my_password_form','UserController@changeMyPasswordForm')->name('admin.user.changeMyPasswordForm')->middleware('auth');
+    Route::post('change_my_password','UserController@changeMyPassword')->name('admin.user.changeMyPassword')->middleware('auth');
+});
+
+/*
+|--------------------------------------------------------------------------
+| 后台公共页面
+|--------------------------------------------------------------------------
 */
 Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>'auth'],function (){
     //后台布局
     Route::get('/','IndexController@layout')->name('admin.layout');
     //后台首页
     Route::get('/index','IndexController@index')->name('admin.index');
-    //拨打电话
-    Route::get('/call','IndexController@call')->name('admin.call');
-    //图标
-    Route::get('icons','IndexController@icons')->name('admin.icons');
 });
 
-//系统管理
-Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth','permission:system.manage']],function (){
+
+/*
+|--------------------------------------------------------------------------
+| 系统管理模块
+|--------------------------------------------------------------------------
+*/
+Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth','permission:system']],function (){
+
     //用户管理
     Route::group(['middleware'=>['permission:system.user']],function (){
         Route::get('user','UserController@index')->name('admin.user');
@@ -55,11 +66,8 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth','perm
         //分配权限
         Route::get('user/{id}/permission','UserController@permission')->name('admin.user.permission')->middleware('permission:system.user.permission');
         Route::put('user/{id}/assignPermission','UserController@assignPermission')->name('admin.user.assignPermission')->middleware('permission:system.user.permission');
-        //更改自己密码
-        Route::get('user/change_my_password_form','UserController@changeMyPasswordForm')->name('admin.user.changeMyPasswordForm')->middleware('permission:system.user.changeMyPassword');
-        Route::post('user/change_my_password','UserController@changeMyPassword')->name('admin.user.changeMyPassword')->middleware('permission:system.user.changeMyPassword');
-
     });
+
     //角色管理
     Route::group(['middleware'=>'permission:system.role'],function (){
         Route::get('role','RoleController@index')->name('admin.role');
@@ -76,6 +84,7 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth','perm
         Route::get('role/{id}/permission','RoleController@permission')->name('admin.role.permission')->middleware('permission:system.role.permission');
         Route::put('role/{id}/assignPermission','RoleController@assignPermission')->name('admin.role.assignPermission')->middleware('permission:system.role.permission');
     });
+
     //权限管理
     Route::group(['middleware'=>'permission:system.permission'],function (){
         Route::get('permission','PermissionController@index')->name('admin.permission');
@@ -89,52 +98,152 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth','perm
         //删除
         Route::delete('permission/destroy','PermissionController@destroy')->name('admin.permission.destroy')->middleware('permission:system.permission.destroy');
     });
-    //配置管理
-    Route::group(['middleware'=>'permission:system.config'],function (){
-        Route::get('config','ConfigController@index')->name('admin.config');
-        Route::get('config/data','ConfigController@data')->name('admin.config.data');
+
+    //配置组
+    Route::group(['middleware'=>'permission:system.config_group'],function (){
+        Route::get('config_group','ConfigGroupController@index')->name('admin.config_group');
+        Route::get('config_group/data','ConfigGroupController@data')->name('admin.config_group.data');
         //添加
-        Route::get('config/create','ConfigController@create')->name('admin.config.create')->middleware('permission:system.config.create');
-        Route::post('config/store','ConfigController@store')->name('admin.config.store')->middleware('permission:system.config.create');
+        Route::get('config_group/create','ConfigGroupController@create')->name('admin.config_group.create')->middleware('permission:system.config_group.create');
+        Route::post('config_group/store','ConfigGroupController@store')->name('admin.config_group.store')->middleware('permission:system.config_group.create');
         //编辑
-        Route::get('config/{id}/edit','ConfigController@edit')->name('admin.config.edit')->middleware('permission:system.config.edit');
-        Route::put('config/{id}/update','ConfigController@update')->name('admin.config.update')->middleware('permission:system.config.edit');
+        Route::get('config_group/{id}/edit','ConfigGroupController@edit')->name('admin.config_group.edit')->middleware('permission:system.config_group.edit');
+        Route::put('config_group/{id}/update','ConfigGroupController@update')->name('admin.config_group.update')->middleware('permission:system.config_group.edit');
         //删除
-        Route::delete('config/destroy','ConfigController@destroy')->name('admin.config.destroy')->middleware('permission:system.config.destroy');
+        Route::delete('config_group/destroy','ConfigGroupController@destroy')->name('admin.config_group.destroy')->middleware('permission:system.config_group.destroy');
+    });
+
+    //配置项
+    Route::group(['middleware'=>'permission:system.configuration'],function (){
+        Route::get('configuration','ConfigurationController@index')->name('admin.configuration');
+        //添加
+        Route::get('configuration/create','ConfigurationController@create')->name('admin.configuration.create')->middleware('permission:system.configuration.create');
+        Route::post('configuration/store','ConfigurationController@store')->name('admin.configuration.store')->middleware('permission:system.configuration.create');
+        //编辑
+        Route::put('configuration/update','ConfigurationController@update')->name('admin.configuration.update')->middleware('permission:system.configuration.edit');
+        //删除
+        Route::delete('configuration/destroy','ConfigurationController@destroy')->name('admin.configuration.destroy')->middleware('permission:system.configuration.destroy');
+    });
+
+    //登录日志
+    Route::group(['middleware'=>'permission:system.login_log'],function (){
+        Route::get('login_log','LoginLogController@index')->name('admin.login_log');
+        Route::get('login_log/data','LoginLogController@data')->name('admin.login_log.data');
+        Route::delete('login_log/destroy','LoginLogController@destroy')->name('admin.login_log.destroy');
+    });
+
+    //操作日志
+    Route::group(['middleware'=>'permission:system.operate_log'],function (){
+        Route::get('operate_log','OperateLogController@index')->name('admin.operate_log');
+        Route::get('operate_log/data','OperateLogController@data')->name('admin.operate_log.data');
+        Route::delete('operate_log/destroy','OperateLogController@destroy')->name('admin.operate_log.destroy');
+    });
+
+});
+
+/*
+|--------------------------------------------------------------------------
+| 资讯管理模块
+|--------------------------------------------------------------------------
+*/
+Route::group(['namespace' => 'Admin', 'prefix' => 'admin', 'middleware' => ['auth', 'permission:information', 'operate.log']], function () {
+    //分类管理
+    Route::group(['middleware' => 'permission:information.category'], function () {
+        Route::get('category/data', 'CategoryController@data')->name('admin.category.data');
+        Route::get('category', 'CategoryController@index')->name('admin.category');
+        //添加分类
+        Route::get('category/create', 'CategoryController@create')->name('admin.category.create')->middleware('permission:information.category.create');
+        Route::post('category/store', 'CategoryController@store')->name('admin.category.store')->middleware('permission:information.category.create');
+        //编辑分类
+        Route::get('category/{id}/edit', 'CategoryController@edit')->name('admin.category.edit')->middleware('permission:information.category.edit');
+        Route::put('category/{id}/update', 'CategoryController@update')->name('admin.category.update')->middleware('permission:information.category.edit');
+        //删除分类
+        Route::delete('category/destroy', 'CategoryController@destroy')->name('admin.category.destroy')->middleware('permission:information.category.destroy');
+    });
+    //文章管理
+    Route::group(['middleware' => 'permission:information.article'], function () {
+        Route::get('article/data', 'ArticleController@data')->name('admin.article.data');
+        Route::get('article', 'ArticleController@index')->name('admin.article');
+        //添加
+        Route::get('article/create', 'ArticleController@create')->name('admin.article.create')->middleware('permission:information.article.create');
+        Route::post('article/store', 'ArticleController@store')->name('admin.article.store')->middleware('permission:information.article.create');
+        //编辑
+        Route::get('article/{id}/edit', 'ArticleController@edit')->name('admin.article.edit')->middleware('permission:information.article.edit');
+        Route::put('article/{id}/update', 'ArticleController@update')->name('admin.article.update')->middleware('permission:information.article.edit');
+        //删除
+        Route::delete('article/destroy', 'ArticleController@destroy')->name('admin.article.destroy')->middleware('permission:information.article.destroy');
+    });
+    //标签管理
+    Route::group(['middleware' => 'permission:information.tag'], function () {
+        Route::get('tag/data', 'TagController@data')->name('admin.tag.data');
+        Route::get('tag', 'TagController@index')->name('admin.tag');
+        //添加
+        Route::get('tag/create', 'TagController@create')->name('admin.tag.create')->middleware('permission:information.tag.create');
+        Route::post('tag/store', 'TagController@store')->name('admin.tag.store')->middleware('permission:information.tag.create');
+        //编辑
+        Route::get('tag/{id}/edit', 'TagController@edit')->name('admin.tag.edit')->middleware('permission:information.tag.edit');
+        Route::put('tag/{id}/update', 'TagController@update')->name('admin.tag.update')->middleware('permission:information.tag.edit');
+        //删除
+        Route::delete('tag/destroy', 'TagController@destroy')->name('admin.tag.destroy')->middleware('permission:information.tag.destroy');
     });
 });
 
-//PBX配置管理
-Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth','permission:pbx.manage']],function (){
+/*
+|--------------------------------------------------------------------------
+| 平台管理模块
+|--------------------------------------------------------------------------
+*/
+Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth','permission:portal.manage']],function (){
     //商户管理
-    Route::group(['middleware'=>'permission:pbx.merchant'],function (){
+    Route::group(['middleware'=>'permission:portal.merchant'],function (){
         Route::get('merchant','MerchantController@index')->name('admin.merchant');
         Route::get('merchant/data','MerchantController@data')->name('admin.merchant.data');
         //添加
-        Route::get('merchant/create','MerchantController@create')->name('admin.merchant.create')->middleware('permission:pbx.merchant.create');
-        Route::post('merchant/store','MerchantController@store')->name('admin.merchant.store')->middleware('permission:pbx.merchant.create');
+        Route::get('merchant/create','MerchantController@create')->name('admin.merchant.create')->middleware('permission:portal.merchant.create');
+        Route::post('merchant/store','MerchantController@store')->name('admin.merchant.store')->middleware('permission:portal.merchant.create');
         //编辑
-        Route::get('merchant/{id}/edit','MerchantController@edit')->name('admin.merchant.edit')->middleware('permission:pbx.merchant.edit');
-        Route::put('merchant/{id}/update','MerchantController@update')->name('admin.merchant.update')->middleware('permission:pbx.merchant.edit');
+        Route::get('merchant/{id}/edit','MerchantController@edit')->name('admin.merchant.edit')->middleware('permission:portal.merchant.edit');
+        Route::put('merchant/{id}/update','MerchantController@update')->name('admin.merchant.update')->middleware('permission:portal.merchant.edit');
         //删除
-        Route::delete('merchant/destroy','MerchantController@destroy')->name('admin.merchant.destroy')->middleware('permission:pbx.merchant.destroy');
-        //帐单列表，与帐单同权限
-        Route::get('merchant/bill','MerchantController@bill')->name('admin.merchant.bill')->middleware('permission:pbx.bill');
-        //添加帐单， 与帐单同权限
-        Route::post('merchant/bill/create','MerchantController@billCreate')->name('admin.merchant.bill.create')->middleware('permission:pbx.bill.create');
+        Route::delete('merchant/destroy','MerchantController@destroy')->name('admin.merchant.destroy')->middleware('permission:portal.merchant.destroy');
         //分配网关
-        Route::get('merchant/{id}/gateway','MerchantController@gateway')->name('admin.merchant.gateway')->middleware('permission:pbx.merchant.gateway');
-        Route::put('merchant/{id}/assignGateway','MerchantController@assignGateway')->name('admin.merchant.assignGateway')->middleware('permission:pbx.merchant.gateway');
+        Route::get('merchant/{id}/gateway','MerchantController@gateway')->name('admin.merchant.gateway')->middleware('permission:portal.merchant.gateway');
+        Route::put('merchant/{id}/assignGateway','MerchantController@assignGateway')->name('admin.merchant.assignGateway')->middleware('permission:portal.merchant.gateway');
+        //详情
+        Route::get('merchant/{id}/show','MerchantController@show')->name('admin.merchant.show');
+        //授予角色
+        Route::put('merchant/{id}/assignRole','MerchantController@assignRole')->name('admin.merchant.assignRole');
 
     });
-    //商户帐单
-    Route::group(['middleware'=>'permission:pbx.bill'], function (){
-        Route::get('bill','BillController@index')->name('admin.bill');
-        Route::get('bill/data','BillController@data')->name('admin.bill.data');
+
+    //员工管理
+    Route::group(['middleware'=>'permission:portal.member'],function (){
+        Route::get('member','MemberController@index')->name('admin.member');
+        Route::get('member/data','MemberController@data')->name('admin.member.data');
         //添加
-        Route::get('bill/create','BillController@create')->name('admin.bill.create')->middleware('permission:pbx.bill.create');
-        Route::post('bill/store','BillController@store')->name('admin.bill.store')->middleware('permission:pbx.bill.create');
+        Route::get('member/create','MemberController@create')->name('admin.member.create')->middleware('permission:portal.member.create');
+        Route::post('member/store','MemberController@store')->name('admin.member.store')->middleware('permission:portal.member.create');
+        //编辑
+        Route::get('member/{id}/edit','MemberController@edit')->name('admin.member.edit')->middleware('permission:portal.member.edit');
+        Route::put('member/{id}/update','MemberController@update')->name('admin.member.update')->middleware('permission:portal.member.edit');
+        //删除
+        Route::delete('member/destroy','MemberController@destroy')->name('admin.member.destroy')->middleware('permission:portal.member.destroy');
+        //分配角色
+        Route::get('member/{id}/role','MemberController@role')->name('admin.member.role')->middleware('permission:portal.member.role');
+        Route::put('member/{id}/assignRole','MemberController@assignRole')->name('admin.member.assignRole')->middleware('permission:portal.member.role');
+        //分配分机
+        Route::post('member/assignSip','MemberController@assignSip')->name('admin.member.assignSip')->middleware('permission:portal.member.assignSip');
+
     });
+
+});
+
+/*
+|--------------------------------------------------------------------------
+| 服务配置管理模块
+|--------------------------------------------------------------------------
+*/
+Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth','permission:pbx.manage']],function (){
     //分机管理
     Route::group(['middleware'=>'permission:pbx.sip'],function (){
         Route::get('sip','SipController@index')->name('admin.sip');
@@ -286,7 +395,12 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth','perm
 
 });
 
-//批量外呼
+
+/*
+|--------------------------------------------------------------------------
+| 批量外呼
+|--------------------------------------------------------------------------
+*/
 Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth','permission:ai.manage']],function (){
 
     //任务管理
@@ -311,20 +425,22 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth','perm
 
 });
 
-//录音管理
-Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth','permission:record.manage']],function (){
+/*
+|--------------------------------------------------------------------------
+| 录音管理
+|--------------------------------------------------------------------------
+*/
+Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth','permission:monitor.manage']],function (){
 
     //CDR录音
-    Route::group(['middleware'=>'permission:record.cdr'],function (){
+    Route::group(['middleware'=>'permission:monitor.cdr'],function (){
         Route::get('cdr','CdrController@index')->name('admin.cdr');
         Route::get('cdr/data','CdrController@data')->name('admin.cdr.data');
         //播放
-        Route::get('cdr/{uuid}/play','CdrController@play')->name('admin.cdr.play');
+        Route::get('cdr/{uuid}/play','CdrController@play')->name('admin.cdr.play')->middleware("permission:monitor.cdr.play");
         //下载
-        Route::get('cdr/{uuid}/download','CdrController@download')->name('admin.cdr.download');
+        Route::get('cdr/{uuid}/download','CdrController@download')->name('admin.cdr.download')->middleware("permission:monitor.cdr.download");
         //通话详单
-        Route::get('cdr/{id}/show','CdrController@show')->name('admin.cdr.show');
+        Route::get('cdr/{id}/show','CdrController@show')->name('admin.cdr.show')->middleware("permission:monitor.cdr.show");
     });
 });
-
-

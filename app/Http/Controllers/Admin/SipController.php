@@ -32,6 +32,9 @@ class SipController extends Controller
             $query = $query->where('username',$username);
         }
         $res = $query->orderByDesc('id')->paginate($request->get('limit', 30));
+        foreach ($res->items() as $d){
+            $d->status = Sip::getStatus($d);
+        }
         $data = [
             'code' => 0,
             'msg' => '正在请求中...',
@@ -48,8 +51,7 @@ class SipController extends Controller
      */
     public function create()
     {
-        $merchants = Merchant::orderByDesc('id')->where('status',1)->get();
-        return view('admin.sip.create',compact('merchants'));
+        return view('admin.sip.create');
     }
 
     /**
@@ -61,6 +63,9 @@ class SipController extends Controller
     public function store(SipRequest $request)
     {
         $data = $request->all([
+            'merchant_gateway',
+            'gateway_id',
+            'expense_id',
             'merchant_id',
             'username',
             'password',
@@ -69,6 +74,9 @@ class SipController extends Controller
             'outbound_caller_id_name',
             'outbound_caller_id_number',
         ]);
+        $mg = explode(',',$data['merchant_gateway']);
+        $data['merchant_id'] = $mg[0];
+        $data['gateway_id'] = $mg[1];
         if ($data['effective_caller_id_name']==null){
             $data['effective_caller_id_name'] = $data['username'];
         }
@@ -76,8 +84,8 @@ class SipController extends Controller
             $data['effective_caller_id_number'] = $data['username'];
         }
         //验证商户允许的最大分机数
-        $merchant = Merchant::withCount('sips')->findOrFail($data['merchant_id']);
-        if ($merchant->sips_count >= $merchant->sip_num){
+        $merchant = Merchant::with('info')->withCount('sips')->findOrFail($data['merchant_id']);
+        if ($merchant->sips_count >= $merchant->info->sip_num){
             return back()->withInput()->withErrors(['error'=>'添加失败：超出商户最大允许分机数量']);
         }
         try{
@@ -123,6 +131,10 @@ class SipController extends Controller
     {
         $model = Sip::findOrFail($id);
         $data = $request->all([
+            'merchant_gateway',
+            'gateway_id',
+            'expense_id',
+            'merchant_id',
             'username',
             'password',
             'effective_caller_id_name',
@@ -130,6 +142,9 @@ class SipController extends Controller
             'outbound_caller_id_name',
             'outbound_caller_id_number',
         ]);
+        $mg = explode(',',$data['merchant_gateway']);
+        $data['merchant_id'] = $mg[0];
+        $data['gateway_id'] = $mg[1];
         if ($data['effective_caller_id_name']==null){
             $data['effective_caller_id_name'] = $data['username'];
         }
@@ -171,12 +186,16 @@ class SipController extends Controller
 
     public function storeList(SipListRequest $request)
     {
-        $data = $request->all(['sip_start','sip_end','password','merchant_id']);
+        $data = $request->all(['sip_start','sip_end','password','merchant_gateway']);
+        $mg = explode(',',$data['merchant_gateway']);
+        $data['merchant_id'] = $mg[0];
+        $data['gateway_id'] = $mg[1];
         if ($data['sip_start'] <= $data['sip_end']){
             //验证商户允许的最大分机数
-            $merchant = Merchant::withCount('sips')->findOrFail($data['merchant_id']);
-            if (($merchant->sips_count+($data['sip_end']-$data['sip_start']+1)) >= $merchant->sip_num){
-                return back()->withInput()->withErrors(['error'=>'添加失败：超出商户最大允许分机数量']);
+            $merchant = Merchant::with('info')->withCount('sips')->findOrFail($data['merchant_id']);
+            $hasSipNum = $data['sip_end']-$data['sip_start']+1+$merchant->sips_count;
+            if ($hasSipNum > $merchant->info->sip_num){
+                return back()->withInput()->withErrors(['error'=>'添加失败：超出商户最大允许分机数量'.$merchant->sips_count.'<=>'.$merchant->info->sip_num]);
             }
             //开启事务
             DB::beginTransaction();
@@ -184,6 +203,7 @@ class SipController extends Controller
                 for ($i=$data['sip_start'];$i<=$data['sip_end'];$i++){
                     DB::table('sip')->insert([
                         'merchant_id' => $data['merchant_id'],
+                        'gateway_id' => $data['gateway_id'],
                         'username'  => $i,
                         'password'  => $data['password'],
                         'effective_caller_id_name' => $i,

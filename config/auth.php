@@ -41,16 +41,16 @@ return [
             'provider' => 'users',
         ],
 
-        'member' => [
+        'merchant' => [
             'driver' => 'session',
-            'provider' => 'members',
+            'provider' => 'merchants',
         ],
 
         'api' => [
             'driver' => 'token',
             'provider' => 'users',
+            'hash' => false,
         ],
-
     ],
 
     /*
@@ -76,9 +76,9 @@ return [
             'model' => App\Models\User::class,
         ],
 
-        'members' => [
+        'merchants' => [
             'driver' => 'eloquent',
-            'model' => App\Models\Member::class,
+            'model' => App\Models\Merchant::class,
         ],
 
         // 'users' => [

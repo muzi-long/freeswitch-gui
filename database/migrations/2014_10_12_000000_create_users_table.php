@@ -15,18 +15,16 @@ class CreateUsersTable extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('username')->unique();
-            $table->string('phone')->unique();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->string('password');
+            $table->string('username')->unique()->comment('用户名');
+            $table->string('phone')->unique()->comment('手机号码');
+            $table->string('nickname')->nullable()->comment('昵称');
+            $table->string('email')->unique()->comment('邮箱');
+            $table->string('password')->comment('密码');
             $table->rememberToken();
-            $table->uuid('uuid');
-            $table->unsignedInteger('sip_id')->nullable()->comment('对应分机ID，不是分机号码');
+            $table->string('api_token', 80)->unique()->nullable()->default(null);
             $table->timestamps();
-            $table->foreign('sip_id')->references('id')->on('sip')->onDelete('set null');
         });
-        \DB::statement("ALTER TABLE `users` comment '后台用户表'");
+        \DB::statement("ALTER TABLE `users` comment '用户表'");
     }
 
     /**

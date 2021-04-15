@@ -7,18 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 class Cdr extends Model
 {
     protected $table = 'cdr_a_leg';
+    protected $guarded = ['id'];
 
     public function bleg()
     {
-        return $this->hasOne('App\Models\Bleg','aleg_uuid','aleg_uuid');
+        return $this->hasOne('App\Models\Bleg','bleg_uuid','bleg_uuid')->withDefault([]);
     }
 
-    public function getBillsecAttribute($value)
-    {
-        if (!empty($this->bleg_uuid)){
-            $value = $this->bleg->billsec;
-        }
-        return $value;
-    }
-    
+
+
 }

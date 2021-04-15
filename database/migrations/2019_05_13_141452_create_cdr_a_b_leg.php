@@ -13,7 +13,7 @@ class CreateCdrABLeg extends Migration
      */
     public function up()
     {
-        Schema::create('cdr_ab_leg', function (Blueprint $table) {
+        /*Schema::create('cdr_ab_leg', function (Blueprint $table) {
             $table->increments('id');
             $table->string('uuid')->comment('通话uuid');
             $table->string('caller_id_name')->nullable()->comment('主叫昵称');
@@ -25,9 +25,11 @@ class CreateCdrABLeg extends Migration
             $table->integer('duration')->default(0)->comment('总通话时长（主叫通话时长）');
             $table->integer('billsec')->default(0)->comment('接听时长（被叫通话时长）');
             $table->string('hangup_cause')->nullable()->comment('挂断原因');
-            $table->string('sofia_record_file')->nullable()->comment('录音文件地址');
+            $table->string('record_file')->nullable()->comment('录音文件地址');
             $table->string('extend_content')->nullable()->comment('预留扩展字段内容');
         });
+        \DB::statement("ALTER TABLE `cdr_ab_leg` comment '通话记录ab表'");
+
         Schema::create('cdr_a_leg', function (Blueprint $table) {
             $table->increments('id');
             $table->string('aleg_uuid')->comment('aleg_uuid');
@@ -41,9 +43,11 @@ class CreateCdrABLeg extends Migration
             $table->integer('duration')->default(0)->comment('总通话时长（主叫通话时长）');
             $table->integer('billsec')->default(0)->comment('接听时长（被叫通话时长）');
             $table->string('hangup_cause')->nullable()->comment('挂断原因');
-            $table->string('sofia_record_file')->nullable()->comment('录音文件地址');
+            $table->string('record_file')->nullable()->comment('录音文件地址');
             $table->string('extend_content')->nullable()->comment('预留扩展字段内容');
         });
+        \DB::statement("ALTER TABLE `cdr_a_leg` comment '通话记录a表'");
+
         Schema::create('cdr_b_leg', function (Blueprint $table) {
             $table->increments('id');
             $table->string('aleg_uuid')->comment('aleg_uuid');
@@ -57,9 +61,10 @@ class CreateCdrABLeg extends Migration
             $table->integer('duration')->default(0)->comment('总通话时长（主叫通话时长）');
             $table->integer('billsec')->default(0)->comment('接听时长（被叫通话时长）');
             $table->string('hangup_cause')->nullable()->comment('挂断原因');
-            $table->string('sofia_record_file')->nullable()->comment('录音文件地址');
+            $table->string('record_file')->nullable()->comment('录音文件地址');
             $table->string('extend_content')->nullable()->comment('预留扩展字段内容');
         });
+        \DB::statement("ALTER TABLE `cdr_b_leg` comment '通话记录b表'");*/
     }
 
     /**

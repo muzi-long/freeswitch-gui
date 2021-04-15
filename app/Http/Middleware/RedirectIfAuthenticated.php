@@ -4,6 +4,8 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\URL;
 
 class RedirectIfAuthenticated
 {
@@ -18,8 +20,12 @@ class RedirectIfAuthenticated
     public function handle($request, Closure $next, $guard = null)
     {
         if (Auth::guard($guard)->check()) {
-            $path = $guard=='member'? route('home.member') : route('admin.index');
-            return redirect($path);
+            if ($guard=='merchant'){
+                $route = 'home.layout';
+            }else{
+                $route = 'admin.layout';
+            }
+            return Redirect::to(URL::route($route));
         }
 
         return $next($request);

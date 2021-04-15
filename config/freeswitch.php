@@ -3,7 +3,7 @@ return [
 
     //socket连接授权
     'event_socket' => [
-        'host'      => '172.16.2.12',
+        'host'      => '127.0.0.1',
         'port'      => 8021,
         'password'  => 'ClueCon',
     ],
@@ -80,6 +80,16 @@ return [
         'menu-exec-app' => '应用',
         'menu-sub' => '子菜单',
         'enu-top' => '父菜单',
+    ],
+
+    //字段类型
+    'field_type' => [
+        'input' => '输入框',
+        'radio' => '单选',
+        'checkbox' => '多选',
+        'select' => '下拉选择',
+        'image' => '图片上传',
+        'textarea' => '文本框',
     ],
 
 ];

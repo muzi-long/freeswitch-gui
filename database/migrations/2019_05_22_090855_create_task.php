@@ -26,6 +26,7 @@ class CreateTask extends Migration
             $table->tinyInteger('status')->default(1)->comment('状态，1-停止，2-启动，3-完成');
             $table->timestamps();
         });
+        \DB::statement("ALTER TABLE `task` comment '呼叫任务表'");
     }
 
     /**

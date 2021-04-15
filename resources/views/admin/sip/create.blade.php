@@ -12,3 +12,7 @@
         </div>
     </div>
 @endsection
+
+@section('script')
+    @include('admin.sip._js')
+@endsection
