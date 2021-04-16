@@ -33,19 +33,18 @@
                 </li>
                 <li class="layui-nav-item" lay-unselect>
                     <a href="javascript:;" >
-                        <video id="remoteVideo" style="display: none" ></video>
-                        <video id="localVideo" style="display: none" muted="muted"></video>
+                        <video id="myVideo" autoplay style="display: none" ></video>
                     </a>
                 </li>
             </ul>
 
             <ul class="layui-nav layui-layout-right" lay-filter="layadmin-layout-right">
                 <li class="layui-nav-item" lay-unselect >
-                    <a href="javascript:;" id="call-status" style="width: 50px" ></a>
+                    <a href="javascript:;" id="callStatus" style="width: 50px" ></a>
                 </li>
                 <li class="layui-nav-item" lay-unselect>
                     <a href="javascript:;">
-                        <cite id="sip-status">
+                        <cite id="regStatus">
                             @if($data['sip_id'])
                                 外呼号：{{$data['username']}}
                             @else
@@ -215,7 +214,7 @@
 </div>
 
 <script src="/layuiadmin/layui/layui.js"></script>
-<script src="/webrtc/sip-0.7.0.js"></script>
+<script src="/webrtc/jssip-3.7.4.min.js"></script>
 <script>
     layui.config({
         base: '/layuiadmin/' //静态资源所在路径
@@ -252,91 +251,99 @@
         })
 
         @if(isset($data['sip_id'])&&$data['sip_id'])
+        //获取浏览器麦克风权限
         navigator.mediaDevices.getUserMedia({audio: true, video: true});
-        var userAgentSession;
-        var userAgent;
-        function initUserAgent(){
-            userAgent = new SIP.UA({
-                uri: '{{$data["uri"]}}',
-                wsServers: ['wss://{{$data["wss_url"]}}:7443'],
-                authorizationUser: '{{$data["username"]}}',
-                password: '{{$data["password"]}}',
-                displayName: '{{$data["username"]}}',
-                hackIpInContact: true,
-                rtcpMuxPolicy: 'negotiate',
-                hackWssInTransport: true,
-                rel100: SIP.C.supported.SUPPORTED,
-                log: {
-                    level: 0, //日志等级
-                },
-                /**
-                 * sip.js生成的随机contact字符串 设置后会以此为后缀 可以搭配 cusContactName使用,根据自身业务进行使用
-                 *  设置前: sofia/internal/sip:admin10@df7jal23ls0d.invalid;
-                 *  设置后: sofia/internal/sip:admin10@192.168.0.253;
-                 *
-                 *
-                 hackIpInContact: "106.13.223.129",
-                 userAgentString: "myAwesomeApp",
-                 registerOptions: {
-                    expires: 300,
-                    registrar: 'sip:xdwh.dgg.net',
-                },
-                 **
-                 * 此处是笔者自定义的参数,因为注册到fs时,sip.js会随机生成contact字符串,如:sofia/internal/sip:admin10@df7jal23ls0d.invalid;
-                 *  笔者自己添加了一个参数,对sip.js的源码进行了修改 ,修改后效果  sofia/internal/sip:1012@192.168.0.253 不需要的可以不理会此参数
-                 * 此处纠正问题,官方提供了一个参数[contactName],使用此参数即可,sip.js使用官方的即可
-                 * contactName:"1012"
-                 */
-                contactName:"1001"
+        var currentSession = null
+        var userAgent
+        var conf = {
+            "wss": '{{$data["wss_url"]}}:7443',
+            "uri": '{{$data["uri"]}}',
+            "username": '{{$data["username"]}}',
+            "password": '{{$data["password"]}}',
+        }
+        $("#regBtn").click(function () {
+            var socket = new JsSIP.WebSocketInterface('wss://' + conf.wss);
+            var configuration = {
+                sockets: [socket],
+                uri: 'sip:' + conf.uri,
+                password: conf.password
+            };
+            userAgent = new JsSIP.UA(configuration);
+
+            // websocket
+            userAgent.on('connected', function (e) {
+                console.log('jssip websocket已连接')
             });
-            //注册成功
-            userAgent.on('registered', function (e) {
-                $('#sip-status').text($("#regBtn").text());
+            userAgent.on('disconnected', function (e) {
+                console.log('jssip websocket已断开')
             });
-            //未注册成功
-            userAgent.on('unregistered', function () {
-                $('#sip-status').text($("#unregBtn").text());
-                $('#sip-status').click(function () {
-                    return;
-                })
-            });
-            //监听来电
-            userAgent.on('invite', function (session) {
-                userAgentSession = session;
-                userAgentSession.on('terminated', function (message, cause) {//结束
-                    $("#call-status").html("")
-                    layer.msg("通话结束");
-                });
-                userAgentSession.accept({
-                    media: {
-                        render: {
-                            remote: document.getElementById('remoteVideo'),
-                            local: document.getElementById('localVideo')
-                        },
-                        constraints: {
-                            audio: true,
-                            video: false
+
+            // 来电监听
+            userAgent.on('newRTCSession', function (data) {
+                // 服务器呼叫该分机
+                if (data.originator === 'remote') {
+                    layer.msg('有新的来电，系统为您自动接听')
+                    currentSession = data.session
+                    currentSession.answer({
+                        'mediaConstraints': {'audio': true, 'video': true}
+                    })
+                    //Fired when the call is accepted (2XX received/sent).
+                    currentSession.on('accepted', function () {
+                        console.log('已接听')
+                        $("#callStatus").text('通话中')
+                    })
+                    //Fired when the call is confirmed (ACK received/sent).
+                    currentSession.on('confirmed', function () {
+                        console.log('ACK确认')
+                        const stream = new MediaStream();
+                        const receivers = currentSession.connection.getReceivers();
+                        if (receivers) {
+                            receivers.forEach(function (receiver,index) {
+                                stream.addTrack(receiver.track)
+                            })
                         }
-                    }
-                });
-                layer.msg("新的来电系统已为您自动接听");
-                $("#call-status").html('<span class="layui-badge">挂断</span>')
-                $("#call-status span").click(function () {
-                    if(userAgent){
-                        userAgentSession.terminate()
-                    }
-                })
+                        document.getElementById("myVideo").srcObject = stream;
+                        //添加挂机
+                        $("#callStatus").html('<span class="layui-badge">挂断</span>')
+                        $("#callStatus span").click(function () {
+                            currentSession.terminate()
+                        })
+                    })
+                    //Fired when an established call ends.
+                    currentSession.on('ended', function () {
+                        console.log('呼叫结束')
+                        $("#callStatus").text('通话结束')
+                        currentSession = null
+                    })
+                    //Fired when the session was unable to establish.
+                    currentSession.on('failed', function () {
+                        console.log('通话失败')
+                        $("#callStatus").text('通话失败')
+                        currentSession = null
+                    })
+
+                }
+            });
+
+            // 注册信息
+            userAgent.on('registered', function (e) {
+                $("#regStatus").text('在线')
+            });
+            userAgent.on('unregistered', function (e) {
+                $("#regStatus").text('离线')
+            });
+            userAgent.on('registrationFailed', function (e) {
+                $("#regStatus").text('注册失败')
+                console.log(e)
             });
             userAgent.start()
-        }
-
-        $("#regBtn").click(function () {
-            initUserAgent();
-            userAgent.register();
         })
+
         $("#unregBtn").click(function () {
-            if(userAgent){
-                userAgent.unregister()
+            if (userAgent !== undefined) {
+                userAgent.unregister({
+                    all: true
+                })
             }
         })
         @endif

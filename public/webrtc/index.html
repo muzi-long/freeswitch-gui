@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="renderer" content="webkit">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/layuiadmin/style/admin.css" media="all">
+    <script src="/layuiadmin/layui/layui.js"></script>
+</head>
+<body>
+<div class="layui-fluid">
+    <div class="layui-card-body">
+        <div class="layui-row">
+            <div class="layui-col-md4 layui-col-lg-offset4">
+                <form class="layui-form">
+                    <video autoplay style="display: none" id="myVideo"></video>
+                    <div class="layui-form-item">
+                        <label for="" class="layui-form-label">WSS</label>
+                        <div class="layui-input-block">
+                            <input type="text" class="layui-input" value="testcall.shupian.cn:7443" id="wss">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label for="" class="layui-form-label">uri</label>
+                        <div class="layui-input-block">
+                            <input type="text" class="layui-input" value="192.168.254.216:2088" id="uri">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label for="" class="layui-form-label">外呼号</label>
+                        <div class="layui-input-block">
+                            <input type="text" class="layui-input" value="" id="username">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label for="" class="layui-form-label">密码</label>
+                        <div class="layui-input-block">
+                            <input type="text" class="layui-input" value="" id="password">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label for="" class="layui-form-label"></label>
+                        <div class="layui-input-block">
+                            <button type="button" class="layui-btn layui-btn-sm" id="regBtn">注册</button>
+                            <button type="button" class="layui-btn layui-btn-sm" id="unRegBtn">注销</button>
+                            <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" id="hupBtn">挂断
+                            </button>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label for="" class="layui-form-label">注册状态</label>
+                        <div class="layui-input-block">
+                            <div class="layui-word-aux layui-form-mid">
+                                <span class="layui-badge layui-bg-green" id="regStatus">未注册</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label for="" class="layui-form-label">呼叫状态</label>
+                        <div class="layui-input-block">
+                            <div class="layui-word-aux layui-form-mid">
+                                <span class="layui-badge layui-bg-cyan" id="callStatus">空闲</span>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="./jssip-3.7.4.min.js"></script>
+<script>
+    layui.config({
+        base: '/layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index', //主入口模块
+    }).use(['element', 'form', 'layer', 'table', 'upload', 'laydate', 'jquery'], function () {
+        var $ = layui.jquery;
+        var form = layui.form;
+        var table = layui.table;
+
+
+        var currentSession = null
+        var userAgent
+        var conf
+
+        $("#regBtn").click(function () {
+            conf = {
+                "wss": $("#wss").val(),
+                "uri": $("#uri").val(),
+                "username": $("#username").val(),
+                "password": $("#password").val(),
+            }
+            var socket = new JsSIP.WebSocketInterface('wss://' + conf.wss);
+            var configuration = {
+                sockets: [socket],
+                uri: 'sip:' + conf.username + '@' + conf.uri,
+                password: conf.password
+            };
+            userAgent = new JsSIP.UA(configuration);
+
+            // websocket
+            userAgent.on('connected', function (e) {
+                console.log('jssip websocket已连接')
+            });
+            userAgent.on('disconnected', function (e) {
+                console.log('jssip websocket已断开')
+            });
+
+            // 来电监听
+            userAgent.on('newRTCSession', function (data) {
+                // 服务器呼叫该分机
+                if (data.originator === 'remote') {
+                    layer.msg('有新的来电，系统为您自动接听')
+                    currentSession = data.session
+                    currentSession.answer({
+                        'mediaConstraints': {'audio': true, 'video': true}
+                    })
+                    //Fired when the call is accepted (2XX received/sent).
+                    currentSession.on('accepted', function () {
+                        console.log('已接听')
+                        $("#callStatus").text('通话中')
+                    })
+                    //Fired when the call is confirmed (ACK received/sent).
+                    currentSession.on('confirmed', function () {
+                        console.log('ACK确认')
+                        const stream = new MediaStream();
+                        const receivers = currentSession.connection.getReceivers();
+                        if (receivers) {
+                            receivers.forEach(function (receiver,index) {
+                                stream.addTrack(receiver.track)
+                            })
+                        }
+
+                        document.getElementById("myVideo").srcObject = stream;
+                    })
+                    //Fired when an established call ends.
+                    currentSession.on('ended', function () {
+                        console.log('呼叫结束')
+                        $("#callStatus").text('结束')
+                        currentSession = null
+                    })
+                    //Fired when the session was unable to establish.
+                    currentSession.on('failed', function () {
+                        console.log('通话失败')
+                        $("#callStatus").text('通话失败')
+                        currentSession = null
+                    })
+                }
+            });
+
+            // 注册信息
+            userAgent.on('registered', function (e) {
+                $("#regStatus").text('已注册')
+            });
+            userAgent.on('unregistered', function (e) {
+                $("#regStatus").text('未注册')
+            });
+            userAgent.on('registrationFailed', function (e) {
+                $("#regStatus").text('注册失败')
+                console.log(e)
+            });
+            userAgent.start()
+        })
+
+        $("#unRegBtn").click(function () {
+            if (userAgent !== undefined) {
+                userAgent.unregister({
+                    all: true
+                })
+            }
+        })
+
+        $("#hupBtn").click(function () {
+            if (currentSession !== null) {
+                currentSession.terminate()
+            }
+        })
+    });
+</script>
+
+</body>
+</html>
+
+
+
