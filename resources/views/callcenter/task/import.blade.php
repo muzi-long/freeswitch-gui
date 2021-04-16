@@ -18,7 +18,7 @@
                 <div class="layui-form-item">
                     <div class="layui-input-block">
                         <input type="hidden" name="file" id="file">
-                        <button type="submit" class="layui-btn layui-btn-sm layui-disabled" disabled lay-submit lay-filter="go-close" id="sureBtn" >确认导入</button>
+                        <button type="button" class="layui-btn layui-btn-sm layui-disabled" disabled lay-submit lay-filter="go-close" id="sureBtn" >确认导入</button>
                     </div>
                 </div>
             </form>
