@@ -1,177 +1,193 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-    <script src="./jssip-3.3.6.js"></script>
-    <script src="./jquery.min.js"></script>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="renderer" content="webkit">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/layuiadmin/style/admin.css" media="all">
+    <script src="/layuiadmin/layui/layui.js"></script>
 </head>
 <body>
-<video id="remoteVideo"></video>
-<video id="localVideo" muted="muted"></video>
-<div>状态：<span id="status">注册中...</span></div>
-<div>
-    <input type="text" id="phone">
-    <button type="button" onclick="testCall()">拨打</button>
-    <button type="button" onclick="hangup()">挂断</button>
-    <button type="button" id="accept">接听</button>
+<div class="layui-fluid">
+    <div class="layui-card-body">
+        <div class="layui-row">
+            <div class="layui-col-md4 layui-col-lg-offset4">
+                <form class="layui-form">
+                    <video autoplay style="display: none" id="myVideo"></video>
+                    <div class="layui-form-item">
+                        <label for="" class="layui-form-label">WSS</label>
+                        <div class="layui-input-block">
+                            <input type="text" class="layui-input" value="testcall.shupian.cn:7443" id="wss">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label for="" class="layui-form-label">uri</label>
+                        <div class="layui-input-block">
+                            <input type="text" class="layui-input" value="192.168.254.216:2088" id="uri">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label for="" class="layui-form-label">外呼号</label>
+                        <div class="layui-input-block">
+                            <input type="text" class="layui-input" value="" id="username">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label for="" class="layui-form-label">密码</label>
+                        <div class="layui-input-block">
+                            <input type="text" class="layui-input" value="" id="password">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label for="" class="layui-form-label"></label>
+                        <div class="layui-input-block">
+                            <button type="button" class="layui-btn layui-btn-sm" id="regBtn">注册</button>
+                            <button type="button" class="layui-btn layui-btn-sm" id="unRegBtn">注销</button>
+                            <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" id="hupBtn">挂断
+                            </button>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label for="" class="layui-form-label">注册状态</label>
+                        <div class="layui-input-block">
+                            <div class="layui-word-aux layui-form-mid">
+                                <span class="layui-badge layui-bg-green" id="regStatus">未注册</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label for="" class="layui-form-label">呼叫状态</label>
+                        <div class="layui-input-block">
+                            <div class="layui-word-aux layui-form-mid">
+                                <span class="layui-badge layui-bg-cyan" id="callStatus">空闲</span>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
 </div>
+
+<script src="./jssip-3.7.4.min.js"></script>
 <script>
-    JsSIP.debug.disable('JsSIP:*');
-    JsSIP.C.SESSION_EXPIRES=120;
-    JsSIP.C.MIN_SESSION_EXPIRES=120;
+    layui.config({
+        base: '/layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index', //主入口模块
+    }).use(['element', 'form', 'layer', 'table', 'upload', 'laydate', 'jquery'], function () {
+        var $ = layui.jquery;
+        var form = layui.form;
+        var table = layui.table;
 
-    var remoteVideo = document.getElementById('remoteVideo');
 
-    var localStream = null;
-    var outgoingSession = null;
-    var incomingSession = null;
-    var currentSession = null;
-    var wss_url = 'wss://ssl.nicaicai.top:7443';
+        var currentSession = null
+        var userAgent
+        var conf
 
-    var socket = new JsSIP.WebSocketInterface(wss_url);
-    var configuration = {
-        sockets: [socket],
-        outbound_proxy_set: wss_url,
-        uri: "sip:1001@ssl.nicaicai.top",
-        password: 1234,
-        register: true,
-        session_timers: false,
-        audio: true
-    };
-
-    userAgent = new JsSIP.UA(configuration);
-
-    //注册成功
-    userAgent.on('registered', function (data) {
-        $("#status").text("注册成功");
-        console.info("registered: ", data.response.status_code, ",", data.response.reason_phrase);
-    });
-
-    //注册失败
-    userAgent.on('registrationFailed', function (data) {
-        $("#status").text("注册失败");
-        console.warn("registrationFailed, ", data.response.status_code, ",", data.response.reason_phrase, " cause - ", data.cause);
-    });
-
-    //注册超时
-    userAgent.on('registrationExpiring', function () {
-        $("#status").text("注册超时");
-        console.warn("registrationExpiring");
-    });
-
-    userAgent.on('newRTCSession', function (data) {
-        console.info('onNewRTCSession: ', data);
-
-        //通话呼入
-        if (data.originator == 'remote') {
-            console.info("incomingSession, answer the call----------------------");
-            var accept = confirm("有来电，是否接听？");
-            incomingSession = data.session;
-            if (accept) {
-                data.session.answer({
-                    'mediaConstraints': {
-                        'audio': true,
-                        'video': false,
-                        mandatory: {maxWidth: 640, maxHeight: 360}
-                    },
-                    'mediaStream': localStream
-                });
-            } else {
-                data.session.terminate();
+        $("#regBtn").click(function () {
+            conf = {
+                "wss": $("#wss").val(),
+                "uri": $("#uri").val(),
+                "username": $("#username").val(),
+                "password": $("#password").val(),
             }
-        } else {
-            console.info("outgoingSession");
-            outgoingSession = data.session;
-            outgoingSession.on('connecting', function (data) {
-                console.info('onConnecting - ', data.request);
-                currentSession = outgoingSession;
-                outgoingSession = null;
-            });
-        }
-        data.session.on('accepted', function (data) {
-            console.info('onAccepted - ', data);
-            if (data.originator == 'remote' && currentSession == null) {
-                currentSession = incomingSession;
-                incomingSession = null;
-                console.info("setCurrentSession - ", currentSession);
-            }
-        });
-        data.session.on('confirmed', function (data) {
-            console.info('onConfirmed - ', data);
-            if (data.originator == 'remote' && currentSession == null) {
-                currentSession = incomingSession;
-                incomingSession = null;
-                console.info("setCurrentSession - ", currentSession);
-            }
-        });
-        data.session.on('sdp', function (data) {
-            //console.info('onSDP, type - ', data.type, ' sdp - ', data.sdp);
-        });
-
-        data.session.on('progress', function (data) {
-            console.info('onProgress - ', data.originator);
-            if (data.originator == 'remote') {
-                console.info('onProgress, response - ', data.response);
-            }
-        });
-        data.session.on('peerconnection', function (data) {
-            console.info('onPeerconnection - ', data.peerconnection);
-            data.peerconnection.onaddstream = function (ev) {
-                console.info('onaddstream from remote ----------- ', ev);
-                remoteVideo.srcObject = ev.stream;
-                remoteVideo.play();
+            var socket = new JsSIP.WebSocketInterface('wss://' + conf.wss);
+            var configuration = {
+                sockets: [socket],
+                uri: 'sip:' + conf.username + '@' + conf.uri,
+                password: conf.password
             };
-        });
+            userAgent = new JsSIP.UA(configuration);
+
+            // websocket
+            userAgent.on('connected', function (e) {
+                console.log('jssip websocket已连接')
+            });
+            userAgent.on('disconnected', function (e) {
+                console.log('jssip websocket已断开')
+            });
+
+            // 来电监听
+            userAgent.on('newRTCSession', function (data) {
+                // 服务器呼叫该分机
+                if (data.originator === 'remote') {
+                    layer.msg('有新的来电，系统为您自动接听')
+                    currentSession = data.session
+                    currentSession.answer({
+                        'mediaConstraints': {'audio': true, 'video': true}
+                    })
+                    //Fired when the call is accepted (2XX received/sent).
+                    currentSession.on('accepted', function () {
+                        console.log('已接听')
+                        $("#callStatus").text('通话中')
+                    })
+                    //Fired when the call is confirmed (ACK received/sent).
+                    currentSession.on('confirmed', function () {
+                        console.log('ACK确认')
+                        const stream = new MediaStream();
+                        const receivers = currentSession.connection.getReceivers();
+                        if (receivers) {
+                            receivers.forEach(function (receiver,index) {
+                                stream.addTrack(receiver.track)
+                            })
+                        }
+
+                        document.getElementById("myVideo").srcObject = stream;
+                    })
+                    //Fired when an established call ends.
+                    currentSession.on('ended', function () {
+                        console.log('呼叫结束')
+                        $("#callStatus").text('结束')
+                        currentSession = null
+                    })
+                    //Fired when the session was unable to establish.
+                    currentSession.on('failed', function () {
+                        console.log('通话失败')
+                        $("#callStatus").text('通话失败')
+                        currentSession = null
+                    })
+                }
+            });
+
+            // 注册信息
+            userAgent.on('registered', function (e) {
+                $("#regStatus").text('已注册')
+            });
+            userAgent.on('unregistered', function (e) {
+                $("#regStatus").text('未注册')
+            });
+            userAgent.on('registrationFailed', function (e) {
+                $("#regStatus").text('注册失败')
+                console.log(e)
+            });
+            userAgent.start()
+        })
+
+        $("#unRegBtn").click(function () {
+            if (userAgent !== undefined) {
+                userAgent.unregister({
+                    all: true
+                })
+            }
+        })
+
+        $("#hupBtn").click(function () {
+            if (currentSession !== null) {
+                currentSession.terminate()
+            }
+        })
     });
-
-    userAgent.start();
-
-    // Register callbacks to desired call events
-    var eventHandlers = {
-        'progress': function (e) {
-            console.log('call is in progress');
-        },
-        'failed': function (e) {
-            console.log('call failed: ', e);
-        },
-        'ended': function (e) {
-            console.log('call ended : ', e);
-        },
-        'confirmed': function (e) {
-            console.log('call confirmed');
-        }
-    };
-
-    function testCall() {
-        var options = {
-            'eventHandlers': eventHandlers,
-            'mediaConstraints': {
-                'audio': true, 'video': false,
-                mandatory: {maxWidth: 640, maxHeight: 360}
-            },
-            'mediaStream': localStream
-        };
-
-        outgoingSession = userAgent.call("sip:"+$("#phone").val()+"@ssl.nicaicai.top", options);
-    }
-    function reg() {
-        console.log('register----------->');
-        userAgent.register();
-    }
-
-    function unReg() {
-        console.log('unregister----------->');
-        userAgent.unregister(true);
-    }
-
-    function hangup() {
-        console.log('hangup----------->');
-        userAgent.terminateSessions();
-    }
-
-
 </script>
 
 </body>
 </html>
+
+
+

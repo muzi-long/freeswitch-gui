@@ -7,17 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class Task extends Model
 {
     protected $table = 'task';
-    protected $fillable = [
-        'name',
-        'date_start',
-        'date_end',
-        'time_start',
-        'time_end',
-        'gateway_id',
-        'queue_id',
-        'max_channel',
-        'status',
-    ];
+    protected $guarded = ['id'];
+
     protected $appends = ['gateway_name','queue_name','date','time'];
 
     public function gateway()
@@ -37,7 +28,7 @@ class Task extends Model
 
     public function getQueueNameAttribute()
     {
-        return $this->attributes['queue_name'] = $this->queue->display_name;
+        return $this->attributes['queue_name'] = $this->queue->name;
     }
 
     public function getDateAttribute()
@@ -49,7 +40,6 @@ class Task extends Model
     {
         return $this->attributes['time'] = $this->time_start . ' - '. $this->time_end;
     }
-
 
     //总呼叫数
     public function calls()
@@ -75,10 +65,10 @@ class Task extends Model
         return $this->hasMany('App\Models\Call','task_id','id')->where('status',4);
     }
 
-    //呼叫失败数 status=5
+    //呼叫失败数 status=2
     public function failCalls()
     {
-        return $this->hasMany('App\Models\Call','task_id','id')->where('status',5);
+        return $this->hasMany('App\Models\Call','task_id','id')->where('status',2);
     }
 
 }

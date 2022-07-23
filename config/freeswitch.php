@@ -1,39 +1,61 @@
 <?php
+
 return [
-
-    //socket连接授权
-    'event_socket' => [
-        'host'      => '172.16.2.12',
-        'port'      => 8021,
-        'password'  => 'ClueCon',
-    ],
-
-    //网关目录
-    'gateway_dir' => '/usr/local/freeswitch/etc/freeswitch/sip_profiles/external/',
-
-    //IVR 目录
-    'ivr_dir' => '/usr/local/freeswitch/etc/freeswitch/ivr_menus/',
-
-    //callcenter目录
-    'callcenter_dir' => '/usr/local/freeswitch/etc/freeswitch/autoload_configs/callcenter.conf.xml',
-
+    //超级管理员
+    'user_root_id' => 1,
+    //超级角色
+    'role_root_id' => 1,
     //application
     'application' => [
-        'set'       => '设置变量',
-        'answer'    => '应答',
-        'sleep'     => '睡眠',
-        'hangup'    => '挂断',
+        'set'               => '设置变量',
+        'answer'            => '应答',
+        'sleep'             => '睡眠',
+        'hangup'            => '挂断',
         'record_session'    => '录音',
-        'export'    => '导入变量',
-        'bridge'    => '桥接呼叫',
-        'echo'      => '回音',
-        'park'      => '停泊',
-        'transfer'  => '呼叫转移',
-        'info'      => '显示信息',
-        'lua'       => 'lua脚本',
-        'detect_speech'=> 'detect_speech',
-        'play_and_detect_speech'=>'play_and_detect_speech',
-        'log' => 'log',
+        'export'            => '导入变量',
+        'bridge'            => '桥接呼叫',
+        'echo'              => '回音',
+        'park'              => '停泊',
+        'transfer'          => '呼叫转移',
+        'info'              => '显示信息',
+        'lua'               => 'lua脚本',
+        'log'               => 'log',
+        'playback'          => '播放',
+    ],
+
+    //生成静态文件地址
+    'swoole_http_url' => [
+        //生成网关
+        'gateway' => 'http://127.0.0.1:9501/gateway',
+        //生成分机
+        'directory' => 'http://127.0.0.1:9501/directory',
+        //生成拨号计划
+        'dialplan' => 'http://127.0.0.1:9501/dialplan',
+        //生成群呼
+        'callcenter' => 'http://127.0.0.1:9501/callcenter',
+    ],
+
+    'esl' => [
+        'host' => '127.0.0.1',
+        'password' => 'dgg@1234.',
+        'port' => 8022,
+    ],
+
+    'redis_key' => [
+        'dial' => 'dial_uuid_queue',
+        'api' => 'api_exec_queue',
+        'callcenter_task' => 'callcenter_task_queue',
+    ],
+    'record_url' => env('APP_URL','http://localhost'),
+    'host' => env('FS_HOST','127.0.0.1'),
+    'wss_url' => env('FS_WSS_URL','127.0.0.1'),
+    'websocket_url' => env('WEBSOCKET_URL','127.0.0.1'),
+
+    'node_type' => [
+        1 => '公共节点',
+        2 => '客户跟进',
+        3 => '订单生产',
+        4 => '财务付款',
     ],
 
     //队列响铃模式
@@ -48,38 +70,30 @@ return [
         'random'                        => '随机振铃',
     ],
 
-    //坐席状态status
-    'agent_status' => [
-        'Logged Out'    => '签出',
-        'Available'     => '示闲',
-        'On Break'      => '休息(不接收呼叫)',
-    ],
-    //坐席呼叫状态state
-    'agent_state' => [
-        'Idle'              => '空闲（不接收呼叫）',
-        'Waiting'           => '等待',
-        'Receiving'         => '电话呼入',
-        'In a queue call'   => '通话中',
+    //字段类型
+    'field_type' => [
+        'input' => '输入框',
+        'radio' => '单选',
+        'checkbox' => '多选',
+        'select' => '下拉选择',
+        'image' => '单图片上传',
+        'images' => '多图片上传',
+        'textarea' => '文本框',
     ],
 
-    //商户状态
-    'merchant_status' => [
-        1 => '正常',
-        2 => '禁用',
+    'pay_type' => [
+        1 => '现金',
+        2 => '对公账户',
+        3 => '支付宝',
+        4 => '微信',
+        5 => '其它',
     ],
 
-    //讯飞在线语音合成参数
-    'xfyun' => [
-        'appid' => '5bc842c0',
-        'apikey' => '33e3e90871156122614cbe26d2992ab0',
-        'sounds' => '/usr/local/freeswitch/share/freeswitch/sounds/en/us/callie/custom/8000/'
+    //群呼状态
+    'callcenter_call_status' => [
+        1 => '待呼叫',
+        2 => '呼叫失败',
+        3 => '漏接',
+        4 => '成功',
     ],
-
-    //IVR
-    'ivr_action' => [
-        'menu-exec-app' => '应用',
-        'menu-sub' => '子菜单',
-        'enu-top' => '父菜单',
-    ],
-
 ];
