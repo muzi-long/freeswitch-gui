@@ -2,380 +2,288 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Extension;
-use App\Models\Gateway;
-use App\Models\Group;
+use App\Models\Cdr;
+use App\Models\CustomerRemark;
+use App\Models\Department;
+use App\Models\Node;
+use App\Models\Order;
+use App\Models\OrderPay;
+use App\Models\OrderRemark;
+use App\Models\Permission;
+use App\Models\Role;
 use App\Models\Sip;
+use App\Models\User;
 use Illuminate\Http\Request;
-use Log;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Facades\Storage;
 
 class ApiController extends Controller
 {
-    /**
-     * 分机动态注册
-     * @param Request $request
-     * @return bool
-     */
-    public function directory(Request $request)
+    public function getPermissionByRoleId(Request $request)
     {
-        $sips = Sip::get();
-        $groups = Group::with('sips')->whereHas('sips')->get();
-
-        $xml  = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n";
-        $xml .= "<document type=\"freeswitch/xml\">\n";
-        $xml .= "<section name=\"directory\" >\n";
-        $xml .= "<domain name=\"\$\${domain}\">\n";
-        $xml .= "<params>\n";
-        $xml .= "<param name=\"dial-string\" value=\"{presence_id=\${dialed_user}@\${dialed_domain}}\${sofia_contact(\${dialed_user}@\${dialed_domain})}\"/>\n";
-        $xml .= "</params>\n";
-        $xml .= "<groups>\n";
-
-        //默认用户组default
-        $xml .= "<group name=\"default\">\n";
-        $xml .= "    <users>\n";
-        foreach ($sips as $sip){
-            $outbound_caller_id_number = $sip->outbound_caller_id_number??"\$\${outbound_caller_id}";
-            $xml .= "    <user id=\"".$sip->username."\">\n";
-            $xml .= "        <params>";
-            $xml .= "           <param name=\"password\" value=\"".$sip->password."\"/>\n";
-            $xml .= "           <param name=\"vm-password\" value=\"".$sip->password."\"/>\n";
-            $xml .= "        </params>\n";
-            $xml .= "        <variables>\n";
-            $xml .= "        <variable name=\"toll_allow\" value=\"domestic,international,local\"/>\n";
-            $xml .= "           <variable name=\"accountcode\" value=\"".$sip->username."\"/>\n";
-            $xml .= "           <variable name=\"user_context\" value=\"".$sip->context."\"/>\n";
-            $xml .= "           <variable name=\"effective_caller_id_name\" value=\"".$sip->effective_caller_id_name."\"/>\n";
-            $xml .= "           <variable name=\"effective_caller_id_number\" value=\"".$sip->effective_caller_id_number."\"/>\n";
-            $xml .= "           <variable name=\"outbound_caller_id_name\" value=\"\$\${outbound_caller_name}\"/>\n";
-            $xml .= "           <variable name=\"outbound_caller_id_number\" value=\"".$outbound_caller_id_number."\"/>\n";
-            $xml .= "        </variables>\n";
-            $xml .= "    </user>";
+        $role_id = $request->input('role_id');
+        $role = null;
+        $checkedIds = [];
+        if ($role_id) {
+            $role = Role::query()->where('id', $role_id)->first();
         }
-        $xml .= "    </users>\n";
-        $xml .= "</group>\n";
-
-        //自定义用户组
-        foreach ($groups as $group){
-            $xml .= "<group name=\"".$group->name."\">\n";
-            $xml .= "    <users>\n";
-            foreach ($group->sips as $sip){
-                $xml .= "   <user id=\"".$sip->username."\" type=\"pointer\"/>";
+        $permissions = Permission::query()->orderByDesc('id')->get();
+        foreach ($permissions as $permission) {
+            if ($role != null) {
+                if ($role->hasPermissionTo($permission)) {
+                    array_push($checkedIds, $permission->id);
+                }
             }
-            $xml .= "    </users>\n";
-            $xml .= "</group>\n";
         }
-
-        $xml .= "</groups>\n";
-        $xml .= "</domain>\n";
-        $xml .= "</section>\n";
-        $xml .= "</document>\n";
-        return response($xml,200)->header("Content-type","text/xml");
+        return $this->success('ok', ['trees' => $permissions, 'checkedId' => $checkedIds]);
     }
 
-    /**
-     * 动态拨号计划
-     * @param Request $request
-     * @return mixed
-     */
-    public function dialplan(Request $request)
+    public function getRoleByUserId(Request $request)
     {
-        if ($request->get('section')=='dialplan'){
-            $context = $request->get('Caller-Context','default');
+        $user_id = $request->input('user_id');
+        $user = null;
+        if ($user_id) {
+            $user = User::query()->where('id', $user_id)->first();
+        }
+        $roles = Role::query()->orderByDesc('id')->get();
+        foreach ($roles as $role) {
+            $role->selected = $user != null && $user->hasRole($role);
+        }
+        return $this->success('ok', $roles);
+    }
 
-            $xml  = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n";
-            $xml .= "<document type=\"freeswitch/xml\">\n";
-            $xml .= "<section name=\"dialplan\" description=\"RE Dial Plan For FreeSwitch\">\n";
-            $xml .= "<context name=\"".$context."\">\n";
+    public function getDepartmentByUserId(Request $request)
+    {
+        $user_id = $request->input('user_id');
+        $user = null;
+        if ($user_id) {
+            $user = User::query()->where('id', $user_id)->first();
+        }
+        $departments = Department::query()->orderByDesc('id')->get();
+        foreach ($departments as $d) {
+            $d->selected = $user != null && $user->department_id == $d->id;
+        }
+        $data = recursive($departments);
+        return $this->success('ok', $data);
+    }
 
-            //拨号计划
-            $extension = Extension::with('conditions')->whereHas('conditions')->where('context',$context)->orderBy('sort')->orderBy('id')->get();
-            foreach ($extension as $exten){
-                $xml .= "<extension name=\"" . $exten->name . "\" continue=\"" . $exten->continue . "\" >\n";
-                if ($exten->conditions->isNotEmpty()){
-                    foreach ($exten->conditions as $condition){
-                        $xml .= "<condition field=\"" . $condition->field . "\" expression=\"" . $condition->expression . "\" break=\"" . $condition->break . "\">\n";
-                        if ($condition->actions->isNotEmpty()){
-                            foreach ($condition->actions as $action){
-                                $xml .= "<action application=\"" . $action->application . "\" data=\"" . $action->data . "\" />\n";
-                            }
-                        }
-                        $xml .= "</condition>\n";
-                    }
-                }
-                $xml .= "</extension>\n";
+    public function getUser(Request $request)
+    {
+        $user_id = $request->input('user_id');
+        $users = User::query()->get();
+        foreach ($users as $user){
+            $user->selected = $user_id == $user->id;
+        }
+        return $this->success('ok',$users);
+    }
+
+    public function getNode(Request $request)
+    {
+        $node_id = $request->input('node_id');
+        $type = $request->input('type');
+        $nodes = Node::query()
+            ->whereIn('type',[1,$type])
+            ->orderBy('sort','asc')
+            ->orderBy('id','asc')
+            ->get();
+        foreach ($nodes as $node){
+            $node->selected = $node_id == $node->id;
+        }
+        return $this->success('ok',$nodes);
+    }
+
+
+    public function remarkList(Request $request)
+    {
+        $node_type = $request->input('type');
+        $id = $request->input('id');
+        if ($node_type == 2){
+            $res = CustomerRemark::query()->where('customer_id','=',$id)->orderByDesc('id')->paginate($request->get('limit', 2));
+        }elseif ($node_type == 3){
+            $res = OrderRemark::query()->where('order_id','=',$id)->orderByDesc('id')->paginate($request->get('limit', 2));
+        }
+        return $this->success('ok',['list'=>$res->items(),'lastPage'=>$res->lastPage()]);
+    }
+
+
+    /**
+     * 呼叫接口
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function call(Request $request)
+    {
+        $user_id = $request->input('user_id');
+        $caller = $request->input('caller');
+        $callee = $request->input('callee');
+        $user_data = $request->input('user_data');
+        if ($caller != null){
+            $sip = Sip::query()->where('username',$caller)->first();
+            if ($sip == null){
+                return $this->error('外呼号不存在');
             }
-
-            $xml .= "</context>\n";
-            $xml .= "</section>\n";
-            $xml .= "</document>\n";
-            return response($xml,200)->header("Content-type","text/xml");
-        }
-    }
-
-    /**
-     * 动态configuration 包含动态网关
-     * @param Request $request
-     * @return mixed
-     */
-    public function configuration(Request $request)
-    {
-        $xml  = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n";
-        $xml .= "<document type=\"freeswitch/xml\">\n";
-        $xml .= "<section name=\"configuration\" description=\"FreeSwitch configuration\">\n";
-
-        $xml .= "<configuration name=\"sofia.conf\" description=\"sofia Endpoint\">\n";
-        $xml .= "    <global_settings>\n";
-        $xml .= "       <param name=\"log-level\" value=\"0\"/>\n";
-        $xml .= "       <!-- <param name=\"auto-restart\" value=\"false\"/> -->\n";
-        $xml .= "       <param name=\"debug-presence\" value=\"0\"/>\n";
-        $xml .= "       <!-- <param name=\"capture-server\" value=\"udp:homer.domain.com:5060\"/> -->\n";
-        $xml .= "       <!-- <param name=\"capture-server\" value=\"udp:homer.domain.com:5060;hep=3;capture_id=100\"/> -->\n";
-        $xml .= "    </global_settings>\n";
-        $xml .= "    <profiles>\n";
-        $xml .= "    <profile name=\"external\">\n";
-        $xml .= "       <gateways>\n";
-        $gateways = Gateway::orderByDesc('id')->get();
-        foreach ($gateways as $gateway){
-            $xml .= "           <gateway name=\"gw".$gateway->id."\">\n";
-            $xml .= "               <param name=\"username\" value=\"".$gateway->username."\"/>\n";
-            $xml .= "               <param name=\"realm\" value=\"".$gateway->realm."\"/>\n";
-            $xml .= "               <param name=\"password\" value=\"".$gateway->password."\"/>\n";
-            $xml .= "           </gateway>\n";
-        }
-        $xml .= "       </gateways>\n";
-        $xml .= "       <aliases>\n";
-        $xml .= "       </aliases>\n";
-        $xml .= "       <domains>\n";
-        $xml .= "           <domain name=\"all\" alias=\"false\" parse=\"true\"/>\n";
-        $xml .= "       </domains>\n";
-        $xml .= "       <settings>\n";
-        $xml .= "           <param name=\"debug\" value=\"0\"/>\n";
-        $xml .= "           <!-- If you want FreeSWITCH to shutdown if this profile fails to load, uncomment the next line. -->\n";
-        $xml .= "           <!-- <param name=\"shutdown-on-fail\" value=\"true\"/> -->\n";
-        $xml .= "           <param name=\"sip-trace\" value=\"no\"/>\n";
-        $xml .= "           <param name=\"sip-capture\" value=\"no\"/>\n";
-        $xml .= "           <param name=\"rfc2833-pt\" value=\"101\"/>\n";
-        $xml .= "           <!-- RFC 5626 : Send reg-id and sip.instance -->\n";
-        $xml .= "           <!--<param name=\"enable-rfc-5626\" value=\"true\"/> -->\n";
-        $xml .= "           <param name=\"sip-port\" value=\"\$\${external_sip_port}\"/>\n";
-        $xml .= "           <param name=\"dialplan\" value=\"XML\"/>\n";
-        $xml .= "           <param name=\"context\" value=\"public\"/>\n";
-        $xml .= "           <param name=\"dtmf-duration\" value=\"2000\"/>\n";
-        $xml .= "           <param name=\"inbound-codec-prefs\" value=\"\$$\{global_codec_prefs}\"/>\n";
-        $xml .= "           <param name=\"outbound-codec-prefs\" value=\"\$\${outbound_codec_prefs}\"/>\n";
-        $xml .= "           <param name=\"hold-music\" value=\"\$\${hold_music}\"/>\n";
-        $xml .= "           <param name=\"rtp-timer-name\" value=\"soft\"/>\n";
-        $xml .= "           <!--<param name=\"enable-100rel\" value=\"true\"/>-->\n";
-        $xml .= "           <!--<param name=\"disable-srv503\" value=\"true\"/>-->\n";
-        $xml .= "           <!-- This could be set to \"passive\" -->\n";
-        $xml .= "           <param name=\"local-network-acl\" value=\"localnet.auto\"/>\n";
-        $xml .= "           <param name=\"manage-presence\" value=\"false\"/>\n";
-        $xml .= "           <!-- Name of the db to use for this profile -->\n";
-        $xml .= "           <!--<param name=\"dbname\" value=\"share_presence\"/>-->\n";
-        $xml .= "           <!--<param name=\"presence-hosts\" value=\"\$\${domain}\"/>-->\n";
-        $xml .= "           <!--<param name=\"force-register-domain\" value=\"\$\${domain}\"/>-->\n";
-        $xml .= "           <!--all inbound reg will stored in the db using this domain -->\n";
-        $xml .= "           <!--<param name=\"force-register-db-domain\" value=\"\$\${domain}\"/>-->  \n";
-        $xml .= "           <!--<param name=\"aggressive-nat-detection\" value=\"true\"/>-->\n";
-        $xml .= "           <param name=\"inbound-codec-negotiation\" value=\"generous\"/>\n";
-        $xml .= "           <param name=\"nonce-ttl\" value=\"60\"/>\n";
-        $xml .= "           <param name=\"auth-calls\" value=\"false\"/>\n";
-        $xml .= "           <param name=\"inbound-late-negotiation\" value=\"true\"/>\n";
-        $xml .= "           <param name=\"inbound-zrtp-passthru\" value=\"true\"/>\n";
-        $xml .= "           <param name=\"rtp-ip\" value=\"\$\${local_ip_v4}\"/>\n";
-        $xml .= "           <param name=\"sip-ip\" value=\"\$\${local_ip_v4}\"/>\n";
-        $xml .= "           <param name=\"ext-rtp-ip\" value=\"auto-nat\"/>\n";
-        $xml .= "           <param name=\"ext-sip-ip\" value=\"auto-nat\"/>\n";
-        $xml .= "           <param name=\"rtp-timeout-sec\" value=\"300\"/>\n";
-        $xml .= "           <param name=\"rtp-hold-timeout-sec\" value=\"1800\"/>\n";
-        $xml .= "           <!--<param name=\"enable-3pcc\" value=\"true\"/>-->\n";
-        $xml .= "           <param name=\"tls\" value=\"\$\${external_ssl_enable}\"/>\n";
-        $xml .= "           <param name=\"tls-only\" value=\"false\"/>\n";
-        $xml .= "           <param name=\"tls-bind-params\" value=\"transport=tls\"/>\n";
-        $xml .= "           <param name=\"tls-sip-port\" value=\"\$\${external_tls_port}\"/>\n";
-        $xml .= "           <!--<param name=\"tls-cert-dir\" value=\"\"/>-->\n";
-        $xml .= "           <param name=\"tls-passphrase\" value=\"\"/>\n";
-        $xml .= "           <!-- Verify the date on TLS certificates -->\n";
-        $xml .= "           <param name=\"tls-verify-date\" value=\"true\"/>\n";
-        $xml .= "           <param name=\"tls-verify-policy\" value=\"none\"/>\n";
-        $xml .= "           <param name=\"tls-verify-depth\" value=\"2\"/>\n";
-        $xml .= "           <param name=\"tls-verify-in-subjects\" value=\"\"/>\n";
-        $xml .= "           <param name=\"tls-version\" value=\"\$\${sip_tls_version}\"/>\n";
-        $xml .= "       </settings>\n";
-        $xml .= "   </profile>\n";
-        //$xml .=     file_get_contents('etc_freeswitch/sip_profiles/internal.xml');
-        $xml .= "   </profiles>\n";
-        $xml .= "</configuration>\n";
-        $xml .= "</section>\n";
-        $xml .= "</document>\n";
-        return response($xml,200)->header("Content-type","text/xml");
-    }
-
-    /**
-     * 动态configuration 包含动态网关
-     * @param Request $request
-     * @return mixed
-     */
-    public function configuration1(Request $request)
-    {
-        $xml  = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n";
-        $xml .= "<document type=\"freeswitch/xml\">\n";
-        $xml .= "<section name=\"configuration\" description=\"FreeSwitch configuration\">\n";
-
-        foreach (scandir('etc_freeswitch/autoload_configs/') as $conf){
-            if ($conf=='.'||$conf=='..')
-            {
-                continue;
-            }elseif ($conf=='sofia.conf.xml') {
-
-                $xml .= "<configuration name=\"sofia.conf\" description=\"sofia Endpoint\">\n";
-                $xml .= "    <global_settings>\n";
-                $xml .= "       <param name=\"log-level\" value=\"0\"/>\n";
-                $xml .= "       <!-- <param name=\"auto-restart\" value=\"false\"/> -->\n";
-                $xml .= "       <param name=\"debug-presence\" value=\"0\"/>\n";
-                $xml .= "       <!-- <param name=\"capture-server\" value=\"udp:homer.domain.com:5060\"/> -->\n";
-                $xml .= "       <!-- <param name=\"capture-server\" value=\"udp:homer.domain.com:5060;hep=3;capture_id=100\"/> -->\n";
-                $xml .= "    </global_settings>\n";
-                $xml .= "    <profiles>\n";
-                $xml .= "    <profile name=\"external\">\n";
-                $xml .= "       <gateways>\n";
-                $gateways = Gateway::orderByDesc('id')->get();
-                foreach ($gateways as $gateway){
-                    $xml .= "           <gateway name=\"gw".$gateway->id."\">\n";
-                    $xml .= "               <param name=\"username\" value=\"".$gateway->username."\"/>\n";
-                    $xml .= "               <param name=\"realm\" value=\"".$gateway->realm."\"/>\n";
-                    $xml .= "               <param name=\"password\" value=\"".$gateway->password."\"/>\n";
-                    $xml .= "           </gateway>\n";
-                }
-                $xml .= "       </gateways>\n";
-                $xml .= "       <aliases>\n";
-                $xml .= "       </aliases>\n";
-                $xml .= "       <domains>\n";
-                $xml .= "           <domain name=\"all\" alias=\"false\" parse=\"true\"/>\n";
-                $xml .= "       </domains>\n";
-                $xml .= "       <settings>\n";
-                $xml .= "           <param name=\"debug\" value=\"0\"/>\n";
-                $xml .= "           <!-- If you want FreeSWITCH to shutdown if this profile fails to load, uncomment the next line. -->\n";
-                $xml .= "           <!-- <param name=\"shutdown-on-fail\" value=\"true\"/> -->\n";
-                $xml .= "           <param name=\"sip-trace\" value=\"no\"/>\n";
-                $xml .= "           <param name=\"sip-capture\" value=\"no\"/>\n";
-                $xml .= "           <param name=\"rfc2833-pt\" value=\"101\"/>\n";
-                $xml .= "           <!-- RFC 5626 : Send reg-id and sip.instance -->\n";
-                $xml .= "           <!--<param name=\"enable-rfc-5626\" value=\"true\"/> -->\n";
-                $xml .= "           <param name=\"sip-port\" value=\"\$\${external_sip_port}\"/>\n";
-                $xml .= "           <param name=\"dialplan\" value=\"XML\"/>\n";
-                $xml .= "           <param name=\"context\" value=\"public\"/>\n";
-                $xml .= "           <param name=\"dtmf-duration\" value=\"2000\"/>\n";
-                $xml .= "           <param name=\"inbound-codec-prefs\" value=\"\$$\{global_codec_prefs}\"/>\n";
-                $xml .= "           <param name=\"outbound-codec-prefs\" value=\"\$\${outbound_codec_prefs}\"/>\n";
-                $xml .= "           <param name=\"hold-music\" value=\"\$\${hold_music}\"/>\n";
-                $xml .= "           <param name=\"rtp-timer-name\" value=\"soft\"/>\n";
-                $xml .= "           <!--<param name=\"enable-100rel\" value=\"true\"/>-->\n";
-                $xml .= "           <!--<param name=\"disable-srv503\" value=\"true\"/>-->\n";
-                $xml .= "           <!-- This could be set to \"passive\" -->\n";
-                $xml .= "           <param name=\"local-network-acl\" value=\"localnet.auto\"/>\n";
-                $xml .= "           <param name=\"manage-presence\" value=\"false\"/>\n";
-                $xml .= "           <!-- Name of the db to use for this profile -->\n";
-                $xml .= "           <!--<param name=\"dbname\" value=\"share_presence\"/>-->\n";
-                $xml .= "           <!--<param name=\"presence-hosts\" value=\"\$\${domain}\"/>-->\n";
-                $xml .= "           <!--<param name=\"force-register-domain\" value=\"\$\${domain}\"/>-->\n";
-                $xml .= "           <!--all inbound reg will stored in the db using this domain -->\n";
-                $xml .= "           <!--<param name=\"force-register-db-domain\" value=\"\$\${domain}\"/>-->  \n";
-                $xml .= "           <!--<param name=\"aggressive-nat-detection\" value=\"true\"/>-->\n";
-                $xml .= "           <param name=\"inbound-codec-negotiation\" value=\"generous\"/>\n";
-                $xml .= "           <param name=\"nonce-ttl\" value=\"60\"/>\n";
-                $xml .= "           <param name=\"auth-calls\" value=\"false\"/>\n";
-                $xml .= "           <param name=\"inbound-late-negotiation\" value=\"true\"/>\n";
-                $xml .= "           <param name=\"inbound-zrtp-passthru\" value=\"true\"/>\n";
-                $xml .= "           <param name=\"rtp-ip\" value=\"\$\${local_ip_v4}\"/>\n";
-                $xml .= "           <param name=\"sip-ip\" value=\"\$\${local_ip_v4}\"/>\n";
-                $xml .= "           <param name=\"ext-rtp-ip\" value=\"auto-nat\"/>\n";
-                $xml .= "           <param name=\"ext-sip-ip\" value=\"auto-nat\"/>\n";
-                $xml .= "           <param name=\"rtp-timeout-sec\" value=\"300\"/>\n";
-                $xml .= "           <param name=\"rtp-hold-timeout-sec\" value=\"1800\"/>\n";
-                $xml .= "           <!--<param name=\"enable-3pcc\" value=\"true\"/>-->\n";
-                $xml .= "           <param name=\"tls\" value=\"\$\${external_ssl_enable}\"/>\n";
-                $xml .= "           <param name=\"tls-only\" value=\"false\"/>\n";
-                $xml .= "           <param name=\"tls-bind-params\" value=\"transport=tls\"/>\n";
-                $xml .= "           <param name=\"tls-sip-port\" value=\"\$\${external_tls_port}\"/>\n";
-                $xml .= "           <!--<param name=\"tls-cert-dir\" value=\"\"/>-->\n";
-                $xml .= "           <param name=\"tls-passphrase\" value=\"\"/>\n";
-                $xml .= "           <!-- Verify the date on TLS certificates -->\n";
-                $xml .= "           <param name=\"tls-verify-date\" value=\"true\"/>\n";
-                $xml .= "           <param name=\"tls-verify-policy\" value=\"none\"/>\n";
-                $xml .= "           <param name=\"tls-verify-depth\" value=\"2\"/>\n";
-                $xml .= "           <param name=\"tls-verify-in-subjects\" value=\"\"/>\n";
-                $xml .= "           <param name=\"tls-version\" value=\"\$\${sip_tls_version}\"/>\n";
-                $xml .= "       </settings>\n";
-                $xml .= "   </profile>\n";
-                $xml .=     file_get_contents('etc_freeswitch/sip_profiles/internal.xml');
-                $xml .= "   </profiles>\n";
-                $xml .= "</configuration>\n";
-
-            }elseif ($conf=='ivr.conf.xml'){
-
-                $xml .= "<configuration name=\"ivr.conf\" description=\"IVR menus\">\n";
-                $xml .= "<menus>\n";
-                foreach (scandir("etc_freeswitch/ivr_menus") as $file){
-                    if ($file=='.'||$file=='..') continue;
-                    $xml .= file_get_contents('etc_freeswitch/ivr_menus/'.$file);
-                }
-                $xml .= "</menus>\n";
-                $xml .= "</configuration>\n";
-
-            }elseif ($conf=='dingaling.conf.xml'){
-
-                $xml .= "<configuration name=\"dingaling.conf\" description=\"XMPP Jingle Endpoint\">\n";
-                $xml .= "<settings>\n";
-                $xml .= "<param name=\"debug\" value=\"0\"/>\n";
-                $xml .= "<param name=\"codec-prefs\" value=\"H264,PCMU\"/>\n";
-                $xml .= "</settings>\n";
-                foreach (scandir("etc_freeswitch/jingle_profiles") as $file){
-                    if ($file=='.'||$file=='..') continue;
-                    $xml .= file_get_contents('etc_freeswitch/jingle_profiles/'.$file);
-                }
-                $xml .= "</configuration>\n";
-
-            }elseif ($conf=='skinny.conf.xml'){
-
-                $xml .= "<configuration name=\"skinny.conf\" description=\"Skinny Endpoints\">\n";
-                $xml .= "<profiles>\n";
-                foreach (scandir("etc_freeswitch/sip_profiles") as $file){
-                    if ($file=='.'||$file=='..') continue;
-                    $xml .= file_get_contents('etc_freeswitch/sip_profiles/'.$file);
-                }
-                $xml .= "</profiles>\n";
-                $xml .= "</configuration>\n";
-
-            }elseif ($conf=='unimrcp.conf.xml'){
-
-                $xml .= "<configuration name=\"unimrcp.conf\" description=\"UniMRCP Client\">\n";
-                $xml .= "<settings>\n";
-                $xml .= "<param name=\"default-tts-profile\" value=\"voxeo-prophecy8.0-mrcp1\"/>\n";
-                $xml .= "<param name=\"default-asr-profile\" value=\"voxeo-prophecy8.0-mrcp1\"/>\n";
-                $xml .= "<param name=\"log-level\" value=\"DEBUG\"/>\n";
-                $xml .= "<param name=\"enable-profile-events\" value=\"false\"/>\n";
-                $xml .= "<param name=\"max-connection-count\" value=\"100\"/>\n";
-                $xml .= "<param name=\"offer-new-connection\" value=\"1\"/>\n";
-                $xml .= "<param name=\"request-timeout\" value=\"3000\"/>\n";
-                $xml .= "</settings>\n";
-                $xml .= "<profiles>\n";
-                foreach (scandir("etc_freeswitch/mrcp_profiles") as $file){
-                    if ($file=='.'||$file=='..') continue;
-                    $xml .= file_get_contents('etc_freeswitch/mrcp_profiles/'.$file);
-                }
-                $xml .= "</profiles>\n";
-                $xml .= "</configuration>\n";
-
-            }else{
-                $xml .= file_get_contents('etc_freeswitch/autoload_configs/'.$conf);
+            if ($sip->status != 1) {
+                return $this->error('外呼号未在线');
             }
-
+            $user = User::query()->where('sip_id', '=', $sip->id)->first();
+        }else{
+            $user = User::query()->with('sip')->where('id', '=', $user_id)->first();
+            if ($user == null){
+                return $this->error('用户ID不存在');
+            }
+            if ($user->sip == null) {
+                return $this->error('用户未分配外呼号');
+            }
+            if ($user->sip->status != 1) {
+                return $this->error('用户外呼号未在线');
+            }
+            $sip = $user->sip;
         }
-        $xml .= "</section>\n";
-        $xml .= "</document>\n";
-        return response($xml,200)->header("Content-type","text/xml");
+
+        try {
+            $cdr = Cdr::create([
+                'uuid' => uuid_generate(),
+                'aleg_uuid' => uuid_generate(),
+                'bleg_uuid' => uuid_generate(),
+                'caller' => $sip->username,
+                'callee' => $callee,
+                'department_id' => $user->department_id??0,
+                'user_id' => $user->id??0,
+                'user_nickname' => $user->nickname??null,
+                'sip_id' => $sip->id,
+                'user_data' => $user_data,
+                'gateway_id' => $sip->gateway_id ?? 0,
+            ]);
+            Redis::rpush(config('freeswitch.redis_key.dial'), $cdr->uuid);
+            return $this->success('呼叫成功', [
+                'uuid' => $cdr->uuid,
+                'call_time' => date('Y-m-d H:i:s'),
+            ]);
+        } catch (\Exception $exception) {
+            Log::error('呼叫异常：' . $exception->getMessage());
+            return $this->error('呼叫失败');
+        }
     }
+
+    public function hangup(Request $request)
+    {
+        $uuid = $request->input('uuid');
+        if($uuid == null){
+            return $this->error('参数错误');
+        }
+        $cdr = Cdr::query()->where('uuid',$uuid)->first();
+        if ($cdr==null){
+            return $this->error('参数错误');
+        }
+        if (!$cdr->end_time){
+            Redis::rpush(config('freeswitch.redis_key.api'),'uuid_kill '.$cdr->aleg_uuid);
+        }
+        return $this->success('已挂断');
+    }
+
+    public function chanspy(Request $request)
+    {
+        $data = $request->all(['fromExten','toExten','type']);
+
+        $toSip = Sip::where('username',$data['toExten'])->first();
+        if ($toSip->status == 0){
+            return $this->error('监听分机未在线');
+        }
+        //验证监听，是否登录
+        $fromSip = Sip::where('username',$data['fromExten'])->first();
+        if ($fromSip->status == 0){
+            return $this->error('被监听分机未在线');
+        }
+        $cdr = Cdr::query()
+            ->where('caller',$toSip)
+            ->whereNotNull('answer_time')
+            ->whereNull('end_time')
+            ->orderByDesc('id')
+            ->first();
+        if ($cdr == null){
+            return $this->error('被监听分机未在通话中');
+        }
+        $dailStr = "originate {origination_caller_id_number=".$data['fromExten']."}";
+        $dailStr .= "{origination_caller_id_name=".$data['fromExten']."}";
+        $dailStr .= "user/".$data['fromExten'];
+        if ($data['type']==3){
+            $dailStr .= " &three_way(".$cdr->aleg_uuid.")";
+        }elseif ($data['type']==2){
+            $dailStr .= " &{eavesdrop_whisper_aleg=false}{eavesdrop_whisper_bleg=false}eavesdrop(".$cdr->aleg_uuid.")";
+        }elseif ($data['type']==1){
+            $dailStr .= " &{eavesdrop_whisper_aleg=true}{eavesdrop_whisper_bleg=false}eavesdrop(".$cdr->aleg_uuid.")";
+        }else{
+            return $this->error('监听模式错误');
+        }
+        Redis::rpush(config('freeswitch.redis_key.api'),$dailStr);
+        return $this->success('监听成功');
+    }
+
+    //文件上传
+    public function upload(Request $request)
+    {
+
+        //上传文件最大大小,单位M
+        $maxSize = 10;
+        //支持的上传图片类型
+        $allowed_extensions = ["png", "jpg", "gif", "xlsx", "xls"];
+        $file = $request->file('file');
+        //检查文件是否上传完成
+        if ($file->isValid()) {
+            //检测图片类型
+            $ext = $file->getClientOriginalExtension();
+            if (!in_array(strtolower($ext), $allowed_extensions)) {
+                return $this->success("请上传" . implode(",", $allowed_extensions) . "格式的图片");
+            }
+            //检测图片大小
+            if ($file->getSize() > $maxSize * 1024 * 1024) {
+                return $this->success("图片大小限制" . $maxSize . "M");
+            }
+        } else {
+            return $this->error('文件不完整');
+        }
+        try {
+            $newFile = date('Y/m/d/') . uuid_generate() . "." . $file->getClientOriginalExtension();
+            $disk = Storage::disk('uploads');
+            $res = $disk->put($newFile, file_get_contents($file->getRealPath()));
+            if ($res) {
+                $data = [
+                    'url' => '/uploads/' . $newFile,
+                ];
+                return $this->success('上传成功', $data);
+            } else {
+                Log::error('文件上传错误：' . $file->getErrorMessage());
+                $this->error('上传失败');
+            }
+        }catch (\Exception $exception){
+            Log::error('文件上传异常：' . $exception->getMessage());
+            $this->error('系统异常');
+        }
+
+    }
+
+    public function payList(Request $request)
+    {
+        $id = $request->input('id');
+        $res = OrderPay::query()->where('order_id','=',$id)->orderByDesc('id')->paginate($request->get('limit', 2));
+        return $this->success('ok',['list'=>$res->items(),'lastPage'=>$res->lastPage()]);
+    }
+
+    public function getSipsByQueueId(Request $request)
+    {
+        $queueId = $request->input('queue_id');
+        $lists = Sip::with('user')->get();
+        $values = [];
+        if ($queueId){
+            $values = DB::table('queue_sip')->where('queue_id',$queueId)->pluck('sip_id')->toArray();
+        }
+        foreach ($lists as $item){
+            $item->checked = in_array($item->id,$values) ? true : false;
+        }
+        return $this->success('ok',['lists'=>$lists,'values'=>$values]);
+    }
+
 
 }
-

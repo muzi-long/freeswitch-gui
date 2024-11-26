@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Condition extends Model
 {
     protected $table = 'condition';
-    protected $fillable = ['display_name','field','expression','break','extension_id','sort'];
+    protected $guarded = ['id'];
     protected $with = 'actions';
 
     public function actions()

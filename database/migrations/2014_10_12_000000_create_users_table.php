@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateUsersTable extends Migration
 {
@@ -13,20 +13,22 @@ class CreateUsersTable extends Migration
      */
     public function up()
     {
-        Schema::create('users', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('username')->unique();
-            $table->string('phone')->unique();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->string('password');
+        Schema::create('user', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->string('name')->nullable()->comment('帐号');
+            $table->string('password')->nullable()->comment('密码');
+            $table->string('nickname')->nullable()->comment('昵称');
+            $table->string('phone')->nullable()->comment('手机号');
+            $table->tinyInteger('status')->default(1)->comment('状态：1正常，2禁用，默认1');
+            $table->string('last_login_ip')->nullable()->comment('最后登录ip');
+            $table->string('last_login_time')->nullable()->comment('最后登录时间');
+            $table->string('email')->nullable();
+            $table->timestamp('email_verified_at')->nullable();
+            $table->unsignedBigInteger('sip_id')->default(0)->nullable()->comment('分机ID');
+            $table->unsignedBigInteger('department_id')->default(0)->nullable()->comment('部门ID');
             $table->rememberToken();
-            $table->uuid('uuid');
-            $table->unsignedInteger('sip_id')->nullable()->comment('对应分机ID，不是分机号码');
             $table->timestamps();
-            $table->foreign('sip_id')->references('id')->on('sip')->onDelete('set null');
         });
-        \DB::statement("ALTER TABLE `users` comment '后台用户表'");
     }
 
     /**
@@ -36,6 +38,6 @@ class CreateUsersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('user');
     }
 }
